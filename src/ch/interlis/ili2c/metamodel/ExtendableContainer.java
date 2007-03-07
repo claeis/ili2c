@@ -10,6 +10,7 @@
 package ch.interlis.ili2c.metamodel;
 
 import java.util.*;
+import ch.ehi.basics.logging.EhiLogger;
 
 /** A Container that can be extended.
 */
@@ -436,30 +437,24 @@ public abstract class ExtendableContainer extends Container implements Extendabl
   }
 
 
-  public boolean checkStructuralEquivalence (Element with, ErrorListener listener)
+  public boolean checkStructuralEquivalence (Element with)
   {
   	if(isAlias()){
-  		return ((ExtendableContainer)getReal()).checkStructuralEquivalence (with, listener);
+  		return ((ExtendableContainer)getReal()).checkStructuralEquivalence (with);
   	}else{
-	    if (!super.checkStructuralEquivalence (with, listener))
+	    if (!super.checkStructuralEquivalence (with))
 	      return false;
 
 	    boolean fine = true;
 	    if (this.isAbstract() != ((ExtendableContainer) with).isAbstract())
 	    {
-	      listener.error (new ErrorListener.ErrorEvent (
-	        formatMessage ("err_diff_mismatchInAbstractness", this.toString(), with.toString()),
-	        /* origin of error */ this,
-	        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+	      EhiLogger.logError(formatMessage ("err_diff_mismatchInAbstractness", this.toString(), with.toString()));
 	      fine = false;
 	    }
 
 	    if (this.isFinal() != ((ExtendableContainer) with).isFinal())
 	    {
-	      listener.error (new ErrorListener.ErrorEvent (
-	        formatMessage ("err_diff_mismatchInFinality", this.toString(), with.toString()),
-	        /* origin of error */ this,
-	        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+	      EhiLogger.logError(formatMessage ("err_diff_mismatchInFinality", this.toString(), with.toString()));
 	      fine = false;
 	    }
 

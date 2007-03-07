@@ -1,7 +1,7 @@
 // Copyright (c) 2002, Eisenhut Informatik
 // All rights reserved.
-// $Date: 2007-03-07 07:52:01 $
-// $Revision: 1.1.1.1 $
+// $Date: 2007-03-07 08:36:07 $
+// $Revision: 1.2 $
 //
 
 package ch.interlis.ili2c.gui;

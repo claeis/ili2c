@@ -25,18 +25,16 @@ public final class MetaObjectParser
   java.util.Map       transfernameToElement = new java.util.HashMap ();
 
   public static boolean parse (
-    TransferDescription td, String fileName, ErrorListener errorListener)
+    TransferDescription td, String fileName)
   {
-    return (new MetaObjectParser (td, fileName, errorListener)).parse ();
+    return (new MetaObjectParser (td, fileName)).parse ();
   }
 
   private MetaObjectParser (TransferDescription td,
-    String fileName,
-    ch.interlis.ili2c.metamodel.ErrorListener errorListener)
+    String fileName)
   {
     this.fileName = fileName;
     this.td = td;
-    this.errorListener = errorListener;
 
     // build a list of the tag names that may represent METAOBJECT instances
     Iterator iter = td.INTERLIS.METAOBJECT.getExtensions().iterator();

@@ -5,6 +5,7 @@ import java.io.Writer;
 import java.io.IOException;
 import java.util.*;
 import java.lang.reflect.*;
+import ch.ehi.basics.logging.EhiLogger;
 
 /**
  * @author ce
@@ -16,12 +17,10 @@ public class IomGenerator
 	public static String TOPIC="metamodel";
 	Writer   out;
 	int                 numErrors = 0;
-	ErrorListener el;
 	
-	private IomGenerator (Writer out, ErrorListener el)
+	private IomGenerator (Writer out)
 	{
 	  this.out = out;
-	  this.el=el;
 	}
 
 
@@ -29,15 +28,15 @@ public class IomGenerator
 	private void finish()
 	{
 	}
-	public static int generate (Writer out, TransferDescription td,ErrorListener el)
+	public static int generate (Writer out, TransferDescription td)
 	{
-	  IomGenerator d = new IomGenerator (out,el);
+	  IomGenerator d = new IomGenerator (out);
 	  d.initMapping();
 	  try{
 		d.encode (td);
 	  }
 	  catch(IOException ex){
-	  	el.error(new ErrorListener.ErrorEvent(ex,null,0,ErrorListener.ErrorEvent.SEVERITY_ERROR));
+	  	EhiLogger.logError(ex);
 	  }
 	  d.finish();
 	  return d.numErrors;

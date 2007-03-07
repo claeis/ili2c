@@ -184,7 +184,7 @@ public class AboutDialog extends JDialog {
 	private javax.swing.JLabel getIliVersion() {
 		if(iliVersion == null) {
 			iliVersion = new javax.swing.JLabel();
-			iliVersion.setText("2.2");
+			iliVersion.setText("2.3");
 		}
 		return iliVersion;
 	}

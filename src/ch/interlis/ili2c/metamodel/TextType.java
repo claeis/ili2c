@@ -20,9 +20,10 @@ package ch.interlis.ili2c.metamodel;
 public class TextType extends BaseType
 {
   /** The maximal number of characters allowed for a field of this type.
-      A value of -1 means "unspecified".
+      A value of -1 means "unlimited".
   */
   protected int    maxLength;
+  private boolean normalized=true;
   
   public TextType ()
   {
@@ -44,30 +45,22 @@ public class TextType extends BaseType
   
   public String toString ()
   {
+  	String kw=normalized?"TEXT":"MTEXT";
     if (maxLength != -1)
-      return "TEXT*" + Integer.toString (maxLength);
+      return kw+"*" + Integer.toString (maxLength);
     else
-      return "TEXT";
+      return kw;
   }
-
-
-  /** An abstract type is one that does describe sufficiently
-      the set of possible values. A TextType is abstract
-      if its maximal length is not specified.
-      
-      @return Whether or not this type is abstract.
-  */
+  
   public boolean isAbstract ()
   {
-    return maxLength == -1;
+    return false;
   }
   
   
-  /** @return The maximal number of characters that is allowed for a
-              field of this type, as specified in the description language.
-      @beaninfo
-       description: The maximal number of characters that is allowed for a field of this type.
-  */
+  /** The maximal number of characters that is allowed for a
+   * field of this type, or -1 if unlimited.
+   */
   public int getMaxLength ()
   {
     return maxLength;
@@ -87,7 +80,6 @@ public class TextType extends BaseType
   */
   void checkTypeExtension (Type wantToExtend)
   {
-    TextType   general;
     
     super.checkTypeExtension (wantToExtend);
     if ((wantToExtend == null)
@@ -98,17 +90,33 @@ public class TextType extends BaseType
       throw new IllegalArgumentException (rsrc.getString (
         "err_textType_ExtOther"));
 
+	TextType   general;
     general = (TextType) wantToExtend;
     if (general.maxLength != -1)
     {
-      if (this.maxLength == -1)
-        throw new IllegalArgumentException (formatMessage (
-          "err_textType_abstractExtConcrete", general.toString()));
+      if (this.maxLength == -1){
+		throw new IllegalArgumentException (formatMessage (
+		  "err_textType_longerExtShorter",
+		  this.toString(), general.toString()));
+      }
       
-      if (this.maxLength > general.maxLength)
-        throw new IllegalArgumentException (formatMessage (
-          "err_textType_longerExtShorter",
-          this.toString(), general.toString()));
+      if (this.maxLength > general.maxLength){
+		throw new IllegalArgumentException (formatMessage (
+		  "err_textType_longerExtShorter",
+		  this.toString(), general.toString()));
+      }
+    }
+    if(general.normalized!=this.normalized){
+		throw new IllegalArgumentException (formatMessage (
+		  "err_textType_kindMismatch",
+		  this.toString(), general.toString()));
     }
   }
+public boolean isNormalized() {
+	return normalized;
+}
+public void setNormalized(boolean b) {
+	normalized = b;
+}
+
 }

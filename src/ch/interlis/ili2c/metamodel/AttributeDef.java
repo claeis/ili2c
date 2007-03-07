@@ -13,6 +13,7 @@ package ch.interlis.ili2c.metamodel;
 
 
 import java.util.*;
+import ch.ehi.basics.logging.EhiLogger;
 
 
 /** AttributeDef is an abstract class which serves as a common
@@ -532,9 +533,9 @@ public abstract class AttributeDef
   }
 
 
-  public boolean checkStructuralEquivalence (Element with, ErrorListener listener)
+  public boolean checkStructuralEquivalence (Element with)
   {
-    if (!super.checkStructuralEquivalence (with, listener))
+    if (!super.checkStructuralEquivalence (with))
       return false;
 
     Type myDomain = this.getDomain ();
@@ -547,12 +548,9 @@ public abstract class AttributeDef
     if (myDomain == null)
       return false;
 
-    if (!myDomain.checkStructuralEquivalence (otherDomain, listener))
+    if (!myDomain.checkStructuralEquivalence (otherDomain))
     {
-      listener.error (new ErrorListener.ErrorEvent (
-        formatMessage ("err_diff_attributeType", this.toString(), with.toString()),
-        /* origin of error */ this,
-        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+      EhiLogger.logError(formatMessage ("err_diff_attributeType", this.toString(), with.toString()));
       return false;
     }
 

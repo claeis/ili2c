@@ -21,7 +21,7 @@ import java.util.HashSet;
 
 /**
  * @author ce
- * @version $Revision: 1.1.1.1 $ $Date: 2007-03-07 07:52:21 $
+ * @version $Revision: 1.2 $ $Date: 2007-03-07 08:36:08 $
  */
 public class IliModel {
 	private String name=null;

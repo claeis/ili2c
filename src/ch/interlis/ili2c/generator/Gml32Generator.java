@@ -4,6 +4,8 @@ package ch.interlis.ili2c.generator;
 import ch.interlis.ili2c.metamodel.*;
 import java.io.Writer;
 import java.util.*;
+import ch.ehi.basics.logging.EhiLogger;
+import ch.ehi.basics.io.IndentPrintWriter;
 
 /** writes a GML 3.2-application schema
  * 
@@ -14,25 +16,23 @@ public final class Gml32Generator
   IndentPrintWriter   ipw;
   TransferDescription td;
   String outdir;
-  ErrorListener el;
   int                 numErrors = 0;
-	private static String PRBLMTAG="preGML32:";
+	//private static String PRBLMTAG="preGML32:";
 
   static ResourceBundle rsrc = ResourceBundle.getBundle(
     Interlis1Generator.class.getName(),
     Locale.getDefault());
 
 
-  private Gml32Generator(TransferDescription td, String outdir, ErrorListener el)
+  private Gml32Generator(TransferDescription td, String outdir)
   {
     this.td = td;
     this.outdir = outdir;
-    this.el = el;
   }
 
-  public static int generate (TransferDescription td,String outdir,ErrorListener el)
+  public static int generate (TransferDescription td,String outdir)
   {
-    Gml32Generator d = new Gml32Generator (td,outdir,el);
+    Gml32Generator d = new Gml32Generator (td,outdir);
    // d.findItemsToDeclare (td);
     d.printXSD (td);
     return d.numErrors;
@@ -84,52 +84,55 @@ public final class Gml32Generator
 			Object mObj = modeli.next();
 			if ((mObj instanceof Model)
 				&& !(mObj instanceof PredefinedModel)) {
-				Model model = (Model) mObj;
-				String filename=outdir+"/"+model.getName()+".xsd";
-				try{
-					ipw=new IndentPrintWriter(new java.io.BufferedWriter(new java.io.FileWriter(filename)));
-				}catch(java.io.IOException ex){
-					el.error(new ErrorListener.ErrorEvent(ex,null,0,ErrorListener.ErrorEvent.SEVERITY_ERROR));
-					return;
-				}
-				ipw.println("<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"");
-				ipw.indent();
-				ipw.println("xmlns=\"http://www.interlis.ch/INTERLIS2.2/preGML32\""
-				  +" targetNamespace=\"http://www.interlis.ch/INTERLIS2.2/preGML32\""
-				  +" elementFormDefault=\"qualified\" attributeFormDefault=\"unqualified\"");
-				ipw.println("xmlns:gml=\"http://www.opengis.net/gml\"");
-				ipw.println(">");
-				ipw.unindent();
-				//ipw.println("<import namespace=\"http://www.opengis.net/gml\" schemaLocation=\"../ feature.xsd\"/>");
-				ipw.println("<xsd:import namespace=\"http://www.opengis.net/gml\"/>");
-				Iterator topici = model.iterator();
-				while (topici.hasNext()) {
-					Object tObj = topici.next();
-					// model level domaindefs
-					if (tObj instanceof Domain) {
-						declareDomainDef((Domain) tObj);
-					}
-					// modellevel classes
-					if (tObj instanceof AbstractClassDef) {
-						declareAbstractClassDef((AbstractClassDef) tObj);
-					}
-					// modellevel lineforms
-					if(tObj instanceof LineForm){
-					   declareLineForm((LineForm)tObj);
-					}
-					if (tObj instanceof Topic) {
-						Topic topic = (Topic) tObj;
-						declareTopic(topic);
-					}
-				}
-				declareCurveSegmentWithLineAttr();
-				ipw.println ("</xsd:schema>");
-				ipw.close();
+					Model model = (Model) mObj;
+					printModel(model);
 			}
 		}
 
   }
-
+  private void printModel(Model model)
+  {
+	String filename=outdir+"/"+model.getName()+".xsd";
+	try{
+		ipw=new IndentPrintWriter(new java.io.BufferedWriter(new java.io.FileWriter(filename)));
+	}catch(java.io.IOException ex){
+		EhiLogger.logError(ex);
+		return;
+	}
+	ipw.println("<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"");
+	ipw.indent();
+	ipw.println("xmlns=\"http://www.interlis.ch/INTERLIS2.3/GML32\""
+	  +" targetNamespace=\"http://www.interlis.ch/INTERLIS2.3/GML32\""
+	  +" elementFormDefault=\"qualified\" attributeFormDefault=\"unqualified\"");
+	ipw.println("xmlns:gml=\"http://www.opengis.net/gml/3.2\"");
+	ipw.println(">");
+	ipw.unindent();
+	//ipw.println("<import namespace=\"http://www.opengis.net/gml\" schemaLocation=\"../ feature.xsd\"/>");
+	ipw.println("<xsd:import namespace=\"http://www.opengis.net/gml/3.2\"/>");
+	Iterator topici = model.iterator();
+	while (topici.hasNext()) {
+		Object tObj = topici.next();
+		// model level domaindefs
+		if (tObj instanceof Domain) {
+			declareDomainDef((Domain) tObj);
+		}
+		// modellevel classes
+		if (tObj instanceof AbstractClassDef) {
+			declareAbstractClassDef((AbstractClassDef) tObj);
+		}
+		// modellevel lineforms
+		if(tObj instanceof LineForm){
+		   declareLineForm((LineForm)tObj);
+		}
+		if (tObj instanceof Topic) {
+			Topic topic = (Topic) tObj;
+			declareTopic(topic);
+		}
+	}
+	declareCurveSegmentWithLineAttr();
+	ipw.println ("</xsd:schema>");
+	ipw.close();
+  }
   private boolean suppressModel (Model model)
   {
     if (model == null)
@@ -167,7 +170,7 @@ public final class Gml32Generator
   }
 
 
-  private boolean suppressViewable (Viewable v)
+  private boolean suppressViewableInTopic (Viewable v)
   {
     if (v == null)
       return true;
@@ -176,7 +179,7 @@ public final class Gml32Generator
     if (v.isAbstract())
       return true;
 
-    if(v instanceof AssociationDef && ((AssociationDef)v).isLightweight()){
+    if(v instanceof AssociationDef && isLightweightAssociation(((AssociationDef)v))){
       return true;
     }
 
@@ -231,8 +234,7 @@ public final class Gml32Generator
    }
 
 	// member
-	ipw.println("<xsd:element name=\""+getTransferName(topic)+".member\" type=\""+getTransferName(topic)+".member\" substitutionGroup=\"gml:abstractFeatureMember\"/>");
-	 ipw.println ("<xsd:complexType name=\""+getTransferName(topic)+".member\">");
+	 ipw.println ("<xsd:complexType name=\""+getTransferName(topic)+"MemberType\">");
 	 ipw.indent ();
 	 ipw.println ("<xsd:complexContent>");
 	 ipw.indent ();
@@ -246,7 +248,7 @@ public final class Gml32Generator
 	 iter = topic.getViewables().iterator();
 	 while (iter.hasNext()) {
 		 Object obj = iter.next();
-		 if ((obj instanceof Viewable) && !suppressViewable((Viewable) obj)) {
+		 if ((obj instanceof Viewable) && !suppressViewableInTopic((Viewable) obj)) {
 			 Viewable v = (Viewable) obj;
 			 ipw.println("<xsd:element ref=\"" + getTransferName(v) + "\"/>");
 		 }
@@ -263,27 +265,16 @@ public final class Gml32Generator
 	 // TODO: add owns fixed to "true" 
 	 ipw.println ("</xsd:complexType>");
 	
-   ipw.println("<xsd:element name=\""+getTransferName(topic)+"\" type=\""+getTransferName(topic)+"\" substitutionGroup=\"gml:_GML\"/>");
-    ipw.println ("<xsd:complexType name=\""+getTransferName(topic)+"\">");
+   ipw.println("<xsd:element name=\""+getTransferName(topic)+"\" type=\""+getTransferName(topic)+"Type\"/>");
+    ipw.println ("<xsd:complexType name=\""+getTransferName(topic)+"Type\">");
 	ipw.indent ();
-	ipw.println ("<xsd:complexContent>");
-	ipw.indent ();
-	ipw.println ("<xsd:extension base=\"gml:AbstractGMLType\">");
-	ipw.indent ();
-	Topic baseType=(Topic)topic.getExtending();
-	if(baseType!=null){
-		ipw.println("<!-- "+PRBLMTAG+" unable to express extension of topic -->");
-	}
 	ipw.println ("<xsd:sequence>");
 	ipw.indent ();
-	ipw.println ("<xsd:element name=\""+getTransferName(topic)+".member\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
+	ipw.println ("<xsd:element name=\"member\" type=\""+getTransferName(topic)+"MemberType\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
 	ipw.unindent ();
 	ipw.println ("</xsd:sequence>");
-	ipw.unindent();
-	ipw.println ("</xsd:extension>");
-	ipw.unindent();
-	ipw.println("</xsd:complexContent>");
-	ipw.unindent();
+	ipw.println ("<xsd:attributeGroup ref=\"gml:AggregationAttributeGroup\"/>");
+	ipw.unindent ();
 	ipw.println ("</xsd:complexType>");
 
   }
@@ -292,19 +283,19 @@ public final class Gml32Generator
 
   private void declareAbstractClassDef(Viewable v)
   {
-  	String baseElement="gml:_Feature";
+  	String baseElement="gml:AbstractFeature";
   	Viewable baseType=(Viewable)v.getExtending();
   	if(baseType!=null){
   		baseElement=getTransferName(baseType);
   	}
-	ipw.println("<xsd:element name=\""+getTransferName(v)+"\" type=\""+getTransferName(v)+"\" substitutionGroup=\""+baseElement+"\"/>");
-	ipw.println("<xsd:complexType  name=\"" + getTransferName(v) + "\">");
+	ipw.println("<xsd:element name=\""+getTransferName(v)+"\" type=\""+getTransferName(v)+"Type\" substitutionGroup=\""+baseElement+"\"/>");
+	ipw.println("<xsd:complexType  name=\"" + getTransferName(v) + "Type\">");
 	ipw.indent ();
 	ipw.println ("<xsd:complexContent>");
   	ipw.indent ();
   	String baseXsdType="gml:AbstractFeatureType";
 	if(baseType!=null){
-		baseXsdType=getTransferName(baseType);
+		baseXsdType=getTransferName(baseType)+"Type";
 	}
 	ipw.println ("<xsd:extension base=\""+baseXsdType+"\">");
 	ipw.indent ();
@@ -331,10 +322,20 @@ public final class Gml32Generator
 					"<xsd:element name=\""
 						+ getTransferName(role)
 						+ "\" type=\"gml:ReferenceType\">");
-				ipw.println("<!-- "+PRBLMTAG+" unable to express target type -->");
-   				ipw.println("<!-- "+PRBLMTAG+" unable to express ordering kind -->");
-				ipw.println("<!-- "+PRBLMTAG+" unable to express aggregation kind -->");
-				ipw.println("<!-- "+PRBLMTAG+" unable to express cardinality -->");
+				ipw.indent();
+				ipw.println("<xsd:annotation>");
+					ipw.indent();
+					ipw.println("<xsd:appinfo>");
+						ipw.indent();
+						ipw.println("<gml:targetElement>"+getTransferName(role.getDestination())+"</gml:targetElement>");
+						ipw.unindent();
+					ipw.println("</xsd:appinfo>");
+					ipw.unindent();
+				ipw.println("</xsd:annotation>");
+   				//ipw.println("<!-- "+PRBLMTAG+" unable to express ordering kind -->");
+				//ipw.println("<!-- "+PRBLMTAG+" unable to express aggregation kind -->");
+				//ipw.println("<!-- "+PRBLMTAG+" unable to express cardinality -->");
+				ipw.unindent();
 				ipw.println("</xsd:element>");
 			}
 		}
@@ -389,10 +390,10 @@ public final class Gml32Generator
 					+ " type=\"gml:PointPropertyType\""
 					+ ">");
 			ipw.indent();
-			ipw.println("<!-- "+PRBLMTAG+" unable to express domain of values -->");
-			ipw.println("<!-- "+PRBLMTAG+" unable to express unit of values -->");
-			ipw.println("<!-- "+PRBLMTAG+" unable to express CRS -->");
-			ipw.println("<!-- "+PRBLMTAG+" unable to express rotation -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express domain of values -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express unit of values -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express CRS -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express rotation -->");
 			ipw.unindent();
 			ipw.println("</xsd:element>");
 		}else if (type instanceof PolylineType){
@@ -404,10 +405,10 @@ public final class Gml32Generator
 					+ " type=\"gml:CurvePropertyType\""
 					+ ">");
 			ipw.indent();
-			ipw.println("<!-- "+PRBLMTAG+" unable to express domain/unit/crs of control points -->");
-			ipw.println("<!-- "+PRBLMTAG+" unable to express allowed line forms -->");
-			ipw.println("<!-- "+PRBLMTAG+" unable to express line attributes -->");
-			ipw.println("<!-- "+PRBLMTAG+" unable to express overlaps -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express domain/unit/crs of control points -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express allowed line forms -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express line attributes -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express overlaps -->");
 			ipw.unindent();
 			ipw.println("</xsd:element>");
 		}else if (type instanceof SurfaceOrAreaType){
@@ -419,13 +420,13 @@ public final class Gml32Generator
 					+ " type=\"gml:SurfacePropertyType\""
 					+ ">");
 			ipw.indent();
-			ipw.println("<!-- "+PRBLMTAG+" unable to express domain/unit/crs of control points -->");
-			ipw.println("<!-- "+PRBLMTAG+" unable to express allowed line forms -->");
-			ipw.println("<!-- "+PRBLMTAG+" unable to express line attributes -->");
-			ipw.println("<!-- "+PRBLMTAG+" unable to express overlaps -->");
-			if(type instanceof AreaType){
-				ipw.println("<!-- "+PRBLMTAG+" unable to express AREA constraint -->");
-			}
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express domain/unit/crs of control points -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express allowed line forms -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express line attributes -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express overlaps -->");
+			//if(type instanceof AreaType){
+			//	ipw.println("<!-- "+PRBLMTAG+" unable to express AREA constraint -->");
+			//}
 			ipw.unindent();
 			ipw.println("</xsd:element>");
 		}else if (type instanceof CompositionType){
@@ -449,7 +450,7 @@ public final class Gml32Generator
 				ipw.indent ();
 				ipw.println ("<xsd:sequence>");
 					ipw.indent ();
-					ipw.println ("<xsd:element ref=\""+getTransferName(part)+"\" type=\""+getTransferName(part)+"\"/>");
+					ipw.println ("<xsd:element ref=\""+getTransferName(part)+"\"/>");
 					ipw.unindent ();
 				ipw.println ("</xsd:sequence>");
 				ipw.unindent ();
@@ -457,7 +458,15 @@ public final class Gml32Generator
 		}else if (type instanceof ReferenceType){
 			ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"gml:ReferenceType\""+minOccurs+">");
 				ipw.indent ();
-				ipw.println("<!-- "+PRBLMTAG+" unable to express target type -->");
+				ipw.println("<xsd:annotation>");
+					ipw.indent ();
+					ipw.println("<xsd:appinfo>");
+						ipw.indent ();
+						ipw.println("<gml:targetElement>"+getTransferName(((ReferenceType)type).getReferred())+"</gml:targetElement>");
+						ipw.unindent ();
+					ipw.println("</xsd:appinfo>");
+					ipw.unindent ();
+				ipw.println("</xsd:annotation>");
 				ipw.unindent ();
 			ipw.println ("</xsd:element>");
 		}else{
@@ -505,24 +514,14 @@ public final class Gml32Generator
 			}
 			ipw.println ("<xsd:restriction base=\""+base+"\">");
 			ipw.indent ();
-			ipw.println("<!-- "+PRBLMTAG+" unable to express domain of values -->");
-			ipw.println("<!-- "+PRBLMTAG+" unable to express unit of values -->");
-			ipw.println("<!-- "+PRBLMTAG+" unable to express CRS -->");
-			ipw.println("<!-- "+PRBLMTAG+" unable to express rotation -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express domain of values -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express unit of values -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express CRS -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express rotation -->");
 			ipw.unindent ();
 			ipw.println ("</xsd:restriction>");
 			ipw.unindent ();
 			ipw.println ("</xsd:complexContent>");
-		    ipw.unindent ();
-	    ipw.println ("</xsd:complexType>");
-    }else if (type instanceof BasketType){
-		ipw.println ("<xsd:complexType"+typeName+">");
-		    ipw.indent ();
-		    ipw.println ("<xsd:sequence>");
-			    ipw.indent ();
-				ipw.println ("<xsd:element name=\"BASKETVALUE\" type=\"BasketValue\"/>");
-			    ipw.unindent ();
-		    ipw.println ("</xsd:sequence>");
 		    ipw.unindent ();
 	    ipw.println ("</xsd:complexType>");
     }else if(type instanceof EnumerationType){
@@ -540,7 +539,7 @@ public final class Gml32Generator
           }
           ipw.unindent ();
 		}else{
-			ipw.println("<!-- "+PRBLMTAG+" unable to express elements of an extendable enumeration -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express elements of an extendable enumeration -->");
 		}
         ipw.println ("</xsd:restriction>");
         ipw.unindent ();
@@ -593,13 +592,13 @@ public final class Gml32Generator
 	}
 	ipw.println ("<xsd:restriction base=\""+base+"\">");
 	ipw.indent ();
-	ipw.println("<!-- "+PRBLMTAG+" unable to express domain/unit/crs of control points -->");
-	ipw.println("<!-- "+PRBLMTAG+" unable to express allowed line forms -->");
-	ipw.println("<!-- "+PRBLMTAG+" unable to express line attributes -->");
-	ipw.println("<!-- "+PRBLMTAG+" unable to express overlaps -->");
-	if(type instanceof AreaType){
-		ipw.println("<!-- "+PRBLMTAG+" unable to express AREA constraint -->");
-	}
+	//ipw.println("<!-- "+PRBLMTAG+" unable to express domain/unit/crs of control points -->");
+	//ipw.println("<!-- "+PRBLMTAG+" unable to express allowed line forms -->");
+	//ipw.println("<!-- "+PRBLMTAG+" unable to express line attributes -->");
+	//ipw.println("<!-- "+PRBLMTAG+" unable to express overlaps -->");
+	//if(type instanceof AreaType){
+	//	ipw.println("<!-- "+PRBLMTAG+" unable to express AREA constraint -->");
+	//}
 	ipw.unindent ();
 	ipw.println ("</xsd:restriction>");
 	ipw.unindent ();

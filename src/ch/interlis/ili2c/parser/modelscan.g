@@ -5,7 +5,7 @@ header
 	import java.util.*;
 	import ch.ehi.basics.logging.EhiLogger;
 }
- 
+
 class Ili2ModelScan extends Parser;
 
 options
@@ -33,14 +33,21 @@ options
   	}
   	catch(RecognitionException ex){
   		EhiLogger.logError(ex);
-  	}
-	catch(TokenStreamException ex){
+    }catch(antlr.TokenStreamRecognitionException ex){
+    	if(ex.recog instanceof antlr.NoViableAltForCharException){
+		// ignore unexpected char's
+	}else{
+		EhiLogger.logError(ex);
+	}
+	}catch(TokenStreamException ex){
 		EhiLogger.logError(ex);
 	}
   }
 }
 file 
-: ("INTERLIS" | ("TRANSFER" NAME SEMI))
+: ("INTERLIS"       // INTERLIS 2.x
+		| ("TRANSFER" NAME SEMI) // INTERLIS 1
+	)
 	((("MODEL" n:NAME)
 		{
 			if(model!=null){

@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Set;
+import ch.ehi.basics.logging.EhiLogger;
 
 
 
@@ -515,12 +516,12 @@ public abstract class Container
   /** Checks whether of not this Container is structurally
       equivalent to another INTERLIS Element.
   */
-  public boolean checkStructuralEquivalence (Element with, ErrorListener listener)
+  public boolean checkStructuralEquivalence (Element with)
   {
   	if(isAlias()){
-  		return ((Container)getReal()).checkStructuralEquivalence (with, listener);
+  		return ((Container)getReal()).checkStructuralEquivalence (with);
   	}else{
-	    if (!super.checkStructuralEquivalence (with, listener))
+	    if (!super.checkStructuralEquivalence (with))
 	      return false;
 
 
@@ -533,14 +534,11 @@ public abstract class Container
 	    int withSize = ((Container) with).size ();
 	    if (mySize != withSize)
 	    {
-	      listener.error (new ErrorListener.ErrorEvent (
-	        formatMessage ("err_diff_unequalNumberOfElts",
+	      EhiLogger.logError(formatMessage ("err_diff_unequalNumberOfElts",
 	                       this.toString (),
 	                       Integer.toString (mySize),
 	                       with.toString (),
-	                       Integer.toString (withSize)),
-	        /* origin of error */ this,
-	        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+	                       Integer.toString (withSize)));
 	      return false;
 	    }
 
@@ -559,7 +557,7 @@ public abstract class Container
 
 	      if (curMy != null)
 	      {
-	        if (!curMy.checkStructuralEquivalence (curOther, listener))
+	        if (!curMy.checkStructuralEquivalence (curOther))
 	          allFine = false;
 	      }
 	    }

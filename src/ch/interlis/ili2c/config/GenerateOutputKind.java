@@ -1,7 +1,7 @@
 // Copyright (c) 2002, Eisenhut Informatik
 // All rights reserved.
-// $Date: 2007-03-07 07:51:49 $
-// $Revision: 1.1.1.1 $
+// $Date: 2007-03-07 08:36:07 $
+// $Revision: 1.2 $
 //
 
 // -beg- preserve=no 3C6262B9035B package "GenerateOutputKind"
@@ -46,9 +46,8 @@ public class GenerateOutputKind
   // please fill in/modify the following section
   // -beg- preserve=yes 3C6262B9035B detail_end "GenerateOutputKind"
   public static final int ILI1FMTDESC = 5;
-  public static final int JAVA = 6;
-  public static final int GML32 = 7;
-  public static final int IOM = 8;
+  public static final int GML32 = 6;
+  public static final int IOM = 7;
 
   // -end- 3C6262B9035B detail_end "GenerateOutputKind"
 

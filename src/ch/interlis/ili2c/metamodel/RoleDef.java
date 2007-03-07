@@ -121,7 +121,11 @@ public class RoleDef extends AbstractLeafElement
 	{
 		return cardinality;
 	}
-	public void setDestination(ReferenceType ref)
+	public ReferenceType getReference()
+	{
+		return end;
+	}
+	public void setReference(ReferenceType ref)
 	{
 		end=ref;
                 // backlink target class to this.

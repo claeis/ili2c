@@ -19,7 +19,7 @@ package ch.interlis.ili2c.metamodel;
 
 /**
  * @author ce
- * @version $Revision: 1.1.1.1 $ $Date: 2007-03-07 07:52:20 $
+ * @version $Revision: 1.2 $ $Date: 2007-03-07 08:36:08 $
  */
 public class ViewableTransferElement {
 		public ViewableTransferElement(Object obj) {this.obj=obj;}

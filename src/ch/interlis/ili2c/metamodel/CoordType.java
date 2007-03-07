@@ -1,5 +1,6 @@
 
 package ch.interlis.ili2c.metamodel;
+import ch.ehi.basics.logging.EhiLogger;
 
 
 /** A coordinate type. */
@@ -89,9 +90,9 @@ public class CoordType extends BaseType
     return false;
   }
   
-  public boolean checkStructuralEquivalence (Element with, ErrorListener listener)
+  public boolean checkStructuralEquivalence (Element with)
   {
-    if (!super.checkStructuralEquivalence (with, listener))
+    if (!super.checkStructuralEquivalence (with))
       return false;
     
     boolean fine = true;
@@ -99,19 +100,13 @@ public class CoordType extends BaseType
 
     if (this.getNullAxis() != other.getNullAxis())
     {
-      listener.error (new ErrorListener.ErrorEvent (
-        formatMessage ("err_diff_coordType_nullAxis", this.toString(), other.toString()),
-        /* origin of error */ this,
-        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+      EhiLogger.logError(formatMessage ("err_diff_coordType_nullAxis", this.toString(), other.toString()));
       fine = false;
     }
 
     if (this.getPiHalfAxis() != other.getPiHalfAxis())
     {
-      listener.error (new ErrorListener.ErrorEvent (
-        formatMessage ("err_diff_coordType_piHalfAxis", this.toString(), other.toString()),
-        /* origin of error */ this,
-        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+      EhiLogger.logError(formatMessage ("err_diff_coordType_piHalfAxis", this.toString(), other.toString()));
       fine = false;
     }
    
@@ -119,7 +114,7 @@ public class CoordType extends BaseType
     NumericalType[] otherDims = other.getDimensions();
     
     fine &= checkStructuralEquivalenceOfArrays (with, this.getDimensions(), other.getDimensions(),
-                                                listener, "err_diff_coordType_numDimensions");
+                               "err_diff_coordType_numDimensions");
     return fine;
   }
 }

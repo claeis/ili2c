@@ -12,7 +12,7 @@
 
 package ch.interlis.ili2c.metamodel;
 import java.util.*;
-
+import ch.ehi.basics.logging.EhiLogger;
 
 /** An Interlis Model which contains the pre-defined elements
     that are part of the language specification.
@@ -115,9 +115,9 @@ public class PredefinedModel extends DataModel
     "INTERLIS_1_DATE", new TextType (8),
     /* extending */ null, /* abstract */ false, /* final */ true);
 
-  public final Domain BOOLEAN;
-  public final Domain HALIGNMENT;
-  public final Domain VALIGNMENT;
+  public final Domain BOOLEAN=new Domain();
+  public final Domain HALIGNMENT=new Domain();
+  public final Domain VALIGNMENT=new Domain();
 
   public final Domain ANYOID = new Domain ("ANYOID", new AnyOIDType(),
     /* extending */ null, /* abstract */ true, /* final */ false);
@@ -125,14 +125,18 @@ public class PredefinedModel extends DataModel
   public final Domain I32OID = new Domain ("I32OID",
   	new NumericOIDType(
 		new NumericType(
-			new PrecisionDecimal(0,0)
-			,new PrecisionDecimal(2147483647,0)
+			new PrecisionDecimal("0")
+			,new PrecisionDecimal("2147483647")
 		)),
     /* extending */ null, /* abstract */ false, /* final */ false);
 
   public final Domain STANDARDOID = new Domain ("STANDARDOID", new TextOIDType(
   	new TextType(16)),
     /* extending */ null, /* abstract */ false, /* final */ false);
+
+  public final Domain UUIDOID = new Domain ("UUIDOID", new TextOIDType(
+	  new TextType(36)),
+	  /* extending */ null, /* abstract */ false, /* final */ false);
 
   /*    LineCoord (ABSTRACT) = COORD NUMERIC, NUMERIC;
   */
@@ -150,14 +154,6 @@ public class PredefinedModel extends DataModel
   public final Table ANYCLASS = new Table ();
   public final Table ANYSTRUCTURE = new Table ();
 
-  public final Table LINE_SEGMENT = new Table ();
-  //public final Table START_SEGMENT = new Table ();
-  //public final Table STRAIGHT_SEGMENT = new Table ();
-  //public final Table ARC_SEGMENT = new Table ();
-  public final Table SURFACE_EDGE = new Table ();
-  public final Table SURFACE_BOUNDARY = new Table ();
-  public final Table LINE_GEOMETRY = new Table ();
-  public final Table BASKET = new Table ();
   public final Table METAOBJECT = new Table ();
   public final Table METAOBJECT_TRANSLATION = new Table ();
   public final Table AXIS = new Table ();
@@ -165,6 +161,49 @@ public class PredefinedModel extends DataModel
   public final Table COORDSYSTEM = new Table ();
   public final Table SCALSYSTEM = new Table ();
   public final Table SIGN = new Table ();
+  
+  public final TopicTIMESYSTEMS TIMESYSTEMS = new TopicTIMESYSTEMS();
+  public final Unit Minute = createModelInterlisNumUnit (
+	"min", "Minute",
+	SECOND, 60.0);
+	public final Unit Hour = createModelInterlisNumUnit (
+	  "h", "Hour",
+	  Minute, 60.0);
+	public final Unit Day = createModelInterlisNumUnit (
+	  "d", "Day",
+	  Hour, 24.0);
+	public final Unit Month = createModelInterlisBaseUnit (
+	  "M", "Month",
+	  TIME, /* abstract */ false);
+	public final Unit Year = createModelInterlisBaseUnit (
+	  "Y", "Year",
+	  TIME, /* abstract */ false);
+	
+	public final MetaDataUseDef BaseTimeSystems = new MetaDataUseDef();
+	public final Table TimeOfDay = new Table ();
+	public final Table UTC = new Table ();
+	public final Domain GregorianYear=new Domain("GregorianYear" 
+		,new NumericType(new PrecisionDecimal("1582"),new PrecisionDecimal("2999"))
+		,/* extending */ null, /* abstract */ false, /* final */ false);
+	public final Table GregorianDate = new Table ();
+	public final Table GregorianDateTime = new Table ();
+	public final Domain XmlTime=new Domain("XMLTime"
+		,new FormattedType()
+		,/* extending */ null, /* abstract */ false, /* final */ false);
+	public final Domain XmlDate=new Domain("XMLDate"
+		,new FormattedType()
+		,/* extending */ null, /* abstract */ false, /* final */ false);
+	public final Domain XmlDateTime=new Domain("XMLDateTime"
+		,new FormattedType()
+		,/* extending */ null, /* abstract */ false, /* final */ false);
+		
+  public final Table LINE_SEGMENT = new Table ();
+  //public final Table START_SEGMENT = new Table ();
+  //public final Table STRAIGHT_SEGMENT = new Table ();
+  //public final Table ARC_SEGMENT = new Table ();
+  public final Table SURFACE_EDGE = new Table ();
+  public final Table SURFACE_BOUNDARY = new Table ();
+  public final Table LINE_GEOMETRY = new Table ();
 
 
   public PredefinedModel ()
@@ -172,8 +211,12 @@ public class PredefinedModel extends DataModel
     elements = new ElementDelegate() {
     };
     name = "INTERLIS";
-
-
+	setContracted(true);
+	setIssuer("http://www.interlis.ch");
+	setModelVersion("20060126");
+  }
+  public void setupModel()
+  {
     add (STRAIGHTS);
     add (ARCS);
 
@@ -210,12 +253,15 @@ public class PredefinedModel extends DataModel
   List ev=new ArrayList();
   ev.add(new Enumeration.Element ("false"));
   ev.add(new Enumeration.Element ("true"));
-  BOOLEAN = new Domain ("BOOLEAN",
-    new EnumerationType (
-      new Enumeration (ev),
-      /* ordered */ true,
-      /* circular */ false),
-    /* extending */ null, /* abstract*/ false, /* final */ true);
+  try {
+	  BOOLEAN.setName("BOOLEAN");
+	  BOOLEAN.setAbstract(false);
+	  BOOLEAN.setFinal(true);
+	  BOOLEAN.setType(
+	    new EnumerationType (
+	      new Enumeration (ev),
+	      /* ordered */ true,
+	      /* circular */ false));
 
     add (BOOLEAN);
 
@@ -223,35 +269,39 @@ public class PredefinedModel extends DataModel
   ev.add(new Enumeration.Element ("Left"));
   ev.add(new Enumeration.Element ("Center"));
   ev.add(new Enumeration.Element ("Right"));
-  HALIGNMENT = new Domain ("HALIGNMENT",
+  HALIGNMENT.setName("HALIGNMENT");
+  HALIGNMENT.setAbstract(false);
+  HALIGNMENT.setFinal(true);
+  HALIGNMENT.setType(
     new EnumerationType (
       new Enumeration (ev),
       /* ordered */ true,
-      /* circular */ false),
-    /* extending */ null, /* abstract*/ false, /* final */ true);
+      /* circular */ false));
     add (HALIGNMENT);
 
-  ev=new ArrayList();
-  ev.add(new Enumeration.Element ("Top"));
-  ev.add(new Enumeration.Element ("Cap"));
-  ev.add(new Enumeration.Element ("Half"));
-  ev.add(new Enumeration.Element ("Base"));
-  ev.add(new Enumeration.Element ("Bottom"));
-  VALIGNMENT = new Domain ("VALIGNMENT",
-    new EnumerationType (
-      new Enumeration (ev),
-      /* ordered */ true,
-      /* circular */ false),
-    /* extending */ null, /* abstract*/ false, /* final */ true);
+	  ev=new ArrayList();
+	  ev.add(new Enumeration.Element ("Top"));
+	  ev.add(new Enumeration.Element ("Cap"));
+	  ev.add(new Enumeration.Element ("Half"));
+	  ev.add(new Enumeration.Element ("Base"));
+	  ev.add(new Enumeration.Element ("Bottom"));
+	  VALIGNMENT.setName("VALIGNMENT");
+	  VALIGNMENT.setAbstract(false);
+	  VALIGNMENT.setFinal(true);
+	  VALIGNMENT.setType(
+	    new EnumerationType (
+	      new Enumeration (ev),
+	      /* ordered */ true,
+	      /* circular */ false));
     add (VALIGNMENT);
 
   add(ANYOID);
   add(I32OID);
   add(STANDARDOID);
+  add(UUIDOID);
 
   add(LINE_COORD);
 
-    try {
       Type typ;
 
 
@@ -337,145 +387,6 @@ einer gemeinsamen Einheit abgeleitet werden.
       ANYSTRUCTURE.setAbstract (true);
       ANYSTRUCTURE.setIdentifiable (false);
       add (ANYSTRUCTURE);
-
-        /*
-	  STRUCTURE LineSegment (ABSTRACT) =
-	    SegmentEndPoint: MANDATORY LineCoord;
-	  END LineSegment;
-  	*/
-      LINE_SEGMENT.setName ("LineSegment");
-      LINE_SEGMENT.setIdentifiable (false);
-      LINE_SEGMENT.setAbstract (true);
-      LocalAttribute linesegment_ep = new LocalAttribute ();
-      linesegment_ep.setName ("SegmentEndPoint");
-      linesegment_ep.setAbstract(true);
-      typ = new TypeAlias();
-      ((TypeAlias) typ).setAliasing (LINE_COORD);
-      typ.setMandatory (true);
-      linesegment_ep.setDomain (typ);
-      LINE_SEGMENT.add (linesegment_ep);
-      add (LINE_SEGMENT);
-
-	/*
-	  STRUCTURE StartSegment EXTENDS LineSegment (FINAL) =
-	  END StartSegment;
-	*/
-	/*
-	  STRUCTURE StraightSegment EXTENDS LineSegment (FINAL) =
-	  END StraightSegment;
-	*/
-	/*
-	  STRUCTURE ArcSegment EXTENDS LineSegment (FINAL) =
-	    ArcPoint: MANDATORY LineCoord;
-	    Radius: Length;
-	  END ArcSegment;
-	*/
-
-	/*
-	  STRUCTURE SurfaceEdge =
-	    Geometry: DIRECTED POLYLINE;
-	    LineAttrs: STRUCTURE;
-	  END SurfaceEdge;
-	*/
-      SURFACE_EDGE.setName ("SurfaceEdge");
-      SURFACE_EDGE.setAbstract(true);
-      SURFACE_EDGE.setIdentifiable (false);
-      LocalAttribute surfaceEdge_geometry = new LocalAttribute ();
-      surfaceEdge_geometry.setAbstract(true);
-      PolylineType geomType = new PolylineType ();
-      geomType.setDirected (true);
-      surfaceEdge_geometry.setName ("Geometry");
-      surfaceEdge_geometry.setDomain (geomType);
-      SURFACE_EDGE.add (surfaceEdge_geometry);
-      LocalAttribute surfaceEdge_lineAttrs = new LocalAttribute ();
-      typ = new ClassType ();
-      ((ClassType)typ).setStructure(true);
-      surfaceEdge_lineAttrs.setName ("LineAttrs");
-      surfaceEdge_lineAttrs.setDomain (typ);
-      SURFACE_EDGE.add (surfaceEdge_lineAttrs);
-      add (SURFACE_EDGE);
-
-	/*
-	  STRUCTURE SurfaceBoundary =
-	    Lines: LIST OF SurfaceEdge;
-	  END SurfaceBoundary;
-	*/
-      SURFACE_BOUNDARY.setName ("SurfaceBoundary");
-      SURFACE_BOUNDARY.setIdentifiable (false);
-      ct = new CompositionType ();
-      ct.setComponentType (SURFACE_EDGE);
-      ct.setOrdered (true);
-      LocalAttribute surfaceBoundary_Lines;
-      surfaceBoundary_Lines = new LocalAttribute ();
-      surfaceBoundary_Lines.setName ("Lines");
-      surfaceBoundary_Lines.setDomain (ct);
-      SURFACE_BOUNDARY.add (surfaceBoundary_Lines);
-      add (SURFACE_BOUNDARY);
-
-	/*
-	  STRUCTURE LineGeometry =
-	    Segments: LIST OF LineSegment;
-	  MANDATORY CONSTRAINT isOfClass (Segments[FIRST],INTERLIS.StartSegment)
-	  END LineGeometry;
-	*/
-      LINE_GEOMETRY.setName ("LineGeometry");
-      LINE_GEOMETRY.setIdentifiable (false);
-      ct = new CompositionType ();
-      ct.setComponentType (LINE_SEGMENT);
-      ct.setOrdered (true);
-      LocalAttribute lineGeometry_segments;
-      lineGeometry_segments = new LocalAttribute ();
-      lineGeometry_segments.setName ("Segments");
-      lineGeometry_segments.setDomain (ct);
-      LINE_GEOMETRY.add(lineGeometry_segments);
-      add(LINE_GEOMETRY);
-
-	/*
-	  STRUCTURE Basket (ABSTRACT) =
-	    Model: MANDATORY NAME;
-	    Topic: MANDATORY NAME;
-	    Kind: MANDATORY (Data, View, Base, Graphic);
-	    Ident (ABSTRACT): MANDATORY ANYOID;
-	  END Basket;
-	*/
-      BASKET.setName ("BASKET");
-      BASKET.setAbstract (true);
-      LocalAttribute basket_model = new LocalAttribute ();
-      basket_model.setName ("Model");
-      typ = new TypeAlias();
-      ((TypeAlias) typ).setAliasing (NAME);
-      typ.setMandatory (true);
-      basket_model.setDomain (typ);
-      BASKET.add (basket_model);
-      LocalAttribute basket_topic = new LocalAttribute ();
-      basket_topic.setName ("Topic");
-      typ = new TypeAlias();
-      ((TypeAlias) typ).setAliasing (NAME);
-      typ.setMandatory (true);
-      basket_topic.setDomain (typ);
-      BASKET.add (basket_topic);
-      LocalAttribute basket_kind = new LocalAttribute ();
-      basket_kind.setName ("Kind");
-      ev=new ArrayList();
-      ev.add(new Enumeration.Element ("Data"));
-      ev.add(new Enumeration.Element ("View"));
-      ev.add(new Enumeration.Element ("Base"));
-      ev.add(new Enumeration.Element ("Graphic"));
-      typ = new EnumerationType (
-      new Enumeration(ev),
-      /* ordered */ false,
-      /* circular */ false);
-      typ.setMandatory (true);
-      basket_kind.setDomain (typ);
-      BASKET.add (basket_kind);
-      LocalAttribute basket_ident = new LocalAttribute ();
-      basket_ident.setName ("Ident");
-      basket_ident.setAbstract(true);
-      typ = new AnyOIDType();
-      typ.setMandatory (true);
-      basket_ident.setDomain (typ);
-      BASKET.add (basket_ident);
-      add(BASKET);
 
 
       METAOBJECT.setName ("METAOBJECT");
@@ -573,8 +484,305 @@ einer gemeinsamen Einheit abgeleitet werden.
       SIGN.add (sign_param);
       add (SIGN);
 
+  {
+  	TIMESYSTEMS.setName("TIMESYSTEMS");
+	add(TIMESYSTEMS);
+  	/*
+	CLASS CALENDAR EXTENDS INTERLIS.SCALSYSTEM =
+		PARAMETER
+			Unit(EXTENDED): NUMERIC [TIME];
+	END CALENDAR;
+	*/
+	TIMESYSTEMS.CALENDAR=new Table();
+	TIMESYSTEMS.CALENDAR.setName("CALENDAR");
+	TIMESYSTEMS.CALENDAR.setExtending(SCALSYSTEM);
+	Parameter overriding =  (Parameter) TIMESYSTEMS.CALENDAR.getRealElement (
+	  Parameter.class, "Unit");
+	Parameter calendar_Unit = new Parameter();
+	calendar_Unit.setName ("Unit");
+	calendar_Unit.setType (typ = new NumericType ());
+	((NumericType) typ).setUnit (TIME);
+	calendar_Unit.setExtending(overriding);
+	TIMESYSTEMS.CALENDAR.add (calendar_Unit);
+	TIMESYSTEMS.add(TIMESYSTEMS.CALENDAR);
+	/*
+	CLASS TIMEOFDAYSYS EXTENDS INTERLIS.SCALSYSTEM =
+		PARAMETER
+			Unit(EXTENDED): NUMERIC [TIME];
+	END TIMEOFDAYSYS;
+	*/
+	TIMESYSTEMS.TIMEOFDAYSYS=new Table();
+	TIMESYSTEMS.TIMEOFDAYSYS.setName("TIMEOFDAYSYS");
+	TIMESYSTEMS.TIMEOFDAYSYS.setExtending(SCALSYSTEM);
+	overriding =  (Parameter) TIMESYSTEMS.TIMEOFDAYSYS.getRealElement (
+	  Parameter.class, "Unit");
+	Parameter timeofdaysys_Unit = new Parameter();
+	timeofdaysys_Unit.setName ("Unit");
+	timeofdaysys_Unit.setType (typ = new NumericType ());
+	((NumericType) typ).setUnit (TIME);
+	timeofdaysys_Unit.setExtending(overriding);
+	TIMESYSTEMS.TIMEOFDAYSYS.add (timeofdaysys_Unit);
+	TIMESYSTEMS.add(TIMESYSTEMS.TIMEOFDAYSYS);
+  }
+  
+  add(Minute);
+  add(Hour);
+  add(Day);
+  add(Month);
+  add(Year);
+
+  /*
+  REFSYSTEM BASKET BaseTimeSystems ~ INTERLIS.TIMESYSTEMS
+  OBJECTS OF CALENDAR: GregorianCalendar
+  OBJECTS OF TIMEOFDAYSYS: UTC;
+  */
+  BaseTimeSystems.setName("BaseTimeSystems");
+  BaseTimeSystems.setTopic(TIMESYSTEMS);
+  add(BaseTimeSystems); // TODO metaobjs
+
+  /*
+  STRUCTURE TimeOfDay (ABSTRACT) =
+  Hours: 0..23 CIRCULAR [h];
+  CONTINUOUS SUBDIVISION Minutes: 0..59 CIRCULAR [min];
+  CONTINUOUS SUBDIVISION Seconds: 0.000 .. 59.999 CIRCULAR [s];
+  END TimeOfDay;
+  */
+  TimeOfDay.setName("TimeOfDay");
+  TimeOfDay.setAbstract(true);
+  TimeOfDay.setIdentifiable(false);
+  {
+	typ=new NumericType(new PrecisionDecimal("0"),new PrecisionDecimal("23"));
+	((NumericType) typ).setUnit (Hour);
+	((NumericType) typ).setCircular(true);
+	LocalAttribute timeofday_hours = new LocalAttribute ();
+	timeofday_hours.setName ("Hours");
+	timeofday_hours.setDomain (typ);
+	TimeOfDay.add (timeofday_hours);
+
+	typ=new NumericType(new PrecisionDecimal("0"),new PrecisionDecimal("59"));
+	((NumericType) typ).setUnit (Minute);
+	((NumericType) typ).setCircular(true);
+	LocalAttribute timeofday_minutes = new LocalAttribute ();
+	timeofday_minutes.setName ("Minutes");
+	timeofday_minutes.setDomain (typ);
+	timeofday_minutes.setSubdivision(true);
+	timeofday_minutes.setContinuous(true);
+	TimeOfDay.add (timeofday_minutes);
+
+	typ=new NumericType(new PrecisionDecimal("0.000"),new PrecisionDecimal("59.999"));
+	((NumericType) typ).setUnit (SECOND);
+	((NumericType) typ).setCircular(true);
+	LocalAttribute timeofday_seconds = new LocalAttribute ();
+	timeofday_seconds.setName ("Seconds");
+	timeofday_seconds.setDomain (typ);
+	timeofday_seconds.setSubdivision(true);
+	timeofday_seconds.setContinuous(true);
+	TimeOfDay.add (timeofday_seconds);
+  }    
+  add(TimeOfDay);
+
+  /*
+  STRUCTURE UTC EXTENDS TimeOfDay =
+  Hours(EXTENDED): {UTC};
+  END UTC;
+  */
+  UTC.setName("UTC");
+  UTC.setIdentifiable(false);
+  UTC.setExtending(TimeOfDay);
+  add(UTC); // TODO ref to MetaObj
+
+  /*
+  DOMAIN
+  GregorianYear = 1582 .. 2999 [Y] {GregorianCalendar};
+  */
+  add(GregorianYear); // TODO ref to MetaObj
+
+  /*
+  STRUCTURE GregorianDate =
+  Year: GregorianYear;
+  SUBDIVISION Month: 1..12 [M];
+  SUBDIVISION Day: 1..31 [d];
+  END GregorianDate;
+  */
+  GregorianDate.setName("GregorianDate");
+  GregorianDate.setIdentifiable(false);
+  {
+	typ=new TypeAlias();
+	((TypeAlias) typ).setAliasing(GregorianYear);
+	LocalAttribute gregoriandate_year = new LocalAttribute ();
+	gregoriandate_year.setName ("Year");
+	gregoriandate_year.setDomain (typ);
+	GregorianDate.add (gregoriandate_year);
+
+	typ=new NumericType(new PrecisionDecimal("1"),new PrecisionDecimal("12"));
+	((NumericType) typ).setUnit (Month);
+	LocalAttribute gregoriandate_month = new LocalAttribute ();
+	gregoriandate_month.setName ("Month");
+	gregoriandate_month.setDomain (typ);
+	gregoriandate_month.setSubdivision(true);
+	GregorianDate.add (gregoriandate_month);
+
+	typ=new NumericType(new PrecisionDecimal("1"),new PrecisionDecimal("31"));
+	((NumericType) typ).setUnit (Day);
+	LocalAttribute gregoriandate_day = new LocalAttribute ();
+	gregoriandate_day.setName ("Day");
+	gregoriandate_day.setDomain (typ);
+	gregoriandate_day.setSubdivision(true);
+	GregorianDate.add (gregoriandate_day);
+  }    
+  add(GregorianDate);
+
+  /*
+  STRUCTURE GregorianDateTime EXTENDS GregorianDate =
+	 SUBDIVISION Hours: 0..23 CIRCULAR [h] {UTC};
+	 CONTINUOUS SUBDIVISION Minutes: 0..59 CIRCULAR [min];
+	 CONTINUOUS SUBDIVISION Seconds: 0.000 .. 59.999 CIRCULAR [INTERLIS.s];
+  END GreogorianDateTime;
+  */
+  GregorianDateTime.setName("GregorianDateTime");
+  GregorianDateTime.setIdentifiable(false);
+  GregorianDateTime.setExtending(GregorianDate);
+  {
+	typ=new NumericType(new PrecisionDecimal("0"),new PrecisionDecimal("23"));
+	((NumericType) typ).setUnit (Hour);
+	((NumericType) typ).setCircular(true);
+	LocalAttribute gregoriandatetime_hours = new LocalAttribute ();
+	gregoriandatetime_hours.setName ("Hours");
+	gregoriandatetime_hours.setDomain (typ);
+	gregoriandatetime_hours.setSubdivision(true);
+	TimeOfDay.add (gregoriandatetime_hours);
+
+	typ=new NumericType(new PrecisionDecimal("0"),new PrecisionDecimal("59"));
+	((NumericType) typ).setUnit (Minute);
+	((NumericType) typ).setCircular(true);
+	LocalAttribute gregoriandatetime_minutes = new LocalAttribute ();
+	gregoriandatetime_minutes.setName ("Minutes");
+	gregoriandatetime_minutes.setDomain (typ);
+	gregoriandatetime_minutes.setSubdivision(true);
+	gregoriandatetime_minutes.setContinuous(true);
+	TimeOfDay.add (gregoriandatetime_minutes);
+
+	typ=new NumericType(new PrecisionDecimal("0.000"),new PrecisionDecimal("59.999"));
+	((NumericType) typ).setUnit (SECOND);
+	((NumericType) typ).setCircular(true);
+	LocalAttribute gregoriandatetime_seconds = new LocalAttribute ();
+	gregoriandatetime_seconds.setName ("Seconds");
+	gregoriandatetime_seconds.setDomain (typ);
+	gregoriandatetime_seconds.setSubdivision(true);
+	gregoriandatetime_seconds.setContinuous(true);
+	TimeOfDay.add (gregoriandatetime_seconds);
+  }    
+  add(GregorianDateTime); // TODO set metaobjref UTC
+
+  /*
+  DOMAIN XMLTime = FORMAT BASED ON UTC ( Hours/2 ":" Minutes ":" Seconds );
+  DOMAIN XMLDate = FORMAT BASED ON GregorianDate ( Year "-" Month "-" Day );
+  DOMAIN XMLDateTime EXTENDS XMLDate = FORMAT BASED ON GregorianDateTime
+	( INHERITANCE "T" Hours/2 ":" Minutes ":" Seconds );
+
+  */
+  add(XmlTime); // TODO define FormatType specifics
+  add(XmlDate); // TODO define FormatType specifics
+  add(XmlDateTime); // TODO define FormatType specifics
+
+
+
+	  /*
+	STRUCTURE LineSegment (ABSTRACT) =
+	  SegmentEndPoint: MANDATORY LineCoord;
+	END LineSegment;
+  */
+	LINE_SEGMENT.setName ("LineSegment");
+	LINE_SEGMENT.setIdentifiable (false);
+	LINE_SEGMENT.setAbstract (true);
+	LocalAttribute linesegment_ep = new LocalAttribute ();
+	linesegment_ep.setName ("SegmentEndPoint");
+	linesegment_ep.setAbstract(true);
+	typ = new TypeAlias();
+	((TypeAlias) typ).setAliasing (LINE_COORD);
+	typ.setMandatory (true);
+	linesegment_ep.setDomain (typ);
+	LINE_SEGMENT.add (linesegment_ep);
+	add (LINE_SEGMENT);
+
+  /*
+	STRUCTURE StartSegment EXTENDS LineSegment (FINAL) =
+	END StartSegment;
+  */
+  /*
+	STRUCTURE StraightSegment EXTENDS LineSegment (FINAL) =
+	END StraightSegment;
+  */
+  /*
+	STRUCTURE ArcSegment EXTENDS LineSegment (FINAL) =
+	  ArcPoint: MANDATORY LineCoord;
+	  Radius: Length;
+	END ArcSegment;
+  */
+
+  /*
+	STRUCTURE SurfaceEdge =
+	  Geometry: DIRECTED POLYLINE;
+	  LineAttrs: ANYSTRUCTURE;
+	END SurfaceEdge;
+  */
+	SURFACE_EDGE.setName ("SurfaceEdge");
+	SURFACE_EDGE.setAbstract(true);
+	SURFACE_EDGE.setIdentifiable (false);
+	LocalAttribute surfaceEdge_geometry = new LocalAttribute ();
+	surfaceEdge_geometry.setAbstract(true);
+	PolylineType geomType = new PolylineType ();
+	geomType.setDirected (true);
+	surfaceEdge_geometry.setName ("Geometry");
+	surfaceEdge_geometry.setDomain (geomType);
+	SURFACE_EDGE.add (surfaceEdge_geometry);
+	LocalAttribute surfaceEdge_lineAttrs = new LocalAttribute ();
+	typ = new CompositionType ();
+	((CompositionType) typ).setComponentType (ANYSTRUCTURE);
+	((CompositionType) typ).setCardinality (new Cardinality (0, 1));
+	surfaceEdge_lineAttrs.setName ("LineAttrs");
+	surfaceEdge_lineAttrs.setDomain (typ);
+	SURFACE_EDGE.add (surfaceEdge_lineAttrs);
+	add (SURFACE_EDGE);
+
+  /*
+	STRUCTURE SurfaceBoundary =
+	  Lines: LIST OF SurfaceEdge;
+	END SurfaceBoundary;
+  */
+	SURFACE_BOUNDARY.setName ("SurfaceBoundary");
+	SURFACE_BOUNDARY.setIdentifiable (false);
+	ct = new CompositionType ();
+	ct.setComponentType (SURFACE_EDGE);
+	ct.setOrdered (true);
+	LocalAttribute surfaceBoundary_Lines;
+	surfaceBoundary_Lines = new LocalAttribute ();
+	surfaceBoundary_Lines.setName ("Lines");
+	surfaceBoundary_Lines.setDomain (ct);
+	SURFACE_BOUNDARY.add (surfaceBoundary_Lines);
+	add (SURFACE_BOUNDARY);
+
+  /*
+	STRUCTURE LineGeometry =
+	  Segments: LIST OF LineSegment;
+	MANDATORY CONSTRAINT isOfClass (Segments[FIRST],INTERLIS.StartSegment)
+	END LineGeometry;
+  */
+	LINE_GEOMETRY.setName ("LineGeometry");
+	LINE_GEOMETRY.setIdentifiable (false);
+	ct = new CompositionType ();
+	ct.setComponentType (LINE_SEGMENT);
+	ct.setOrdered (true);
+	LocalAttribute lineGeometry_segments;
+	lineGeometry_segments = new LocalAttribute ();
+	lineGeometry_segments.setName ("Segments");
+	lineGeometry_segments.setDomain (ct);
+	LINE_GEOMETRY.add(lineGeometry_segments);
+	add(LINE_GEOMETRY);
+
     } catch (Exception ex) {
-      throw new RuntimeException (ex.toString());
+		//ex.printStackTrace ();
+	  throw new RuntimeException (ex);
     }
   }
 
@@ -591,10 +799,10 @@ einer gemeinsamen Einheit abgeleitet werden.
 
 
 
-  private Unit createModelInterlisBaseUnit (String name, String docName, Unit extending, boolean abstr)
+  private BaseUnit createModelInterlisBaseUnit (String name, String docName, Unit extending, boolean abstr)
   {
     try {
-      Unit result = new BaseUnit ();
+      BaseUnit result = new BaseUnit ();
 
 
       result.setName (name);
@@ -606,5 +814,23 @@ einer gemeinsamen Einheit abgeleitet werden.
       ex.printStackTrace ();
       return null;
     }
+  }
+  private NumericallyDerivedUnit createModelInterlisNumUnit (String name, String docName, Unit extending, double fact)
+  {
+	try {
+		NumericallyDerivedUnit result = new NumericallyDerivedUnit ();
+
+
+	  result.setName (name);
+	  result.setDocName (docName);
+	  result.setExtending (extending);
+	  NumericallyDerivedUnit.Factor factv[]=new NumericallyDerivedUnit.Factor[1];
+	  factv[0]=new NumericallyDerivedUnit.Factor ('*', fact);
+	  result.setConversionFactors(factv);
+	  return result;
+	} catch (Exception ex) {
+	  ex.printStackTrace ();
+	  return null;
+	}
   }
 }

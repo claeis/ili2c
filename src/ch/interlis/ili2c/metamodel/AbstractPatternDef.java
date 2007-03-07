@@ -6,7 +6,7 @@ import java.util.*;
 
 public abstract class AbstractPatternDef extends ExtendableContainer {
 
-  protected List     contents = new LinkedList ();
+  protected List     contents = new ArrayList ();
   protected class ElementDelegate extends AbstractCollection
   {
     public Iterator iterator ()
@@ -23,7 +23,14 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
 
 
 
-    public boolean add (Object o)
+	public boolean add (Object o)
+	{
+		if(check(o)){
+			return contents.add(o);
+		}
+		return false;
+	}
+    private boolean check (Object o)
     {
         /* In all sorts of model: UNIT, DOMAIN, FUNCTION, LINE FORM, STRUCTURE,
            abstract TABLE */
@@ -32,11 +39,11 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
 	{
           Element conflicting = getElement ( e.getName());
           if ((conflicting != null) && (conflicting != e))
-            throw new IllegalArgumentException (formatMessage (
+            throw new Ili2cSemanticException (formatMessage (
               "err_nonuniqueMetaDataUseDefName",
               e.getName(),
               AbstractPatternDef.this.toString()));
-          return contents.add(o);
+          return true;
 	}
 
 
@@ -44,13 +51,13 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
         {
           Element conflicting = getElement (e.getName());
           if ((conflicting != null) && (conflicting != e))
-            throw new IllegalArgumentException (formatMessage (
+            throw new Ili2cSemanticException (formatMessage (
               "err_duplicateUnitName",
               e.getName(),
               AbstractPatternDef.this.toString()));
 
 
-          return contents.add (e);
+          return true;
         }
 
 
@@ -58,13 +65,13 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
         {
           Element conflicting = getElement (e.getName());
           if ((conflicting != null) && (conflicting != e))
-            throw new IllegalArgumentException (formatMessage (
+            throw new Ili2cSemanticException (formatMessage (
               "err_duplicateDomainName",
               e.getName(),
               AbstractPatternDef.this.toString()));
 
 
-          return contents.add (e);
+          return true;
         }
 
 
@@ -74,94 +81,32 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
           Element conflicting = getElement (e.getName());
           if ((conflicting != null) && (conflicting != e)
             && !toInsert.isExtended() && !toInsert.isExtending(conflicting))
-            throw new IllegalArgumentException (formatMessage (
+            throw new Ili2cSemanticException (formatMessage (
               "err_association_nonunique",
               e.getName(),
               AbstractPatternDef.this.toString()));
-          return contents.add(o);
+          return true;
         }
 
 
 
         if (o instanceof Table)
         {
-        Model containingModel;
-        TransferDescription td;
-        containingModel = (Model) AbstractPatternDef.this.getContainer (Model.class);
-        td = (TransferDescription) AbstractPatternDef.this.getContainer (TransferDescription.class);
-        if ((containingModel == null) || (td == null))
-          throw new IllegalStateException ();
-
 
           Table toInsert = (Table) o;
           Viewable hiding;
 
 
-          toInsert.checkNameSanity (toInsert.getName(), /* empty ok? */ false);
+          Element.checkNameSanity (toInsert.getName(), /* empty ok? */ false);
 
 
           Element conflicting = getElement ( e.getName());
           if ((conflicting != null) && (conflicting != e)
             && !toInsert.isExtended() && !toInsert.isExtending(conflicting))
-            throw new IllegalArgumentException (formatMessage (
+            throw new Ili2cSemanticException (formatMessage (
               "err_table_nonunique",
               e.getName(),
               AbstractPatternDef.this.toString()));
-
-
-          if (toInsert.isExtending (td.INTERLIS.SIGN))
-          {
-            /* Extensions of SIGN only in a SYMBOLOGY MODEL */
-            if (!(containingModel instanceof SymbologyModel))
-              throw new IllegalArgumentException (formatMessage (
-                "err_topic_addSymbologyTable",
-                o.toString (),
-                AbstractPatternDef.this.toString (),
-                containingModel.toString(),
-                td.INTERLIS.SIGN.toString()));
-          }
-          else if (toInsert.isExtending (td.INTERLIS.REFSYSTEM))
-          {
-            /* Extensions of REFSYSTEM only in a REFSYSTEM MODEL */
-            if (!(containingModel instanceof RefSystemModel))
-              throw new IllegalArgumentException (formatMessage (
-                "err_topic_addRefsysTable",
-                o.toString (),
-                AbstractPatternDef.this.toString (),
-                containingModel.toString(),
-                td.INTERLIS.REFSYSTEM.toString()));
-          }
-          else if (toInsert.isExtending (td.INTERLIS.AXIS))
-          {
-            /* Extensions of AXIS only in a REFSYSTEM MODEL */
-            if (!(containingModel instanceof RefSystemModel))
-              throw new IllegalArgumentException (formatMessage (
-                "err_topic_addRefsysTable",
-                o.toString (),
-                AbstractPatternDef.this.toString (),
-                containingModel.toString(),
-                td.INTERLIS.AXIS.toString()));
-          }
-          else if (toInsert.isExtending (td.INTERLIS.COORDSYSTEM))
-          {
-            /* Extensions of COORDSYSTEM only in a REFSYSTEM MODEL */
-            if (!(containingModel instanceof RefSystemModel))
-              throw new IllegalArgumentException (formatMessage (
-                "err_topic_addRefsysTable",
-                o.toString (),
-                AbstractPatternDef.this.toString (),
-                containingModel.toString(),
-                td.INTERLIS.COORDSYSTEM.toString()));
-          }
-          else
-          {
-            /* o is neither extending SIGN, REFSYSTEM, AXIS nor COORDSYSTEM.
-               We don't care; an in-depth analysis of this situation is just
-               too complex for now. It would be needed to follow the reversed
-               reference graph to determine whether a table is actually related
-               to symbology or reference systems.
-            */
-          }
 
 
           if (!toInsert.isAbstract()
@@ -170,7 +115,7 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
           {
             if (((Topic)(AbstractPatternDef.this)).isViewTopic())
             {
-              throw new IllegalArgumentException (
+              throw new Ili2cSemanticException (
                 formatMessage ("err_topic_addNormalTableInViewTopic",
                                toInsert.toString (),
                                AbstractPatternDef.this.toString ()));
@@ -178,7 +123,7 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
           }
 
 
-          return contents.add(o);
+          return true;
         }
 
 
@@ -190,40 +135,65 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
         {
           Element conflicting = getElement ( e.getName());
           if ((conflicting != null) && (conflicting != e))
-            throw new IllegalArgumentException (formatMessage (
+            throw new Ili2cSemanticException (formatMessage (
               "err_view_nonunique",
               e.getName(),
               AbstractPatternDef.this.toString()));
-          return contents.add(o);
+          return true;
         }
+		if (o instanceof Function)
+		{
+			Model enclosingModel = (Model) getContainer(Model.class);
+			if (!enclosingModel.isContracted() && !(enclosingModel instanceof PredefinedModel))
+			  throw new Ili2cSemanticException (formatMessage (
+				"err_model_functionButNoContract",
+				e.toString(),
+				enclosingModel.toString()));
+			
+			Element conflicting = getElement (e.getName());
+			if ((conflicting != null) && (conflicting != e)){
+				throw new Ili2cSemanticException (formatMessage (
+				  "err_function_duplicateName",
+				  e.getName(),
+				  AbstractPatternDef.this.toString(),
+				  conflicting.toString()));
+			}
+			return true;
+		}
         if (o instanceof Projection)
         {
           Element conflicting = getElement ( e.getName());
           if ((conflicting != null) && (conflicting != e))
-            throw new IllegalArgumentException (formatMessage (
+            throw new Ili2cSemanticException (formatMessage (
               "err_projection_nonunique",
               e.getName(),
               AbstractPatternDef.this.toString()));
-          return contents.add(o);
+          return true;
         }
 	if (o instanceof Graphic)
         {
           Element conflicting = getElement ( e.getName());
           if ((conflicting != null) && (conflicting != e))
-            throw new IllegalArgumentException (formatMessage (
+            throw new Ili2cSemanticException (formatMessage (
               "err_graphic_nonunique",
               e.getName(),
               AbstractPatternDef.this.toString()));
-          return contents.add(o);
+          return true;
         }
 
 
-        throw new ClassCastException (formatMessage (
+        throw new Ili2cSemanticException (formatMessage (
           "err_container_cannotContain",
           AbstractPatternDef.this.toString(), o.toString()));
     }
   };
 
+  public void addPreLast (Object o)
+  {
+	  if(((ElementDelegate)elements).check(o)){
+		  contents.add(contents.size()-1,o);
+	  }
+  }
 
   public AbstractPatternDef(){
   }

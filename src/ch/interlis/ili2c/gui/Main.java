@@ -10,6 +10,7 @@ import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.metamodel.ErrorListener;
 import ch.interlis.ili2c.parser.Ili2Parser;
 import ch.interlis.ili2c.config.*;
+import ch.interlis.ili2c.LogListener;
 import ch.ehi.basics.view.*;
 
 public class Main {
@@ -22,17 +23,10 @@ public class Main {
         Container comparePane;
         FileEntriesAdapter inputFileList;
         JList inputFileListUi;
-        JButton addXmlFileButton;
-        BoidEntriesAdapter inputBoidList;
-        JList inputBoidListUi;
-        JButton addBoidButton;
-        JButton editBoidButton;
-        JButton removeBoidButton;
         JTextField outputFileUi;
         JRadioButton warnButton;
         JRadioButton errButton;
         JCheckBox predefButton;
-        JCheckBox checkMetaObjsButton;
         JComboBox outputKind;
         JTextArea  errOutput;
         JPopupMenu errPopup;
@@ -84,41 +78,18 @@ public class Main {
         buildMenu();
 
         updateUi();
+        LogListener.setSwingOutput(errOutput);
 		frame.setSize(508,490);
         frame.pack();
         frame.setVisible(true);
   }
-  private class MyErrorListener implements ch.interlis.ili2c.metamodel.ErrorListener
-  {
-    int numSupressed = 0;
-    int severityLevel = 0;
-
-    public void setSeverityLevel (int level)
-    {
-      severityLevel = level;
-    }
-
-    public void error (ErrorListener.ErrorEvent evt)
-    {
-      if (evt.getSeverity () < severityLevel)
-        numSupressed = numSupressed + 1;
-      else{
-        errOutput.append(evt.toString ());
-        errOutput.append("\n");
-        if(evt.getException()!=null){
-			evt.getException().printStackTrace(ch.interlis.ili2c.metamodel.Trace.getTraceStream());
-        }
-      }
-    }
-  };
 
   private void runCompiler(){
       TransferDescription   desc = new TransferDescription ();
-      MyErrorListener el = new MyErrorListener();
       if(config.isGenerateWarnings()){
-        el.setSeverityLevel (ErrorListener.ErrorEvent.SEVERITY_WARNING);
+        LogListener.setShowWarnings(true);
       }else{
-        el.setSeverityLevel (ErrorListener.ErrorEvent.SEVERITY_ERROR);
+		LogListener.setShowWarnings(false);
       }
       boolean emitPredefined=config.isIncPredefModel();
       boolean checkMetaObjs=config.isCheckMetaObjs();
@@ -138,7 +109,7 @@ public class Main {
           if(e.getKind()==FileEntryKind.METADATAFILE){
             /* Don't continue if there is a fatal error. */
             if(!ch.interlis.ili2c.parser.MetaObjectParser.parse (
-              desc, e.getFilename(), /* error listener */ el)){
+              desc, e.getFilename())){
             	return;
             }
 
@@ -162,7 +133,7 @@ public class Main {
               return;
             }
 
-            if (!Ili2Parser.parseIliFile (desc,streamName, stream, el,checkMetaObjs))
+            if (!Ili2Parser.parseIliFile (desc,streamName, stream, checkMetaObjs))
                return;
           }
         }
@@ -203,7 +174,7 @@ public class Main {
                     return;
               }
             }
-           ch.interlis.ili2c.generator.Interlis2Generator.generate(
+           new ch.interlis.ili2c.generator.Interlis2Generator().generate(
               out, desc, emitPredefined);
             break;
           case GenerateOutputKind.XMLSCHEMA:
@@ -239,11 +210,8 @@ public class Main {
             }
             ch.interlis.ili2c.generator.Interlis1Generator.generateFmt(out, desc);
             break;
-          case GenerateOutputKind.JAVA:
-            ch.interlis.ili2c.generator.java.JavaGenerator.generate(desc,config.getOutputFile(),packagePrefixField.getText());
-            break;
 		  case GenerateOutputKind.GML32:
-			  ch.interlis.ili2c.generator.Gml32Generator.generate(desc,config.getOutputFile(),el);
+			  ch.interlis.ili2c.generator.Gml32Generator.generate(desc,config.getOutputFile());
 			  break;
 			case GenerateOutputKind.IOM:
 			  if("-".equals(config.getOutputFile())){
@@ -259,7 +227,7 @@ public class Main {
 					  return;
 				}
 			  }
-			  ch.interlis.ili2c.generator.iom.IomGenerator.generate(out, desc,el);
+			  ch.interlis.ili2c.generator.iom.IomGenerator.generate(out, desc);
 			  break;
           default:
             // ignore
@@ -433,7 +401,6 @@ public class Main {
   void setConfig(Configuration config){
     this.config = config;
     inputFileList.setModel(config);
-    inputBoidList.setModel(config);
     // update other ui elements
     updateUi();
   }
@@ -442,8 +409,6 @@ public class Main {
     outputKind.setSelectedIndex(kind-1);
     if(kind==GenerateOutputKind.NOOUTPUT){
       outputFileUi.setEditable(false);
-	}else if(kind == GenerateOutputKind.JAVA){
-	  outputFileUi.setEditable(false);
     }else{
       outputFileUi.setEditable(true);
       outputFileUi.setText(config.getOutputFile());
@@ -454,23 +419,6 @@ public class Main {
       errButton.setSelected(true);
     }
     predefButton.setSelected(config.isIncPredefModel());
-    checkMetaObjsButton.setSelected(config.isCheckMetaObjs());
-    updateUicheckMetaObj(config.isCheckMetaObjs());
-  }
-  void updateUicheckMetaObj(boolean checkMetaObj){
-    if(checkMetaObj){
-              inputBoidListUi.setEnabled(true);
-              addXmlFileButton.setEnabled(true);
-              addBoidButton.setEnabled(true);
-              editBoidButton.setEnabled(true);
-              removeBoidButton.setEnabled(true);
-    }else{
-              inputBoidListUi.setEnabled(false);
-              addXmlFileButton.setEnabled(false);
-              addBoidButton.setEnabled(false);
-              editBoidButton.setEnabled(false);
-              removeBoidButton.setEnabled(false);
-    }
   }
   /** read all values from GUI elements that have no action listeners
    */
@@ -662,42 +610,8 @@ public class Main {
         inputPane.add(buildInputFilesButtonPane(),cnstr);
     cnstr.gridx=0;
 
-    checkMetaObjsButton = new JCheckBox("check if referenced metaobjects exist");
-    checkMetaObjsButton.addActionListener(new ActionListener(){
-          public void actionPerformed(java.awt.event.ActionEvent e){
-            config.setCheckMetaObjs(checkMetaObjsButton.isSelected());
-            updateUicheckMetaObj(config.isCheckMetaObjs());
-          }
-        });
 
-    cnstr.gridwidth=2;
-    cnstr.gridy+=1;
-    inputPane.add(checkMetaObjsButton,cnstr);
-
-    label = new JLabel("Mappings from a basket name in a model to an existing basket in a data file");
-    cnstr.gridy+=1;
-    cnstr.gridwidth=2;
-    inputPane.add(label,cnstr);
-    cnstr.gridwidth=1;
     //inputPane.add(Box.createRigidArea(new Dimension(0,5)));
-
-        inputBoidList=new BoidEntriesAdapter(config);
-        inputBoidListUi=new JList(inputBoidList);
-        inputBoidListUi.setCellRenderer(new BoidEntryRenderer());
-        listScroller = new JScrollPane(inputBoidListUi);
-        listScroller.setPreferredSize(new Dimension(250, 80));
-        listScroller.setMinimumSize(new Dimension(250, 80));
-    cnstr.gridy+=1;
-    cnstr.fill=java.awt.GridBagConstraints.BOTH;
-    cnstr.weightx=1.0;
-    cnstr.weighty=1.0;
-        inputPane.add(listScroller,cnstr);
-    cnstr.fill=java.awt.GridBagConstraints.NONE;
-    cnstr.weightx=0.0;
-    cnstr.weighty=0.0;
-    cnstr.gridx=1;
-        inputPane.add(buildInputBoidButtonPane(),cnstr);
-    cnstr.gridx=0;
 
     //
     // output
@@ -717,7 +631,6 @@ public class Main {
       , "Generate an INTERLIS 2 model"
       , "Generate an XML-Schema"
       , "Generate an ILI1 FMT-Description"
-      , "Generate JAVA classes"
 	  , "Generate a GML-Schema"
 	  , "Generate Model as INTERLIS-Transfer (XTF)"
       };
@@ -734,9 +647,6 @@ public class Main {
             
 			if(kind==GenerateOutputKind.NOOUTPUT){
 			  outputFileUi.setEditable(false);
-			}else if(kind==GenerateOutputKind.JAVA){
-			   packagePrefixField.setEditable(true);
-			   fileLabel.setText("Output directory");
 			}else if(kind==GenerateOutputKind.GML32){
 			   outputFileUi.setEditable(true);
 			   fileLabel.setText("Output directory");
@@ -768,8 +678,6 @@ public class Main {
               fc.addChoosableFileFilter(new GenericFileFilter("ILI1 Format (*.fmt)","fmt"));
 			}else if(config.getOutputKind()==GenerateOutputKind.IOM){
 			  fc.addChoosableFileFilter(GenericFileFilter.createXmlFilter());
-			}else if(config.getOutputKind()==GenerateOutputKind.JAVA){
-			  useDir=true;
 			}else if(config.getOutputKind()==GenerateOutputKind.GML32){
 			  useDir=true;
             }else{
@@ -899,25 +807,6 @@ public class Main {
             }
           }
         });
-        addXmlFileButton = new JButton("Add Metadata basket (.xml)...");
-        addXmlFileButton.addActionListener(new ActionListener(){
-          public void actionPerformed(java.awt.event.ActionEvent e){
-
-            fc.resetChoosableFileFilters();
-            fc.addChoosableFileFilter(new GenericFileFilter("Metadata baskets (*.xml)","xml"));
-            fc.setCurrentDirectory(new File(settings.getWorkingDirectory()));
-            int returnVal = fc.showOpenDialog(frame);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                settings.setWorkingDirectory(fc.getCurrentDirectory().getAbsolutePath());
-                java.io.File file = fc.getSelectedFile();
-                // user selected a file
-                FileEntry entry=new FileEntry(file.getAbsolutePath(),FileEntryKind.METADATAFILE);
-                inputFileList.addElement(entry);
-            } else {
-                // Open command cancelled by user
-            }
-          }
-        });
         JButton removeFileButton = new JButton("Remove");
         removeFileButton.addActionListener(new ActionListener(){
           public void actionPerformed(java.awt.event.ActionEvent e){
@@ -968,7 +857,6 @@ public class Main {
         filesButtonPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
         filesButtonPane.add(addIliFileButton);
         filesButtonPane.add(Box.createRigidArea(new Dimension(10, 0)));
-        filesButtonPane.add(addXmlFileButton);
         filesButtonPane.add(Box.createRigidArea(new Dimension(10, 0)));
         filesButtonPane.add(removeFileButton);
         filesButtonPane.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -976,78 +864,6 @@ public class Main {
         filesButtonPane.add(Box.createRigidArea(new Dimension(10, 0)));
         filesButtonPane.add(moveFileDownButton);
         return filesButtonPane;
-  }
-  public Container buildInputBoidPane(){
-        JPanel boidPane = new JPanel();
-        boidPane.setLayout(new BoxLayout(boidPane, BoxLayout.X_AXIS));
-        inputBoidList=new BoidEntriesAdapter(config);
-        inputBoidListUi=new JList(inputBoidList);
-        inputBoidListUi.setCellRenderer(new BoidEntryRenderer());
-        JScrollPane listScroller = new JScrollPane(inputBoidListUi);
-        listScroller.setPreferredSize(new Dimension(250, 80));
-        listScroller.setMinimumSize(new Dimension(250, 80));
-        listScroller.setAlignmentX(Container.LEFT_ALIGNMENT);
-        boidPane.add(listScroller);
-        boidPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-        boidPane.add(buildInputBoidButtonPane());
-        return boidPane;
-  }
-  public Container buildInputBoidButtonPane(){
-        JPanel boidButtonPane = new JPanel();
-        addBoidButton = new JButton("Add mapping...");
-        addBoidButton.addActionListener(new ActionListener(){
-          public void actionPerformed(java.awt.event.ActionEvent e){
-                BoidDialog d=new BoidDialog(frame);
-                if(d.showDialog()==BoidDialog.OK_OPTION){
-                  BoidEntry entry=new BoidEntry(d.getBasket(),d.getBoid());
-                  inputBoidList.addElement(entry);
-                }
-          }
-        });
-        editBoidButton = new JButton("Edit mapping...");
-        editBoidButton.addActionListener(new ActionListener(){
-          public void actionPerformed(java.awt.event.ActionEvent e){
-            int idx=inputBoidListUi.getSelectedIndex();
-            if(idx>=0){
-                BoidDialog d=new BoidDialog(frame);
-                BoidEntry entry=(BoidEntry)inputBoidList.getElementAt(idx);
-                d.setBoid(entry.getBoid());
-                d.setBasket(entry.getMetaDataUseDef());
-                if(d.showDialog()==BoidDialog.OK_OPTION){
-                  entry.setBoid(d.getBoid());
-                  entry.setMetaDataUseDef(d.getBasket());
-                  inputBoidList.elementAtChanged(idx);
-                }
-            }
-          }
-        });
-        removeBoidButton = new JButton("Remove");
-        removeBoidButton.addActionListener(new ActionListener(){
-          public void actionPerformed(java.awt.event.ActionEvent e){
-            int[] idxv=inputBoidListUi.getSelectedIndices();
-            if(idxv.length>0){
-              // remove them from model
-              for(int i=idxv.length-1;i>=0;i--){
-                inputBoidList.remove(idxv[i]);
-              }
-              if(inputBoidList.getSize()>0){
-                if(idxv[0]<inputBoidList.getSize()){
-                  inputBoidListUi.setSelectedIndex(idxv[0]);
-                }else{
-                  inputBoidListUi.setSelectedIndex(inputBoidList.getSize()-1);
-                }
-              }
-            }
-          }
-        });
-        boidButtonPane.setLayout(new BoxLayout(boidButtonPane, BoxLayout.Y_AXIS));
-        boidButtonPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-        boidButtonPane.add(addBoidButton);
-        boidButtonPane.add(Box.createRigidArea(new Dimension(10, 0)));
-        boidButtonPane.add(editBoidButton);
-        boidButtonPane.add(Box.createRigidArea(new Dimension(10, 0)));
-        boidButtonPane.add(removeBoidButton);
-        return boidButtonPane;
   }
   public Main(){
      fc=new FileChooser();

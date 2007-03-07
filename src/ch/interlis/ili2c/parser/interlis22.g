@@ -1449,18 +1449,16 @@ protected restrictedClassOrAssRef[Container scope]
     	ref=classOrAssociationRef[scope]
     	{
 		try{
-		  if(scope.getContainer() instanceof AbstractPatternDef){
-			  // check that scope's topic depends on ref's topic
-			  AbstractPatternDef scopeTopic=(AbstractPatternDef)scope.getContainer(AbstractPatternDef.class);
-			  AbstractPatternDef refTopic=(AbstractPatternDef)ref.getContainer(AbstractPatternDef.class);
-			  if(refTopic!=scopeTopic){
-			    if(!scopeTopic.isDependentOn(refTopic)){
-			      reportError(formatMessage ("err_refattr_topicdepreq",
-						scopeTopic.getName(),
-						refTopic.getName()),refto);
-			    }
-			  }
-		  }
+          // check that scope's topic depends on ref's topic
+          AbstractPatternDef scopeTopic=(AbstractPatternDef)scope.getContainer(AbstractPatternDef.class);
+          AbstractPatternDef refTopic=(AbstractPatternDef)ref.getContainer(AbstractPatternDef.class);
+          if(refTopic!=scopeTopic){
+            if(!scopeTopic.isDependentOn(refTopic)){
+              reportError(formatMessage ("err_refattr_topicdepreq",
+				scopeTopic.getName(),
+				refTopic.getName()),refto);
+            }
+          }
 		  rt.setReferred(ref);
 		}catch(Exception ex){
 			reportError(ex,refto);

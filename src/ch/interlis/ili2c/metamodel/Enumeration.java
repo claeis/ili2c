@@ -27,12 +27,13 @@ public class Enumeration
   public static class Element {
     protected String name = "";
     protected Enumeration subEnum = null;
-
+	private String documentation=null;
     /** copy constructor
      */
     public Element(Element src)
     {
       name=src.name;
+      documentation=src.documentation;
       if(src.subEnum!=null){
         subEnum=new Enumeration(src.subEnum);
       }
@@ -73,6 +74,12 @@ public class Enumeration
       else
         return name + " " + subEnum.toString();
     }
+	public String getDocumentation() {
+		return documentation;
+	}
+	public void setDocumentation(String string) {
+		documentation = string;
+	}
   }
 
   private List elements; // list<Enumeration.Element>

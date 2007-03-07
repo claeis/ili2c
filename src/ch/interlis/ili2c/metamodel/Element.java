@@ -1,11 +1,20 @@
-/*****************************************************************************
+/* This file is part of the INTERLIS-Compiler.
+ * For more information, please see <http://www.interlis.ch/>.
  *
- * Element.java
- * ------------
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * Copyright (C) 1999 Adasys AG, Kronenstr. 38, 8006 Zurich, Switzerland
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- *****************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 package ch.interlis.ili2c.metamodel;
 
@@ -22,6 +31,7 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.ResourceBundle;
 
+import ch.ehi.basics.logging.EhiLogger;
 
 /** Element is an abstract class which serves as a common
     superclass for all Interlis elements.
@@ -37,6 +47,10 @@ public abstract class Element implements BeanContextChild,ElementAlias {
       = ResourceBundle.getBundle(ErrorMessages.class.getName(),
                                  java.util.Locale.getDefault());
 
+	private String documentation=null;
+	/** true, if definition somewhat incomplete due to (compile) errors.
+	 */
+	private boolean dirty=false;
 
   static final String formatMessage(String msg, Object[] args) {
     try {
@@ -342,6 +356,7 @@ public abstract class Element implements BeanContextChild,ElementAlias {
     return getName();
   }
 
+ 
 
   /** Throws an exception if a name is not a valid Interlis name.
   */
@@ -668,10 +683,10 @@ public abstract class Element implements BeanContextChild,ElementAlias {
       @return <code>true</code> if <code>this</code> and <code>with</code> are
               structurally equivalent, <code>false</code> otherwise.
   */
-  public boolean checkStructuralEquivalence (Element with, ErrorListener listener)
+  public boolean checkStructuralEquivalence (Element with)
   {
   	if(isAlias()){
-  		return ((Element)getReal()).checkStructuralEquivalence (with, listener);
+  		return ((Element)getReal()).checkStructuralEquivalence (with);
   	}else{
 
 	    /* This can only occur due to parsing errors. Do not report additional
@@ -683,10 +698,7 @@ public abstract class Element implements BeanContextChild,ElementAlias {
 	    /* Class must be the same for structural equivalence. */
 	    if (this.getClass() != with.getClass())
 	    {
-	      listener.error (new ErrorListener.ErrorEvent (
-	        formatMessage ("err_diff_mismatchInClass", this.toString(), with.toString()),
-	        /* origin of error */ this,
-	        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+	      EhiLogger.logError(formatMessage ("err_diff_mismatchInClass", this.toString(), with.toString()));
 	      return false;
 	    }
 
@@ -696,7 +708,7 @@ public abstract class Element implements BeanContextChild,ElementAlias {
 
 
   protected boolean checkStructuralEquivalenceOfArrays (
-    Element with, Element[] myArray, Element[] withArray, ErrorListener listener,
+    Element with, Element[] myArray, Element[] withArray,
     String numElementMismatchMessageKey)
   {
     /* This can only occur due to parsing errors. Do not report additional
@@ -707,10 +719,7 @@ public abstract class Element implements BeanContextChild,ElementAlias {
 
     if (myArray.length != withArray.length)
     {
-      listener.error (new ErrorListener.ErrorEvent (
-        formatMessage (numElementMismatchMessageKey, this.toString(), with.toString()),
-        /* origin of error */ this,
-        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+      EhiLogger.logError(formatMessage (numElementMismatchMessageKey, this.toString(), with.toString()));
       return false;
     }
 
@@ -722,7 +731,7 @@ public abstract class Element implements BeanContextChild,ElementAlias {
 
       if (myArray[i] != null)
       {
-        if (!myArray[i].checkStructuralEquivalence (withArray[i], listener))
+        if (!myArray[i].checkStructuralEquivalence (withArray[i]))
           fine = false;
       }
     }
@@ -761,5 +770,23 @@ public abstract class Element implements BeanContextChild,ElementAlias {
 		return null;
 	}
 
+
+public String getDocumentation() {
+	return documentation;
+}
+public void setDocumentation(String string) {
+	documentation = string;
+}
+
+	/**
+	 * @return true if definition incomplete due to errors
+	 */
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public void setDirty(boolean b) {
+		dirty = b;
+	}
 
 }

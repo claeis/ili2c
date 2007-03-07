@@ -28,6 +28,7 @@ public class Topic extends AbstractPatternDef
 	private boolean viewTopic;
   protected String   name = "";
   private Domain oid=null;
+  private Domain basketOid=null;
 
 
   protected List     dependsOn = new LinkedList();
@@ -279,6 +280,14 @@ public class Topic extends AbstractPatternDef
   public Domain getOid()
   {
 	  return oid;
+  }
+  public void setBasketOid(Domain type)
+  {
+	  this.basketOid=type;
+  }
+  public Domain getBasketOid()
+  {
+	  return basketOid;
   }
 
 }

@@ -23,6 +23,8 @@ import java.util.*;
 public class LocalAttribute extends AttributeDef
 {
 	protected ObjectPath[] basePaths;
+	private boolean subdivision=false;
+	private boolean continuous=false;
 
   public LocalAttribute()
   {
@@ -124,5 +126,21 @@ public class LocalAttribute extends AttributeDef
   {
     return basePaths;
   }
+
+	public boolean isContinuous() {
+		return continuous;
+	}
+
+	public boolean isSubdivision() {
+		return subdivision;
+	}
+
+	public void setContinuous(boolean b) {
+		continuous = b;
+	}
+
+	public void setSubdivision(boolean b) {
+		subdivision = b;
+	}
 
 }

@@ -9,6 +9,8 @@ import java.util.*;
 public class AssociationDef extends AbstractClassDef
 {
 	protected List     roles = new LinkedList();
+	private Cardinality cardinality=null;
+	private boolean identifiable = false;
 
 
 	private Viewable derivedFrom;
@@ -35,8 +37,8 @@ public class AssociationDef extends AbstractClassDef
       {
         Iterator[] it = new Iterator[]
         {
-          attributes.iterator(),
           roles.iterator(),
+		  attributes.iterator(),
           constraints.iterator()
         };
         return new CombiningIterator(it);
@@ -393,6 +395,9 @@ public class AssociationDef extends AbstractClassDef
   }
   public void fixupRoles()
   {
+  	if(isDirty()){
+  		return;
+  	}
         Iterator iter;
 	// if extended
 	if(getExtending()!=null){
@@ -415,9 +420,9 @@ public class AssociationDef extends AbstractClassDef
         // for each role, create backlink from target class
     	iter = roles.iterator();
 	while (iter.hasNext()){
-   	  RoleDef role= (RoleDef)iter.next();
-          AbstractClassDef targetClass=role.getDestination();
-          targetClass.addTargetForRole(role);
+		RoleDef role= (RoleDef)iter.next();
+		AbstractClassDef targetClass=role.getDestination();
+		targetClass.addTargetForRole(role);
 	}
 
 	// check, that there is only one aggregation or composition
@@ -514,4 +519,32 @@ public class AssociationDef extends AbstractClassDef
   public boolean isLightweight(){
   	return getRoleWhereEmbedded()!=null;
   }
+  
+  public void setCardinality(Cardinality v)
+  {
+	  cardinality=v;
+  }
+  public boolean containsCardinality()
+  {
+	  return cardinality!=null;
+  }
+  public Cardinality getDefinedCardinality()
+  {
+	  return cardinality;
+  }
+
+	/**
+	 * @return
+	 */
+	public boolean isIdentifiable() {
+		return identifiable;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setIdentifiable(boolean b) {
+		identifiable = b;
+	}
+
 }

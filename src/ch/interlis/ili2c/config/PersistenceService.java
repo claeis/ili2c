@@ -40,9 +40,10 @@ public class PersistenceService {
               config.setOutputFile(optvalue);
               config.setOutputKind(GenerateOutputKind.ILI1FMTDESC);
              }else if(arg.startsWith("-oJAVA ")){
-				String optvalue=arg.substring(7);
-				config.setOutputFile(optvalue);
-              config.setOutputKind(GenerateOutputKind.JAVA);
+             	// ignore it
+				//String optvalue=arg.substring(7);
+				//config.setOutputFile(optvalue);
+              	//config.setOutputKind(GenerateOutputKind.JAVA);
 			 }else if(arg.startsWith("-oGML ")){
 				String optvalue=arg.substring(8);
 				config.setOutputFile(optvalue);
@@ -142,10 +143,6 @@ public class PersistenceService {
           case GenerateOutputKind.ILI1FMTDESC:
             out.write("-oFMT ");
             out.write(config.getOutputFile());
-            break;
-          case GenerateOutputKind.JAVA:
-            out.write("-oJAVA ");
-			out.write(config.getOutputFile());
             break;
 		  case GenerateOutputKind.GML32:
 			out.write("-oGML ");

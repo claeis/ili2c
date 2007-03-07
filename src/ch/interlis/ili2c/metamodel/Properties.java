@@ -14,6 +14,8 @@ public class Properties {
 	public static final int eGRAPHIC=0x0080;
 	public static final int eEXTERNAL=0x0100;
 	public static final int eTRANSIENT=0x0200;
+	public static final int eOID=0x0400;
+	public static final int eHIDING=0x0800;
 	/** do not instantiate 
 	 */
 	private Properties(){};

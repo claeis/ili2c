@@ -13,7 +13,7 @@ public class BaseRestriction extends Selection
   public BaseRestriction(Viewable selected, String[] base)
   {
 	super(selected);
-	base=base;
+	this.base=base;
         alias=getSelected().resolveBaseAlias(base[0]);
         if(alias==null){
             throw new IllegalArgumentException (formatMessage (

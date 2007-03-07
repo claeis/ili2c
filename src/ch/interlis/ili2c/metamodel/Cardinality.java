@@ -145,7 +145,7 @@ public class Cardinality
   */
   public String toString() {
     if ((min == 0) && (max == UNBOUND))
-      return "{*}";
+      return "{0..*}";
     else if (min == max)
       return "{" + makeString(min) + "}";
     else

@@ -25,7 +25,10 @@ public abstract class Model extends Importable
   protected List     unqualifiedImports = new LinkedList(); // List<Model>
   private List contracts=new LinkedList(); // List<Contract>
   private String language=null;
-
+  private boolean contracted=false;
+  private String issuer=null;
+  private String modelVersion=null;
+  private String modelVersionExpl=null;
 
   protected class ElementDelegate extends AbstractCollection
   {
@@ -49,148 +52,176 @@ public abstract class Model extends Importable
 
     public boolean add (Object o)
     {
-        /* In all sorts of model: UNIT, DOMAIN, FUNCTION, LINE FORM, STRUCTURE,
-           abstract TABLE */
-        Element e=(Element)o;
-        if (o instanceof MetaDataUseDef)
+		if(!checkChildElement(o)){
+			return false;
+		}
+        if (o instanceof GraphicParameterDef)
+        {
+          return runtimeParameters.add (o);
+        }
+		return contents.add(o);
+
+
+    }
+
+	public boolean checkChildElement (Object o)
 	{
-          Element conflicting = getElement ( e.getName());
-          if ((conflicting != null) && (conflicting != e))
-            throw new IllegalArgumentException (formatMessage (
-              "err_nonuniqueMetaDataUseDefName",
-              e.getName(),
-              Model.this.toString()));
-          return contents.add(o);
+		/* In all sorts of model: UNIT, DOMAIN, FUNCTION, LINE FORM, STRUCTURE,
+		   abstract TABLE */
+		Element e=(Element)o;
+		if (o instanceof MetaDataUseDef)
+	{
+		  Element conflicting = getElement ( e.getName());
+		  if ((conflicting != null) && (conflicting != e))
+			throw new IllegalArgumentException (formatMessage (
+			  "err_nonuniqueMetaDataUseDefName",
+			  e.getName(),
+			  Model.this.toString()));
+		  return true;
 	}
 
 
 	if (o instanceof Unit)
-        {
-          Element conflicting = getElement (e.getName());
-          if ((conflicting != null) && (conflicting != e))
-            throw new IllegalArgumentException (formatMessage (
-              "err_duplicateUnitName",
-              e.getName(),
-              Model.this.toString()));
+		{
+		  Element conflicting = getElement (e.getName());
+		  if ((conflicting != null) && (conflicting != e))
+			throw new IllegalArgumentException (formatMessage (
+			  "err_duplicateUnitName",
+			  e.getName(),
+			  Model.this.toString()));
 
 
-          return contents.add (e);
-        }
+		  return true;
+		}
 
 
-        if (o instanceof Function)
-        {
+		if (o instanceof Function)
+		{
 
 
-          if (!isContracted() && !(Model.this instanceof PredefinedModel))
-            throw new IllegalArgumentException (formatMessage (
-              "err_model_functionButNoContract",
-              e.toString(),
-              Model.this.toString()));
+		  if (!isContracted() && !(Model.this instanceof PredefinedModel))
+			throw new IllegalArgumentException (formatMessage (
+			  "err_model_functionButNoContract",
+			  e.toString(),
+			  Model.this.toString()));
 
 
-          Element conflicting = getElement (e.getName());
-          if ((conflicting != null) && (conflicting != e))
-            throw new IllegalArgumentException (formatMessage (
-              "err_function_duplicateName",
-              e.getName(),
-              Model.this.toString(),
-              conflicting.toString()));
+		  Element conflicting = getElement (e.getName());
+		  if ((conflicting != null) && (conflicting != e))
+			throw new IllegalArgumentException (formatMessage (
+			  "err_function_duplicateName",
+			  e.getName(),
+			  Model.this.toString(),
+			  conflicting.toString()));
 
 
-          return contents.add (e);
-        }
-
-
-
-        if (o instanceof LineForm)
-        {
-
-
-          if (!isContracted() && !(Model.this instanceof PredefinedModel))
-            throw new IllegalArgumentException (formatMessage (
-              "err_lineForm_inUnconctractedModel",
-              Model.this.toString()));
-
-
-          Element conflicting = getElement (e.getName());
-          if ((conflicting != null) && (conflicting != e))
-            throw new IllegalArgumentException (formatMessage (
-              "err_lineForm_duplicateName",
-              e.getName(),
-              Model.this.toString(),
-              conflicting.toString()));
-
-
-          return contents.add (e);
-        }
-
-
-        if (o instanceof Domain)
-        {
-          Element conflicting = getElement (e.getName());
-          if ((conflicting != null) && (conflicting != e))
-            throw new IllegalArgumentException (formatMessage (
-              "err_duplicateDomainName",
-              e.getName(),
-              Model.this.toString()));
-
-
-          return contents.add (e);
-        }
+		  return true;
+		}
 
 
 
-        if (o instanceof GraphicParameterDef)
-        {
-          Element conflicting = getRuntimeParameter ( e.getName());
-          if ((conflicting != null) && (conflicting != e))
-            throw new IllegalArgumentException (formatMessage (
-              "err_graphicparam_nonunique",
-              e.getName(),
-              Model.this.toString()));
+		if (o instanceof LineForm)
+		{
 
 
-          return runtimeParameters.add (o);
-        }
+		  if (!isContracted() && !(Model.this instanceof PredefinedModel))
+			throw new IllegalArgumentException (formatMessage (
+			  "err_lineForm_inUnconctractedModel",
+			  Model.this.toString()));
 
 
-        if (o instanceof Topic)
-        {
-          if (Model.this instanceof TypeModel)
-            throw new IllegalArgumentException (formatMessage (
-              "err_typeModel_addTopic",
-              o.toString (),
-              Model.this.toString ()));
-          Element conflicting = getElement ( e.getName());
-          if ((conflicting != null) && (conflicting != e))
-            throw new IllegalArgumentException (formatMessage (
-              "err_topic_nonunique",
-              e.getName(),
-              Model.this.toString()));
+		  Element conflicting = getElement (e.getName());
+		  if ((conflicting != null) && (conflicting != e))
+			throw new IllegalArgumentException (formatMessage (
+			  "err_lineForm_duplicateName",
+			  e.getName(),
+			  Model.this.toString(),
+			  conflicting.toString()));
 
 
-          return contents.add (o);
-        }
+		  return true;
+		}
+
+
+		if (o instanceof Domain)
+		{
+		  Element conflicting = getElement (e.getName());
+		  if ((conflicting != null) && (conflicting != e))
+			throw new IllegalArgumentException (formatMessage (
+			  "err_duplicateDomainName",
+			  e.getName(),
+			  Model.this.toString()));
+
+
+		  return true;
+		}
+
+
+
+		if (o instanceof GraphicParameterDef)
+		{
+		  Element conflicting = getRuntimeParameter ( e.getName());
+		  if ((conflicting != null) && (conflicting != e))
+			throw new IllegalArgumentException (formatMessage (
+			  "err_graphicparam_nonunique",
+			  e.getName(),
+			  Model.this.toString()));
+
+
+		  return true;
+		}
+
+
+		if (o instanceof Topic)
+		{
+		  if (Model.this instanceof TypeModel)
+			throw new IllegalArgumentException (formatMessage (
+			  "err_typeModel_addTopic",
+			  o.toString (),
+			  Model.this.toString ()));
+		  Element conflicting = getElement ( e.getName());
+		  if ((conflicting != null) && (conflicting != e))
+			throw new IllegalArgumentException (formatMessage (
+			  "err_topic_nonunique",
+			  e.getName(),
+			  Model.this.toString()));
+
+
+		  return true;
+		}
 
 
 	if(o instanceof Table){
-          Element conflicting = getElement ( e.getName());
-          if ((conflicting != null) && (conflicting != e))
-            throw new IllegalArgumentException (formatMessage (
-              "err_table_nonunique",
-              e.getName(),
-              Model.this.toString()));
-		return contents.add(o);
+		  Element conflicting = getElement ( e.getName());
+		  if ((conflicting != null) && (conflicting != e))
+			throw new IllegalArgumentException (formatMessage (
+			  "err_table_nonunique",
+			  e.getName(),
+			  Model.this.toString()));
+		return true;
 	}
 
 
-        throw new ClassCastException (formatMessage (
-          "err_container_cannotContain",
-          Model.this.toString(), o.toString()));
-    }
+		throw new ClassCastException (formatMessage (
+		  "err_container_cannotContain",
+		  Model.this.toString(), o.toString()));
+	}
+
   };
 
+  public void addPreLast(Object o)
+  {
+	  if(!((ElementDelegate)elements).checkChildElement(o)){
+		  return;
+	  }
+	  if (o instanceof GraphicParameterDef)
+	  {
+		runtimeParameters.add (o);
+	  }
+	  contents.add(contents.size()-1,o);
+
+
+  }
 
 
   /** Constructs a new model.
@@ -308,9 +339,36 @@ public abstract class Model extends Importable
   */
   public boolean isContracted ()
   {
-    return !contracts.isEmpty();
+    return contracted || !contracts.isEmpty();
   }
-
+  public void setContracted(boolean contracted1)
+  {
+	contracted=contracted1;
+  }
+public void setIssuer(String issuer1)
+{
+	issuer=issuer1;
+}
+public String getIssuer()
+{
+	return issuer;
+}
+public void setModelVersion(String modelVersion1)
+{
+	modelVersion=modelVersion1;
+}
+public String getModelVersion()
+{
+	return modelVersion;
+}
+public void setModelVersionExpl(String modelVersionExpl1)
+{
+	modelVersionExpl=modelVersionExpl1;
+}
+public String getModelVersionExpl()
+{
+	return modelVersionExpl;
+}
 
 
   public void addContract(Contract contract)

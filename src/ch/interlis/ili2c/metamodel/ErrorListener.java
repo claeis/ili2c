@@ -31,6 +31,7 @@ public interface ErrorListener
   {
     public static final int SEVERITY_ERROR = 5;
     public static final int SEVERITY_WARNING = 3;
+    public static final int SEVERITY_NOTE = 1;
     
     protected String message = null;
     protected int line = 0;

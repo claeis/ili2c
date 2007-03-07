@@ -4,11 +4,12 @@ package ch.interlis.ili2c.generator;
 import ch.interlis.ili2c.metamodel.*;
 import java.io.Writer;
 import java.util.Iterator;
+import ch.ehi.basics.io.IndentPrintWriter;
 
 
 /** A class used to generate an INTERLIS model description as INTERLIS-2.
 */
-public final class Interlis2Generator
+public class Interlis2Generator
 {
   IndentPrintWriter   ipw;
   TransferDescription td;
@@ -22,15 +23,15 @@ public final class Interlis2Generator
   
   private java.util.ArrayList selfStandingConstraints=null;
 
-
-  private Interlis2Generator(Writer out, TransferDescription td,
-    boolean withPredefined)
+  public Interlis2Generator()
   {
-    ipw = new IndentPrintWriter (out);
-    this.td = td;
-    modelInterlis = td.INTERLIS;
-    anyUnit = td.INTERLIS.ANYUNIT;
-    this.withPredefined = withPredefined;
+  }
+  public static Interlis2Generator generateElements (
+	Writer out, TransferDescription td)
+  {
+	Interlis2Generator i = new Interlis2Generator();
+	i.setup(out,td,false);
+	return i;
   }
 
 
@@ -62,21 +63,29 @@ public final class Interlis2Generator
               file with recoverable syntactic or semantic errors. Of course, the parser reports
               these errors.
   */
-  public static int generate (
+  public int generate (
+	Writer out, TransferDescription td)
+	{
+		return generate(out,td,false);
+	}
+  public int generate (
     Writer out, TransferDescription td, boolean withPredefined)
   {
-    Interlis2Generator i = new Interlis2Generator(out, td, withPredefined);
-    i.printTransferDescription (td);
-    i.finish();
-    return i.numErrors;
+	setup(out, td, withPredefined);
+    printTransferDescription (td);
+    finish();
+    return numErrors;
   }
-
-  public static Interlis2Generator generateElements (
-    Writer out, TransferDescription td)
-  {
-    Interlis2Generator i = new Interlis2Generator(out, td, false);
-    return i;
-  }
+private void setup(
+	Writer out,
+	TransferDescription td,
+	boolean withPredefined) {
+	ipw = new IndentPrintWriter (out);
+	this.td = td;
+	modelInterlis = td.INTERLIS;
+	anyUnit = td.INTERLIS.ANYUNIT;
+	this.withPredefined = withPredefined;
+}
 
   private boolean printModifierHelper(boolean first, boolean flag, String what)
   {
@@ -91,7 +100,7 @@ public final class Interlis2Generator
 
 
 
-  private void printModifiers(boolean _abstract,
+  protected void printModifiers(boolean _abstract,
     boolean _final, boolean _extended,boolean _ordered, boolean _external)
   {
     if (!_abstract && !_final && !_extended && !_ordered && !_external){
@@ -121,6 +130,7 @@ public final class Interlis2Generator
     Topic extending = (Topic) topic.getExtending();
 
 
+	printDocumentation(topic.getDocumentation());
     ipw.print("TOPIC ");
     ipw.print(topic.getName());
     printModifiers(topic.isAbstract(), topic.isFinal(),
@@ -136,7 +146,21 @@ public final class Interlis2Generator
 
     ipw.println(" =");
     ipw.indent();
-
+	
+	Domain basketOid=topic.getBasketOid();
+	if(basketOid!=null){
+		
+		ipw.print("BASKET OID AS ");
+		ipw.print(basketOid.getScopedName(topic));
+		ipw.println(';');
+	}
+	Domain classOid=topic.getOid();
+	if(classOid!=null){
+		
+		ipw.print("OID AS ");
+		ipw.print(classOid.getScopedName(topic));
+		ipw.println(';');
+	}
 
     Iterator it = topic.getDependentOn();
     if (it.hasNext())
@@ -193,29 +217,28 @@ public final class Interlis2Generator
 
 
 
-  protected void printTable (Table tdef)
+  protected void printAbstractClassDef (AbstractClassDef def)
   {
-    String keyword;
+	printDocumentation(def.getDocumentation());
+
+	String keyword;
+	if(def instanceof Table){
+		Table tdef=(Table)def;
+		if (tdef.isIdentifiable())
+		  keyword = "CLASS";
+		else
+		  keyword = "STRUCTURE";
+	}else if(def instanceof AssociationDef){
+		keyword = "ASSOCIATION";
+	}else{
+		throw new IllegalArgumentException();
+	}
 
 
-    if (tdef.isIdentifiable())
-      keyword = "CLASS";
-    else
-      keyword = "STRUCTURE";
-
-
-    printStart (keyword, tdef, /* based on */ null);
-    printElements(tdef);
-    printEnd (tdef);
+    printStart (keyword, def, /* based on */ null);
+    printElements(def);
+    printEnd (def);
   }
-
-  protected void printAssociationDef (AssociationDef def)
-  {
-	printStart ("ASSOCIATION", def, /* based on */ null);
-	printElements(def);
-	printEnd (def);
-  }
-
 
   private void printRenamedViewableRef (Container scope, ViewableAlias ref)
   {
@@ -327,6 +350,7 @@ public final class Interlis2Generator
 
   public void printView (View view)
   {
+	printDocumentation(view.getDocumentation());
     printStart ("VIEW", view, /* basedOn */ null);
     if (view instanceof Projection)
     {
@@ -388,7 +412,8 @@ public final class Interlis2Generator
       return;
 
 
-    printStart ("GRAPHIC", graph, /* basedOn */ graph.getBasedOn());
+	printDocumentation(graph.getDocumentation());
+   printStart ("GRAPHIC", graph, /* basedOn */ graph.getBasedOn());
     printElements (graph);
     printEnd (graph);
   }
@@ -795,6 +820,7 @@ public final class Interlis2Generator
 
   public void printConstraint(Constraint elt)
   {
+	printDocumentation(elt.getDocumentation());
       Container container=elt.getContainer();
       if (elt instanceof MandatoryConstraint)
       {
@@ -831,6 +857,7 @@ public final class Interlis2Generator
   }
   public void printGraphicParameterDef(GraphicParameterDef gfxp)
   {
+	printDocumentation(gfxp.getDocumentation());
     ipw.print(gfxp.getName());
     ipw.print(" : ");
     printType(gfxp.getContainer(),gfxp.getDomain());
@@ -838,6 +865,7 @@ public final class Interlis2Generator
   }
   public void printMetaDataUseDef(MetaDataUseDef mu)
   {
+	printDocumentation(mu.getDocumentation());
     if(mu.isSignData()){
       ipw.print("SIGN BASKET ");
     }else{
@@ -878,6 +906,7 @@ public final class Interlis2Generator
     Unit extending = (Unit)u.getExtending();
 
 
+	printDocumentation(u.getDocumentation());
     ipw.print(u.getDocName());
     if (!u.getDocName().equals(u.getName())) {
       ipw.print(" [");
@@ -989,10 +1018,12 @@ public final class Interlis2Generator
 
 
 
-  private void printRef (Container scope, Element elt)
+  protected void printRef (Container scope, Element elt)
   {
     if (elt == null){
       printError ();
+    }else if(elt==modelInterlis.ANYCLASS){
+		ipw.print ("ANYCLASS");
     }else{
       ipw.print (elt.getScopedName (scope));
     }
@@ -1009,6 +1040,7 @@ public final class Interlis2Generator
     }
 
 
+	printDocumentation(par.getDocumentation());
     ipw.print(par.getName());
 
 
@@ -1071,6 +1103,7 @@ public final class Interlis2Generator
 								RoleDef role)
   {
 
+	printDocumentation(role.getDocumentation());
 	ipw.print(role.getName());
 	printModifiers(role.isAbstract(), role.isFinal(),
 	  role.isExtended(),role.isOrdered(),role.isExternal());
@@ -1091,6 +1124,18 @@ public final class Interlis2Generator
 	  ipw.print(role.getDefinedCardinality()+" ");
 	}
 	printRef (scope, role.getDestination());
+	Iterator resti=role.getReference().iteratorRestrictedTo();
+	String sep=" RESTRICTION (";
+	boolean hasRestriction=false;
+	while(resti.hasNext()){
+		AbstractClassDef rest=(AbstractClassDef)resti.next();
+		ipw.print(sep);sep=";";
+		printRef (scope, rest);
+		hasRestriction=true;
+	}
+	if(hasRestriction){
+		ipw.print(")");
+	}
 	ipw.println(';');
 		
   }
@@ -1102,12 +1147,21 @@ public final class Interlis2Generator
       printError ();
       return;
     }
+	printDocumentation(attrib.getDocumentation());
 
-
+	if(attrib instanceof LocalAttribute){
+		LocalAttribute la=(LocalAttribute)attrib;
+		if(la.isSubdivision()){
+			if(la.isContinuous()){
+				ipw.print("CONTINUOUS ");
+			}
+			ipw.print("SUBDIVISION ");
+		}
+	}
     ipw.print(attrib.getName());
     printModifiers(attrib.isAbstract(), attrib.isFinal(),
       /* EXTENDED */ attrib.getExtending() != null, /*ORDERED*/false,/*EXTERNAL*/false);
-    ipw.print(": ");
+    ipw.print(" : ");
 
 
     if (attrib instanceof LocalAttribute){
@@ -1136,6 +1190,7 @@ public final class Interlis2Generator
     SignAttribute extending = (SignAttribute)attrib.getExtending();
 
 
+	printDocumentation(attrib.getDocumentation());
     ipw.print(attrib.getName());
     printModifiers(/* ABSTRACT */ false, /* FINAL */ false,
       /* EXTENDED */ extending != null, /*ORDERED*/false,/*EXTERNAL*/false);
@@ -1225,12 +1280,36 @@ public final class Interlis2Generator
   }
 
 
+  public void printDocumentation(String doc)
+	{
+	if(doc==null)return;
+	if(doc.length()==0)return;
+	String beg="/** ";
+	// for each line
+	int last=0;
+	int next=doc.indexOf("\n",last);
+	while(next>-1){
+	  String line=doc.substring(last,next);
+	  ipw.println(beg+line);
+	  beg=" * ";
+	  last=next+1;
+	  next=doc.indexOf("\n",last);
+	}
+	  String line=doc.substring(last);
+	  ipw.println(beg+line);
+	  ipw.println(" */");
+	}
 
   protected void printModel (Model mdef)
   {
     Iterator it;
 
-
+	printDocumentation(mdef.getDocumentation());
+	
+	if(mdef.isContracted()){
+		ipw.print("CONTRACTED ");
+	}
+	
     ipw.print(mdef.toString());
 
 
@@ -1238,29 +1317,33 @@ public final class Interlis2Generator
     if(mdef.getLanguage()!=null){
 	    ipw.print("("+mdef.getLanguage()+")");
     }
+	ipw.println ();
+	ipw.indent();
+	String issuer=mdef.getIssuer();
+	if(issuer==null){
+		issuer="mailto:"+System.getProperty("user.name")+"@localhost";
+	}
+    ipw.println("AT \""+issuer+"\"");
+    String version=mdef.getModelVersion();
+    if(version==null){
+		java.util.Calendar current=java.util.Calendar.getInstance();
+		java.text.DecimalFormat digit4 = new java.text.DecimalFormat("0000");
+		java.text.DecimalFormat digit2 = new java.text.DecimalFormat("00");
+		version=digit4.format(current.get(java.util.Calendar.YEAR))
+			+"-"+digit2.format(current.get(java.util.Calendar.MONTH)+1)
+			+"-"+digit2.format(current.get(java.util.Calendar.DAY_OF_MONTH));
+    }
+    ipw.print("VERSION \""+version+"\"");
+	String expl=mdef.getModelVersionExpl();
+	if ((expl != null) && (expl.length() > 0))
+	{
+	  ipw.print (' ');
+	  printExplanation (expl);
+	}
+	// TODO Translation
     ipw.println(" =");
     ipw.indent();
     ipw.println ();
-
-
-    Contract[] contractv=mdef.getContracts();
-
-
-    for (int i=0;i<contractv.length;i++)
-    {
-      ipw.println("CONTRACT ISSUED BY");
-      ipw.indent();
-      ipw.print (contractv[i].getIssuer());
-      String expl=contractv[i].getExplanation();
-      if ((expl != null) && (expl.length() > 0))
-      {
-        ipw.print (' ');
-        printExplanation (expl);
-      }
-      ipw.println (';');
-      ipw.unindent ();
-    }
-
 
 
     Importable[] imported = mdef.getImporting ();
@@ -1316,6 +1399,7 @@ public final class Interlis2Generator
     Domain extending = dd.getExtending();
 
 
+	printDocumentation(dd.getDocumentation());
     ipw.print (dd.getName());
     printModifiers (dd.isAbstract(), dd.isFinal(),
       /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false);
@@ -1395,7 +1479,7 @@ public final class Interlis2Generator
     }
 
 
-    if (dd.isMandatory())
+    if (dd.isMandatory() && !(dd instanceof CompositionType))
       ipw.print("MANDATORY ");
 
 
@@ -1436,7 +1520,7 @@ public final class Interlis2Generator
     {
       CompositionType comp = (CompositionType) dd;
       Cardinality card = comp.getCardinality();
-      if (comp.isOrdered() && (card.getMaximum() == 1))
+      if (card.getMaximum() == 1)
       {
         /* [MANDATORY] OBJECT */
         if (card.getMinimum() == 1)
@@ -1446,15 +1530,12 @@ public final class Interlis2Generator
       {
         /* BAG OR LIST */
         ipw.print(comp.isOrdered() ? "LIST " : "BAG ");
-        if (!(card.getMaximum()==Cardinality.UNBOUND && card.getMinimum()==0))
-        {
-          ipw.print(card);
-          ipw.print(' ');
-        }
+	      ipw.print(card);
+	      ipw.print(' ');
+		ipw.print("OF ");
       }
 
 
-      ipw.print("OF ");
       printRef (scope, comp.getComponentType());
     }
     else if (dd instanceof ReferenceType)
@@ -1575,6 +1656,15 @@ public final class Interlis2Generator
         ipw.print ("OID ");
         printType(scope,type);
       }
+	}else if(dd instanceof BlackboxType){
+	  BlackboxType bt=(BlackboxType)dd;
+	  ipw.print ("BLACKBOX");
+	  int kind=bt.getKind();
+	  if(kind==BlackboxType.eXML){
+		ipw.print (" XML");
+	  }else if(kind==BlackboxType.eBINARY){
+		ipw.print (" BINARY");
+	  }
     }else if(dd instanceof BasketType){
       BasketType bt=(BasketType)dd;
       ipw.print ("BASKET");
@@ -1726,6 +1816,7 @@ public final class Interlis2Generator
 
   protected void printEnumerationElement (ch.interlis.ili2c.metamodel.Enumeration.Element ee)
   {
+	printDocumentation(ee.getDocumentation());
     ipw.print(ee.getName());
 
 
@@ -1748,6 +1839,7 @@ public final class Interlis2Generator
     }
 
 
+	printDocumentation(lf.getDocumentation());
     ipw.print (lf.getName ());
 
 
@@ -1772,6 +1864,7 @@ public final class Interlis2Generator
     }
 
 
+	printDocumentation(f.getDocumentation());
     ipw.print("FUNCTION ");
     ipw.print(f.getName());
     ipw.print(" (");
@@ -1859,22 +1952,12 @@ public final class Interlis2Generator
 
       if (elt instanceof AttributeDef)
       {
-        if (lastClass != AttributeDef.class)
-        {
-          if (lastClass != null)
-            ipw.println();
-          ipw.println("ATTRIBUTE");
-        }
-        ipw.indent();
         printAttribute (container, (AttributeDef) elt);
-        ipw.unindent();
         lastClass = AttributeDef.class;
       }
 	  else if (elt instanceof RoleDef)
 	  {
-		ipw.indent();
 		printRoleDef(container, (RoleDef) elt);
-		ipw.unindent();
 		lastClass = RoleDef.class;
 	  }
       else if (elt instanceof Function)
@@ -1888,13 +1971,9 @@ public final class Interlis2Generator
       {
         if (lastClass != Parameter.class)
         {
-          if (lastClass != null)
-            ipw.println();
           ipw.println ("PARAMETER");
         }
-        ipw.indent();
         printParameter (container, (Parameter) elt);
-        ipw.unindent();
         lastClass = Parameter.class;
       }
       else if (elt instanceof Domain)
@@ -1955,15 +2034,6 @@ public final class Interlis2Generator
       }
       else if (elt instanceof Topic)
       {
-        /* Stefan Keller <Stefan.Keller@lt.admin.ch> always wants
-           two empty lines before topics -- 1999-10-06/Sascha Brawer
-
-
-         if (lastClass != null)
-          ipw.println();
-
-
-        */
         ipw.println ();
         ipw.println ();
         printTopic((Topic) elt);
@@ -1978,14 +2048,14 @@ public final class Interlis2Generator
         if (!((Table) elt).isImplicit ())
         {
           ipw.println ();
-          printTable((Table) elt);
+          printAbstractClassDef((Table) elt);
           lastClass = AbstractClassDef.class;
         }
       }
 	  else if (elt instanceof AssociationDef)
 	  {
 		  ipw.println ();
-		  printAssociationDef((AssociationDef) elt);
+		  printAbstractClassDef((AssociationDef) elt);
 		  lastClass = AbstractClassDef.class;
 	  }
       else if (elt instanceof View)
@@ -2007,8 +2077,6 @@ public final class Interlis2Generator
 		if(((Constraint)elt).isSelfStanding()){
 			selfStandingConstraints.add(elt);
 		}else{
-			if (lastClass != null)
-			  ipw.println();
 			printConstraint((Constraint)elt);
 			lastClass = Constraint.class;
 		}
@@ -2044,7 +2112,7 @@ public final class Interlis2Generator
   protected void printTransferDescription (
     TransferDescription   td)
   {
-    ipw.println("INTERLIS 2.2;");
+    ipw.println("INTERLIS 2.3;");
     ipw.unindent();
     ipw.println();
 

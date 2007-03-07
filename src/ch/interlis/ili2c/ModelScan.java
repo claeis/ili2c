@@ -26,17 +26,18 @@ import ch.interlis.ili2c.config.*;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
  * @author ce
- * @version $Revision: 1.1.1.1 $ $Date: 2007-03-07 07:51:49 $
+ * @version $Revision: 1.2 $ $Date: 2007-03-07 08:36:06 $
  */
 public class ModelScan {
 
 	public static void main(String[] args) {
 		EhiLogger.getInstance().setTraceFiler(false);
-		String dirName = args[0];
+		ArrayList dirName = new ArrayList(Arrays.asList(args[0].split(";")));
 		String model = args[1];
 		ArrayList models=new ArrayList();
 		models.add(model);
@@ -118,6 +119,7 @@ public class ModelScan {
 		}
 		HashSet toVisitFiles=new HashSet();
 		it=requiredModels.iterator();
+		HashSet missingModels=new HashSet();
 		boolean err=false;
 		while(it.hasNext()){
 			String model=(String)it.next();
@@ -126,7 +128,10 @@ public class ModelScan {
 			}
 			IliFile file=(IliFile)models.get(model);
 			if(file==null){
-				EhiLogger.logError(model+": model not found");
+				if(!missingModels.contains(model)){
+					EhiLogger.logError(model+": model not found");
+					missingModels.add(model);
+				}
 				err=true;
 			}else{
 				toVisitFiles.add(file);
@@ -136,10 +141,6 @@ public class ModelScan {
 			return null;
 		}
 		return createConfig(toVisitFiles,models);
-	}
-	public static Configuration getConfig(String ilipaths,ArrayList requiredModels){
-		ArrayList ilipathv = new ArrayList(java.util.Arrays.asList(ilipaths.split(";")));
-		return getConfig(ilipathv,requiredModels);
 	}
 	/** create compile configuration, given a set of ilifilenames and a set of paths with additional ilifiles
 	 * @param ilipaths list<String dirName> 		
@@ -211,6 +212,7 @@ public class ModelScan {
 		}
 		HashSet visitedFiles=new HashSet();
 		TopoSort reqFiles=new TopoSort();
+		HashSet missingModels=new HashSet();
 		boolean modelsIncomplete=false;
 		while(!toVisitFiles.isEmpty()){
 			IliFile ilifile=(IliFile)toVisitFiles.iterator().next();
@@ -224,7 +226,10 @@ public class ModelScan {
 					String dep=(String)depi.next();
 					IliFile supplier=(IliFile)models.get(dep);
 					if(supplier==null){
-						EhiLogger.logError("missing model "+dep);
+						if(!missingModels.contains(dep)){
+							EhiLogger.logError(dep+": model not found");
+							missingModels.add(dep);
+						}
 						modelsIncomplete=true;
 					}else{
 						if(!visitedFiles.contains(supplier)){

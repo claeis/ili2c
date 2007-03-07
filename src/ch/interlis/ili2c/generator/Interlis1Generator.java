@@ -4,6 +4,7 @@ package ch.interlis.ili2c.generator;
 import ch.interlis.ili2c.metamodel.*;
 import java.io.Writer;
 import java.util.*;
+import ch.ehi.basics.io.IndentPrintWriter;
 
 /** generates INTERLIS 1 (ili and fmt)
  * 
@@ -1021,7 +1022,7 @@ public final class Interlis1Generator
     return true;
   }
 
-  public static int countEnumLeafs(ch.interlis.ili2c.metamodel.Enumeration enumer){
+  private int countEnumLeafs(ch.interlis.ili2c.metamodel.Enumeration enumer){
       int ret=0;
       Iterator iter = enumer.getElements();
       while (iter.hasNext()) {
@@ -1406,7 +1407,7 @@ public final class Interlis1Generator
     }
   }
 
-  private static char getIdxCode(int idx){
+  private char getIdxCode(int idx){
     return Character.toUpperCase(Character.forDigit(idx,Character.MAX_RADIX));
   }
   private String genFmtField(int idx,int size){
@@ -1417,7 +1418,7 @@ public final class Interlis1Generator
     }
     return ret.toString();
   }
-  public static String genFmtField(int idx,PrecisionDecimal value){
+  private String genFmtField(int idx,PrecisionDecimal value){
     StringBuffer ret=new StringBuffer(10);
     char c=getIdxCode(idx);
     int size=value.toBigInteger().toString().length();
@@ -1433,7 +1434,7 @@ public final class Interlis1Generator
     }
     return ret.toString();
   }
-  public static String genFmtField(int idx,PrecisionDecimal min,PrecisionDecimal max){
+  private String genFmtField(int idx,PrecisionDecimal min,PrecisionDecimal max){
     String minFld=genFmtField(idx,min);
     String maxFld=genFmtField(idx,max);
     if(minFld.length()>maxFld.length()){

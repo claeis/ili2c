@@ -36,6 +36,7 @@ public class TransferDescription extends Container
   {
     // add predefined model
     add (INTERLIS);
+    INTERLIS.setupModel();
   }
    protected Collection createElements(){
     return new AbstractCollection() {

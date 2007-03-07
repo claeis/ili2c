@@ -14,6 +14,7 @@ package ch.interlis.ili2c.metamodel;
 
 import java.util.Set;
 import java.util.HashSet;
+import ch.ehi.basics.logging.EhiLogger;
 
 
 /** A domain declaration, as expressed by the DOMAIN construct
@@ -453,9 +454,9 @@ public class Domain extends AbstractLeafElement
 
 
 
-  public boolean checkStructuralEquivalence (Element with, ErrorListener listener)
+  public boolean checkStructuralEquivalence (Element with)
   {
-    if (!super.checkStructuralEquivalence (with, listener))
+    if (!super.checkStructuralEquivalence (with))
       return false;
 
     Type myType = this.getType ();
@@ -469,31 +470,22 @@ public class Domain extends AbstractLeafElement
         return false;
     }
 
-    if (!myType.checkStructuralEquivalence (otherType, listener))
+    if (!myType.checkStructuralEquivalence (otherType))
     {
-      listener.error (new ErrorListener.ErrorEvent (
-        formatMessage ("err_diff_domainType", this.toString(), with.toString()),
-        /* origin of error */ this,
-        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+      EhiLogger.logError(formatMessage ("err_diff_domainType", this.toString(), with.toString()));
       return false;
     }
 
     if (this.isAbstract() != ((Domain) with).isAbstract())
     {
-      listener.error (new ErrorListener.ErrorEvent (
-        formatMessage ("err_diff_mismatchInAbstractness", this.toString(), with.toString()),
-        /* origin of error */ this,
-        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+      EhiLogger.logError(formatMessage ("err_diff_mismatchInAbstractness", this.toString(), with.toString()));
       return false;
     }
 
 
     if (this.isFinal() != ((Domain) with).isFinal())
     {
-      listener.error (new ErrorListener.ErrorEvent (
-        formatMessage ("err_diff_mismatchInFinality", this.toString(), with.toString()),
-        /* origin of error */ this,
-        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+      EhiLogger.logError(formatMessage ("err_diff_mismatchInFinality", this.toString(), with.toString()));
       return false;
     }
 

@@ -11,6 +11,7 @@
 
 package ch.interlis.ili2c.metamodel;
 import java.util.Iterator;
+import ch.ehi.basics.logging.EhiLogger;
 
 
 /** EnumerationType holds the information associated with
@@ -277,32 +278,26 @@ public class EnumerationType extends BaseType {
     }
   }
 
-  public boolean checkStructuralEquivalence (Element with, ErrorListener listener)
+  public boolean checkStructuralEquivalence (Element with)
   {
-    if (!super.checkStructuralEquivalence (with, listener))
+    if (!super.checkStructuralEquivalence (with))
       return false;
 
     EnumerationType other = (EnumerationType) with;
     boolean fine = true;
     if (this.isCircular() != other.isCircular())
     {
-      listener.error (new ErrorListener.ErrorEvent (
-        formatMessage ("err_diff_enumType_mismatchInCircularity",
+      EhiLogger.logError(formatMessage ("err_diff_enumType_mismatchInCircularity",
                        this.toString(),
-                       with.toString()),
-        /* origin of error */ this,
-        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+                       with.toString()));
       fine = false;
     }
 
     if (this.isOrdered() != other.isOrdered())
     {
-      listener.error (new ErrorListener.ErrorEvent (
-        formatMessage ("err_diff_enumType_mismatchInOrderedness",
+      EhiLogger.logError(formatMessage ("err_diff_enumType_mismatchInOrderedness",
                        this.toString(),
-                       with.toString()),
-        /* origin of error */ this,
-        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+                       with.toString()));
       fine = false;
     }
 

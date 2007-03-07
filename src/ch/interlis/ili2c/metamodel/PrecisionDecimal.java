@@ -27,14 +27,7 @@ public class PrecisionDecimal extends java.math.BigDecimal
   protected int exponent = 0;
 
 
-  public PrecisionDecimal(double d, int exponent)
-  {
-    super(d);
-    this.exponent = exponent;
-  }
-
-
-  static private int scalePos(String s){
+  static private int exponentPos(String s){
     int ret;
     ret=s.indexOf('S');
     if(ret==-1){
@@ -57,9 +50,9 @@ public class PrecisionDecimal extends java.math.BigDecimal
   {
 
 
-    super(scalePos(s) == -1 ? s : s.substring(0, scalePos(s)));
+    super(exponentPos(s) == -1 ? s : s.substring(0, exponentPos(s)));
 
-    int sp=scalePos(s);
+    int sp=exponentPos(s);
 
     if (sp >= 0)
     {
@@ -69,26 +62,27 @@ public class PrecisionDecimal extends java.math.BigDecimal
     //
     // set accuracy
     //
+	int accuracy=0;
     int pp=s.indexOf('.');
     // decimal point found?
     if(pp>=0){
     	if(sp>=0){
-		if(pp<sp){
-			accuracy=sp-pp-1;
+			if(pp<sp){
+				accuracy=sp-pp-1;
+			}else{
+				// ignore it
+			}
 		}else{
-			// ignore it
+			accuracy=s.length()-pp-1;
 		}
-	}else{
-		accuracy=s.length()-pp-1;
-	}
     }
+    setScale(accuracy);
   }
 
 
-  private int accuracy=0;
   public int getAccuracy()
   {
-  	return accuracy;
+  	return scale();
   }
 
   /** Returns the number after the 'S'.
