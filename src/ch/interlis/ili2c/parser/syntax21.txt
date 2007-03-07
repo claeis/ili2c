@@ -1,0 +1,401 @@
+INTERLIS2Def = 'INTERLIS' Version-Dec ';'
+		    { ModelDef }.
+ModelDef = ['TYPE' |'REFSYSTEM' |'SYMBOLOGY']
+	     'MODEL' Model-Name ['('Language-Name ')']
+	 ['TRANSLATION' 'OF' Model-Name ]'='
+           {'CONTRACT' 'ISSUED' 'BY' Issuer-Name [Explanation] ';'}
+           {'IMPORTS'Model-Name {','Model-Name }';'}
+             { MetaDataUseDef
+ | UnitDef
+             | FunctionDef
+             | LineFormTypeDef
+             | DomainDef
+             | GraphicParameterDef
+             | PatternDef
+		 | TopicDef }
+           'END' Model-Name '.'.
+TopicDef = ['VIEW'] 'TOPIC' Topic-Name 
+ Properties<ABSTRACT,FINAL>
+             ['EXTENDS' TopicRef] '='
+               {'DEPENDS' 'ON' TopicRef {',' TopicRef} ';'}
+		   {'USES' PatternUse {',' PatternUse} ';'}
+     	   Definitions
+     'END' Topic-Name ';' .
+
+Definitions =  { MetaDataUseDef
+   | UnitDef
+               | DomainDef
+               | ClassDef
+ 		   | AssociationDef
+ 		   | ConstraintsDef
+		   | ViewDef
+               | ViewProjectionDef
+               | GraphicDef } .
+           
+TopicRef = [Model-Name'.'] Topic-Name.
+
+PatternUse = PatternRef [ 'WITH' 'PREFIX' Prefix-Name ] .
+ClassDef = ('CLASS' | 'STRUCTURE') Class-Name
+                Properties<ABSTRACT,EXTENDED,FINAL>
+                   ['EXTENDS' ClassRef ]
+'='
+             ['ATTRIBUTE'] { AttributeDef }
+             {ConstraintDef}
+             ['PARAMETER' { ParameterDef }]
+           'END' Class-Name ';'.
+
+ClassRef = ([ Model-Name'.' [ Topic-Name'.' ]] Class-Name ) .
+
+StructureRef = [ Model-Name'.' [ Topic-Name'.' ]]
+               (Structure-Class-Name | Class-Name).
+
+PatternDef = 'PATTERN' Pattern-Name 
+      Properties<ABSTRACT,FINAL>
+             	['EXTENDS' PatternRef]
+ '='
+		   {'USES' PatternUse {',' PatternUse} ';'}
+     	   Definitions
+       'END' Pattern-Name ';
+
+PatternRef = [Model-Name'.'] Pattern-Name.
+
+AttributeDef = Attribute-Name Properties<ABSTRACT,EXTENDED,FINAL>
+ ':' AttrTypeDef
+ 	[ ':=' ( FunctionCall
+ 		 | Constant
+ 						 | AttributePath ) ] ';'.
+
+AttrTypeDef = ('MANDATORY' [AttrType] | AttrType ) .
+
+AttrType = ( Type | DomainRef | RestrictedObjectReference 
+     | RestrictedStructureRef 
+           | ( ('BAG' | 'LIST') [ Cardinality ]
+'OF' RestrictedStructureRef ) ) .
+
+RestrictedObjectReference = 'REFERENCE' 'TO' ClassOrAssociationRef
+[ 'RESTRICTED' 'TO' ClassOrAssociationRef
+{ ',' ClassOrAssociationRef } ].
+
+RestrictedStructureRef = StructureRef
+ [ 'RESTRICTED' 'TO' StructureRef
+{ ',' StructureRef } ] .
+
+AssociationDef = 'ASSOCIATION' [ Association-Name ] 
+  Properties<ABSTRACT,EXTENDED,FINAL>
+			  ['EXTENDS' AssociationRef ]
+			  ['DERIVED' 'FROM' ViewableRef ]
+     '='
+       { RoleDef }
+	 ['ATTRIBUTE'] { AttributeDef }
+	 { ConstraintDef }
+     'END' [ Association-Name ] ';' .
+
+AssociationRef = [ Model-Name'.' [ Topic-Name'.' ]] Association-Name .
+
+RoleDef = Role-Name Properties<ABSTRACT,EXTENDED,FINAL,ORDERED>
+('--' | '-<>' | '-<#>') [ Cardinality ] ClassOrAssociationRef
+['FROM' ObjectPath] ';' .
+
+ClassOrAssociationRef = ( ClassRef | AssociationRef ) .
+
+Cardinality = '{' ( '*' | PosNumber [ '..' (PosNumber|'*')] ) '}'.
+
+DomainDef = 'DOMAIN'
+              {Domain-Name Properties<ABSTRACT,FINAL>
+ ['EXTENDS' DomainRef]  
+   '=' ('MANDATORY' [Type] | Type) ';'}.
+
+
+Type = (BaseType | LineType) .
+
+DomainRef = [ Model-Name '.' [ Topic-Name '.']] Domain-Name.
+
+BaseType = ( TextType
+           | NumericType
+           | StructuredUnitType
+           | EnumerationType 
+           | AlignmentType
+           | BooleanType
+           | CoordinateType
+           | BasketType ).
+
+Constant = ( 'UNDEFINED'
+           | NumericConst 
+           | TextConst
+                 | StructUnitConst 
+           | EnumerationConst ).
+TextType        = ( 'TEXT' ['*' MaxLength-PosNumber]
+                  | 'NAME'
+                  | 'URI') .
+
+TextConst       = String .
+EnumerationType = Enumeration ['ORDERED' |'CIRCULAR'].
+
+Enumeration = '('EnumElement {',' EnumElement} ')'.
+
+EnumElement = EnumElement-Name{'.'EnumElement-Name} [Sub-Enumeration].
+
+EnumerationConst = '#' EnumElement-Name{'.'EnumElement-Name}.
+
+AlignmentType = ('HALIGNMENT' |'VALIGNMENT').
+BooleanType = 'BOOLEAN'.
+
+NumericType = ( Min-Dec '..' Max-Dec | 'NUMERIC') ['CIRCULAR']
+               [ '[' UnitRef ']' ]
+               ['CLOCKWISE' | 'COUNTERCLOCKWISE']
+               [ RefSys ].
+
+RefSys = ( '{' RefSys-MetaObjectRef [ '/' Axis-PosNumber ] '}'
+         | '<' Coord-DomainRef [ '/' Axis-PosNumber ] '>' ).
+
+DecConst = ( Dec | 'PI' | 'LNBASE' ) .
+
+NumericConst = DecConst ['[' UnitRef']'].
+
+
+StructuredUnitType = Min-StructDec '..' Max-StructDec ['CIRCULAR']
+                     '[' Structured-UnitRef']'
+                      ['CLOCKWISE' | 'COUNTERCLOCKWISE']
+                      [ RefSys ].
+
+StructUnitConst = StructDec['[' UnitRef']'].
+
+CoordinateType = 'COORD' NumericalType 
+                  [',' NumericalType [',' NumericalType]
+                  [',' RotationDef ]].
+
+NumericalType = (NumericType | StructuredUnitType).
+
+RotationDef = 'ROTATION' NullAxis-PosNumber '->' 
+              PiHalfAxis-PosNumber.
+
+BasketType = 'BASKET' Properties<DATA,VIEW,BASE,GRAPHIC> 
+    [ 'OF' [ Model-Name '.' ] Topic-Name ] .
+
+LineType = (['DIRECTED'] 'POLYLINE' | 'SURFACE' | 'AREA')
+           [LineForm] [ControlPoints] [IntersectionDef]
+           [LinAttrDef].
+
+LineForm = 'WITH' '(' LineFormType {',' LineFormType} ')'.
+
+LineFormType = ( 'STRAIGHTS' | 'ARCS'
+               | [ Model-Name '.' ] LineFormType-Name ).
+
+ControlPoints = 'VERTEX' CoordType-DomainRef.
+
+IntersectionDef = 'WITHOUT' 'OVERLAPS' '>' Dec.
+LinAttrDef = 'LINE' 'ATTRIBUTES' Structure-Name.
+LineFormTypeDef = 'LINE' 'FORM'
+                  { LineFormType-Name [ Explanation ] ';' }.
+
+UnitDef = 'UNIT'
+            { Unit-Name 
+              [ '(' 'ABSTRACT' ')' | '[' UnitShort-Name ']' ]
+              [ 'EXTENDS' Abstract-UnitRef ]
+              [ '=' ( DerivedUnit | ComposedUnit | StructuredUnit )]
+              ';' }.
+
+DerivedUnit = [ DecConst { ('*' |'/') DecConst }
+              | 'FUNCTION' Explanation ] '[' UnitRef ']'. 
+
+ComposedUnit = '(' UnitRef { ('*' |'/') UnitRef } ')'.
+
+StructuredUnit = '{' UnitRef
+                     { ':' UnitRef '[' Min-Dec '..' Max-Dec ']' }
+                 '}'
+                 [ 'CONTINUOUS' ].
+
+UnitRef = [ Model-Name'.' [Topic-Name '.']] UnitShort-Name.
+
+MetaDataUseDef = ('SIGN' | 'REFSYSTEM' ) 'BASKET' Basket-Name
+Properties<EXTENDED,FINAL>
+[ 'EXTENDS' MetaDataUseRef ]
+  	'~' Model-Name '.' Topic-Name ';' .
+
+MetaDataUseRef = [ Model-Name '.' [ Topic-Name '.' ]] Basket-Name .
+
+MetaObjectRef = [ MetaDataUseRef '.' ] Metaobject-Name;
+ParameterDef = Parameter-Name Properties<ABSTRACT,EXTENDED,FINAL>
+ 		':' (AttrTypeDef | 'METAOBJECT' [ 'OF' MetaObject-ClassRef ]) ';'.
+
+
+ConstraintDef = ( MandatoryConstraint
+                | PlausibilityConstraint
+    | ExistenceConstraint
+                | UniquenessConstraint ).
+
+MandatoryConstraint = 'MANDATORY' 'CONSTRAINT' 
+                         Logical-Expression ';'.
+
+PlausibilityConstraint = 'CONSTRAINT'
+                           ('<=' |'>=') Percentage-Dec '%'
+                           Logical-Expression ';'.
+
+ExistenceConstraint = 'EXISTENCE' 'CONSTRAINT'
+				 AttributePath 'REQUIRED' 'IN'
+				   ViewableRef ':' AttributeRef
+			          { 'OR' ViewableRef ':' AttributeRef } ';'.
+					
+UniquenessConstraint =   'UNIQUE'
+( UniqueEl
+| StructAttr ':' UniqueEl ) 
+                         ';'.
+
+UniqueEl = ( AttributePath  | Role-Name ) 
+              { ',' ( AttributePath  | Role-Name ) } .
+
+StructAttr = StructureAttribute-Name { '.' StructureAttribute-Name } .
+
+ConstraintsDef = 'CONSTRAINTS' 'OF' ClassOrAssociationRef '='
+			{ ConstraintDef }
+		    'END' ';' .
+Expression = Term .
+
+Term = Term1 { 'OR' Term1 } .
+
+Term1 = Term2 { 'AND' Term2 } .
+
+Term2 = Term3 { '->' Term3 } .
+
+Term3 = Predicate [ Relation Predicate ] .
+
+Predicate = ( Factor
+		| ['NOT'] '(' Logical-Expression ')'
+		| 'DEFINED' '(' Factor ')' ) .	
+
+Relation = ( '==' | '!=' | '<>' | '<=' | '>=' | '<' | '>' ).
+
+Factor = ( ObjectPath
+	   | AttributePath
+         | FunctionCall 
+         | [ Model-Name '.' ] GraphicParam-Name 
+         | Constant ).
+
+ObjectPath = PathEl { '.' PathEl } .
+
+PathEl = ('THIS'
+   | 'THISAREA' | 'THATAREA'
+         | 'PARENT'
+   | ReferenceAttribute-Name
+         | AssociationPath
+         | Role-Name
+         | 'BASE' [ BaseView-Name ] ) .
+
+AssociationPath = '\' Role-Name '.' Association-Name ['.' Role-Name ].
+
+AttributePath = [ ObjectPath ':' ] AttributeRef .
+
+AttributeRef = Attribute-Name [ '[' Axis-PosNumber ']'
+| ['[' ListIndex ']'] '.' AttributeRef ].
+
+ListIndex = ('FIRST' | 'LAST' | PosNumber ) .
+
+FunctionCall = [ Model-Name '.' ] Function-Name 
+'(' Argument {',' Argument } ')'.
+
+Argument = ( Expression | ViewableRef | 'AGGREGATES') .
+
+FunctionDef = 'FUNCTION' Function-Name
+                 '(' Argument-Name ':' ArgumentType 
+ {';' Argument-Name ':' ArgumentType } ')'
+                 ':' ArgumentType [Explanation] ';'.
+
+ArgumentType = ( AttrTypeDef
+   | 'OBJECT' [ 'OF' ViewableRef ]
+   | 'CLASS'  ) .
+
+
+ViewDef = 'VIEW' View-Name '='
+	  (SelectionView | Join | Union | Aggregation | Inspection )
+	  { Selection }
+	  [ ViewProjectionAttributes ]
+	  {ConstraintDef}
+	  'END' View-Name ';'.
+
+SelectionView = 'SELECTION' 'OF' RenamedViewableRef ';'.
+
+Join = 'JOIN' 'OF' RenamedViewableRef
+              	(* ',' RenamedViewableRef 
+[ '(' 'OR' 'NULL' ')' ] *) ';'.
+
+Union = 'UNION' 'OF' RenamedViewableRef 
+(* ',' RenamedViewableRef *) ';'.
+
+Aggregation = 'AGGREGATION' 'OF'
+( 'ALL' | 'EQUAL' '(' UniqueEl ')' )  
+RenamedViewableRef ';' .
+
+Inspection = ['AREA'] 'INSPECTION' 'OF' ViewableRef 
+			    ':' StructureAttribute-Name
+			       { '.' StructureAttribute-Name } ';'.
+
+Selection = ( 'WHERE'  Logical-Expression 
+		| 'BASE' LocalBase-Name { '.' LocalBase-Name }
+			'RESTRICTED' 'TO' ClassOrAssociationRef 
+					      { ',' ClassOrAssociationRef } ) ';'.
+
+RenamedViewableRef = [ LocalBase-Name '~' ] ViewableRef.
+  
+ViewableRef = [ Model-Name '.' [ Topic-Name '.' ]]
+		     ( Class-Name | Association-Name 
+     | View-Name | ViewProjection-Name).
+
+ViewRef = [ Model-Name'.' [ Topic-Name'.' ]]
+( View-Name | ViewProjection-Name ) .
+
+
+ViewProjectionRef = [ Model-Name '.' [ Topic-Name '.' ]] 
+ViewProjection-Name.
+
+ViewProjectionDef = 'PROJECTION' ViewProjection-Name 
+  Properties<ABSTRACT,FINAL>
+ 		    	  ( 'EXTENDS' ViewProjectionRef
+           		  | 'BASED' 'ON' ViewableRef )
+           		  '='
+		     	  ViewProjectionAttributes
+		    	  {ConstraintDef}
+		     	  'END' ViewProjection-Name ';'.
+
+ViewProjectionAttributes = [ 'ATTRIBUTE' ]
+	          { 'ALL' 'OF' Base-Name ';'
+                | ViewProjectionAttributeDef }.
+
+ViewProjectionAttributeDef =
+Attribute-Name Properties<ABSTRACT,EXTENDED,FINAL> ':'
+AttrTypeDef
+             ':=' ( FunctionCall 
+                  ¦ BaseAttributeRef { ',' BaseAttributeRef } ) ';' .
+
+BaseAttributeRef = Base-Name ':' Attribute-Name { '.' Attribute-Name }.
+
+GraphicParameterDef = 'PARAMETER' 
+                         { Parameter-Name ':' AttrTypeDef';' }.
+
+GraphicDef = 'GRAPHIC' Graphic-Name Properties<ABSTRACT,FINAL>
+               ['EXTENDS' GraphicRef]
+               ['BASED' 'ON' ViewableRef]
+              '='
+                { Selection }
+                { SignAttribute }
+              'END' Graphic-Name ';'.
+
+GraphicRef = [ Model-Name '.' [ Topic-Name'.']] Graphic-Name.
+
+SignAttribute = SignAttr-Name Properties<ABSTRACT,EXTENDED,FINAL>
+                  ['OF' Sign-ClassRef] ':' CondSigParamAss
+                                           {',' CondSigParamAss} ';'.
+
+CondSigParamAss = ['WHERE' Logical-Expression ]
+                    '(' SigAssignment {';' SigAssignment} ')'.
+
+SigAssignment = SignParameter-Name ':='
+                  ( MetaObjectRef
+      | Constant
+| FunctionCall
+                  | AttributePath
+                  | 'ACCORDING'Enum-AttributePath
+                    '(' EnumAssignment {',' EnumAssignment} ')' ).
+
+EnumAssignment = ( MetaObjectRef | Constant ) 'WHEN' 'IN' EnumRange.
+
+EnumRange = EnumerationConst [ '..' EnumerationConst ].

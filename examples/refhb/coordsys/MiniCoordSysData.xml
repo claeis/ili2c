@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- File MiniCoordSysData.xml Release 2003-03-18 -->
+
+<TRANSFER xmlns="http://www.interlis.ch/INTERLIS2.2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:noNamespaceSchemaLocation="MiniCoordSysData.xsd">
+
+  <HEADERSECTION VERSION="2.2" SENDER="V+D">
+    <ALIAS>
+      <ENTRIES FOR="INTERLIS">
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.Ellipsoid"
+                  TO="INTERLIS.REFSYSTEM"></TAGENTRY>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GravityModel"
+                  TO="INTERLIS.REFSYSTEM"></TAGENTRY>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GeoidModel"
+                  TO="INTERLIS.REFSYSTEM"></TAGENTRY>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GeoCartesian1D"
+                  TO="INTERLIS.COORDSYSTEM"></TAGENTRY>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GeoHeight"
+                  TO="INTERLIS.COORDSYSTEM"></TAGENTRY>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GeoCartesian2D"
+                  TO="INTERLIS.COORDSYSTEM"></TAGENTRY>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GeoCartesian3D"
+                  TO="INTERLIS.COORDSYSTEM"></TAGENTRY>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GeoEllipsoidal"
+                  TO="INTERLIS.ELLIPSOIDALCS"></TAGENTRY>
+      </ENTRIES>
+      <ENTRIES FOR="CoordSys">
+        <TAGENTRY FROM="CoordSys.CoordsysTopic"
+                  TO="CoordSys.CoordsysTopic"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.Ellipsoid"
+                  TO="CoordSys.CoordsysTopic.Ellipsoid"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GravityModel"
+                  TO="CoordSys.CoordsysTopic.GravityModel"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GeoidModel"
+                  TO="CoordSys.CoordsysTopic.GeoidModel"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.LengthAXIS"
+                  TO="CoordSys.CoordsysTopic.LengthAXIS"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.AngleAXIS"
+                  TO="CoordSys.CoordsysTopic.AngleAXIS"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GeoCartesian1D"
+                  TO="CoordSys.CoordsysTopic.GeoCartesian1D"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GeoHeight"
+                  TO="CoordSys.CoordsysTopic.GeoCartesian1D"/>
+        <DELENTRY TAG="CoordSys.CoordsysTopic.GeoHeight.System"/>
+        <DELENTRY TAG="CoordSys.CoordsysTopic.GeoHeight.ReferenceHeight"/>
+        <DELENTRY TAG="CoordSys.CoordsysTopic.GeoHeight.ReferenceHeightDescr"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GeoHeight"
+                  TO="CoordSys.CoordsysTopic.GeoHeight"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.HeightEllips"
+                  TO="CoordSys.CoordsysTopic.HeightEllips"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.HeightGravit"
+                  TO="CoordSys.CoordsysTopic.HeightGravit"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.HeightGeoid"
+                  TO="CoordSys.CoordsysTopic.HeightGeoid"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GeoCartesian2D"
+                  TO="CoordSys.CoordsysTopic.GeoCartesian2D"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GeoCartesian3D"
+                  TO="CoordSys.CoordsysTopic.GeoCartesian3D"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.GeoEllipsoidal"
+                  TO="CoordSys.CoordsysTopic.GeoEllipsoidal"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.EllCSEllips"
+                  TO="CoordSys.CoordsysTopic.EllCSEllips"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.ToGeoEllipsoidal"
+                  TO="CoordSys.CoordsysTopic.ToGeoEllipsoidal"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.ToGeoCartesian3D"
+                  TO="CoordSys.CoordsysTopic.ToGeoCartesian3D"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.BidirectGeoCartesian3D"
+                  TO="CoordSys.CoordsysTopic.BidirectGeoCartesian3D"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.BidirectGeoCartesian2D"
+                  TO="CoordSys.CoordsysTopic.BidirectGeoCartesian2D"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.BidirectGeoEllipsoidal"
+                  TO="CoordSys.CoordsysTopic.BidirectGeoEllipsoidal"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.TransverseMercator"
+                  TO="CoordSys.CoordsysTopic.TransverseMercator"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.SwissProjection"
+                  TO="CoordSys.CoordsysTopic.SwissProjection"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.Mercator"
+                  TO="CoordSys.CoordsysTopic.Mercator"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.ObliqueMercator"
+                  TO="CoordSys.CoordsysTopic.ObliqueMercator"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.Lambert"
+                  TO="CoordSys.CoordsysTopic.Lambert"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.Polyconic"
+                  TO="CoordSys.CoordsysTopic.Polyconic"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.Albus"
+                  TO="CoordSys.CoordsysTopic.Albus"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.Azimutal"
+                  TO="CoordSys.CoordsysTopic.Azimutal"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.Stereographic"
+                  TO="CoordSys.CoordsysTopic.Stereographic"/>
+        <TAGENTRY FROM="CoordSys.CoordsysTopic.HeightConversion"
+                  TO="CoordSys.CoordsysTopic.HeightConversion"/>
+      </ENTRIES>
+    </ALIAS>
+    <COMMENT>
+      example dataset ili2 refmanual appendix J
+    </COMMENT>
+  </HEADERSECTION>
+
+  <DATASECTION>
+
+    <CoordSys.CoordsysTopic BID="xBCoordSys">
+
+      <CoordSys.CoordsysTopic.Ellipsoid TID="xBCoordSysBessel">
+        <Name>Bessel</Name>
+        <EllipsoidAlias>Bessel(1841)</EllipsoidAlias>
+        <SemiMajorAxis>6377397.1550</SemiMajorAxis>
+        <InverseFlattening>299.1528128</InverseFlattening>
+        <Remarks>Dok swisstopo 19031266</Remarks>
+      </CoordSys.CoordsysTopic.Ellipsoid >
+      <CoordSys.CoordsysTopic.Ellipsoid TID="xBCoordSysWGS72">
+        <Name>WGS72</Name>
+        <EllipsoidAlias>World Geodetic System 1972</EllipsoidAlias>
+        <SemiMajorAxis>6378135.000</SemiMajorAxis>
+        <InverseFlattening>298.2600000</InverseFlattening>
+      </CoordSys.CoordsysTopic.Ellipsoid>
+
+      <CoordSys.CoordsysTopic.GravityModel
+        TID="xBCoordSysCHLotabweichung">
+        <Name>CHLotabweichung</Name>
+        <Definition>Siehe Software LAG swisstopo</Definition>
+      </CoordSys.CoordsysTopic.GravityModel>
+
+      <CoordSys.CoordsysTopic.GeoidModel TID="xBCoordSysCHGeoid">
+        <Name>CHGeoid</Name>
+        <Definition>Siehe neues CH Geoid swisstopo</Definition>
+      </CoordSys.CoordsysTopic.GeoidModel>
+
+      <CoordSys.CoordsysTopic.GeoHeight
+        TID="xBCoordSysSwissOrthometricAlt">
+        <Name>SwissOrthometricAlt</Name>
+        <Axis>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>h</ShortName>
+            <Description>CHOrthometricAlt</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+        </Axis>
+        <System>orthometric</System>
+        <ReferenceHeight>373.600</ReferenceHeight>
+        <ReferenceHeightDescr>Pierre du Niton</ReferenceHeightDescr>
+        <EllipsoidRef REF="xBCoordSysBessel"/>
+        <GravityRef REF="xBCoordSysCHLotabweichung"/>
+        <GeoidRef REF="xBCoordSysCHGeoid"/>
+
+      </CoordSys.CoordsysTopic.GeoHeight>
+      <CoordSys.CoordsysTopic.GeoHeight
+        TID="xBCoordSysSwissEllipsoidalAlt">
+        <Name>SwissEllipsoidalAlt</Name>
+        <Axis>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>H</ShortName>
+            <Description>CHEllipsoidalAlt</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+        </Axis>
+        <System>ellipsoidal</System>
+        <ReferenceHeight>0.000</ReferenceHeight>
+        <ReferenceHeightDescr>Meereshoehe</ReferenceHeightDescr>
+        <EllipsoidRef REF="xBCoordSysBessel"/>
+        <GravityRef REF="xBCoordSysCHLotabweichung"/>
+        <GeoidRef REF="xBCoordSysCHGeoid"/>
+      </CoordSys.CoordsysTopic.GeoHeight>
+
+      <CoordSys.CoordsysTopic.GeoCartesian2D TID="xBCoordSysCOORD2">
+        <Name>COORD2</Name>
+        <Definition>Mathematisches 2D Refsystem</Definition>
+        <Axis>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>X</ShortName>
+            <Description>X-Axis</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>Y</ShortName>
+            <Description>Y-Axis</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+        </Axis>
+      </CoordSys.CoordsysTopic.GeoCartesian2D>
+      <CoordSys.CoordsysTopic.GeoCartesian2D TID="xBCoordSysCHLV03">
+        <Name>CHLV03</Name>
+        <Definition>Geodaetisches 2D Refsystem</Definition>
+        <Axis>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>Y</ShortName>
+            <Description>Ost-Wert</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>X</ShortName>
+            <Description>Nord-Wert</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+        </Axis>
+      </CoordSys.CoordsysTopic.GeoCartesian2D>
+
+      <CoordSys.CoordsysTopic.GeoCartesian3D TID="xBCoordSysCOORD3">
+        <Name>COORD3</Name>
+        <Definition>Mathematisches 3D Refsystem</Definition>
+        <Axis>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>X</ShortName>
+            <Description>X-Axis</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>Y</ShortName>
+            <Description>Y-Axis</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>Z</ShortName>
+            <Description>Z-Axis</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+        </Axis>
+      </CoordSys.CoordsysTopic.GeoCartesian3D>
+      <CoordSys.CoordsysTopic.GeoCartesian3D TID="xCoordSysCH1903">
+        <Name>CH1903</Name>
+        <Definition>Geodaetisches 3D Refsystem CH</Definition>
+        <Axis>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>XC</ShortName>
+            <Description>Aequator Greenwich</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>YC</ShortName>
+            <Description>Aequator East</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>ZC</ShortName>
+            <Description>North</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+        </Axis>
+      </CoordSys.CoordsysTopic.GeoCartesian3D>
+      <CoordSys.CoordsysTopic.GeoCartesian3D TID="xBCoordSysWGS84">
+        <Name>WGS84</Name>
+        <Definition>World Geodetic System 1984</Definition>
+        <Axis>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>XW</ShortName>
+            <Description>Aequator Greenwich</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>YW</ShortName>
+            <Description>Aequator_East</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+          <CoordSys.CoordsysTopic.LengthAXIS>
+            <ShortName>ZW</ShortName>
+            <Description>North</Description>
+          </CoordSys.CoordsysTopic.LengthAXIS>
+        </Axis>
+      </CoordSys.CoordsysTopic.GeoCartesian3D>
+
+      <CoordSys.CoordsysTopic.GeoEllipsoidal
+        TID="xBCoordSysSwitzerland">
+        <Name>Switzerland</Name>
+        <Definition>Koordinaten auf dem CH Ellipsoid 1903</Definition>
+        <Axis>
+          <CoordSys.CoordsysTopic.AngleAXIS>
+            <ShortName>Lat</ShortName>
+            <Description>Breite</Description>
+          </CoordSys.CoordsysTopic.AngleAXIS>
+          <CoordSys.CoordsysTopic.AngleAXIS>
+            <ShortName>Long</ShortName>
+            <Description>Laenge</Description>
+          </CoordSys.CoordsysTopic.AngleAXIS>
+        </Axis>
+        <EllipsoidRef/>
+      </CoordSys.CoordsysTopic.GeoEllipsoidal>
+
+      <CoordSys.CoordsysTopic.ToGeoEllipsoidal
+        TID="xBCoordSysFromCH1903toSwitzerland">
+        <From>BCoordSys.CH1903</From>
+        <To>BCoordSys.Switzerland</To>
+        <ToHeight>BCoordSys.SwissEllipsoidalAlt</ToHeight>
+      </CoordSys.CoordsysTopic.ToGeoEllipsoidal>
+
+      <CoordSys.CoordsysTopic.ToGeoCartesian3D
+        TID="xBCoordSysFromSwitzerlandToCH1903">
+        <From2>BCoordSys.Switzerland</From2>
+        <FromHeight>BCoordSys.SwissEllipsoidalAlt</FromHeight>
+        <To3>BCoordSys.CH1903</To3>
+      </CoordSys.CoordsysTopic.ToGeoCartesian3D>
+
+      <CoordSys.CoordsysTopic.BidirectGeoCartesian3D
+        TID="xBCoordSysWGS84toCH1903">
+        <Precision>measure_based</Precision>
+        <ShiftAxis1>-660.077</ShiftAxis1>
+        <ShiftAxis2>-13.551</ShiftAxis2>
+        <ShiftAxis3>-369.344</ShiftAxis3>
+        <RotationAxis1>-0:0:2.484</RotationAxis1>
+        <RotationAxis2>-0:0:1.783</RotationAxis2>
+        <RotationAxis3>-0:0:2.939</RotationAxis3>
+        <NewScale>0.99444</NewScale>
+        <From>BCoordSys.WGS84</From>
+        <To2>BCoordSys.CH1903</To2>
+      </CoordSys.CoordsysTopic.BidirectGeoCartesian3D>
+      <CoordSys.CoordsysTopic.BidirectGeoCartesian3D
+        TID="xBCoordSysCH1903toWGS84">
+        <Precision>measure_based</Precision>
+        <ShiftAxis1>660.077</ShiftAxis1>
+        <ShiftAxis2>13.551</ShiftAxis2>
+        <ShiftAxis3>369.344</ShiftAxis3>
+        <RotationAxis1>0:0:2.484</RotationAxis1>
+        <RotationAxis2>0:0:1.783</RotationAxis2>
+        <RotationAxis3>0:0:2.939</RotationAxis3>
+        <NewScale>1.00566</NewScale>
+        <From>BCoordSys.CH1903</From>
+        <To2>BCoordSys.WGS84</To2>
+      </CoordSys.CoordsysTopic.BidirectGeoCartesian3D>
+
+      <CoordSys.CoordsysTopic.TransverseMercator
+        TID="xBCoordSysFromCH1903ToSwitzerland">
+        <FromCo1_FundPt>46:57:08.66</FromCo1_FundPt>
+        <FromCo2_FundPt>7:26:22.50</FromCo2_FundPt>
+        <ToCoord1_FundPt>600000</ToCoord1_FundPt>
+        <ToCoord2_FundPt>200000</ToCoord2_FundPt>
+        <From5>BCoordSys.Switzerland</From5>
+        <To5>BCoordSys.CHLV03</To5>
+      </CoordSys.CoordsysTopic.TransverseMercator>
+
+      <CoordSys.CoordsysTopic.HeightConversion
+        TID="xBCoordSysElliphToOrth">
+        <FromHeight>BCoordSys.SwissEllipsoidAlt</FromHeight>
+        <ToHeight>BCoordSys.SwissOrthometricAlt</ToHeight>
+      </CoordSys.CoordsysTopic.HeightConversion>
+      <CoordSys.CoordsysTopic.HeightConversion
+        TID="xBCoordSysOrthToElliph">
+        <FromHeight>BCoordSys.SwissOrthometricAlt</FromHeight>
+        <ToHeight>BCoordSys.SwissEllipsoidAlt</ToHeight>
+      </CoordSys.CoordsysTopic.HeightConversion>
+
+    </CoordSys.CoordsysTopic>
+
+  </DATASECTION>
+
+</TRANSFER>
+
