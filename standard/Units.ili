@@ -1,46 +1,45 @@
-!! File Units.ili Release 2003-03-18
+!! File Units.ili Release 2005-06-16
 
-INTERLIS 2.2;
+INTERLIS 2.3;
 
-TYPE MODEL Units (en) =
-
-  IMPORTS UNQUALIFIED INTERLIS;
+CONTRACTED TYPE MODEL Units (en) AT "http://www.interlis.ch/models"
+  VERSION "2005-06-06" =
 
   UNIT
     !! abstract Units
-    Area (ABSTRACT) = (LENGTH*LENGTH);
-    Volume (ABSTRACT) = (LENGTH*LENGTH*LENGTH);
-    Velocity (ABSTRACT) = (LENGTH/TIME);
-    Acceleration (ABSTRACT) = (Velocity/TIME);
-    Force (ABSTRACT) = (MASS*LENGTH/TIME/TIME);
+    Area (ABSTRACT) = (INTERLIS.LENGTH*INTERLIS.LENGTH);
+    Volume (ABSTRACT) = (INTERLIS.LENGTH*INTERLIS.LENGTH*INTERLIS.LENGTH);
+    Velocity (ABSTRACT) = (INTERLIS.LENGTH/INTERLIS.TIME);
+    Acceleration (ABSTRACT) = (Velocity/INTERLIS.TIME);
+    Force (ABSTRACT) = (INTERLIS.MASS*INTERLIS.LENGTH/INTERLIS.TIME/INTERLIS.TIME);
     Pressure (ABSTRACT) = (Force/Area);
-    Energy (ABSTRACT) = (Force*LENGTH);
-    Power (ABSTRACT) = (Energy/TIME);
-    Electric_Potential (ABSTRACT) = (Power/ELECTRIC_CURRENT);
-    Frequency (ABSTRACT) = (DIMENSIONLESS/TIME);
+    Energy (ABSTRACT) = (Force*INTERLIS.LENGTH);
+    Power (ABSTRACT) = (Energy/INTERLIS.TIME);
+    Electric_Potential (ABSTRACT) = (Power/INTERLIS.ELECTRIC_CURRENT);
+    Frequency (ABSTRACT) = (INTERLIS.DIMENSIONLESS/INTERLIS.TIME);
 
-    Millimeter [mm] = 0.001 [m];
-    Centimeter [cm] = 0.01 [m];
-    Decimeter [dm] = 0.1 [m];
-    Kilometer [km] = 1000 [m];
+    Millimeter [mm] = 0.001 [INTERLIS.m];
+    Centimeter [cm] = 0.01 [INTERLIS.m];
+    Decimeter [dm] = 0.1 [INTERLIS.m];
+    Kilometer [km] = 1000 [INTERLIS.m];
 
-    Square_Meter [m2] EXTENDS Area   = (m*m);
-    Cubic_Meter  [m3] EXTENDS Volume = (m*m*m);
+    Square_Meter [m2] EXTENDS Area = (INTERLIS.m*INTERLIS.m);
+    Cubic_Meter [m3] EXTENDS Volume = (INTERLIS.m*INTERLIS.m*INTERLIS.m);
 
-    Minute [min] = 60 [s];
-    Hour   [h]   = 60 [min];
-    Day    [d]   = 24 [h];
+    Minute [min] = 60 [INTERLIS.s];
+    Hour [h] = 60 [min];
+    Day [d] = 24 [h];
 
     Kilometer_per_Hour [kmh] EXTENDS Velocity = (km/h);
     Meter_per_Second [ms] = 3.6 [kmh];
-    Newton [N]  EXTENDS Force = (kg*m/s/s);
+    Newton [N] EXTENDS Force = (INTERLIS.kg*INTERLIS.m/INTERLIS.s/INTERLIS.s);
     Pascal [Pa] EXTENDS Pressure = (N/m2);
-    Joule  [J]  EXTENDS Energy = (N*m);
-    Watt   [W]  EXTENDS Power = (J/s);
-    Volt   [V]  EXTENDS Electric_Potential = (W/A);
+    Joule [J] EXTENDS Energy = (N*INTERLIS.m);
+    Watt [W] EXTENDS Power = (J/INTERLIS.s);
+    Volt [V] EXTENDS Electric_Potential = (W/INTERLIS.A);
 
     Inch [in] = 2.54 [cm];
-    Foot [ft] = 0.3048 [m];
+    Foot [ft] = 0.3048 [INTERLIS.m];
     Mile [mi] = 1.609344 [km];
 
     Are [a] = 100 [m2];
@@ -51,17 +50,15 @@ TYPE MODEL Units (en) =
     Liter [L] = 1 / 1000 [m3];
     US_Gallon [USgal] = 3.785412 [L];
 
-    Angle_Degree = 180 / PI [rad];
+    Angle_Degree = 180 / PI [INTERLIS.rad];
     Angle_Minute = 1 / 60 [Angle_Degree];
     Angle_Second = 1 / 60 [Angle_Minute];
-    Angle_DMS = {Angle_Degree:Angle_Minute[0 .. 59]:Angle_Second[0 .. 59]}
-                CONTINUOUS;
 
-    Gon = 200 / PI [rad];
+    Gon = 200 / PI [INTERLIS.rad];
 
-    Gram [g] = 1 / 1000 [kg];
-    Ton [t] = 1000 [kg];
-    Pound [lb] = 0.4535924 [kg];
+    Gram [g] = 1 / 1000 [INTERLIS.kg];
+    Ton [t] = 1000 [INTERLIS.kg];
+    Pound [lb] = 0.4535924 [INTERLIS.kg];
 
     Calorie [cal] = 4.1868 [J];
     Kilowatt_Hour [kWh] = 0.36E7 [J];
@@ -76,12 +73,12 @@ TYPE MODEL Units (en) =
 
     Decibel [dB] = FUNCTION // 10**(dB/20) * 0.00002 // [Pa];
 
-    Degree_Celsius [oC] = FUNCTION // oC+273.15 // [K];
-    Degree_Fahrenheit [oF] = FUNCTION // (oF+459.67)/1.8 // [K];
+    Degree_Celsius [oC] = FUNCTION // oC+273.15 // [INTERLIS.K];
+    Degree_Fahrenheit [oF] = FUNCTION // (oF+459.67)/1.8 // [INTERLIS.K];
 
-    CountedObjects EXTENDS DIMENSIONLESS;
+    CountedObjects EXTENDS INTERLIS.DIMENSIONLESS;
 
-    Hertz [Hz] EXTENDS Frequency = (CountedObjects/s);
+    Hertz [Hz] EXTENDS Frequency = (CountedObjects/INTERLIS.s);
     KiloHertz [KHz] = 1000 [Hz];
     MegaHertz [MHz] = 1000 [KHz];
 
@@ -89,9 +86,9 @@ TYPE MODEL Units (en) =
     Permille = 0.001 [CountedObjects];
 
     !! ISO 4217 Currency Abbreviation
-    USDollar    [USD] EXTENDS MONEY;
-    Euro        [EUR] EXTENDS MONEY;
-    SwissFrancs [CHF] EXTENDS MONEY;
+    USDollar [USD] EXTENDS INTERLIS.MONEY;
+    Euro [EUR] EXTENDS INTERLIS.MONEY;
+    SwissFrancs [CHF] EXTENDS INTERLIS.MONEY;
 
 END Units.
 

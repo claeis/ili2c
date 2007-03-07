@@ -1,12 +1,12 @@
-!! File StandardSymbology.ili Release 2003-03-18
+!! File StandardSymbology.ili Release 2005-06-16
 
-INTERLIS 2.2;
+INTERLIS 2.3;
 
-SYMBOLOGY MODEL StandardSymbology (en) =
+CONTRACTED SYMBOLOGY MODEL StandardSymbology (en)
+  AT "http://www.interlis.ch/models"
+  VERSION "2005-06-16" =
 
   !! Extended symbology model with symbol libraries and priorities.
-
-  CONTRACT ISSUED BY Unknown;  !! Contractor(s) have to be defined!
 
   IMPORTS AbstractSymbology;
 
@@ -52,7 +52,7 @@ SYMBOLOGY MODEL StandardSymbology (en) =
     !! Polyline attributes
     !! +++++++++++++++++++
     !! Presentation parameters for simple continuous lines. Polyline attributes
-    !! are used by all other polyline definitions (see also below).
+    !! are used by all other polyline definitions (see below).
 
     CLASS PolylineAttrs =
       Width       : SS_Float;
@@ -62,7 +62,7 @@ SYMBOLOGY MODEL StandardSymbology (en) =
         miter
       );
       MiterLimit  : 1.0 .. 1000.0; !! only for Join = miter
-      Caps        : (  !! termination form at end of line
+      Caps        : ( !! termination form at end of line
         round,
         butt
       );
@@ -81,7 +81,7 @@ SYMBOLOGY MODEL StandardSymbology (en) =
 
     STRUCTURE FontSymbol_Polyline EXTENDS FontSymbol_Geometry =
       Color       : REFERENCE TO Color; !! only for symbols
-      LineAttrs   : MANDATORY REFERENCE TO PolylineAttrs;
+      LineAttrs   : REFERENCE TO PolylineAttrs;
       Geometry    : MANDATORY SS_Polyline;
     END FontSymbol_Polyline;
 
@@ -117,20 +117,20 @@ SYMBOLOGY MODEL StandardSymbology (en) =
     END Font;
 
     ASSOCIATION FontAssoc =
-      Font -<#> Font;
-      Symbol -- FontSymbol;
+      Font -<#> {1} Font;
+      Symbol -- {0..*} FontSymbol;
     END FontAssoc;
 
     !! Line symbology library
     !! ======================
-    !! With the line sybology library the user can define continuos, dashed or
+    !! With the line sybology library the user can define continuous, dashed or
     !! patterned lines. It is also possible to define multi line symbologies.
     !! Each line in a multi line symbology can be continuous, dashed or patterned
     !! for itself. The offset indicates the distance from the middle axis. All
     !! are stored in the library relative to the width 1.0. The width can be over
-    !! written by the symbology parameter With in the symbology interface. For
-    !! continuous lines the With parameter defines the total width of the line,
-    !! for multi lines the parameter With scales the attribute value offset.
+    !! written by the symbology parameter Width in the symbology interface. For
+    !! continuous lines the Width parameter defines the total width of the line,
+    !! for multi lines the parameter Width scales the attribute value offset.
 
     CLASS LineStyle (ABSTRACT) =
       Name        : MANDATORY TEXT*40;
@@ -140,12 +140,12 @@ SYMBOLOGY MODEL StandardSymbology (en) =
     END LineStyle_Solid;
 
     ASSOCIATION LineStyle_SolidColorAssoc =
-      Color -- {0 .. 1} Color;
+      Color -- {0..1} Color;
       LineStyle -- {1} LineStyle_Solid;
     END LineStyle_SolidColorAssoc;
 
     ASSOCIATION LineStyle_SolidPolylineAttrsAssoc =
-      LineAttrs -- {0 .. 1} PolylineAttrs;
+      LineAttrs -- {0..1} PolylineAttrs;
       LineStyle -- {1} LineStyle_Solid;
     END LineStyle_SolidPolylineAttrsAssoc;
 
@@ -161,12 +161,12 @@ SYMBOLOGY MODEL StandardSymbology (en) =
     END LineStyle_Dashed;
 
     ASSOCIATION LineStyle_DashedColorAssoc =
-      Color -- {0 .. 1} Color;
+      Color -- {0..1} Color;
       LineStyle_Dashed -- {1} LineStyle_Dashed;
     END LineStyle_DashedColorAssoc;
 
     ASSOCIATION LineStyle_DashedLineAttrsAssoc =
-      LineAttrs -- {0 .. 1} PolylineAttrs;
+      LineAttrs -- {0..1} PolylineAttrs;
       LineStyle_Dashed -- {1} LineStyle_Dashed;
     END LineStyle_DashedLineAttrsAssoc;
 
@@ -205,19 +205,19 @@ SYMBOLOGY MODEL StandardSymbology (en) =
 
     ASSOCIATION TextSignFontAssoc =
       Font -- {1} Font;
-      TextSign -- {1} TextSign;
+      TextSign -- {0..*} TextSign;
     MANDATORY CONSTRAINT
       Font -> Type == #text;
     END TextSignFontAssoc;
 
     ASSOCIATION TextSignColorAssoc =
-      Color -- {0 .. 1} Color;
-      TextSign -- {1} TextSign;
+      Color -- {0..1} Color;
+      TextSign -- {0..*} TextSign;
     END TextSignColorAssoc;
 
     ASSOCIATION TextSignClipFontAssoc =
-      ClipFont -- {0 .. 1} Font;
-      TextSign2 -- {1} TextSign;
+      ClipFont -- {0..1} Font;
+      TextSign2 -- {0..*} TextSign;
     END TextSignClipFontAssoc;
 
     !! Symbol interface
@@ -232,17 +232,17 @@ SYMBOLOGY MODEL StandardSymbology (en) =
 
     ASSOCIATION SymbolSignSymbolAssoc =
       Symbol -- {1} FontSymbol;
-      SymbolSign -- {1} SymbolSign;
+      SymbolSign -- {0..*} SymbolSign;
     END SymbolSignSymbolAssoc;
 
     ASSOCIATION SymbolSignClipSymbolAssoc =
-      ClipSymbol -- {0 .. 1} FontSymbol;
-      SymbolSign2 -- {1} SymbolSign;
+      ClipSymbol -- {0..1} FontSymbol;
+      SymbolSign2 -- {0..*} SymbolSign;
     END SymbolSignClipSymbolAssoc;
 
     ASSOCIATION SymbolSignColorAssoc =
-      Color -- {0 .. 1} Color;
-      SymbolSign -- {1} SymbolSign;
+      Color -- {0..1} Color;
+      SymbolSign -- {0..*} SymbolSign;
     END SymbolSignColorAssoc;
 
     !! Polyline interface
@@ -257,32 +257,32 @@ SYMBOLOGY MODEL StandardSymbology (en) =
     END PolylineSign;
 
     ASSOCIATION PolylineSignLineStyleAssoc =
-      Style -- {1 .. *} LineStyle;
-      PolylineSign -- {1} PolylineSign;
+      Style -- {1} LineStyle;
+      PolylineSign -- {0..*} PolylineSign;
     ATTRIBUTE
       Offset      : SS_Float; !! Default 0.0
     END PolylineSignLineStyleAssoc;
 
     ASSOCIATION PolylineSignColorAssoc =
-      Color -- {0 .. 1}Color;
-      PolylineSign -- {1} PolylineSign;
+      Color -- {0..1} Color;
+      PolylineSign -- {0..*} PolylineSign;
     END PolylineSignColorAssoc;
 
     ASSOCIATION PolylineSignClipStyleAssoc =
-      ClipStyle -- {0 .. 1} LineStyle; !! Used as a mask for clipping
-      PolylineSign2 -- {1} PolylineSign;
+      ClipStyle -- {0..1} LineStyle; !! Used as a mask for clipping
+      PolylineSign2 -- {0..*} PolylineSign;
     END PolylineSignClipStyleAssoc;
 
     ASSOCIATION PolylineSignStartSymbolAssoc =
-      StartSymbol -- {0 .. 1} SymbolSign; !! Symbol at start of line in opposite
-                                          !! direction of line
-      PolylineSign -- {1} PolylineSign;
+      StartSymbol -- {0..1} SymbolSign; !! Symbol at start of line in opposite
+                                        !! direction of line
+      PolylineSign -- {0..*} PolylineSign;
     END PolylineSignStartSymbolAssoc;
 
     ASSOCIATION PolylineSignEndSymbolAssoc =
-      EndSymbol -- {0 .. 1} SymbolSign; !! Symbol at end of line in same
-                                        !! direction as line
-      PolylineSign3 -- {1} PolylineSign;
+      EndSymbol -- {0..1} SymbolSign; !! Symbol at end of line in same
+                                      !! direction as line
+      PolylineSign3 -- {0..*} PolylineSign;
     END PolylineSignEndSymbolAssoc;
 
     !! Surface interface
@@ -302,18 +302,18 @@ SYMBOLOGY MODEL StandardSymbology (en) =
     END SurfaceSign;
 
     ASSOCIATION SurfaceSignColorAssoc =
-      FillColor -- {0 .. 1} Color; !! Fill color
-      SurfaceSign -- {1} SurfaceSign;
+      FillColor -- {0..1} Color; !! Fill color
+      SurfaceSign -- {0..*} SurfaceSign;
     END SurfaceSignColorAssoc;
 
     ASSOCIATION SurfaceSignBorderAssoc =
-      Border -- {0 .. 1} PolylineSign; !! Border symbology
-      SurfaceSign -- {1} SurfaceSign;
+      Border -- {0..1} PolylineSign; !! Border symbology
+      SurfaceSign -- {0..*} SurfaceSign;
     END SurfaceSignBorderAssoc;
 
     ASSOCIATION SurfaceSignHatchSymbAssoc =
-      HatchSymb -- {0 .. 1} PolylineSign; !! Hatch symbology
-      SurfaceSign2 -- {1} SurfaceSign;
+      HatchSymb -- {0..1} PolylineSign; !! Hatch symbology
+      SurfaceSign2 -- {0..*} SurfaceSign;
     END SurfaceSignHatchSymbAssoc;
 
   END StandardSigns;

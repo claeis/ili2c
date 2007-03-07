@@ -1,10 +1,10 @@
-!! File AbstractSymbology.ili Release 2003-03-18
+!! File AbstractSymbology.ili Release 2005-06-16
 
-INTERLIS 2.2;
+INTERLIS 2.3;
 
-SYMBOLOGY MODEL AbstractSymbology (en) =
-
-  CONTRACT ISSUED BY Unknown; !! Contractor(s) have to be defined!
+CONTRACTED SYMBOLOGY MODEL AbstractSymbology (en)
+  AT "http://www.interlis.ch/models"
+  VERSION "2005-06-16" =
 
   UNIT
     Millimeter [mm] = 0.001 [INTERLIS.m];

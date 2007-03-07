@@ -1,15 +1,24 @@
-!! File CoordSys.ili Release 2002-07-02
+!! File CoordSys.ili Release 2005-06-16
 
-INTERLIS 2.2;
+INTERLIS 2.3;
 
-REFSYSTEM MODEL CoordSys (en) =  !! 2-letter code (ISO 639)
+REFSYSTEM MODEL CoordSys (en) AT "http://www.interlis.ch/models"
+  VERSION "2005-06-16" =
 
   UNIT
     Angle_Degree = 180 / PI [INTERLIS.rad];
     Angle_Minute = 1 / 60 [Angle_Degree];
     Angle_Second = 1 / 60 [Angle_Minute];
-    Angle_DMS = {Angle_Degree:Angle_Minute[0 .. 59]:Angle_Second[0 .. 59]}
-                CONTINUOUS;
+
+  STRUCTURE Angle_DMS_S =
+    Degrees: -180 .. 180 CIRCULAR [Angle_Degree];
+    CONTINUOUS SUBDIVISION Minutes: 0 .. 59 CIRCULAR [Angle_Minute];
+    CONTINUOUS SUBDIVISION Seconds: 0.000 .. 59.999 CIRCULAR [Angle_Second];
+  END Angle_DMS_S;
+
+  DOMAIN
+    Angle_DMS = FORMAT BASED ON Angle_DMS_S (Degrees ":" Minutes ":" Seconds);
+    Angle_DMS_90 EXTENDS Angle_DMS = "-90:00:00.000" .. "90:00:00.000";
 
 
   TOPIC CoordsysTopic =
@@ -83,14 +92,17 @@ REFSYSTEM MODEL CoordSys (en) =  !! 2-letter code (ISO 639)
     END HeightGeoid;
 
     CLASS GeoCartesian2D EXTENDS INTERLIS.COORDSYSTEM =
+      Definition: TEXT*70;
       Axis (EXTENDED): LIST {2} OF LengthAXIS;
     END GeoCartesian2D;
 
     CLASS GeoCartesian3D EXTENDS INTERLIS.COORDSYSTEM =
+      Definition: TEXT*70;
       Axis (EXTENDED): LIST {3} OF LengthAXIS;
     END GeoCartesian3D;
 
     CLASS GeoEllipsoidal EXTENDS INTERLIS.COORDSYSTEM =
+      Definition: TEXT*70;
       Axis (EXTENDED): LIST {2} OF AngleAXIS;
     END GeoEllipsoidal;
 
@@ -107,7 +119,8 @@ REFSYSTEM MODEL CoordSys (en) =  !! 2-letter code (ISO 639)
       From -- {1..*} GeoCartesian3D;
       To -- {1..*} GeoEllipsoidal;
       ToHeight -- {1..*} GeoHeight;
-    MANDATORY CONSTRAINT  ToHeight -> System == #ellipsoidal;
+    MANDATORY CONSTRAINT
+      ToHeight -> System == #ellipsoidal;
     MANDATORY CONSTRAINT
       To -> EllipsoidRef -> Name == ToHeight -> EllipsoidRef -> Name;
     END ToGeoEllipsoidal;
@@ -116,30 +129,31 @@ REFSYSTEM MODEL CoordSys (en) =  !! 2-letter code (ISO 639)
       From2 -- {1..*} GeoEllipsoidal;
       FromHeight-- {1..*} GeoHeight;
       To3 -- {1..*} GeoCartesian3D;
-    MANDATORY CONSTRAINT FromHeight -> System == #ellipsoidal;
-!!    MANDATORY CONSTRAINT
-!!      From2 -> EllipsoidRef -> Name == FromHeight -> EllipsoidRef -> Name;
+    MANDATORY CONSTRAINT
+      FromHeight -> System == #ellipsoidal;
+    MANDATORY CONSTRAINT
+      From2 -> EllipsoidRef -> Name == FromHeight -> EllipsoidRef -> Name;
     END ToGeoCartesian3D;
-
-    ASSOCIATION BidirectGeoCartesian3D =
-      From -- {1..*} GeoCartesian3D;
-      To2 -- {1..*} GeoCartesian3D;
-      Precision: MANDATORY
-        (exact,
-        measure_based);
-      ShiftAxis1: MANDATORY -10000.000 .. 10000.000 [INTERLIS.m];
-      ShiftAxis2: MANDATORY -10000.000 .. 10000.000 [INTERLIS.m];
-      ShiftAxis3: MANDATORY -10000.000 .. 10000.000 [INTERLIS.m];
-      RotationAxis1: -90:00:00.000 .. 90:00:00.000 [Angle_DMS];
-      RotationAxis2: -90:00:00.000 .. 90:00:00.000 [Angle_DMS];
-      RotationAxis3: -90:00:00.000 .. 90:00:00.000 [Angle_DMS];
-      NewScale: 0.000001 .. 1000000.000000;
-    END BidirectGeoCartesian3D;
 
     ASSOCIATION BidirectGeoCartesian2D =
       From -- {1..*} GeoCartesian2D;
       To -- {1..*} GeoCartesian2D;
     END BidirectGeoCartesian2D;
+
+    ASSOCIATION BidirectGeoCartesian3D =
+      From -- {1..*} GeoCartesian3D;
+      To2 -- {1..*} GeoCartesian3D;
+      Precision: MANDATORY (
+        exact,
+        measure_based);
+      ShiftAxis1: MANDATORY -10000.000 .. 10000.000 [INTERLIS.m];
+      ShiftAxis2: MANDATORY -10000.000 .. 10000.000 [INTERLIS.m];
+      ShiftAxis3: MANDATORY -10000.000 .. 10000.000 [INTERLIS.m];
+      RotationAxis1: Angle_DMS_90;
+      RotationAxis2: Angle_DMS_90;
+      RotationAxis3: Angle_DMS_90;
+      NewScale: 0.000001 .. 1000000.000000;
+    END BidirectGeoCartesian3D;
 
     ASSOCIATION BidirectGeoEllipsoidal =
       From4 -- {1..*} GeoEllipsoidal;
@@ -149,8 +163,8 @@ REFSYSTEM MODEL CoordSys (en) =  !! 2-letter code (ISO 639)
     ASSOCIATION MapProjection (ABSTRACT) =
       From5 -- {1..*} GeoEllipsoidal;
       To5 -- {1..*} GeoCartesian2D;
-      FromCo1_FundPt: MANDATORY -90:00:00.00 .. +90:00:00.00 [Angle_DMS];
-      FromCo2_FundPt: MANDATORY -90:00:00.00 .. +90:00:00.00 [Angle_DMS];
+      FromCo1_FundPt: MANDATORY Angle_DMS_90;
+      FromCo2_FundPt: MANDATORY Angle_DMS_90;
       ToCoord1_FundPt: MANDATORY -10000000 .. +10000000 [INTERLIS.m];
       ToCoord2_FundPt: MANDATORY -10000000 .. +10000000 [INTERLIS.m];
     END MapProjection;
@@ -159,8 +173,8 @@ REFSYSTEM MODEL CoordSys (en) =  !! 2-letter code (ISO 639)
     END TransverseMercator;
 
     ASSOCIATION SwissProjection EXTENDS MapProjection =
-      IntermFundP1: MANDATORY -90:00:00.00 .. +90:00:00.00 [Angle_DMS];
-      IntermFundP2: MANDATORY -90:00:00.00 .. +90:00:00.00 [Angle_DMS];
+      IntermFundP1: MANDATORY Angle_DMS_90;
+      IntermFundP2: MANDATORY Angle_DMS_90;
     END SwissProjection;
 
     ASSOCIATION Mercator EXTENDS MapProjection =

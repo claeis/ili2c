@@ -1,6 +1,5 @@
 open issues
 ----------------------------
-- add notice in readme about license
 - publish tests
 - improve call to antlr in ant script
 - multi-language support
@@ -11,39 +10,90 @@ open issues
 - Bug: multiple PARENT PathEl doesn't work
 - Bug: PARENT in sub-sub-structure inspection doesn't work
 - Bug: base name in extended view not known
-- Bug: if unable to write trace.txt, error message is not visible 
 - Bug: INSPECTION of a POLYLINE doesn't work
 - Bug XML-Schema: no enum entries in alias table
 - Bug: Bei der Deklaration von strukturierten Typen werden die von der UNIT vorgegebenen Wertebereiche bzw. Anzahl Dezimalstellen nicht überprüft
 - Bug: doesn't refuse DOMAIN abc = MANDATORY;
 - Bug: refuses DOMAIN abc (FINAL) = TEXT*30; uvw EXTENDS abc = MANDATORY; 
-- Bug ili1: Ili1 to Ili2 should define unit m2 before its use
 - Bug ili1: doesn't check table/topic name uniqueness on 24 first characters
-- Bug ili1: Ili1 to Ili2 should define lineattrib structure before its use
 - Bug ili1: ClassType, BasketType, OIDType, StructuredUnitType were missing from ili1 export
 - Bug ili1: doesn't do line wrapping in fmt file, if fixed format
 - Bug ili1: doesn't support fixed format
 - Bug: doesn't check that ViewDef is abstract in case of short attribute def (attr := B->attr;)
 - Bug: doesn't accept the same role name in different extended topics.
 - Bug: doesn't check that only one composite end exists with cardinality 1
-- Bug: exception in restrictedClassOrAssRef if target class at model level
 - Bug: doesn't check name uniqueness of EnumElements
 - Bug: doesn't check that line form structure extends INTERLIS.LineSegment
 - Bug XML-Schema: type INTERLIS.LineCoord isn't defined, but referenced in schema of custom line form
 - Bug: exception if empty AREA type
 - Bug: exception if in coord def min>max
-- read TID/BID of metaobjects and save them in repository/output them to iom 
-- XML-Schema: generate element COMMENT with type xsd:string
 - add switch -oALIAS
 - Bug: refuses 0.1e6
+- rename MetaDataUseDef to MetaDataBasketDef (also in error messages!)
+- allow .ilc files on command line
+- check that topics that use structs (defined at model level) with refattrs depend on all topics that these refattrs refere to
 
-ili2c 2.6.4 (2006-xx-xx)
+ili2c 3.4.x (2007-03-xx)
 ----------------------------
-- Modelscan: parser now accepts INTERLIS 1 models as well
+- bug: metaObjectRef not resolved if metaobject declared in another model
+- check syntax of issuer URI
+- Bug ili1: Ili1 to Ili2 should define lineattrib structure before its use
+- Bug ili1: Ili1 to Ili2 should define unit m2 before its use
+- ili1: read DATE as INTERLIS.XmlDate
+
+ili2c 3.3.0 (2007-02-22)
+----------------------------
+- auto scan of ili files (added switch --no-auto to disable it)
+- added location to error message "unexpected char"
+- Bug: NullPointerException if unknown target table in ili1 ref attr
+- Bug: exception in restrictedClassOrAssRef if target class at model level
+- Bug ili2 output: generate INTERLIS 2.3;
+
+ili2c 3.2.0 (2006-11-08) BETA
+----------------------------
+- GML: updated to GML 3.2
+
+ili2c 3.1.2 (2006-08-11) BETA
+----------------------------
+- error handling refactored
+- Bug: wrong syntax implemented at rule TopicDef (OID...';')
+- Bug: didn't accept FunctionDef at topic level
+
+ili2c 3.1.1 (2006-08-08) BETA
+----------------------------
+- Bug: wrong syntax implemented at rule ClassDef (OID...';')
+- Bug: wrong synatx implemented at rule FormatedType
+
+ili2c 3.1.0 (2006-07-05) BETA
+----------------------------
+- unlimited length TEXT implemented
+- MTEXT implemented
+- AssociationDef.Cardinality
+- XML-Schema: TEXT, MTEXT implemented
+- read ilidoc comments
 - Bug: doesn't check that an association has at least two roles
 - Bug: crash if refattr in struct at model level 
 
-ili2c 2.6.3 (2005-12-06)
+ili2c 3.0.2 (2006-01-26)
+----------------------------
+- ModelDef: read issuer, version
+- Annex A update
+- XML-Schema: generate element COMMENT with type xsd:string
+- XML-Schema: simplified schema for CLASSes
+- XML-Schema: adapted to refhb 2.3
+
+ili2c 3.0.1 (2005-08-31)
+----------------------------
+- bug fixed in syntax rule MetaDataUseDef
+- syntax rules cross checked with language spec 2.3-2005-06-16
+
+ili2c 3.0.0 (2005-08-19)
+----------------------------
+- syntax adapted to refhb 2.3
+- contracts adapted to refhb 2.3
+- gui adapted to refhb 2.3
+
+ili2c 2.6.2 (2005-09-15)
 ----------------------------
 - iom: added ORDER_POS in StructuredUnit_Part.structuredUnit  
 - ModelScan: NullPointerException if no files found with given models

@@ -1,46 +1,43 @@
-!! File Time.ili Release 2003-03-18
+!! File Time.ili Release 2005-06-16
 
-INTERLIS 2.2;
+INTERLIS 2.3;
 
-REFSYSTEM MODEL Time (en) =  !! en = 2-letter code (ISO 639)
-
-  CONTRACT ISSUED BY Unknown;  !! Contractor(s) have to be defined!
+CONTRACTED REFSYSTEM MODEL Time (en) AT "http://www.interlis.ch/models"
+  VERSION "2005-06-16" =
 
   IMPORTS Units;
 
-  UNIT
-    HM = {Units.h : Units.min[0 .. 59]} CONTINUOUS;
-    HMS = {Units.h : Units.min[0 .. 59] : INTERLIS.s[0 .. 59]} CONTINUOUS;
+  STRUCTURE DayOfYear =
+    Month: 1 .. 12 [INTERLIS.M];
+    SUBDIVISION Day: 1 .. 31 [INTERLIS.d];
+  END DayOfYear;
 
-    Year [Y] EXTENDS INTERLIS.TIME;
-    Month [M] EXTENDS INTERLIS.TIME;
-
-    DayOfYear [MD] = {M:Units.d[1 .. 31]};
-    Date [YMD] = {Y:M[1 .. 12]:Units.d[1 .. 31]};
+  STRUCTURE HMDiffWithinDay =
+    Hours: -23 .. 23 CIRCULAR [INTERLIS.h];
+    CONTINUOUS SUBDIVISION Minutes: 0 .. 59 [INTERLIS.min];
+  END HMDiffWithinDay;
 
   DOMAIN
-    Year = 1582 .. 2999 [Y]; !! Gregorian Calendar
-    Date = 1582:10:15 .. 2999:12:31 [YMD];
-    DayOfYear = 1:1 .. 12:31 [MD];
-
     WeekDay = (WorkingDay (Monday, Tuesday, Wednesday,
-               Thursday, Friday, Saturday), Sunday);
+                           Thursday, Friday, Saturday),
+               Sunday) CIRCULAR;
 
-    HMOfDay = 0:0 .. 23:59 [HM];
-    DifferenceToUTC = MANDATORY -13:00 .. 13:00 [HM]; !! UTC := LocTime + Diff
+    HMDiffWDay = FORMAT BASED ON HMDiffWithinDay (Hours ":" Minutes);
+    DifferenceToUTC EXTENDS HMDiffWDay = MANDATORY "-13:00" .. "13:00";
+                                         !! UTC := LocTime + Diff
 
   FUNCTION AppropriateDate (dayOfYear: MANDATORY DayOfYear;
                             weekDay: WeekDay): DayOfYear
-    // returns first parameter if second is undefined;
+    // returns first parameter if second is undefined,
        returns first day from (incl) first parameter being the
-       requested weekday // ;
+       requested weekday //;
 
-  FUNCTION DSTOrdered (doy1: DayOfYear; doy2: DayOfYear) : BOOLEAN
+  FUNCTION DSTOrdered (day1: DayOfYear; day2: DayOfYear) : BOOLEAN
     // returns TRUE if the second parameter comes after the
        first parameter or if both parameters are equal //;
 
   STRUCTURE DSTransition =
-    TransitionDSTime: MANDATORY HMOfDay;
+    TransitionDSTime: MANDATORY HMDiffWDay;
     FirstDate: MANDATORY DayOfYear;
     DayOfWeek: WeekDay;
     TransitionDate: DayOfYear := AppropriateDate (FirstDate, DayOfWeek);
@@ -48,8 +45,8 @@ REFSYSTEM MODEL Time (en) =  !! en = 2-letter code (ISO 639)
 
   STRUCTURE DaylightSavingPeriod =
     DSToUTC: DifferenceToUTC;
-    From: MANDATORY Year;
-    To:   MANDATORY Year;
+    From: MANDATORY INTERLIS.GregorianYear;
+    To:   MANDATORY INTERLIS.GregorianYear;
     DSStart: MANDATORY DSTransition;
     DSEnd: MANDATORY DSTransition;
   MANDATORY CONSTRAINT
@@ -58,7 +55,7 @@ REFSYSTEM MODEL Time (en) =  !! en = 2-letter code (ISO 639)
     To >= From;
   END DaylightSavingPeriod;
 
-  FUNCTION DSPOverlaps (periods: BAG {1 .. *} OF DaylightSavingPeriod) : BOOLEAN
+  FUNCTION DSPOverlaps (periods: BAG {1..*} OF DaylightSavingPeriod) : BOOLEAN
     // returns TRUE if any one of the periods overlap //;
 
 
@@ -69,11 +66,12 @@ REFSYSTEM MODEL Time (en) =  !! en = 2-letter code (ISO 639)
       Unit (EXTENDED): NUMERIC [INTERLIS.TIME];
     END TimeZone;
 
-    CLASS BaseTimeZone EXTENDS TimeZone = !! TimeZone without daylight saving
+    CLASS BaseTimeZone EXTENDS INTERLIS.TIMESYSTEMS.TIMEOFDAYSYS =
+                               !! TimeZone without daylight saving
       DiffToUTC: DifferenceToUTC;
     END BaseTimeZone;
 
-    CLASS DaylightSavingTZ EXTENDS TimeZone =
+    CLASS DaylightSavingTZ EXTENDS INTERLIS.TIMESYSTEMS.TIMEOFDAYSYS =
       Periods: BAG {1..*} OF DaylightSavingPeriod;
     MANDATORY CONSTRAINT
       NOT ( DSPOverlaps (Periods) );
