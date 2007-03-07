@@ -22,8 +22,8 @@
     <java classname="antlr.Tool" classpath="${java.class.path}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
-    	<!--  <arg value="-diagnostic"/> -->
-    	<arg value="${src}/ch/interlis/ili2c/parser/interlis22.g"/>
+    	<!-- <arg value="-diagnostic"/> -->
+    	<arg value="${src}/ch/interlis/ili2c/parser/interlis23.g"/>
     </java>
   </target>
 
@@ -73,7 +73,7 @@
     </propertyfile>
 
     <jar jarfile="${projectjar}" manifest="other/manifest">
-	<fileset dir="${build}/classes" excludes="**/Test.class" includes="**/*.class"/>
+	<fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class" includes="**/*.class"/>
     	<fileset dir="${src}" includes="**/*.properties"/>
     	<fileset dir="${src}" includes="**/iom/AliasTable.txt"/>
     	<zipfileset src="lib/antlr.jar"/>
@@ -88,13 +88,14 @@
 	<delete file="${dist}/${ant.project.name}-${buildnr}.zip" quiet="true"/>
     <zip zipfile="${dist}/${ant.project.name}-${buildnr}.zip">
     	<zipfileset dir="." includes="build/jar/ili2c.jar" fullpath="${ant.project.name}-${buildnr}/${ant.project.name}.jar"/>
+    	<zipfileset dir="." includes="src/**/syntax23.txt" fullpath="${ant.project.name}-${buildnr}/doc/syntax23.txt"/>
     	<zipfileset dir="." prefix="${ant.project.name}-${buildnr}">
     		<patternset includes="doc/CHANGELOG.txt"/>
 	    	<patternset includes="doc/LICENSE.*"/>
 		<patternset includes="doc/README.txt"/>
 		<patternset includes="doc/index.html"/>
-		<patternset includes="examples/**/*.ili"/>
-		<patternset includes="examples/**/*.xml"/>
+		<!-- <patternset includes="examples/**/*.ili"/>
+		<patternset includes="examples/**/*.xml"/> -->
 		<patternset includes="standard/**/*.ili"/>
 	</zipfileset>
     </zip>
@@ -110,6 +111,7 @@
   <target depends="init" name="jeditdist">
 	<delete file="${dist}/jeditmacro-${DSTAMP}.zip" quiet="true"/>
     <zip zipfile="${dist}/jeditmacro-${DSTAMP}.zip">
+    	<zipfileset dir="." includes="jedit/interlis.xml" fullpath="jeditmacro-${DSTAMP}/interlis.xml"/>
     	<zipfileset dir="." includes="jedit/readme.txt" fullpath="jeditmacro-${DSTAMP}/readme.txt"/>
     	<zipfileset dir="." includes="jedit/Compile.bsh" fullpath="jeditmacro-${DSTAMP}/Compile.bsh"/>
     </zip>
