@@ -1,0 +1,153 @@
+Transfer = '<?xml version="1.0" encoding="UTF-8" ?>'
+           TAG ( TRANSFER, 'xmlns="http://www.interlis.ch/INTERLIS2.2"' )
+               HeaderSection
+               DataSection
+           ETAG ( TRANSFER ).
+
+HeaderSection = TAG ( HEADERSECTION,
+                      'VERSION="2.2"',
+                      'SENDER=' XML-Value )
+                    Alias
+                    [ Comment ]
+                ETAG ( HEADERSECTION ).
+
+Alias = TAG ( ALIAS )
+            { Entries }
+        ETAG ( ALIAS ).
+
+Entries = TAG ( ENTRIES,
+                'FOR=' XML-Value)
+              { Tagentry | Valentry | Delentry }
+          ETAG ( ENTRIES ).
+
+Tagentry = TAG ( TAGENTRY,
+                 'FROM=' XML-Value, 'TO=' XML-Value )
+           ETAG ( TAGENTRY ).
+
+Valentry = TAG ( VALENTRY,
+                 'ATTR=' XML-Value, 'FROM=' XML-Value, 'TO=' XML-Value )
+           ETAG ( VALENTRY ).
+
+Delentry = TAG ( DELENTRY,
+                 'TAG=' XML-Value )
+           ETAG ( DELENTRY ).
+
+Comment = TAG ( COMMENT )
+              XML-Text
+          ETAG( COMMENT ).
+
+DataSection = TAG ( DATASECTION )
+                { Basket }
+              ETAG ( DATASECTION ).
+
+Basket = TAG (%Model.Topic%,
+               'BID=' XML-ID,
+               'TOPICS=' XML-Value,
+               [ 'KIND=' XML-Value ],
+               [ 'STARTSTATE=' XML-Value ],
+               [ 'ENDSTATE=' XML-Value ] )
+             { Object }
+         ETAG ( %Model.Topic% ).
+
+Object = TAG ( %Model.Topic.Class%,
+               'TID=' XML-ID,
+               [ 'BID=' XML-ID ],
+               [ 'OPERATION= 'XML-Value ] )
+             (* Attribute | Role | ReferenceAttribute *)
+         ETAG ( %Model.Topic.Class% ).
+
+Role = TAG ( %RoleName%,
+         ('REF=' XML-ID | 'EXTREF=' XML-ID 'BID=' XML-ID),
+         [ 'NEXT_TID=' XML-ID ] )
+       ETAG ( %RoleName% ).
+
+RoleStruct = TAG ( %RoleName%,
+               ('REF=' XML-ID | 'EXTREF=' XML-ID 'BID=' XML-ID),
+                ['NEXT_TID=' XML-ID])
+               StructureValue
+             ETAG ( %RoleName% ).
+
+Attribute = [ TAG ( %AttributeName% )
+                AttributeValue
+              ETAG ( %AttributeName% ) ].
+
+AttibuteValue = ( TextValue | EnumValue | NumericValue | StructDecValue |
+                  BasketValue | ClassTypeValue | StructureValue | BagValue |
+                  ListValue | CoordValue | PolylineValue | SurfaceValue).
+
+TextValue = XML-String.
+
+EnumValue = ( EnumElement-Name { '.' EnumElement-Name } ) | 'OTHERS'.
+
+NumericValue = NumericConst.
+
+StructDecValue = StructDec.
+
+BasketValue = TAG ( BASKETVALUE,
+                    'TOPIC=' XML-Value,
+                    'KIND=' XML-Value,
+                    'BID=' XML-ID )
+              ETAG ( BASKETVALUE ).
+
+ClassTypeValue = XML-String.
+
+StructureValue = TAG ( %StructureName% )
+                   (* Attribute *)
+                 ETAG ( %StructureName% ).
+
+BagValue = (* StructureValue *).
+ListValue = (* StructureValue *).
+
+CoordValue = TAG ( COORD ),
+               TAG ( C1 ) NumericConst ETAG ( C1 )
+               [ TAG ( C2 ) NumericConst ETAG ( C2 )
+                 [ TAG ( C3 ) NumericConst ETAG ( C3 ) ]
+               ]
+             ETAG ( COORD ).
+
+PolylineValue = TAG ( POLYLINE )
+                  [ LineAttr ]
+                  SegmentSequence
+                ETAG ( POLYLINE ).
+
+StartSegment = CoordValue.
+
+LineSegment = CoordValue.
+
+ArcSegment = TAG ( ARC )
+               TAG ( C1 ) NumericConst ETAG ( C1 )
+               TAG ( C2 ) NumericConst ETAG ( C2 )
+               [ TAG ( C3 ) NumericConst ETAG ( C3 ) ]
+               TAG ( A1 ) NumericConst ETAG ( A1 )
+               TAG ( A2 ) NumericConst ETAG ( A2 )
+               TAG ( R ) NumericConst ETAG ( R )
+             ETAG ( ARC ).
+
+LineFormSegment = StructureValue.
+
+SegmentSequence = StartSegment { LineSegment
+                                | ArcSegment
+                                | LineFormSegment}.
+
+LineAttr = TAG ( LINEATTR )
+             StructureValue
+           ETAG ( LINEATTR ).
+
+SurfaceValue = TAG ( SURFACE )
+                 OuterBoundary
+                 { InnerBoundary }
+               ETAG ( SURFACE ).
+
+OuterBoundary = Boundary.
+
+InnerBoundary = Boundary.
+
+Boundary = TAG ( BOUNDARY )
+             (* PolylineValue *)
+           ETAG ( BOUNDARY ).
+
+ReferenceAttribute = [ TAG ( %AttributeName%,
+                         ('REF=' XML-ID |
+                          'EXTREF=' XML-ID 'BID=' XML-ID))
+                       ETAG ( %AttributeName% ) ].
+

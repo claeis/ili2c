@@ -1,0 +1,351 @@
+      <ENTRIES FOR="iom04">
+        <TAGENTRY FROM="iom04.errors" TO="iom04.errors"/>
+        <TAGENTRY FROM="iom04.errors.Error" TO="iom04.errors.Error"/>
+        <TAGENTRY FROM="iom04.errors.XmlParseError" TO="iom04.errors.Error"/>
+        <DELENTRY TAG="iom04.errors.XmlParseError.line"/>
+        <DELENTRY TAG="iom04.errors.XmlParseError.column"/>
+        <TAGENTRY FROM="iom04.errors.SemanticError" TO="iom04.errors.Error"/>
+        <DELENTRY TAG="iom04.errors.SemanticError.oid"/>
+        <DELENTRY TAG="iom04.errors.SemanticError.bid"/>
+        <TAGENTRY FROM="iom04.errors.SemanticError" TO="iom04.errors.SemanticError"/>
+        <TAGENTRY FROM="iom04.errors.XmlParseError" TO="iom04.errors.XmlParseError"/>
+        <TAGENTRY FROM="iom04.metamodel" TO="iom04.metamodel"/>
+        <TAGENTRY FROM="iom04.metamodel.Cardinality" TO="iom04.metamodel.Cardinality"/>
+        <TAGENTRY FROM="iom04.metamodel.CombiningIterator" TO="iom04.metamodel.CombiningIterator"/>
+        <TAGENTRY FROM="iom04.metamodel.ComposedUnit_Composed" TO="iom04.metamodel.ComposedUnit_Composed"/>
+        <TAGENTRY FROM="iom04.metamodel.ConditionalExpression_Condition" TO="iom04.metamodel.ConditionalExpression_Condition"/>
+        <TAGENTRY FROM="iom04.metamodel.Contract" TO="iom04.metamodel.Contract"/>
+        <TAGENTRY FROM="iom04.metamodel.DependencyComparator" TO="iom04.metamodel.DependencyComparator"/>
+        <TAGENTRY FROM="iom04.metamodel.ElementAlias" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.UniquenessConstraint" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.UniquenessConstraint.isLocal"/>
+        <TAGENTRY FROM="iom04.metamodel.EnumerationType" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.EnumerationType.isCircular"/>
+        <DELENTRY TAG="iom04.metamodel.EnumerationType.isOrdered"/>
+        <TAGENTRY FROM="iom04.metamodel.ComposedUnit" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.BaseUnit" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.ReferenceSystem" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.ParameterAssignment" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.ClassType" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.ClassType.isStructure"/>
+        <DELENTRY TAG="iom04.metamodel.Unit.docName"/>
+        <DELENTRY TAG="iom04.metamodel.Unit.isAbstract"/>
+        <DELENTRY TAG="iom04.metamodel.Unit.isFinal"/>
+        <TAGENTRY FROM="iom04.metamodel.View" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.PredefinedModel" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.Domain" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.Domain.isAbstract"/>
+        <DELENTRY TAG="iom04.metamodel.Domain.isFinal"/>
+        <DELENTRY TAG="iom04.metamodel.Element.name"/>
+        <TAGENTRY FROM="iom04.metamodel.BasketType" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.BasketType.kind"/>
+        <TAGENTRY FROM="iom04.metamodel.PlausibilityConstraint" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.PlausibilityConstraint.direction"/>
+        <DELENTRY TAG="iom04.metamodel.PlausibilityConstraint.percentage"/>
+        <TAGENTRY FROM="iom04.metamodel.NumericOIDType" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.Axis" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.ExtendedView" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.TransferDescription" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.MetaobjectType" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.SurfaceType" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.NumericallyDerivedUnit" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.AnyOIDType" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.SelectionView" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.RefSystemModel" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.AreaType" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.LineType.maxOverlap"/>
+        <TAGENTRY FROM="iom04.metamodel.TextType" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.TextType.maxLength"/>
+        <DELENTRY TAG="iom04.metamodel.AttributeDef.isFinal"/>
+        <DELENTRY TAG="iom04.metamodel.AttributeDef.isAbstract"/>
+        <TAGENTRY FROM="iom04.metamodel.ReferenceType" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.ReferenceType.isExternal"/>
+        <TAGENTRY FROM="iom04.metamodel.ExpressionSelection" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.RoleDef" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.RoleDef.kind"/>
+        <DELENTRY TAG="iom04.metamodel.RoleDef.isFinal"/>
+        <DELENTRY TAG="iom04.metamodel.RoleDef.isAbstract"/>
+        <DELENTRY TAG="iom04.metamodel.RoleDef.isExtended"/>
+        <DELENTRY TAG="iom04.metamodel.RoleDef.isOrdered"/>
+        <DELENTRY TAG="iom04.metamodel.RoleDef.isExternal"/>
+        <DELENTRY TAG="iom04.metamodel.RoleDef.ili1AttrIdx"/>
+        <TAGENTRY FROM="iom04.metamodel.CoordinateSystem" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.FunctionallyDerivedUnit" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.FunctionallyDerivedUnit.explanation"/>
+        <TAGENTRY FROM="iom04.metamodel.Table" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.Table.isExtended"/>
+        <DELENTRY TAG="iom04.metamodel.Table.isStructure"/>
+        <TAGENTRY FROM="iom04.metamodel.DerivedUnit" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.Topic" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.DataContainer" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.Type.isMandatory"/>
+        <DELENTRY TAG="iom04.metamodel.Type.isAbstract"/>
+        <TAGENTRY FROM="iom04.metamodel.MetaDataUseDef" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.ExtendableContainer.isFinal"/>
+        <DELENTRY TAG="iom04.metamodel.ExtendableContainer.isAbstract"/>
+        <TAGENTRY FROM="iom04.metamodel.Projection" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.TypeModel" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.MandatoryConstraint" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.TextOIDType" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.JoinView" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.SignInstruction" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.Model.filename"/>
+        <DELENTRY TAG="iom04.metamodel.Model.language"/>
+        <TAGENTRY FROM="iom04.metamodel.StructuredUnitType" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.StructuredUnitType.minimum"/>
+        <DELENTRY TAG="iom04.metamodel.StructuredUnitType.maximum"/>
+        <TAGENTRY FROM="iom04.metamodel.PolylineType" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.PolylineType.isDirected"/>
+        <TAGENTRY FROM="iom04.metamodel.FormalArgument" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.MetaObject" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.Sign" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.BaseRestriction" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.NumericType" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.NumericType.minimum"/>
+        <DELENTRY TAG="iom04.metamodel.NumericType.maximum"/>
+        <TAGENTRY FROM="iom04.metamodel.LocalAttribute" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.Graphic" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.TypeAlias" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.FunctionDef" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.FunctionDef.explanation"/>
+        <DELENTRY TAG="iom04.metamodel.NumericalType.isCircular"/>
+        <DELENTRY TAG="iom04.metamodel.NumericalType.rotation"/>
+        <TAGENTRY FROM="iom04.metamodel.AggregationView" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.SignAttribute" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.Selection" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.RuntimeParameterDef" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.SymbologyModel" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.Parameter" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.Parameter.isAbstract"/>
+        <DELENTRY TAG="iom04.metamodel.Parameter.istFinal"/>
+        <TAGENTRY FROM="iom04.metamodel.CoordType" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.CoordType.nullAxis"/>
+        <DELENTRY TAG="iom04.metamodel.CoordType.piHalfAxis"/>
+        <TAGENTRY FROM="iom04.metamodel.ObjectType" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.LineForm" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.LineForm.explanation"/>
+        <TAGENTRY FROM="iom04.metamodel.ExistenceConstraint" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.AssociationDef.isExtended"/>
+        <DELENTRY TAG="iom04.metamodel.AssociationDef.isLightweight"/>
+        <TAGENTRY FROM="iom04.metamodel.CompositionType" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.CompositionType.isOrdered"/>
+        <TAGENTRY FROM="iom04.metamodel.DecompositionView" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.UnionView" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.StructuredUnit" TO="iom04.metamodel.ElementAlias"/>
+        <DELENTRY TAG="iom04.metamodel.StructuredUnit.isContinuous"/>
+        <TAGENTRY FROM="iom04.metamodel.DataModel" TO="iom04.metamodel.ElementAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.Enumeration" TO="iom04.metamodel.Enumeration"/>
+        <TAGENTRY FROM="iom04.metamodel.Enumeration_Element" TO="iom04.metamodel.Enumeration_Element"/>
+        <TAGENTRY FROM="iom04.metamodel.ErrorListener" TO="iom04.metamodel.ErrorListener"/>
+        <TAGENTRY FROM="iom04.metamodel.ErrorListener_ErrorEvent" TO="iom04.metamodel.ErrorListener_ErrorEvent"/>
+        <TAGENTRY FROM="iom04.metamodel.ErrorMessages" TO="iom04.metamodel.ErrorMessages"/>
+        <TAGENTRY FROM="iom04.metamodel.MetadataMapping" TO="iom04.metamodel.MetadataMapping"/>
+        <TAGENTRY FROM="iom04.metamodel.NameSpace" TO="iom04.metamodel.NameSpace"/>
+        <TAGENTRY FROM="iom04.metamodel.NumericallyDerivedUnit_Factor" TO="iom04.metamodel.NumericallyDerivedUnit_Factor"/>
+        <TAGENTRY FROM="iom04.metamodel.PrecisionDecimal" TO="iom04.metamodel.PrecisionDecimal"/>
+        <TAGENTRY FROM="iom04.metamodel.Properties" TO="iom04.metamodel.Properties"/>
+        <TAGENTRY FROM="iom04.metamodel.StructuredUnit_Part" TO="iom04.metamodel.StructuredUnit_Part"/>
+        <TAGENTRY FROM="iom04.metamodel.Trace" TO="iom04.metamodel.Trace"/>
+        <TAGENTRY FROM="iom04.metamodel.Viewable_TransferElement" TO="iom04.metamodel.Viewable_TransferElement"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationPath" TO="iom04.metamodel.AssociationPath"/>
+        <TAGENTRY FROM="iom04.metamodel.ConditionalExpression" TO="iom04.metamodel.ConditionalExpression"/>
+        <TAGENTRY FROM="iom04.metamodel.FunctionCall" TO="iom04.metamodel.FunctionCall"/>
+        <TAGENTRY FROM="iom04.metamodel.ObjectPath" TO="iom04.metamodel.ObjectPath"/>
+        <TAGENTRY FROM="iom04.metamodel.PathElAbstractClassRole" TO="iom04.metamodel.PathElAbstractClassRole"/>
+        <TAGENTRY FROM="iom04.metamodel.PathElAssocRole" TO="iom04.metamodel.PathElAssocRole"/>
+        <TAGENTRY FROM="iom04.metamodel.PathElBase" TO="iom04.metamodel.PathElBase"/>
+        <TAGENTRY FROM="iom04.metamodel.PathElParent" TO="iom04.metamodel.PathElParent"/>
+        <TAGENTRY FROM="iom04.metamodel.PathElRefAttr" TO="iom04.metamodel.PathElRefAttr"/>
+        <TAGENTRY FROM="iom04.metamodel.PathElThis" TO="iom04.metamodel.PathElThis"/>
+        <TAGENTRY FROM="iom04.metamodel.RefSystemRef_CoordDomain" TO="iom04.metamodel.RefSystemRef_CoordDomain"/>
+        <TAGENTRY FROM="iom04.metamodel.RefSystemRef_CoordDomainAxis" TO="iom04.metamodel.RefSystemRef_CoordDomainAxis"/>
+        <TAGENTRY FROM="iom04.metamodel.RefSystemRef_CoordSystem" TO="iom04.metamodel.RefSystemRef_CoordSystem"/>
+        <TAGENTRY FROM="iom04.metamodel.RefSystemRef_CoordSystemAxis" TO="iom04.metamodel.RefSystemRef_CoordSystemAxis"/>
+        <TAGENTRY FROM="iom04.metamodel.RuntimeParameterValue" TO="iom04.metamodel.RuntimeParameterValue"/>
+        <TAGENTRY FROM="iom04.metamodel.ThisArea" TO="iom04.metamodel.ThisArea"/>
+        <TAGENTRY FROM="iom04.metamodel.ViewableAggregate" TO="iom04.metamodel.ViewableAggregate"/>
+        <TAGENTRY FROM="iom04.metamodel.ViewableAlias" TO="iom04.metamodel.ViewableAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.EnumerationElement" TO="iom04.metamodel.EnumerationElement"/>
+        <TAGENTRY FROM="iom04.metamodel.ParentElementSubEnumeration" TO="iom04.metamodel.ParentElementSubEnumeration"/>
+        <TAGENTRY FROM="iom04.metamodel.AggregationRef" TO="iom04.metamodel.AggregationRef"/>
+        <TAGENTRY FROM="iom04.metamodel.AttributeRef" TO="iom04.metamodel.AttributeRef"/>
+        <TAGENTRY FROM="iom04.metamodel.AxisAttributeRef" TO="iom04.metamodel.AxisAttributeRef"/>
+        <TAGENTRY FROM="iom04.metamodel.Constant_Numeric" TO="iom04.metamodel.Constant_Numeric"/>
+        <TAGENTRY FROM="iom04.metamodel.Constant_ReferenceToMetaObject" TO="iom04.metamodel.Constant_ReferenceToMetaObject"/>
+        <TAGENTRY FROM="iom04.metamodel.Constant_Structured" TO="iom04.metamodel.Constant_Structured"/>
+        <TAGENTRY FROM="iom04.metamodel.Constant_Text" TO="iom04.metamodel.Constant_Text"/>
+        <TAGENTRY FROM="iom04.metamodel.Constant_Undefined" TO="iom04.metamodel.Constant_Undefined"/>
+        <TAGENTRY FROM="iom04.metamodel.Expression_Binary" TO="iom04.metamodel.Expression_Binary"/>
+        <TAGENTRY FROM="iom04.metamodel.Expression_Multi" TO="iom04.metamodel.Expression_Multi"/>
+        <TAGENTRY FROM="iom04.metamodel.Expression_Unary" TO="iom04.metamodel.Expression_Unary"/>
+        <TAGENTRY FROM="iom04.metamodel.StructAttributeRef" TO="iom04.metamodel.StructAttributeRef"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef144" TO="iom04.metamodel.AssociationDef144"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef496" TO="iom04.metamodel.AssociationDef496"/>
+        <TAGENTRY FROM="iom04.metamodel.Constant_Enumeration" TO="iom04.metamodel.Constant_Enumeration"/>
+        <TAGENTRY FROM="iom04.metamodel.Constant_EnumerationRange" TO="iom04.metamodel.Constant_EnumerationRange"/>
+        <TAGENTRY FROM="iom04.metamodel.DataContainer" TO="iom04.metamodel.DataContainer"/>
+        <TAGENTRY FROM="iom04.metamodel.Domain" TO="iom04.metamodel.Domain"/>
+        <TAGENTRY FROM="iom04.metamodel.FormalArgument" TO="iom04.metamodel.FormalArgument"/>
+        <TAGENTRY FROM="iom04.metamodel.FunctionDef" TO="iom04.metamodel.FunctionDef"/>
+        <TAGENTRY FROM="iom04.metamodel.LineForm" TO="iom04.metamodel.LineForm"/>
+        <TAGENTRY FROM="iom04.metamodel.MetaObject" TO="iom04.metamodel.MetaObject"/>
+        <TAGENTRY FROM="iom04.metamodel.ReferenceSystem" TO="iom04.metamodel.MetaObject"/>
+        <TAGENTRY FROM="iom04.metamodel.CoordinateSystem" TO="iom04.metamodel.MetaObject"/>
+        <TAGENTRY FROM="iom04.metamodel.Axis" TO="iom04.metamodel.MetaObject"/>
+        <TAGENTRY FROM="iom04.metamodel.Sign" TO="iom04.metamodel.MetaObject"/>
+        <TAGENTRY FROM="iom04.metamodel.Parameter" TO="iom04.metamodel.Parameter"/>
+        <TAGENTRY FROM="iom04.metamodel.ParameterAssignment" TO="iom04.metamodel.ParameterAssignment"/>
+        <TAGENTRY FROM="iom04.metamodel.RoleDef" TO="iom04.metamodel.RoleDef"/>
+        <TAGENTRY FROM="iom04.metamodel.RuntimeParameterDef" TO="iom04.metamodel.RuntimeParameterDef"/>
+        <TAGENTRY FROM="iom04.metamodel.Selection" TO="iom04.metamodel.Selection"/>
+        <TAGENTRY FROM="iom04.metamodel.BaseRestriction" TO="iom04.metamodel.Selection"/>
+        <TAGENTRY FROM="iom04.metamodel.ExpressionSelection" TO="iom04.metamodel.Selection"/>
+        <TAGENTRY FROM="iom04.metamodel.SignInstruction" TO="iom04.metamodel.SignInstruction"/>
+        <TAGENTRY FROM="iom04.metamodel.TransferDescription" TO="iom04.metamodel.TransferDescription"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef133" TO="iom04.metamodel.AssociationDef133"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef16" TO="iom04.metamodel.AssociationDef16"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef771" TO="iom04.metamodel.AssociationDef771"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef778" TO="iom04.metamodel.AssociationDef778"/>
+        <TAGENTRY FROM="iom04.metamodel.ContainerElements" TO="iom04.metamodel.ContainerElements"/>
+        <TAGENTRY FROM="iom04.metamodel.Axis" TO="iom04.metamodel.Axis"/>
+        <TAGENTRY FROM="iom04.metamodel.BaseRestriction" TO="iom04.metamodel.BaseRestriction"/>
+        <TAGENTRY FROM="iom04.metamodel.BaseUnit" TO="iom04.metamodel.BaseUnit"/>
+        <TAGENTRY FROM="iom04.metamodel.BasketType" TO="iom04.metamodel.BasketType"/>
+        <TAGENTRY FROM="iom04.metamodel.ClassType" TO="iom04.metamodel.ClassType"/>
+        <TAGENTRY FROM="iom04.metamodel.ComposedUnit" TO="iom04.metamodel.ComposedUnit"/>
+        <TAGENTRY FROM="iom04.metamodel.CompositionType" TO="iom04.metamodel.CompositionType"/>
+        <TAGENTRY FROM="iom04.metamodel.CoordinateSystem" TO="iom04.metamodel.CoordinateSystem"/>
+        <TAGENTRY FROM="iom04.metamodel.DerivedUnit" TO="iom04.metamodel.DerivedUnit"/>
+        <TAGENTRY FROM="iom04.metamodel.NumericallyDerivedUnit" TO="iom04.metamodel.DerivedUnit"/>
+        <TAGENTRY FROM="iom04.metamodel.FunctionallyDerivedUnit" TO="iom04.metamodel.DerivedUnit"/>
+        <DELENTRY TAG="iom04.metamodel.FunctionallyDerivedUnit.explanation"/>
+        <TAGENTRY FROM="iom04.metamodel.ExistenceConstraint" TO="iom04.metamodel.ExistenceConstraint"/>
+        <TAGENTRY FROM="iom04.metamodel.ExpressionSelection" TO="iom04.metamodel.ExpressionSelection"/>
+        <TAGENTRY FROM="iom04.metamodel.Graphic" TO="iom04.metamodel.Graphic"/>
+        <TAGENTRY FROM="iom04.metamodel.LocalAttribute" TO="iom04.metamodel.LocalAttribute"/>
+        <TAGENTRY FROM="iom04.metamodel.MandatoryConstraint" TO="iom04.metamodel.MandatoryConstraint"/>
+        <TAGENTRY FROM="iom04.metamodel.PlausibilityConstraint" TO="iom04.metamodel.MandatoryConstraint"/>
+        <DELENTRY TAG="iom04.metamodel.PlausibilityConstraint.direction"/>
+        <DELENTRY TAG="iom04.metamodel.PlausibilityConstraint.percentage"/>
+        <TAGENTRY FROM="iom04.metamodel.MetaDataUseDef" TO="iom04.metamodel.MetaDataUseDef"/>
+        <TAGENTRY FROM="iom04.metamodel.MetaobjectType" TO="iom04.metamodel.MetaobjectType"/>
+        <TAGENTRY FROM="iom04.metamodel.ObjectType" TO="iom04.metamodel.ObjectType"/>
+        <TAGENTRY FROM="iom04.metamodel.ReferenceSystem" TO="iom04.metamodel.ReferenceSystem"/>
+        <TAGENTRY FROM="iom04.metamodel.ReferenceType" TO="iom04.metamodel.ReferenceType"/>
+        <TAGENTRY FROM="iom04.metamodel.Sign" TO="iom04.metamodel.Sign"/>
+        <TAGENTRY FROM="iom04.metamodel.SignAttribute" TO="iom04.metamodel.SignAttribute"/>
+        <TAGENTRY FROM="iom04.metamodel.StructuredUnit" TO="iom04.metamodel.StructuredUnit"/>
+        <TAGENTRY FROM="iom04.metamodel.TypeAlias" TO="iom04.metamodel.TypeAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.UniquenessConstraint" TO="iom04.metamodel.UniquenessConstraint"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef109" TO="iom04.metamodel.AssociationDef109"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef166" TO="iom04.metamodel.AssociationDef166"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef173" TO="iom04.metamodel.AssociationDef173"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef221" TO="iom04.metamodel.AssociationDef221"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef243" TO="iom04.metamodel.AssociationDef243"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef266" TO="iom04.metamodel.AssociationDef266"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef406" TO="iom04.metamodel.AssociationDef406"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef413" TO="iom04.metamodel.AssociationDef413"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef420" TO="iom04.metamodel.AssociationDef420"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef489" TO="iom04.metamodel.AssociationDef489"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef622" TO="iom04.metamodel.AssociationDef622"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef651" TO="iom04.metamodel.AssociationDef651"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef658" TO="iom04.metamodel.AssociationDef658"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef680" TO="iom04.metamodel.AssociationDef680"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef695" TO="iom04.metamodel.AssociationDef695"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef703" TO="iom04.metamodel.AssociationDef703"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef9" TO="iom04.metamodel.AssociationDef9"/>
+        <TAGENTRY FROM="iom04.metamodel.CardinalityRoleDef" TO="iom04.metamodel.CardinalityRoleDef"/>
+        <TAGENTRY FROM="iom04.metamodel.DomainDefType" TO="iom04.metamodel.DomainDefType"/>
+        <TAGENTRY FROM="iom04.metamodel.ExtendedByBaseAttributeDef" TO="iom04.metamodel.ExtendedByBaseAttributeDef"/>
+        <TAGENTRY FROM="iom04.metamodel.ExtendedByBaseContainer" TO="iom04.metamodel.ExtendedByBaseContainer"/>
+        <TAGENTRY FROM="iom04.metamodel.ExtendedByBaseDomain" TO="iom04.metamodel.ExtendedByBaseDomain"/>
+        <TAGENTRY FROM="iom04.metamodel.ExtendedByBaseParameter" TO="iom04.metamodel.ExtendedByBaseParameter"/>
+        <TAGENTRY FROM="iom04.metamodel.ExtendedByBaseType" TO="iom04.metamodel.ExtendedByBaseType"/>
+        <TAGENTRY FROM="iom04.metamodel.ParameterType" TO="iom04.metamodel.ParameterType"/>
+        <TAGENTRY FROM="iom04.metamodel.ReferredDomainRefSystemRef" TO="iom04.metamodel.ReferredDomainRefSystemRef"/>
+        <TAGENTRY FROM="iom04.metamodel.RefSystemRef_AxisReferredDomain" TO="iom04.metamodel.RefSystemRef_AxisReferredDomain"/>
+        <TAGENTRY FROM="iom04.metamodel.refSystemRef_AxisSystem" TO="iom04.metamodel.refSystemRef_AxisSystem"/>
+        <TAGENTRY FROM="iom04.metamodel.RefSystemRefSystem" TO="iom04.metamodel.RefSystemRefSystem"/>
+        <TAGENTRY FROM="iom04.metamodel.RoleDef2RoleDef" TO="iom04.metamodel.RoleDef2RoleDef"/>
+        <TAGENTRY FROM="iom04.metamodel.RoleDefDerivedFrom" TO="iom04.metamodel.RoleDefDerivedFrom"/>
+        <TAGENTRY FROM="iom04.metamodel.TransferDescriptionBasketname2boid" TO="iom04.metamodel.TransferDescriptionBasketname2boid"/>
+        <TAGENTRY FROM="iom04.metamodel.TransferDescriptionMetaDataBaskets" TO="iom04.metamodel.TransferDescriptionMetaDataBaskets"/>
+        <TAGENTRY FROM="iom04.metamodel.TypedAttributeType" TO="iom04.metamodel.TypedAttributeType"/>
+        <TAGENTRY FROM="iom04.metamodel.typeFormalArgument" TO="iom04.metamodel.typeFormalArgument"/>
+        <TAGENTRY FROM="iom04.metamodel.AnyOIDType" TO="iom04.metamodel.AnyOIDType"/>
+        <TAGENTRY FROM="iom04.metamodel.CoordType" TO="iom04.metamodel.CoordType"/>
+        <TAGENTRY FROM="iom04.metamodel.DataModel" TO="iom04.metamodel.DataModel"/>
+        <TAGENTRY FROM="iom04.metamodel.PredefinedModel" TO="iom04.metamodel.DataModel"/>
+        <TAGENTRY FROM="iom04.metamodel.EnumerationType" TO="iom04.metamodel.EnumerationType"/>
+        <TAGENTRY FROM="iom04.metamodel.FunctionallyDerivedUnit" TO="iom04.metamodel.FunctionallyDerivedUnit"/>
+        <TAGENTRY FROM="iom04.metamodel.NumericallyDerivedUnit" TO="iom04.metamodel.NumericallyDerivedUnit"/>
+        <TAGENTRY FROM="iom04.metamodel.NumericOIDType" TO="iom04.metamodel.NumericOIDType"/>
+        <TAGENTRY FROM="iom04.metamodel.PlausibilityConstraint" TO="iom04.metamodel.PlausibilityConstraint"/>
+        <TAGENTRY FROM="iom04.metamodel.PolylineType" TO="iom04.metamodel.PolylineType"/>
+        <TAGENTRY FROM="iom04.metamodel.RefSystemModel" TO="iom04.metamodel.RefSystemModel"/>
+        <TAGENTRY FROM="iom04.metamodel.SymbologyModel" TO="iom04.metamodel.SymbologyModel"/>
+        <TAGENTRY FROM="iom04.metamodel.TextOIDType" TO="iom04.metamodel.TextOIDType"/>
+        <TAGENTRY FROM="iom04.metamodel.TextType" TO="iom04.metamodel.TextType"/>
+        <TAGENTRY FROM="iom04.metamodel.Topic" TO="iom04.metamodel.Topic"/>
+        <TAGENTRY FROM="iom04.metamodel.TypeModel" TO="iom04.metamodel.TypeModel"/>
+        <TAGENTRY FROM="iom04.metamodel.View" TO="iom04.metamodel.View"/>
+        <TAGENTRY FROM="iom04.metamodel.JoinView" TO="iom04.metamodel.View"/>
+        <TAGENTRY FROM="iom04.metamodel.SelectionView" TO="iom04.metamodel.View"/>
+        <TAGENTRY FROM="iom04.metamodel.DecompositionView" TO="iom04.metamodel.View"/>
+        <TAGENTRY FROM="iom04.metamodel.ExtendedView" TO="iom04.metamodel.View"/>
+        <TAGENTRY FROM="iom04.metamodel.UnionView" TO="iom04.metamodel.View"/>
+        <TAGENTRY FROM="iom04.metamodel.Projection" TO="iom04.metamodel.View"/>
+        <TAGENTRY FROM="iom04.metamodel.AggregationView" TO="iom04.metamodel.View"/>
+        <TAGENTRY FROM="iom04.metamodel.AliasingTypeAlias" TO="iom04.metamodel.AliasingTypeAlias"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef15" TO="iom04.metamodel.AssociationDef15"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef213" TO="iom04.metamodel.AssociationDef213"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef34" TO="iom04.metamodel.AssociationDef34"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef341" TO="iom04.metamodel.AssociationDef341"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef6" TO="iom04.metamodel.AssociationDef6"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef7" TO="iom04.metamodel.AssociationDef7"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef93" TO="iom04.metamodel.AssociationDef93"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef99" TO="iom04.metamodel.AssociationDef99"/>
+        <TAGENTRY FROM="iom04.metamodel.ClassTypeRestrictedTo" TO="iom04.metamodel.ClassTypeRestrictedTo"/>
+        <TAGENTRY FROM="iom04.metamodel.CompositionTypeCardinality" TO="iom04.metamodel.CompositionTypeCardinality"/>
+        <TAGENTRY FROM="iom04.metamodel.ImportedByImports" TO="iom04.metamodel.ImportedByImports"/>
+        <TAGENTRY FROM="iom04.metamodel.LineTypeControlPointDomain" TO="iom04.metamodel.LineTypeControlPointDomain"/>
+        <TAGENTRY FROM="iom04.metamodel.LineTypeLineForm" TO="iom04.metamodel.LineTypeLineForm"/>
+        <TAGENTRY FROM="iom04.metamodel.LocalAttributeBasePath" TO="iom04.metamodel.LocalAttributeBasePath"/>
+        <TAGENTRY FROM="iom04.metamodel.ModelContracts" TO="iom04.metamodel.ModelContracts"/>
+        <TAGENTRY FROM="iom04.metamodel.ReferredObjectType" TO="iom04.metamodel.ReferredObjectType"/>
+        <TAGENTRY FROM="iom04.metamodel.ViewableAttributesAndRoles" TO="iom04.metamodel.ViewableAttributesAndRoles"/>
+        <TAGENTRY FROM="iom04.metamodel.AggregationView" TO="iom04.metamodel.AggregationView"/>
+        <TAGENTRY FROM="iom04.metamodel.AreaType" TO="iom04.metamodel.AreaType"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef" TO="iom04.metamodel.AssociationDef"/>
+        <TAGENTRY FROM="iom04.metamodel.DecompositionView" TO="iom04.metamodel.DecompositionView"/>
+        <TAGENTRY FROM="iom04.metamodel.ExtendedView" TO="iom04.metamodel.ExtendedView"/>
+        <TAGENTRY FROM="iom04.metamodel.JoinView" TO="iom04.metamodel.JoinView"/>
+        <TAGENTRY FROM="iom04.metamodel.NumericType" TO="iom04.metamodel.NumericType"/>
+        <TAGENTRY FROM="iom04.metamodel.PredefinedModel" TO="iom04.metamodel.PredefinedModel"/>
+        <TAGENTRY FROM="iom04.metamodel.Projection" TO="iom04.metamodel.Projection"/>
+        <TAGENTRY FROM="iom04.metamodel.SelectionView" TO="iom04.metamodel.SelectionView"/>
+        <TAGENTRY FROM="iom04.metamodel.StructuredUnitType" TO="iom04.metamodel.StructuredUnitType"/>
+        <TAGENTRY FROM="iom04.metamodel.SurfaceType" TO="iom04.metamodel.SurfaceType"/>
+        <TAGENTRY FROM="iom04.metamodel.Table" TO="iom04.metamodel.Table"/>
+        <TAGENTRY FROM="iom04.metamodel.UnionView" TO="iom04.metamodel.UnionView"/>
+        <TAGENTRY FROM="iom04.metamodel.AssociationDef179" TO="iom04.metamodel.AssociationDef179"/>
+        <TAGENTRY FROM="iom04.metamodel.BasketTypeTopic" TO="iom04.metamodel.BasketTypeTopic"/>
+        <TAGENTRY FROM="iom04.metamodel.CoordTypeDimension" TO="iom04.metamodel.CoordTypeDimension"/>
+        <TAGENTRY FROM="iom04.metamodel.EnumerationEnumerationType" TO="iom04.metamodel.EnumerationEnumerationType"/>
+        <TAGENTRY FROM="iom04.metamodel.NumericalTypeReferenceSystem" TO="iom04.metamodel.NumericalTypeReferenceSystem"/>
+        <TAGENTRY FROM="iom04.metamodel.ReferenceTypeReferred" TO="iom04.metamodel.ReferenceTypeReferred"/>
+        <TAGENTRY FROM="iom04.metamodel.RestrictedToRestrictionOfRoleDef" TO="iom04.metamodel.RestrictedToRestrictionOfRoleDef"/>
+        <TAGENTRY FROM="iom04.metamodel.RestrictionOfRefTypeRestrictedTo" TO="iom04.metamodel.RestrictionOfRefTypeRestrictedTo"/>
+        <TAGENTRY FROM="iom04.metamodel.TargetAssociation" TO="iom04.metamodel.TargetAssociation"/>
+        <TAGENTRY FROM="iom04.metamodel.TargetLightweightAssociation" TO="iom04.metamodel.TargetLightweightAssociation"/>
+        <TAGENTRY FROM="iom04.metamodel.TypeTextOIDType" TO="iom04.metamodel.TypeTextOIDType"/>
+        <TAGENTRY FROM="iom04.metamodel.UnitNumericalType" TO="iom04.metamodel.UnitNumericalType"/>
+        <TAGENTRY FROM="iom04.metamodel.CompositionTypeComponent" TO="iom04.metamodel.CompositionTypeComponent"/>
+        <TAGENTRY FROM="iom04.metamodel.DerivedAssociationDerivedFrom" TO="iom04.metamodel.DerivedAssociationDerivedFrom"/>
+        <TAGENTRY FROM="iom04.metamodel.LineAttributeStructureSurfaceOrAreaType" TO="iom04.metamodel.LineAttributeStructureSurfaceOrAreaType"/>
+        <TAGENTRY FROM="iom04.metamodel.ReferredMetaobjectType" TO="iom04.metamodel.ReferredMetaobjectType"/>
+        <TAGENTRY FROM="iom04.metamodel.RestrictionOfCompTypeRestrictedTo" TO="iom04.metamodel.RestrictionOfCompTypeRestrictedTo"/>
+        <TAGENTRY FROM="iom04.metamodel.SegmentStructureLineForm" TO="iom04.metamodel.SegmentStructureLineForm"/>
+        <TAGENTRY FROM="iom04.metamodel.TypeNumericOIDType" TO="iom04.metamodel.TypeNumericOIDType"/>
+      </ENTRIES>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="bindist" name="ili2c">
+
+  <!-- set global properties for this build -->
+  <property name="src" value="${basedir}/src"/>
+  <property name="build" value="${basedir}/build"/>
+  <property name="dist" value="${basedir}/dist"/>
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <property name="projectjar" value="${build}/jar/${ant.project.name}.jar"/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build}/jar"/>
+    <mkdir dir="${dist}"/>
+  </target>
+
+  <target depends="init" name="genparser">
+    <mkdir dir="${build}/src/ch/interlis/ili2c/parser"/>
+    <!-- <antlr      target="${src}/ch/interlis/parser/interlis21.g"      outputdirectory="${build}/src/ch/interlis/parser"     /> -->
+    <java classname="antlr.Tool" classpath="${java.class.path}" fork="yes">
+    	<arg value="-o"/>
+        <arg value="${build}/src/ch/interlis/ili2c/parser"/>
+    	<!--  <arg value="-diagnostic"/> -->
+    	<arg value="${src}/ch/interlis/ili2c/parser/interlis22.g"/>
+    </java>
+  </target>
+
+  <target depends="init" name="genmodelscan">
+    <mkdir dir="${build}/src/ch/interlis/ili2c/parser"/>
+    <!-- <antlr      target="${src}/ch/interlis/parser/interlis21.g"      outputdirectory="${build}/src/ch/interlis/parser"     /> -->
+    <java classname="antlr.Tool" classpath="${java.class.path}" fork="yes">
+    	<arg value="-o"/>
+        <arg value="${build}/src/ch/interlis/ili2c/parser"/>
+    	<!--  <arg value="-diagnostic"/> -->
+    	<arg value="${src}/ch/interlis/ili2c/parser/modelscan.g"/>
+    </java>
+  </target>
+
+  <target depends="init,genparser,genmodelscan" name="compile">
+    <!-- Compile the java code from ${src} into ${build}/classes -->
+    <mkdir dir="${build}/classes"/>
+    <javac destdir="${build}/classes" includes="**/*.java" debug="on">
+      <classpath>
+        <!-- <pathelement location="src-hd53/classes"/> -->
+        <pathelement location="lib/antlr.jar"/>
+        <pathelement location="lib/xerces.jar"/>
+        <pathelement location="lib/ehibasics.jar"/>
+      </classpath>
+    	<src path="${src}" />
+    	<src path="${build}/src"/>
+    </javac>
+
+
+  </target>
+
+
+  <target depends="init" name="javadocs">
+    <mkdir dir="${build}/javadoc"/>
+    <javadoc Public="true" Windowtitle="INTERLIS Compiler" destdir="${build}/javadoc" packagenames="ch.interlis.ili2c,ch.interlis.ili2c.metamodel,ch.interlis.ili2c.config">
+    	<sourcepath path="${src}"/>
+	</javadoc>
+  </target>
+
+  <target depends="srcdist,bindist" name="dist"/>
+
+  <target depends="init,compile" name="jar">
+
+    <propertyfile file="${src}/ch/interlis/ili2c/Version.properties">
+	<!-- <entry  key="versionMicro" type="int" value="1" operation="+"/> -->
+	<entry  key="versionDate" type="date" value="now" pattern="yyyyMMdd"/>
+    </propertyfile>
+
+    <jar jarfile="${projectjar}" manifest="other/manifest">
+	<fileset dir="${build}/classes" excludes="**/Test.class" includes="**/*.class"/>
+    	<fileset dir="${src}" includes="**/*.properties"/>
+    	<fileset dir="${src}" includes="**/iom/AliasTable.txt"/>
+    	<zipfileset src="lib/antlr.jar"/>
+    	<zipfileset src="lib/xerces.jar"/>
+    	<zipfileset src="lib/xmlParserAPIs.jar"/>
+    	<zipfileset src="lib/ehibasics.jar"/>
+    </jar>
+  </target>
+  <target depends="init" name="bindist">
+    <property file="${src}/ch/interlis/ili2c/Version.properties" prefix="buildnr."/>
+    <property name="buildnr" value="${buildnr.versionMajor}.${buildnr.versionMinor}.${buildnr.versionMicro}"/>
+	<delete file="${dist}/${ant.project.name}-${buildnr}.zip" quiet="true"/>
+    <zip zipfile="${dist}/${ant.project.name}-${buildnr}.zip">
+    	<zipfileset dir="." includes="build/jar/ili2c.jar" fullpath="${ant.project.name}-${buildnr}/${ant.project.name}.jar"/>
+    	<zipfileset dir="." prefix="${ant.project.name}-${buildnr}">
+    		<patternset includes="doc/CHANGELOG.txt"/>
+	    	<patternset includes="doc/LICENSE.*"/>
+		<patternset includes="doc/README.txt"/>
+		<patternset includes="doc/index.html"/>
+		<patternset includes="examples/**/*.ili"/>
+		<patternset includes="examples/**/*.xml"/>
+		<patternset includes="standard/**/*.ili"/>
+	</zipfileset>
+    </zip>
+  </target>
+  <target depends="init" name="srcdocdist">
+	<delete file="${dist}/${ant.project.name}-${DSTAMP}.srcdoc.zip" quiet="true"/>
+    <zip zipfile="${dist}/${ant.project.name}-${DSTAMP}.srcdoc.zip">
+    	<zipfileset dir="." prefix="${ant.project.name}-${DSTAMP}">
+	    	<patternset includes="build/javadoc/**"/>
+    	</zipfileset>
+    </zip>
+  </target>
+  <target depends="init" name="jeditdist">
+	<delete file="${dist}/jeditmacro-${DSTAMP}.zip" quiet="true"/>
+    <zip zipfile="${dist}/jeditmacro-${DSTAMP}.zip">
+    	<zipfileset dir="." includes="jedit/readme.txt" fullpath="jeditmacro-${DSTAMP}/readme.txt"/>
+    	<zipfileset dir="." includes="jedit/Compile.bsh" fullpath="jeditmacro-${DSTAMP}/Compile.bsh"/>
+    </zip>
+  </target>
+  
+  <target depends="init" name="srcdist">
+    <property file="${src}/ch/interlis/ili2c/Version.properties" prefix="buildnr."/>
+    <property name="buildnr" value="${buildnr.versionMajor}.${buildnr.versionMinor}.${buildnr.versionMicro}"/>
+    <delete file="${dist}/${ant.project.name}-${buildnr}.src.zip" quiet="true"/>
+    <zip zipfile="${dist}/${ant.project.name}-${buildnr}.src.zip">
+    	<zipfileset dir="." prefix="${ant.project.name}-${buildnr}">
+	    	<patternset includes="build.xml"/>
+	    	<patternset includes="lib/*.jar"/>
+	    	<patternset includes="other/manifest"/>
+	    	<patternset includes="src/**/*.java" excludes="**/bak~/*.java"/>
+	    	<patternset includes="src/**/*.properties"/>
+		<patternset includes="src/**/iom/AliasTable.txt"/>
+	    	<patternset includes="${build}/src/**/*.java"/>
+	    	<patternset includes="src/**/*.g"/>
+	    	<patternset includes="doc/LICENSE.*"/>
+		<patternset includes="doc/CHANGELOG.txt"/>
+		<patternset includes="doc/README.txt"/>
+		<patternset includes="doc/README.src.txt"/>
+		<patternset includes="doc/index.html"/>
+		<patternset includes="examples/**/*.ili"/>
+		<patternset includes="examples/**/*.xml"/>
+		<patternset includes="standard/**/*.ili"/>
+    	</zipfileset>
+    </zip>
+  </target>
+
+  <target name="clean">
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+
+  <target depends="init" name="test">
+	<mkdir dir="${build}/tests"/>
+	<delete file="${build}/tests/ok.txt" quiet="true"/>
+	<delete file="${build}/tests/failed.txt" quiet="true"/>
+  	<execon dir="${basedir}" executable="c:\Python21\python.exe">
+		<arg value="ili2tst.py"/>
+		<srcfile/>
+		<arg value="${build}/tests"/>
+		<arg value="${projectjar}"/>
+	    	<fileset dir="${basedir}/tests" includes="**/readme.txt" excludes="**/template/readme.txt"/>
+	</execon>
+  </target>
+
+  <target depends="init" name="copyres">
+
+    <copy toDir="${build}/classes">
+    	<fileset dir="${src}" includes="**/*.properties"/>
+    	<fileset dir="${src}" includes="**/*.gif"/>
+    </copy>
+  </target>
+
+</project>

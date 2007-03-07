@@ -1,0 +1,33 @@
+/*
+ * Compile.bsh - a BeanShell script for compiling INTERLIS models
+ * in jEdit using the Console and ErrorList plugin
+ * Copyright (C) 2002 Claude Eisenhut
+ * ce@eisenhutinformatik.ch
+ *
+ */
+
+import console.Console;
+
+{
+	Buffer b = view.getBuffer();
+	String strName = b.getName();
+	String strPath = b.getPath();
+	//if( !strPath.endsWith(".ili"))
+	//{
+	//	Macros.error(view,"Current file is not an INTERLIS model");
+	//	return;
+	//}
+
+	// build command line
+	String strCmd = new String("java -jar \"C:\\Programme\\INTERLIS\\ili2c\\ili2c.jar\" --without-warnings \"" + strPath + "\"");
+	
+	// save buffer
+	if(!b.isReadOnly()){
+		b.save(view, null);
+	}
+	
+	// run compiler
+        runCommandInConsole(view, "System", strCmd);
+
+}
+
