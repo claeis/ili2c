@@ -1,13 +1,20 @@
-/*****************************************************************************
+/* This file is part of the INTERLIS-Compiler.
+ * For more information, please see <http://www.interlis.ch/>.
  *
- * AttributeDef.java
- * -----------------
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * Copyright (C) 1999 Adasys AG, Kronenstr. 38, 8006 Zurich, Switzerland
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * Revision 0.2  February 1999    Sascha Brawer <sb@adasys.ch>
- *
- *****************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 package ch.interlis.ili2c.metamodel;
 
@@ -32,7 +39,7 @@ public abstract class AttributeDef
   protected boolean       _abstract;
   protected Set           extendedBy = new HashSet(2);
   protected Type          domain;
-
+	private String ili1Explanation=null;
   protected AttributeDef ()
   {
     name = "";
@@ -556,5 +563,16 @@ public abstract class AttributeDef
 
     return true;
   }
+
+	/** get ili explanation. Text in // after Type.
+	 * @return null or ili1-explanation (without surrounding //).
+	 */
+	public String getExplanation() {
+		return ili1Explanation;
+	}
+
+	public void setExplanation(String string) {
+		ili1Explanation = string;
+	}
 
 }
