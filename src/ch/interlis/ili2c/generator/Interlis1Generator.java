@@ -1,3 +1,21 @@
+/* This file is part of the INTERLIS-Compiler.
+ * For more information, please see <http://www.interlis.ch/>.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 package ch.interlis.ili2c.generator;
 
 
@@ -5,6 +23,8 @@ import ch.interlis.ili2c.metamodel.*;
 import java.io.Writer;
 import java.util.*;
 import ch.ehi.basics.io.IndentPrintWriter;
+import ch.ehi.basics.tools.TopoSort;
+import ch.ehi.basics.logging.EhiLogger;
 
 /** generates INTERLIS 1 (ili and fmt)
  * 
@@ -251,6 +271,23 @@ public final class Interlis1Generator
     return false;
   }
 
+  public void printDocumentation(String doc)
+	{
+	if(doc==null)return;
+	if(doc.length()==0)return;
+	String beg="!!* ";
+	// for each line
+	int last=0;
+	int next=doc.indexOf("\n",last);
+	while(next>-1){
+	  String line=doc.substring(last,next);
+	  ipw.println(beg+line);
+	  last=next+1;
+	  next=doc.indexOf("\n",last);
+	}
+	  String line=doc.substring(last);
+	  ipw.println(beg+line);
+	}
 
 
   private void printModel (Model model)
@@ -260,12 +297,40 @@ public final class Interlis1Generator
     if(genFmt){
       ipw.println("MODL "+model.getName ());
     }else{
+		printDocumentation(model.getDocumentation());
+    	if(model.getIssuer()!=null){
+			ipw.println ("!!* @Issuer "+model.getIssuer());
+    	}
+		if(model.getModelVersion()!=null){
+			ipw.println ("!!* @Version "+model.getModelVersion());
+		}
       ipw.print ("MODEL ");
       ipw.println (model.getName ());
       ipw.indent ();
     }
 
-    Iterator iter = model.iterator ();
+	Iterator iter = model.iterator();
+	boolean isFirst=true;
+	while (iter.hasNext ())
+	{
+	  Object obj = iter.next ();
+	  if (obj instanceof Domain)
+	  {
+		Domain domain = (Domain) obj;
+		if(isFirst){
+			ipw.println("DOMAIN");
+			isFirst=false;
+			ipw.indent();
+		}
+		printDomain(domain);
+	  }
+	}
+	if(!isFirst){
+		ipw.unindent();
+		ipw.println("");
+	}
+
+    iter = model.iterator ();
     while (iter.hasNext ())
     {
       Object obj = iter.next ();
@@ -304,6 +369,7 @@ public final class Interlis1Generator
       ipw.println(FMT_CMT); // additional line to improve readability
       ipw.println("TOPI "+topic.getName());
     }else{
+	  printDocumentation(topic.getDocumentation());
       ipw.print ("TOPIC ");
       ipw.print (topic.getName ());
       ipw.println (" =");
@@ -311,13 +377,68 @@ public final class Interlis1Generator
     }
 
 
+	Iterator defi = topic.iterator();
+	boolean isFirst=true;
+	while (defi.hasNext ())
+	{
+	  Object obj = defi.next ();
+	  if (obj instanceof Domain)
+	  {
+		Domain domain = (Domain) obj;
+		if(isFirst){
+			ipw.println("DOMAIN");
+			isFirst=false;
+			ipw.indent();
+		}
+	  	printDomain(domain);
+	  }
+	}
+	if(!isFirst){
+		ipw.unindent();
+		ipw.println("");
+	}
     Class lastPrinted = null;
 
 
-    Iterator iter = topic.getViewables().iterator();
-    while (iter.hasNext ())
+	List tables=topic.getViewables();
+	if(!((Model)topic.getContainer()).getIliVersion().equals(Model.ILI1)){
+		TopoSort sortDefs=new TopoSort();
+		defi = topic.getViewables().iterator();
+		while (defi.hasNext ())
+		{
+		  Object obj = defi.next ();
+		  if (obj instanceof AbstractClassDef)
+		  {
+			AbstractClassDef table = (AbstractClassDef) obj;
+			if (needToPrintTable (table))
+			{
+				sortDefs.add(table);
+
+				Iterator attri = table.getAttributesAndRoles2();
+				while (attri.hasNext ()){
+					ViewableTransferElement roleo = (ViewableTransferElement)attri.next();
+					if (roleo.obj instanceof AttributeDef){
+					}else if(roleo.obj instanceof RoleDef){
+						RoleDef role = (RoleDef) roleo.obj;
+						if(role.getContainer()==table){
+							sortDefs.addcond(role.getDestination(),table);
+						}else if(role.getContainer()!=table){
+						  sortDefs.addcond(role.getDestination(),table);
+						}
+					}
+				}
+			}
+		  }
+		}
+		if(!sortDefs.sort()){
+			throw new IllegalStateException("Cycle in table definitions");
+		}
+		tables=sortDefs.getResult();		
+	}
+    defi = tables.iterator();
+    while (defi.hasNext ())
     {
-      Object obj = iter.next ();
+      Object obj = defi.next ();
       if (obj instanceof AbstractClassDef)
       {
         AbstractClassDef table = (AbstractClassDef) obj;
@@ -390,6 +511,7 @@ public final class Interlis1Generator
       ipw.print("OBJE "+genFmtField(1,1));
       fmtAttrIdx=2;
     }else{
+		printDocumentation(table.getDocumentation());
       ipw.print ("TABLE ");
       ipw.print (table.getName ());
       ipw.println (" =");
@@ -445,7 +567,7 @@ public final class Interlis1Generator
                 ipw.print(" "+genFmtField(fmtAttrIdx,1));
                 fmtAttrIdx++;
               }else{
-                ipw.println(role.getName()+" : ->"+role.getDestination().getName()+";");
+                ipw.println(role.getName()+" : ->"+role.getDestination().getName()+"; !! {1}");
               }
             }else if(role.getContainer()!=table){
               RoleDef oppend = getOppEnd(role);
@@ -454,7 +576,7 @@ public final class Interlis1Generator
                 ipw.print(" "+genFmtField(fmtAttrIdx,1));
                 fmtAttrIdx++;
               }else{
-                ipw.println(oppend.getName()+" : ->"+oppend.getDestination().getName()+";");
+                ipw.println(oppend.getName()+" : ->"+oppend.getDestination().getName()+"; !! "+role.getCardinality().toString());
               }
             }
         }
@@ -564,6 +686,23 @@ public final class Interlis1Generator
   }
 
 
+  private void printDomain(Domain domain)
+  {
+	if(genFmt){
+	}else{
+		printDocumentation(domain.getDocumentation());
+	  ipw.print (domain.getName ());
+	  ipw.print (" = ");
+
+	  String comment = printType (null, domain.getType (),true);
+	  if (comment != null){
+		ipw.print (";  !! ");
+		ipw.println (comment);
+	  }else{
+		ipw.println (';');
+	  }
+	}
+  }
   private void printAttribute (AbstractClassDef forTable, AttributeDef attr)
   {
     /* Do not print abstract attributes. */
@@ -574,10 +713,15 @@ public final class Interlis1Generator
       String comment = printType (forTable, attr.getDomain (),false);
       fmtAttrIdx++;
     }else{
+		printDocumentation(attr.getDocumentation());
       ipw.print (attr.getName ());
-      ipw.print (": ");
+      ipw.print (" : ");
 
       String comment = printType (forTable, attr.getDomain (),false);
+      if(!genFmt && attr.getExplanation()!=null){
+		ipw.print (" ");
+      	printExplanation(attr.getExplanation());
+      }
       if (comment != null){
         ipw.print (";  !! ");
         ipw.println (comment);
@@ -604,10 +748,14 @@ public final class Interlis1Generator
       if (t instanceof TypeAlias)
       {
         Domain aliased = ((TypeAlias) t).getAliasing();
-        if (aliased == null)
-          t = null;
-        else
-          t = aliased.getType ();
+		if(!genFmt){
+			if(!mand && !withoutOptional){
+				ipw.print ("OPTIONAL ");
+			}
+			ipw.print(aliased.getName());
+			return null;
+		}
+        t = aliased.getType ();
       }
     } while (t instanceof TypeAlias);
     if (!mand){
