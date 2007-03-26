@@ -1,13 +1,20 @@
-/*****************************************************************************
+/* This file is part of the INTERLIS-Compiler.
+ * For more information, please see <http://www.interlis.ch/>.
  *
- * Model.java
- * ----------
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * Copyright (C) 1999 Adasys AG, Kronenstr. 38, 8006 Zurich, Switzerland
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * Revision 0.2  February 1999    Sascha Brawer <sb@adasys.ch>
- *
- *****************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 
 package ch.interlis.ili2c.metamodel;
@@ -29,7 +36,11 @@ public abstract class Model extends Importable
   private String issuer=null;
   private String modelVersion=null;
   private String modelVersionExpl=null;
-
+  private String iliVersion=ILI2_3;
+	static public final String ILI1="1";
+	static public final String ILI2_2="2.2";
+	static public final String ILI2_3="2.3";
+	
   protected class ElementDelegate extends AbstractCollection
   {
     public Iterator iterator ()
@@ -446,4 +457,18 @@ public String getModelVersionExpl()
   {
     return filename;
   }
+/**
+ * @return
+ */
+public String getIliVersion() {
+	return iliVersion;
+}
+
+/**
+ * @param string
+ */
+public void setIliVersion(String string) {
+	iliVersion = string;
+}
+
 }
