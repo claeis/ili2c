@@ -21,11 +21,12 @@ import java.util.HashSet;
 
 /**
  * @author ce
- * @version $Revision: 1.2 $ $Date: 2007-03-07 08:36:08 $
+ * @version $Revision: 1.3 $ $Date: 2007-03-29 15:36:02 $
  */
 public class IliModel {
 	private String name=null;
 	private HashSet depv=new HashSet();
+	private double version=0.0;
 
 	public HashSet getDependencies() {
 		return depv;
@@ -38,6 +39,12 @@ public class IliModel {
 	}
 	public void setName(String string) {
 		name = string;
+	}
+	public double getIliVersion() {
+		return version;
+	}
+	public void setIliVersion(double d) {
+		version = d;
 	}
 
 }

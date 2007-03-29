@@ -43,10 +43,26 @@ options
 		EhiLogger.logError(ex);
 	}
   }
+  static public double getIliVersion(java.io.InputStream stream
+    )
+  {
+  	try{
+		Ili2Lexer lexer = new Ili2Lexer (stream);
+		Ili2ModelScan parser = new Ili2ModelScan(lexer);
+		double version=parser.version();
+		return version;
+  	}
+  	catch(Exception ex){
+		// ignore errors
+	}
+	return 0.0;
+  }
 }
 file 
-: ("INTERLIS"       // INTERLIS 2.x
-		| ("TRANSFER" NAME SEMI) // INTERLIS 1
+{double version=0.0;
+}
+: ("INTERLIS" v:DEC  {version=Double.parseDouble(v.getText());}    // INTERLIS 2.x
+		| "TRANSFER" NAME SEMI {version=1.0;} // INTERLIS 1
 	)
 	((("MODEL" n:NAME)
 		{
@@ -55,6 +71,7 @@ file
 			}
 			model=new IliModel();
 			model.setName(n.getText());
+			model.setIliVersion(version);
 			//EhiLogger.debug(n.getText());
 		}
 	| ("TRANSLATION" "OF" trsl:NAME
@@ -91,4 +108,14 @@ file
 	 )
 	)*
 	
+;
+version 
+	returns[double v]
+	{
+	v=0.0;
+	}
+: "INTERLIS" dec:DEC       // INTERLIS 2.x
+	{v= Double.parseDouble(dec.getText());}
+| "TRANSFER" NAME SEMI // INTERLIS 1
+	{v= 1.0;}
 ;

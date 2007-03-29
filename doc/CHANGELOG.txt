@@ -40,6 +40,10 @@ ili2c 3.4.x (2007-03-xx)
 - Bug ili1: Ili1 to Ili2 should define lineattrib structure before its use
 - Bug ili1: Ili1 to Ili2 should define unit m2 before its use
 - ili1: read DATE as INTERLIS.XmlDate
+- ili1 output: sort tables if ili2 model
+- ili1 output: print documentation
+- ili1 output: print explanation
+- ili1 output: print model version/issuer
 
 ili2c 3.3.0 (2007-02-22)
 ----------------------------

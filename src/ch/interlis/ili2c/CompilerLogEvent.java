@@ -21,7 +21,7 @@ import ch.ehi.basics.logging.*;
 
 /**
  * @author ce
- * @version $Revision: 1.1 $ $Date: 2007-03-07 09:02:45 $
+ * @version $Revision: 1.2 $ $Date: 2007-03-29 15:36:02 $
  */
 public class CompilerLogEvent extends StdLogEvent {
 	private int line = 0;
@@ -70,6 +70,16 @@ public class CompilerLogEvent extends StdLogEvent {
 	 */ 
 	static public void logAdaption(String filename,int line,String adaption){
 		EhiLogger.getInstance().logEvent(new CompilerLogEvent(filename,line,LogEvent.ADAPTION,adaption,null,getCallerOrigin()));
+	}
+	private static boolean passWarnings=true;
+	public static void enableWarnings(boolean val)
+	{
+		passWarnings=val;	
+	}
+	static public void logWarning(String filename,int line,String adaption){
+		if(passWarnings){
+			EhiLogger.getInstance().logEvent(new CompilerLogEvent(filename,line,LogEvent.ADAPTION,adaption,null,getCallerOrigin()));
+		}
 	}
 	/** gets the origin of a call to logError() functions.
 	 */

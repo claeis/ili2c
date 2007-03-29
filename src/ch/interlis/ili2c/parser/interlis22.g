@@ -2,10 +2,12 @@ header
 {
 	package ch.interlis.ili2c.parser;
 	import ch.interlis.ili2c.metamodel.*;
+	import ch.interlis.ili2c.CompilerLogEvent;
 	import java.util.*;
+	import ch.ehi.basics.logging.EhiLogger;
 }
 
-class Ili2Parser extends Parser;
+class Ili22Parser extends Parser;
 
 options
 {
@@ -19,7 +21,7 @@ options
   protected Table predefinedScalSystemClass;
   protected Table predefinedCoordSystemClass;
   protected TransferDescription td;
-  private Ili2Lexer lexer;
+  private Ili22Lexer lexer;
   private Map ili1TableRefAttrs;
   private boolean checkMetaObjs;
   /** ensure uniqueness of generate role names
@@ -36,10 +38,9 @@ options
       @return false if there have been any fatal errors which would lead
               this TransferDescription in an inconsistent state.
   */
-  static public boolean parseIliFile (TransferDescription td,
-    String filename,
-    java.io.InputStream stream,
-    ErrorListener listener
+  static public boolean parseIliFile (TransferDescription td
+    ,String filename
+    ,java.io.InputStream stream
     ,boolean checkMetaObjects)
   {
 
@@ -47,23 +48,33 @@ options
 	if ((filename != null) && "".equals (td.getName())){
 		td.setName(filename);
 	}
-      Ili2Lexer lexer = new Ili2Lexer (stream);
+      Ili22Lexer lexer = new Ili22Lexer (stream);
 
-      Ili2Parser parser = new Ili2Parser (lexer);
+      Ili22Parser parser = new Ili22Parser (lexer);
       parser.checkMetaObjs=checkMetaObjects;
       parser.lexer=lexer;
       parser.setFilename (filename);
-      parser.setErrorListener (listener);
       return parser.interlisDescription (td);
-    }catch(antlr.TokenStreamRecognitionException ex){
-      listener.error (new ErrorListener.ErrorEvent (ex, filename, ex.recog.getLine(),
-        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+    }catch(antlr.RecognitionException ex){
+      //listener.error (new ErrorListener.ErrorEvent (ex, filename, ex.recog.getLine(),
+      //  ErrorListener.ErrorEvent.SEVERITY_ERROR));
+      int line=ex.getLine();
+      CompilerLogEvent.logError(filename,line,ex.getLocalizedMessage());
       return false;
-   
+    }catch(antlr.TokenStreamRecognitionException ex){
+    	if(ex.recog instanceof antlr.NoViableAltForCharException){
+		antlr.NoViableAltForCharException ex2=(antlr.NoViableAltForCharException)ex.recog;
+		String msg="unexpected char: "+ex2.foundChar+" (0x"+Integer.toHexString(ex2.foundChar).toUpperCase()+")";
+		CompilerLogEvent.logError(filename,ex2.getLine(),msg);
+	}else{
+		CompilerLogEvent.logError(filename,ex.recog.getLine(),ex.getLocalizedMessage());
+	}
+      return false;
+    } catch (antlr.ANTLRError ex) {
+      EhiLogger.traceState(filename+": "+ex);
+      return false;
     } catch (Exception ex) {
-		ex.printStackTrace(Trace.getTraceStream());
-      listener.error (new ErrorListener.ErrorEvent (ex, filename, 0,
-        ErrorListener.ErrorEvent.SEVERITY_ERROR));
+      CompilerLogEvent.logError(filename,0,ex);
       return false;
     }
   }
@@ -241,124 +252,66 @@ options
         }
                  return resolveDomainRef(scope,nams,lin);
 	}
-  /* By default, ANTLR calls System.exit() when the parser
-     is in an irrecoverable state. This is not acceptable
-     for many applications. Since large parts of the parser
-     code catch for thrown Exception objects (which makes
-     sense because the semantic layer throws RuntimeExceptions
-     fairly often, due to the restrictions of the Collection
-     framework), it is easiest to define a ParserPanic Error
-     which is not an Exception. However, it is really important
-     that this somewhat quick-and-dirty thing is not visible to
-     the outside; be sure to catch ParserPanic in all public
-     methods of the parser.
-  */
-  private static class ParserPanic extends java.lang.Error {
-    public ParserPanic() {
-    }
-  }
-
-  protected ErrorListener errorListener = null;
-
-  public void setErrorListener (ErrorListener listener)
-  {
-    errorListener = listener;
-  }
-
 
   public void reportError (String message)
   {
-    errorListener.error (new ErrorListener.ErrorEvent (
-      message,
-      getFilename(),
-      /* line */ 0,
-      ErrorListener.ErrorEvent.SEVERITY_ERROR));
+      String filename=getFilename();
+      CompilerLogEvent.logError(filename,0,message);
   }
 
 
   public void reportWarning (String message)
   {
-    errorListener.error (new ErrorListener.ErrorEvent (
-      message,
-      getFilename(),
-      /* line */ 0,
-      ErrorListener.ErrorEvent.SEVERITY_WARNING));
+      String filename=getFilename();
+      CompilerLogEvent.logWarning(filename,0,message);
   }
 
 
   protected void reportError (String message, int lineNumber)
   {
-    if (message == null)
-      reportInternalError(lineNumber);
-
-    errorListener.error (new ErrorListener.ErrorEvent (
-      message,
-      getFilename(),
-      lineNumber,
-      ErrorListener.ErrorEvent.SEVERITY_ERROR));
+      String filename=getFilename();
+      CompilerLogEvent.logError(filename,lineNumber,message);
   }
 
 
   protected void reportWarning (String message, int lineNumber)
   {
-    if (message == null)
-      reportInternalError(lineNumber);
-
-    errorListener.error (new ErrorListener.ErrorEvent (
-      message,
-      getFilename(),
-      lineNumber,
-      ErrorListener.ErrorEvent.SEVERITY_WARNING));
+      String filename=getFilename();
+      CompilerLogEvent.logWarning(filename,lineNumber,message);
   }
 
 
-  protected void reportError (Throwable exception, int lineNumber)
+  protected void reportError (Throwable ex, int lineNumber)
   {
-    exception.printStackTrace(Trace.getTraceStream());
-    String msg = exception.getLocalizedMessage();
-    if (msg == null)
-      reportInternalError (exception, lineNumber);
-
-    errorListener.error (new ErrorListener.ErrorEvent (
-      exception,
-      getFilename(),
-      lineNumber,
-      ErrorListener.ErrorEvent.SEVERITY_ERROR));
+      String filename=getFilename();
+      if(ex instanceof antlr.RecognitionException){
+	      CompilerLogEvent.logError(filename,lineNumber,ex.getLocalizedMessage());
+      }else if(ex instanceof Ili2cSemanticException){
+	      CompilerLogEvent.logError(filename,lineNumber,ex.getLocalizedMessage());
+      }else{
+	      CompilerLogEvent.logError(filename,lineNumber,ex);
+      }
+  }
+  public void reportError (antlr.RecognitionException ex)
+  {
+      String filename=getFilename();
+      int lineNumber=((antlr.RecognitionException)ex).getLine();
+      CompilerLogEvent.logError(filename,lineNumber,ex.getLocalizedMessage());
   }
 
   protected void reportInternalError(int lineNumber)
   {
-  	Throwable e = new Throwable();
-  	e.fillInStackTrace();
-  	e.printStackTrace(Trace.getTraceStream());
-
-    reportError(
-      formatMessage("err_internalCompilerError", /* exception */ ""),
-      lineNumber);
+      String filename=getFilename();
+      CompilerLogEvent.logError(filename,lineNumber,formatMessage("err_internalCompilerError", /* exception */ ""));
   }
 
 
-  protected void reportInternalError (Throwable exception, int lineNumber)
+  protected void reportInternalError (Throwable ex, int lineNumber)
   {
-    String msg;
-
-    msg = exception.getLocalizedMessage();
-    if (msg == null)
-      msg = exception.getClass().getName();
-
-    reportError(
-      formatMessage("err_internalCompilerError", msg),
-      lineNumber);
+      String filename=getFilename();
+      CompilerLogEvent.logError(filename,lineNumber,formatMessage("err_internalCompilerError", ""),ex);
   }
 
-  public void reportError (antlr.RecognitionException ex)
-  {
-    errorListener.error (new ErrorListener.ErrorEvent (
-      ex.getErrorMessage(),
-      getFilename(),
-      ex.getLine(),
-      ErrorListener.ErrorEvent.SEVERITY_ERROR));
-  }
 
   protected String formatMessage (String msg, Object[] args)
   {
@@ -367,6 +320,7 @@ options
         rsrc.getString(msg));
       return mess.format(args);
     } catch (Exception ex) {
+      EhiLogger.logError("Internal compiler error",ex);
       return "Internal compiler error [" + ex.getLocalizedMessage() + "]";
     }
   }
@@ -385,15 +339,9 @@ options
     return formatMessage(msg, new Object[] { arg1, arg2, arg3 });
   }
 
-  /** Overrides ANTLR's panic() method. Instead of calling
-      System.exit(), an instance of a subsclass of RuntimeError
-      is thrown.
-
-     See documentation for inner class ParserPanic.
-  */
   public static void panic ()
   {
-    throw new ParserPanic();
+    throw new antlr.ANTLRError();
   }
 
 
@@ -582,7 +530,13 @@ options
     try {
       result.setName ("LineAttrib" + numIli1LineAttrStructures);
       result.setIdentifiable (false); /* make it a structure */
-      container.add (result);
+      if(container instanceof Topic){
+	      ((Topic)container).addPreLast (result);
+      }else if(container instanceof Model){
+	      ((Model)container).addPreLast (result);
+      }else{
+	      container.add (result);
+      }
     } catch (Exception ex) {
       reportInternalError (ex, lineNumber);
     }
@@ -720,6 +674,10 @@ options
 		return ((ObjectType)proxyType).getRef();
 	}
 }
+
+//
+//  start of grammar
+//
 public interlisDescription [TransferDescription td1]
 	returns [boolean canProceed]
 	{
@@ -739,11 +697,6 @@ public interlisDescription [TransferDescription td1]
 		      reportError (rsrc.getString ("err_notIliDescription"));
 		      canProceed = false;
 		    }
-		    catch [ParserPanic pp]
-		    {
-		      reportError(rsrc.getString("err_abortParsing"));
-		      canProceed = false;
-		    }
 	;
 
 
@@ -758,7 +711,7 @@ protected interlis2Def
 	                    ili.getLine());
 	        panic();
 	      }
-              // set lexer mode to Ili 2.1
+              // set lexer mode to Ili 2
               lexer.isIli1=false;
 	    }
 	SEMI ( modelDef )* EOF
@@ -783,6 +736,7 @@ protected modelDef
 				try {
 				 md.setName(n1.getText());
                                   md.setFileName(getFilename());
+				  md.setIliVersion(Model.ILI2_2);
 				 td.add(md);
 				} catch (Exception ex) {
 				 reportError(ex, n1.getLine());
@@ -1449,16 +1403,18 @@ protected restrictedClassOrAssRef[Container scope]
     	ref=classOrAssociationRef[scope]
     	{
 		try{
-          // check that scope's topic depends on ref's topic
-          AbstractPatternDef scopeTopic=(AbstractPatternDef)scope.getContainer(AbstractPatternDef.class);
-          AbstractPatternDef refTopic=(AbstractPatternDef)ref.getContainer(AbstractPatternDef.class);
-          if(refTopic!=scopeTopic){
-            if(!scopeTopic.isDependentOn(refTopic)){
-              reportError(formatMessage ("err_refattr_topicdepreq",
-				scopeTopic.getName(),
-				refTopic.getName()),refto);
-            }
-          }
+		  if(scope.getContainer() instanceof AbstractPatternDef){
+			  // check that scope's topic depends on ref's topic
+			  AbstractPatternDef scopeTopic=(AbstractPatternDef)scope.getContainer(AbstractPatternDef.class);
+			  AbstractPatternDef refTopic=(AbstractPatternDef)ref.getContainer(AbstractPatternDef.class);
+			  if(refTopic!=scopeTopic){
+			    if(!scopeTopic.isDependentOn(refTopic)){
+			      reportError(formatMessage ("err_refattr_topicdepreq",
+						scopeTopic.getName(),
+						refTopic.getName()),refto);
+			    }
+			  }
+		  }
 		  rt.setReferred(ref);
 		}catch(Exception ex){
 			reportError(ex,refto);
@@ -1713,7 +1669,7 @@ protected roleDef[AssociationDef container]
 		if((ref.getReferred() instanceof Table) && !((Table)ref.getReferred()).isIdentifiable()){
 			reportError(formatMessage("err_role_toStruct",n.getText()),n.getLine());
 		}
-		  def.setDestination(ref);
+		  def.setReference(ref);
 		  if(obj!=null){
 		  	if(!(obj instanceof ObjectPath)){
                               reportError(formatMessage ("err_role_factorNotAnObjectPath","")
@@ -5579,9 +5535,9 @@ protected decimal
 	:	d:DEC
     	{ dec = new PrecisionDecimal(d.getText()); }
 	|	p:POSINT
-    	{ dec = new PrecisionDecimal(Double.parseDouble(p.getText()), 0); }
+    	{ dec = new PrecisionDecimal(p.getText()); }
 	|	n:NUMBER
-	    { dec = new PrecisionDecimal(Double.parseDouble(n.getText()), 0); }
+	    { dec = new PrecisionDecimal(n.getText()); }
 	;
 
 protected xyRef
@@ -5680,6 +5636,7 @@ protected interlis1Def
       try {
         td.setName (transferName.getText ());
         model.setName (transferName.getText ());
+	model.setIliVersion(Model.ILI1);
       } catch (Exception ex) {
         reportError (ex, transferName.getLine ());
       }
@@ -5896,14 +5853,14 @@ protected ili1_attribute [Table table]
         role1.setName(thisRoleName);
 	ReferenceType role1ref=new ReferenceType();
 	role1ref.setReferred(table);
-        role1.setDestination(role1ref);
+        role1.setReference(role1ref);
         role1.setCardinality(new Cardinality(0, Cardinality.UNBOUND));
         assoc.add(role1);
         RoleDef role2=new RoleDef();
         role2.setName(attributeName.getText());
 	ReferenceType role2ref=new ReferenceType();
 	role2ref.setReferred(referred);
-        role2.setDestination(role2ref);
+        role2.setReference(role2ref);
         role2.setCardinality(new Cardinality(optional?0:1, 1));
         assoc.add(role2);
         assoc.fixupRoles();
@@ -5946,7 +5903,7 @@ protected ili1_attribute [Table table]
       } catch (Exception ex) {
         reportError (ex, col.getLine ());
       }
-
+      
       try {
         table.add (attrib);
       } catch (Exception ex) {
@@ -6303,7 +6260,7 @@ protected ili1_dim2Type [Model inModel]
 		  new ComposedUnit.Composed ('*', td.INTERLIS.METER)
 		  ,new ComposedUnit.Composed ('*', td.INTERLIS.METER)
 	  });
-          inModel.add (m2); // before reference
+          inModel.addPreLast (m2); // before reference
         } catch (Exception ex) {
           reportInternalError (dim2.getLine ());
           panic ();
@@ -6356,7 +6313,7 @@ protected ili1_angleType [Model containingModel]
               byPi
             });
             u = degr;
-            containingModel.add (degr);
+            containingModel.addPreLast (degr);
           } catch (Exception ex) {
             reportInternalError (ex, degrees.getLine());
           }
@@ -6386,7 +6343,7 @@ protected ili1_angleType [Model containingModel]
               byPi
             });
             u = gon;
-            containingModel.add (gon);
+            containingModel.addPreLast (gon);
           } catch (Exception ex) {
             reportInternalError (ex, grads.getLine());
           }
@@ -6864,12 +6821,12 @@ protected ili1_decimal
 	:	d:ILI1_DEC
     	{ dec = new PrecisionDecimal(d.getText()); }
 	|	p:POSINT
-    	{ dec = new PrecisionDecimal(Double.parseDouble(p.getText()), 0); }
+    	{ dec = new PrecisionDecimal(p.getText()); }
 	|	n:NUMBER
-	    { dec = new PrecisionDecimal(Double.parseDouble(n.getText()), 0); }
+	    { dec = new PrecisionDecimal(n.getText()); }
 	;
 
-class Ili2Lexer extends Lexer;
+class Ili22Lexer extends Lexer;
 options {
   charVocabulary = '\u0000'..'\u00FF'; // set the vocabulary to be all 8 bit binary values
   k=4;                   // two characters of lookahead

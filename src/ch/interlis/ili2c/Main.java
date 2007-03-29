@@ -4,6 +4,7 @@ import java.io.*;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.metamodel.ErrorListener;
 import ch.interlis.ili2c.parser.Ili2Parser;
+import ch.interlis.ili2c.parser.Ili22Parser;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Iterator;
@@ -87,6 +88,7 @@ public class Main
 	boolean emitIOM = false;
 	boolean doAuto=true;
     boolean checkMetaObjs=false;
+    boolean withWarnings=true;
     int     numErrorsWhileGenerating = 0;
     String  progName = "ili2c";
     String  notifyOnError = "compiler@interlis.ch";
@@ -236,12 +238,12 @@ public class Main
         }
         else if (args[i].equals ("--without-warnings"))
         {
-          LogListener.setShowWarnings(false);
+			withWarnings=false;
           continue;
         }
         else if (args[i].equals ("--with-warnings"))
         {
-  			LogListener.setShowWarnings(true);
+			withWarnings=true;
           continue;
         }
         else if (args[i].charAt(0) == '-')
@@ -295,7 +297,8 @@ public class Main
 			Iterator filei=config.iteratorFileEntry();
 			while(filei.hasNext()){
 				FileEntry file=(FileEntry)filei.next();
-				EhiLogger.logState(file.getFilename());
+				String filename=file.getFilename();
+				EhiLogger.logState(filename+" "+ModelScan.getIliFileVersion(new File(filename)));
 			}
 		}
 
@@ -308,6 +311,8 @@ public class Main
 			config.addFileEntry(file);
       	}
       }
+      config.setGenerateWarnings(withWarnings);
+      
 		// compile models
 		TransferDescription td=runCompiler(config);
 
@@ -386,6 +391,7 @@ public class Main
       TransferDescription   desc = new TransferDescription ();
       boolean emitPredefined=config.isIncPredefModel();
       boolean checkMetaObjs=config.isCheckMetaObjs();
+	  CompilerLogEvent.enableWarnings(config.isGenerateWarnings());
 
         // boid  to basket mappings
         Iterator boidi=config.iteratorBoidEntry();
@@ -396,6 +402,7 @@ public class Main
 
 
         // model and metadata files
+        double version=0.0;
         Iterator filei=config.iteratorFileEntry();
         while(filei.hasNext()){
           FileEntry e=(FileEntry)filei.next();
@@ -409,6 +416,9 @@ public class Main
             }
           }else{
             String streamName = e.getFilename();
+            if(version==0.0){
+            	version=ModelScan.getIliFileVersion(new File(streamName));
+            }
             FileInputStream stream = null;
             try {
               stream = new FileInputStream(streamName);
@@ -417,8 +427,14 @@ public class Main
               return null;
             }
 			try{
-				if (!Ili2Parser.parseIliFile (desc,streamName, stream, checkMetaObjs)){
-				   return null;
+				if(version==2.2){
+					if (!Ili22Parser.parseIliFile (desc,streamName, stream, checkMetaObjs)){
+					   return null;
+					}
+				}else{
+					if (!Ili2Parser.parseIliFile (desc,streamName, stream, checkMetaObjs)){
+					   return null;
+					}
 				}
 			}catch(java.lang.Exception ex){
 			  EhiLogger.logError(ex);

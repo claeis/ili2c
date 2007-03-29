@@ -282,7 +282,7 @@ options
   public void reportWarning (String message)
   {
       String filename=getFilename();
-      CompilerLogEvent.logAdaption(filename,0,message);
+      CompilerLogEvent.logWarning(filename,0,message);
   }
 
 
@@ -296,7 +296,7 @@ options
   protected void reportWarning (String message, int lineNumber)
   {
       String filename=getFilename();
-      CompilerLogEvent.logAdaption(filename,lineNumber,message);
+      CompilerLogEvent.logWarning(filename,lineNumber,message);
   }
 
 
@@ -769,7 +769,7 @@ protected interlis2Def
 	                    ili.getLine());
 	        panic();
 	      }
-              // set lexer mode to Ili 2.1
+              // set lexer mode to Ili 2
               lexer.isIli1=false;
 	    }
 	SEMI ( modelDef )* EOF
@@ -799,6 +799,7 @@ protected modelDef
 				 md.setName(n1.getText());
                                   md.setFileName(getFilename());
 				  md.setDocumentation(ilidoc);
+				  md.setIliVersion(Model.ILI2_3);
 				 td.add(md);
 				} catch (Exception ex) {
 				 reportError(ex, n1.getLine());
@@ -5751,6 +5752,7 @@ protected interlis1Def
       try {
         td.setName (transferName.getText ());
         model.setName (transferName.getText ());
+	model.setIliVersion(Model.ILI1);
       } catch (Exception ex) {
         reportError (ex, transferName.getLine ());
       }
@@ -5930,6 +5932,7 @@ protected ili1_attribute [Table table]
   AttributeDef attrib = null;
   Model model = (Model) table.getContainer (Model.class);
   Topic topic = (Topic) table.getContainer (Topic.class);
+  String explText=null;
 }
   : attributeName:NAME
     col:COLON
@@ -5991,6 +5994,7 @@ protected ili1_attribute [Table table]
     (
       expl:EXPLANATION
       {
+        explText=expl.getText();
         reportWarning (formatMessage ("err_attribute_ili1_constraintLost",
                                       attributeName.getText ()),
                        expl.getLine ());
@@ -6019,6 +6023,8 @@ protected ili1_attribute [Table table]
       } catch (Exception ex) {
         reportError (ex, col.getLine ());
       }
+      
+      attrib.setExplanation(explText);
 
       try {
         table.add (attrib);
@@ -6514,7 +6520,7 @@ protected ili1_dateType
     {
       type = new TypeAlias ();
       try {
-        type.setAliasing (td.INTERLIS.XmlDate);
+        type.setAliasing (td.INTERLIS.INTERLIS_1_DATE);
       } catch (Exception ex) {
         reportInternalError (ex, date.getLine ());
       }

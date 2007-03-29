@@ -31,7 +31,7 @@ import java.util.Iterator;
 
 /**
  * @author ce
- * @version $Revision: 1.2 $ $Date: 2007-03-07 08:36:06 $
+ * @version $Revision: 1.3 $ $Date: 2007-03-29 15:36:02 $
  */
 public class ModelScan {
 
@@ -60,7 +60,29 @@ public class ModelScan {
 		}
 		return null;
 	}
-	public static HashSet scanIliFileDir(File dir,HashSet skipModels,HashSet newModels){
+	/** get INTERLIS version of an ili-file.
+	 */
+	public static double getIliFileVersion(File file){
+		String streamName=file.getAbsolutePath();
+		FileInputStream stream = null;
+		try {
+			stream = new FileInputStream(file);
+			double version=Ili2ModelScan.getIliVersion( stream);
+			stream.close();
+			return version;
+		} catch (java.io.FileNotFoundException fnfex) {
+		  EhiLogger.logError(streamName + ":" + "There is no such file.");
+		} catch (Exception ex) {
+			EhiLogger.logError(ex);
+		}
+		return 0.0;
+	}
+	/** scans a directory for ili-files.
+	 * @param dir directory to scan
+	 * @param skipFiles skip this files. set<File iliFile>
+	 * @return set<IliFile>
+	 */
+	public static HashSet scanIliFileDir(File dir,HashSet skipFiles){
 		HashSet ret=new HashSet();
 		if(!dir.exists()){
 			EhiLogger.logAdaption(dir.getAbsoluteFile()+" doesn't exist; ignored");
@@ -75,37 +97,59 @@ public class ModelScan {
 			if(filev[i].isDirectory()){
 				continue;
 			}
-			IliFile iliFile=scanIliFile(filev[i]);
-			if(iliFile!=null){
-				boolean skipThisFile=false;
-				for(Iterator modeli=iliFile.iteratorModel();modeli.hasNext();){
-					IliModel model=(IliModel)modeli.next();
-					if(skipModels.contains(model.getName()) || newModels.contains(model.getName())){
-						skipThisFile=true;
+			boolean ignoreFile=false;
+			if(skipFiles!=null){
+				Iterator skipFilei=skipFiles.iterator();
+				while(skipFilei.hasNext()){
+					File skipFile=(File)skipFilei.next();
+					if(filev[i].equals(skipFile)){
+						ignoreFile=true;
 						break;
 					}
 				}
-				if(skipThisFile){
-					EhiLogger.logAdaption("duplicate model; file ignored "+iliFile.getFilename());
-				}else{
+			}
+			if(!ignoreFile){
+				IliFile iliFile=scanIliFile(filev[i]);
+				if(iliFile!=null){
 					ret.add(iliFile);
-					for(Iterator modeli=iliFile.iteratorModel();modeli.hasNext();){
-						IliModel model=(IliModel)modeli.next();
-						newModels.add(model.getName());
-					}
 				}
 			}
 		}
 		return ret;
 	}
 	public static Configuration getConfig(ArrayList ilipathv,ArrayList requiredModels){
-		HashSet ilifiles=new HashSet();
-		HashSet availablemodels=new HashSet();
+		return getConfig(ilipathv,requiredModels,0.0);
+	}
+	public static Configuration getConfig(ArrayList ilipathv,ArrayList requiredModels,double iliVersion){
+		ArrayList ilifiles=new ArrayList();
+		
+		// scan directories for ili-files
 		for(int i=0;i<ilipathv.size();i++){
-			HashSet newmodels=new HashSet();
-			ilifiles.addAll(scanIliFileDir(new File((String)ilipathv.get(i)),availablemodels,newmodels));
-			availablemodels.addAll(newmodels);
+			ilifiles.addAll(scanIliFileDir(new File((String)ilipathv.get(i)),null));
 		}
+		
+		// auto determine version?
+		if(iliVersion==0.0){
+			// get version of first model
+			// scan threw list of models
+			String firstModel=(String)requiredModels.get(0);
+			Iterator it=ilifiles.iterator();
+			while(it.hasNext()){
+				IliFile ilifile=(IliFile)it.next();
+				Iterator modeli=ilifile.iteratorModel();
+				while(modeli.hasNext()){
+					IliModel model=(IliModel)modeli.next();
+					if(model.getName().equals(firstModel)){				
+						iliVersion=model.getIliVersion();
+						break;
+					}
+				}
+				if(iliVersion!=0.0){
+					break;
+				}
+			}
+		}
+		
 		// build map of modelname -> ilifile
 		HashMap models=new HashMap();
 		Iterator it=ilifiles.iterator();
@@ -114,9 +158,13 @@ public class ModelScan {
 			Iterator modeli=ilifile.iteratorModel();
 			while(modeli.hasNext()){
 				IliModel model=(IliModel)modeli.next();
-				models.put(model.getName(),ilifile);				
+				if(model.getIliVersion()==iliVersion){
+					models.put(model.getName(),ilifile);				
+				}
 			}
 		}
+		
+		// build list of files with required models
 		HashSet toVisitFiles=new HashSet();
 		it=requiredModels.iterator();
 		HashSet missingModels=new HashSet();
@@ -140,6 +188,8 @@ public class ModelScan {
 		if(err){
 			return null;
 		}
+		
+		// build config
 		return createConfig(toVisitFiles,models);
 	}
 	/** create compile configuration, given a set of ilifilenames and a set of paths with additional ilifiles
@@ -148,26 +198,40 @@ public class ModelScan {
 	 * @param requiredIliFiles list<String iliFilename>
 	 * @return
 	 */
-	public static Configuration getConfigWithFiles(ArrayList ilipaths,ArrayList requiredIliFiles){
+	public static Configuration getConfigWithFiles(ArrayList ilipaths,ArrayList requiredIliFileNames){
 		HashSet ilifiles=new HashSet();
-		HashSet toVisitFiles=new HashSet();
-		Iterator reqFileIt=requiredIliFiles.iterator();
+		HashSet toVisitFiles=new HashSet(); // set<IliFile>
+		HashSet requiredFiles=new HashSet(); // set<File>
+		
+		// scan given files and report about duplicate models
+		Iterator reqFileIt=requiredIliFileNames.iterator();
 		HashSet availablemodels=new HashSet();
+		double version=0.0;
 		while(reqFileIt.hasNext()){
 			String fname=(String)reqFileIt.next();
-			IliFile iliFile=scanIliFile(new File(fname));
+			File file=new File(fname);
+			IliFile iliFile=scanIliFile(file);
 			if(iliFile!=null){
 				boolean skipThisFile=false;
 				for(Iterator modeli=iliFile.iteratorModel();modeli.hasNext();){
 					IliModel model=(IliModel)modeli.next();
+					if(version==0.0){
+						version=model.getIliVersion();
+					}else{
+						if(version!=model.getIliVersion()){
+							skipThisFile=true;
+							EhiLogger.logAdaption("different ili version; file ignored "+iliFile.getFilename());
+							break;
+						}
+					}
 					if(availablemodels.contains(model.getName())){
 						skipThisFile=true;
+						EhiLogger.logAdaption("duplicate model; file ignored "+iliFile.getFilename());
 						break;
 					}
 				}
-				if(skipThisFile){
-					EhiLogger.logAdaption("duplicate model; file ignored "+iliFile.getFilename());
-				}else{
+				if(!skipThisFile){
+					requiredFiles.add(file);
 					ilifiles.add(iliFile);
 					toVisitFiles.add(iliFile);
 					for(Iterator modeli=iliFile.iteratorModel();modeli.hasNext();){
@@ -177,12 +241,12 @@ public class ModelScan {
 				}
 			}
 		}
+		
+		// add files in given directories
 		for(Iterator i=ilipaths.iterator();i.hasNext();){
-			HashSet newmodels=new HashSet();
-			HashSet set=scanIliFileDir(new File((String)i.next()),availablemodels,newmodels);
+			HashSet set=scanIliFileDir(new File((String)i.next()),requiredFiles);
 			if(set!=null && !set.isEmpty()){
 				ilifiles.addAll(set);
-				availablemodels.addAll(newmodels);
 			}
 		}
 
@@ -194,7 +258,9 @@ public class ModelScan {
 			Iterator modeli=ilifile.iteratorModel();
 			while(modeli.hasNext()){
 				IliModel model=(IliModel)modeli.next();
-				models.put(model.getName(),ilifile);				
+				if(model.getIliVersion()==version){
+					models.put(model.getName(),ilifile);				
+				}
 			}
 		}
 		return createConfig(toVisitFiles,models);

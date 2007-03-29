@@ -11,6 +11,7 @@ import ch.interlis.ili2c.metamodel.ErrorListener;
 import ch.interlis.ili2c.parser.Ili2Parser;
 import ch.interlis.ili2c.config.*;
 import ch.interlis.ili2c.LogListener;
+import ch.interlis.ili2c.CompilerLogEvent;
 import ch.ehi.basics.view.*;
 
 public class Main {
@@ -87,9 +88,9 @@ public class Main {
   private void runCompiler(){
       TransferDescription   desc = new TransferDescription ();
       if(config.isGenerateWarnings()){
-        LogListener.setShowWarnings(true);
+		CompilerLogEvent.enableWarnings(true);
       }else{
-		LogListener.setShowWarnings(false);
+		CompilerLogEvent.enableWarnings(false);
       }
       boolean emitPredefined=config.isIncPredefModel();
       boolean checkMetaObjs=config.isCheckMetaObjs();

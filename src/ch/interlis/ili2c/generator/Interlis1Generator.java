@@ -1170,7 +1170,7 @@ public final class Interlis1Generator
     return true;
   }
 
-  private int countEnumLeafs(ch.interlis.ili2c.metamodel.Enumeration enumer){
+  public static int countEnumLeafs(ch.interlis.ili2c.metamodel.Enumeration enumer){
       int ret=0;
       Iterator iter = enumer.getElements();
       while (iter.hasNext()) {
@@ -1555,7 +1555,7 @@ public final class Interlis1Generator
     }
   }
 
-  private char getIdxCode(int idx){
+  private static char getIdxCode(int idx){
     return Character.toUpperCase(Character.forDigit(idx,Character.MAX_RADIX));
   }
   private String genFmtField(int idx,int size){
@@ -1566,7 +1566,7 @@ public final class Interlis1Generator
     }
     return ret.toString();
   }
-  private String genFmtField(int idx,PrecisionDecimal value){
+  public static String genFmtField(int idx,PrecisionDecimal value){
     StringBuffer ret=new StringBuffer(10);
     char c=getIdxCode(idx);
     int size=value.toBigInteger().toString().length();
@@ -1582,7 +1582,7 @@ public final class Interlis1Generator
     }
     return ret.toString();
   }
-  private String genFmtField(int idx,PrecisionDecimal min,PrecisionDecimal max){
+  public static String genFmtField(int idx,PrecisionDecimal min,PrecisionDecimal max){
     String minFld=genFmtField(idx,min);
     String maxFld=genFmtField(idx,max);
     if(minFld.length()>maxFld.length()){

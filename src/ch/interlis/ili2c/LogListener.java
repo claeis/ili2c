@@ -23,7 +23,7 @@ import javax.swing.JTextArea;
 
 /**
  * @author ce
- * @version $Revision: 1.1 $ $Date: 2007-03-07 09:02:42 $
+ * @version $Revision: 1.2 $ $Date: 2007-03-29 15:36:02 $
  */
 public class LogListener implements ch.ehi.basics.logging.LogListener {
 
@@ -32,11 +32,6 @@ public class LogListener implements ch.ehi.basics.logging.LogListener {
 		switch(event.getEventKind()){
 			case LogEvent.ERROR:
 				errors=true;
-				break;
-			case LogEvent.ADAPTION:
-				if(!showWarnings){
-					return;
-				}
 				break;
 			default:
 				break;
@@ -74,12 +69,6 @@ public class LogListener implements ch.ehi.basics.logging.LogListener {
 			instance=new LogListener();
 		}
 		return instance;
-	}
-	private boolean showWarnings=false;
-	/** enable/disable warnings on output.
-	 */
-	public static void setShowWarnings(boolean show){
-		getInstance().showWarnings=show;
 	}
 	private JTextArea  errOutput=null;
 	public static void setSwingOutput(JTextArea  err)
