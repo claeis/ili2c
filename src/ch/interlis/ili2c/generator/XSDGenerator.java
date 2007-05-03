@@ -1,3 +1,20 @@
+/* This file is part of the INTERLIS-compiler.
+ * For more information, please see <http://www.umleditor.org/>.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package ch.interlis.ili2c.generator;
 
 
@@ -87,7 +104,7 @@ public final class XSDGenerator
   private void printXSD (TransferDescription td)
   {
     ipw.println("<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-      +" xmlns=\"http://www.interlis.ch/INTERLIS2.3\""
+      +" xmlns=\"http://www.interlis.ch/INTERLIS2.3\" xmlns:ili2c=\"http://www.interlis.ch/ili2c\""
       +" targetNamespace=\"http://www.interlis.ch/INTERLIS2.3\""
       +" elementFormDefault=\"qualified\" attributeFormDefault=\"unqualified\""
       +">");
@@ -97,6 +114,29 @@ public final class XSDGenerator
 		ipw.print("<xsd:appinfo source=\"http://www.interlis.ch/ili2c/ili2cversion\">");
 		ipw.print(ch.interlis.ili2c.Main.getVersion());
 		ipw.println ("</xsd:appinfo>");
+		{
+			Iterator modeli=td.iterator();
+			while(modeli.hasNext()){
+				Object modelo=modeli.next();
+				if(modelo instanceof Model){
+					Model model=(Model)modelo;
+					if(model==td.INTERLIS){
+						// skip built-in model
+						continue;
+					}
+					ipw.println("<xsd:appinfo source=\"http://www.interlis.ch/ili2c\">");
+					ipw.indent();
+					ipw.println("<ili2c:model>"+model.getName()+"</ili2c:model>");
+					ipw.println("<ili2c:modelVersion>"+model.getModelVersion()+"</ili2c:modelVersion>");
+					if(model.getModelVersionExpl()!=null){
+						ipw.println("<ili2c:modelVersionExplanation>"+model.getModelVersionExpl()+"</ili2c:modelVersionExplanation>");
+					}
+					ipw.println("<ili2c:modelAt>"+model.getIssuer()+"</ili2c:modelAt>");
+					ipw.unindent();
+					ipw.println ("</xsd:appinfo>");
+				}
+			}
+		}
 		ipw.unindent ();
 		ipw.println ("</xsd:annotation>");
 
@@ -536,39 +576,6 @@ public final class XSDGenerator
   }
 
 
-  protected boolean suppressViewable (Viewable v)
-  {
-    if (v == null)
-      return true;
-
-
-    if (v.isAbstract())
-      return true;
-
-    if(v instanceof AssociationDef){
-		AssociationDef assoc=(AssociationDef)v;
-    	if(assoc.isLightweight()){
-    		return true;
-    	}
-		if(assoc.getDerivedFrom()!=null){
-			return true;
-		}
-    }
-
-    Topic topic;
-    if ((v instanceof View) && ((topic=(Topic)v.getContainer (Topic.class)) != null)
-	    && !topic.isViewTopic())
-      return true;
-
-
-    /* STRUCTUREs do not need to be printed with their INTERLIS container,
-       but where they are used. */
-    if ((v instanceof Table) && !((Table)v).isIdentifiable())
-      return true;
-
-
-    return false;
-  }
 
   protected boolean suppressViewableInAliasTable(Viewable v)
   {
@@ -613,7 +620,7 @@ public final class XSDGenerator
 			    while (iter.hasNext())
 			    {
 			      Object obj = iter.next();
-			      if ((obj instanceof Viewable) && !suppressViewable ((Viewable)obj))
+			      if ((obj instanceof Viewable) && !AbstractPatternDef.suppressViewableInTransfer((Viewable)obj))
 			      {
 						Viewable v = (Viewable) obj;		
 		    	        ipw.println ("<xsd:element name=\""+getTransferName(v)+"\" type=\""+getTransferName(v)+"\"/>");
