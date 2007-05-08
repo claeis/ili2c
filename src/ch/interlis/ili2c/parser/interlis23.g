@@ -6752,6 +6752,7 @@ protected ili1_controlPoints [LineType lineType, Model inModel, Topic inTopic]
               controlPointDomain.setName (formatMessage ("err_domain_artificialName",
                                                        Integer.toString (numDomains + 1)));
               controlPointDomain.setType (type);
+	      inModel.addPreLast(controlPointDomain);
             } catch (Exception ex) {
               reportError (ex, vertex.getLine ());
               controlPointDomain = null;
