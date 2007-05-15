@@ -37,6 +37,7 @@ public abstract class AttributeDef
   protected AttributeDef  extending;
   protected boolean       _final;
   protected boolean       _abstract;
+  private boolean       _transient;
   protected Set           extendedBy = new HashSet(2);
   protected Type          domain;
 	private String ili1Explanation=null;
@@ -573,6 +574,18 @@ public abstract class AttributeDef
 
 	public void setExplanation(String string) {
 		ili1Explanation = string;
+	}
+
+
+
+	public boolean isTransient() {
+		return _transient;
+	}
+
+
+
+	public void setTransient(boolean _transient) {
+		this._transient = _transient;
 	}
 
 }
