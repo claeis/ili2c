@@ -341,10 +341,17 @@ public class Main
 	  	java.io.PrintWriter out=new java.io.PrintWriter(System.out);
 		if (emitXSD) {
 			try{
-				numErrorsWhileGenerating =
-					ch.interlis.ili2c.generator.XSDGenerator.generate(
-						out,
-						td);
+				if(td.getLastModel().getIliVersion().equals("2.2")){
+					numErrorsWhileGenerating =
+						ch.interlis.ili2c.generator.XSD22Generator.generate(
+							out,
+							td);
+				}else{
+					numErrorsWhileGenerating =
+						ch.interlis.ili2c.generator.XSDGenerator.generate(
+							out,
+							td);
+				}
 			}catch(Exception ex){
 				EhiLogger.logError(ex);
 			}
@@ -494,8 +501,13 @@ public class Main
                   return desc;
               }
             }
-            ch.interlis.ili2c.generator.XSDGenerator.generate (
-              out, desc);
+			if(desc.getLastModel().getIliVersion().equals("2.2")){
+				ch.interlis.ili2c.generator.XSD22Generator.generate (
+				  out, desc);
+			}else{
+				ch.interlis.ili2c.generator.XSDGenerator.generate (
+				  out, desc);
+			}
             break;
           case GenerateOutputKind.ILI1FMTDESC:
             if("-".equals(config.getOutputFile())){
