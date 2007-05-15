@@ -1293,7 +1293,7 @@ protected attributeDef[Viewable container]
           attrib.setFinal((mods & ch.interlis.ili2c.metamodel.Properties.eFINAL) != 0);
 	  attrib.setSubdivision(isSubdivision);
 	  attrib.setContinuous(isContinuous);
-	  /* TODO handle TRANSIENT  in AttributeDef */
+	  attrib.setTransient((mods & ch.interlis.ili2c.metamodel.Properties.eTRANSIENT) != 0);
         } catch (Exception ex) {
           reportError(ex, n.getLine());
         }
@@ -2398,7 +2398,7 @@ protected formattedType[Container scope, Type extending]
 		ft=null;
 	}
 	: 
-	( "FORMAT" "BASED")=>( "FORMAT" "BASED" "ON" structureRef[scope] 
+	(( "FORMAT" "BASED")=>( "FORMAT" "BASED" "ON" structureRef[scope] 
 		LPAREN ("INHERITANCE")?
                   ( STRING )? ( baseAttrRef[scope] (STRING)? )*
                              RPAREN
@@ -2407,7 +2407,7 @@ protected formattedType[Container scope, Type extending]
 	| ( STRING DOTDOT STRING 
 	)
 	| ( "FORMAT" domainRef[scope] STRING DOTDOT STRING
-	)
+	))
 	{ // TODO formattedTyp
 		ft=new FormattedType();
 	}
@@ -3450,7 +3450,8 @@ protected parameterDef[Table container]
         container.add(p);
         p.setType (type);
         p.setExtending (overriding);
-        // TODO: handle FINAL, ABSTRACT
+        p.setAbstract((mods & ch.interlis.ili2c.metamodel.Properties.eABSTRACT) != 0);
+        p.setFinal((mods & ch.interlis.ili2c.metamodel.Properties.eFINAL) != 0);
       } catch (Exception ex) {
         reportError(ex, n.getLine());
       }
