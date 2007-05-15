@@ -1,3 +1,20 @@
+/* This file is part of the ili2c project.
+ * For more information, please see <http://www.interlis.ch>.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package ch.interlis.ili2c.config;
 
 import java.io.*;
@@ -49,9 +66,10 @@ public class PersistenceService {
 				config.setOutputFile(optvalue);
 			  config.setOutputKind(GenerateOutputKind.GML32);
 			 }else if(arg.startsWith("-oIOM ")){
-				String optvalue=arg.substring(8);
-				config.setOutputFile(optvalue);
-			  config.setOutputKind(GenerateOutputKind.IOM);
+	             	// ignore it
+				//String optvalue=arg.substring(8);
+				//config.setOutputFile(optvalue);
+			    //config.setOutputKind(GenerateOutputKind.IOM);
              }else if(arg.startsWith("-boid ")){
               String optvalue=arg.substring(6);
               int eqpos=optvalue.indexOf('=');
@@ -63,7 +81,8 @@ public class PersistenceService {
               String boid=optvalue.substring(eqpos+1);
               config.addBoidEntry(new BoidEntry(qualifiedBasketName,boid));
              }else if(arg.startsWith("--with-predefined")){
-              config.setIncPredefModel(true);
+	             	// ignore it
+              //config.setIncPredefModel(true);
              }else if(arg.startsWith("--check-metaobj")){
               config.setCheckMetaObjs(true);
              }else if(arg.startsWith("--without-warnings")){
@@ -88,10 +107,10 @@ public class PersistenceService {
         BufferedWriter out = new BufferedWriter(new FileWriter(outputFile));
 
         // general options
-        if(config.isIncPredefModel()){
-          out.write("--with-predefined");
-          out.newLine();
-        }
+        //if(config.isIncPredefModel()){
+        //  out.write("--with-predefined");
+        //  out.newLine();
+        //}
         if(!config.isGenerateWarnings()){
           out.write("--without-warnings");
           out.newLine();
@@ -148,10 +167,6 @@ public class PersistenceService {
 			out.write("-oGML ");
 			out.write(config.getOutputFile());
 			  break;
-		  case GenerateOutputKind.IOM:
-			  out.write("-oIOM ");
-			  out.write(config.getOutputFile());
-				break;
           default:
             // ignore
             ;
