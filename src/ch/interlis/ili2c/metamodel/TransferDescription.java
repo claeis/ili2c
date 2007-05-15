@@ -1,13 +1,20 @@
-/*****************************************************************************
+/* This file is part of the ili2c project.
+ * For more information, please see <http://www.interlis.ch>.
  *
- * TransferDescription.java
- * ------------------------
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
- * Copyright (C) 1999 Adasys AG, Kronenstr. 38, 8006 Zurich, Switzerland
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
  *
- * Revision 0.2  February 1999    Sascha Brawer <sb@adasys.ch>
- *
- *****************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 
 package ch.interlis.ili2c.metamodel;
@@ -139,6 +146,18 @@ public class TransferDescription extends Container
   }
   public void setIli1Format(Ili1Format ili1Format1){
 	ili1Format=ili1Format1;
+  }
+  public Model getLastModel()
+  {
+  	Model mainModel=null;
+	Iterator modeli=iterator();
+	while(modeli.hasNext()){
+		Object modelo=modeli.next();
+		if(modelo instanceof Model){
+			mainModel=(Model)modelo;
+		}
+	}
+	return mainModel;
   }
 
 }
