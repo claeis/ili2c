@@ -1,3 +1,20 @@
+/* This file is part of the ili2c project.
+ * For more information, please see <http://www.interlis.ch>.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package ch.interlis.ili2c.gui;
 
 import java.util.*;
@@ -27,17 +44,12 @@ public class Main {
         JTextField outputFileUi;
         JRadioButton warnButton;
         JRadioButton errButton;
-        JCheckBox predefButton;
         JComboBox outputKind;
         JTextArea  errOutput;
         JPopupMenu errPopup;
         JButton runButton;
 
         FileChooser fc;
-	// iboto (Java generator) controls
-	// added by Swen Ruetimann
-	//JCheckBox definePackagePrefixBox;
-	JTextField packagePrefixField;
 	JLabel fileLabel = new JLabel("Filename");
 
         /** current configuration file
@@ -192,8 +204,13 @@ public class Main {
                     return;
               }
             }
-            ch.interlis.ili2c.generator.XSDGenerator.generate (
-              out, desc);
+			if(desc.getLastModel().getIliVersion().equals("2.2")){
+				ch.interlis.ili2c.generator.XSD22Generator.generate (
+				  out, desc);
+			}else{
+				ch.interlis.ili2c.generator.XSDGenerator.generate (
+				  out, desc);
+			}
             break;
           case GenerateOutputKind.ILI1FMTDESC:
             if("-".equals(config.getOutputFile())){
@@ -419,7 +436,6 @@ public class Main {
     }else{
       errButton.setSelected(true);
     }
-    predefButton.setSelected(config.isIncPredefModel());
   }
   /** read all values from GUI elements that have no action listeners
    */
@@ -633,7 +649,6 @@ public class Main {
       , "Generate an XML-Schema"
       , "Generate an ILI1 FMT-Description"
 	  , "Generate a GML-Schema"
-	  , "Generate Model as INTERLIS-Transfer (XTF)"
       };
     JPanel cbp = new JPanel();
     outputKind = new JComboBox(comboBoxItems);
@@ -642,7 +657,6 @@ public class Main {
           public void actionPerformed(java.awt.event.ActionEvent e){
             int kind=outputKind.getSelectedIndex()+1;
 
-			packagePrefixField.setEditable(false);
 			outputFileUi.setEditable(true);
 			fileLabel.setText("Filename");
             
@@ -753,28 +767,6 @@ public class Main {
     outputPane.add(warnButton,cnstr);
     cnstr.gridy+=1;
     outputPane.add(errButton,cnstr);
-
-
-    predefButton = new JCheckBox("Include the predefined MODEL INTERLIS");
-    //chinButton.setMnemonic(KeyEvent.VK_C);
-    //chinButton.setSelected(true);
-        predefButton.addActionListener(new ActionListener(){
-          public void actionPerformed(java.awt.event.ActionEvent e){
-            config.setIncPredefModel(predefButton.isSelected());
-          }
-        });
-    cnstr.gridy+=1;
-    outputPane.add(predefButton,cnstr);
-
-	// Start: ibito extension by Ruetimann, Swen
-	packagePrefixField = new JTextField("gensrc");
-	packagePrefixField.setColumns(30);
-	packagePrefixField.setEditable(false);
-	cnstr.gridy +=1;
-	outputPane.add( new JLabel("Package prefix"),cnstr );
-	cnstr.gridy +=1;
-	outputPane.add(packagePrefixField, cnstr );
-	// End: ibito extension by Ruetimann, Swen
 
     //
     // tabbed pane
