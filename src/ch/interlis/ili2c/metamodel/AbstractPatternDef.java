@@ -208,6 +208,11 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
   public void addPreLast (Object o)
   {
 	  if(((ElementDelegate)elements).check(o)){
+		    try {
+			      ((Element) o).setBeanContext(this);
+		    } catch (java.beans.PropertyVetoException pve) {
+			      throw new IllegalArgumentException(pve.getLocalizedMessage());
+		    }
 		  contents.add(contents.size()-1,o);
 	  }
   }

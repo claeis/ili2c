@@ -225,6 +225,12 @@ public abstract class Model extends Importable
 	  if(!((ElementDelegate)elements).checkChildElement(o)){
 		  return;
 	  }
+	    try {
+		      ((Element) o).setBeanContext(this);
+	    } catch (java.beans.PropertyVetoException pve) {
+		      throw new IllegalArgumentException(pve.getLocalizedMessage());
+	    }
+	  
 	  if (o instanceof GraphicParameterDef)
 	  {
 		runtimeParameters.add (o);
