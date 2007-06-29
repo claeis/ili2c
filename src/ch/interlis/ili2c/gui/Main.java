@@ -48,7 +48,8 @@ public class Main {
         JTextArea  errOutput;
         JPopupMenu errPopup;
         JButton runButton;
-
+        JCheckBox autoCompleteCB;
+        
         FileChooser fc;
 	JLabel fileLabel = new JLabel("Filename");
 
@@ -98,174 +99,18 @@ public class Main {
   }
 
   private void runCompiler(){
-      TransferDescription   desc = new TransferDescription ();
-      if(config.isGenerateWarnings()){
-		CompilerLogEvent.enableWarnings(true);
-      }else{
-		CompilerLogEvent.enableWarnings(false);
-      }
-      boolean emitPredefined=config.isIncPredefModel();
-      boolean checkMetaObjs=config.isCheckMetaObjs();
+	  TransferDescription td=ch.interlis.ili2c.Main.runCompiler(config);
+      Date today;
+      String dateOut;
+      DateFormat dateFormatter;
 
-        // boid  to basket mappings
-        Iterator boidi=config.iteratorBoidEntry();
-        while(boidi.hasNext()){
-          BoidEntry e=(BoidEntry)boidi.next();
-          desc.addMetadataMapping(e.getMetaDataUseDef(),e.getBoid());
-        }
-
-
-        // model and metadata files
-        Iterator filei=config.iteratorFileEntry();
-        while(filei.hasNext()){
-          FileEntry e=(FileEntry)filei.next();
-          if(e.getKind()==FileEntryKind.METADATAFILE){
-            /* Don't continue if there is a fatal error. */
-            if(!ch.interlis.ili2c.parser.MetaObjectParser.parse (
-              desc, e.getFilename())){
-            	return;
-            }
-
-          }else{
-            String streamName = e.getFilename();
-            FileInputStream stream = null;
-            try {
-              stream = new FileInputStream(streamName);
-            } catch (java.io.FileNotFoundException ex) {
-              //System.err.println (args[i] + ":" + "There is no such file.");
-                  JOptionPane.showMessageDialog(frame,
-                    ex.getLocalizedMessage(),
-                    "ili2c error",
-                    JOptionPane.ERROR_MESSAGE);
-              return;
-            } catch (Exception ex) {
-                  JOptionPane.showMessageDialog(frame,
-                    ex.getLocalizedMessage(),
-                    "ili2c error",
-                    JOptionPane.ERROR_MESSAGE);
-              return;
-            }
-
-            if (!Ili2Parser.parseIliFile (desc,streamName, stream, checkMetaObjs))
-               return;
-          }
-        }
-
-        // output options
-        BufferedWriter out=null;
-        try{
-        switch(config.getOutputKind()){
-          case GenerateOutputKind.NOOUTPUT:
-            break;
-          case GenerateOutputKind.ILI1:
-            if("-".equals(config.getOutputFile())){
-              out=new BufferedWriter(new OutputStreamWriter(System.out));;
-            }else{
-              try{
-                out = new BufferedWriter(new FileWriter(config.getOutputFile()));
-              }catch(IOException ex){
-                    JOptionPane.showMessageDialog(frame,
-                      ex.getLocalizedMessage(),
-                      "ili2c error",
-                      JOptionPane.ERROR_MESSAGE);
-                    return;
-              }
-            }
-            ch.interlis.ili2c.generator.Interlis1Generator.generate(out, desc);
-            break;
-          case GenerateOutputKind.ILI2:
-            if("-".equals(config.getOutputFile())){
-              out=new BufferedWriter(new OutputStreamWriter(System.out));;
-            }else{
-              try{
-                out = new BufferedWriter(new FileWriter(config.getOutputFile()));
-              }catch(IOException ex){
-                    JOptionPane.showMessageDialog(frame,
-                      ex.getLocalizedMessage(),
-                      "ili2c error",
-                      JOptionPane.ERROR_MESSAGE);
-                    return;
-              }
-            }
-           new ch.interlis.ili2c.generator.Interlis2Generator().generate(
-              out, desc, emitPredefined);
-            break;
-          case GenerateOutputKind.XMLSCHEMA:
-            if("-".equals(config.getOutputFile())){
-              out=new BufferedWriter(new OutputStreamWriter(System.out));;
-            }else{
-              try{
-                out = new BufferedWriter(new FileWriter(config.getOutputFile()));
-              }catch(IOException ex){
-                    JOptionPane.showMessageDialog(frame,
-                      ex.getLocalizedMessage(),
-                      "ili2c error",
-                      JOptionPane.ERROR_MESSAGE);
-                    return;
-              }
-            }
-			if(desc.getLastModel().getIliVersion().equals("2.2")){
-				ch.interlis.ili2c.generator.XSD22Generator.generate (
-				  out, desc);
-			}else{
-				ch.interlis.ili2c.generator.XSDGenerator.generate (
-				  out, desc);
-			}
-            break;
-          case GenerateOutputKind.ILI1FMTDESC:
-            if("-".equals(config.getOutputFile())){
-              out=new BufferedWriter(new OutputStreamWriter(System.out));;
-            }else{
-              try{
-                out = new BufferedWriter(new FileWriter(config.getOutputFile()));
-              }catch(IOException ex){
-                    JOptionPane.showMessageDialog(frame,
-                      ex.getLocalizedMessage(),
-                      "ili2c error",
-                      JOptionPane.ERROR_MESSAGE);
-                    return;
-              }
-            }
-            ch.interlis.ili2c.generator.Interlis1Generator.generateFmt(out, desc);
-            break;
-		  case GenerateOutputKind.GML32:
-			  ch.interlis.ili2c.generator.Gml32Generator.generate(desc,config.getOutputFile());
-			  break;
-			case GenerateOutputKind.IOM:
-			  if("-".equals(config.getOutputFile())){
-				out=new BufferedWriter(new OutputStreamWriter(System.out));;
-			  }else{
-				try{
-				  out = new BufferedWriter(new FileWriter(config.getOutputFile()));
-				}catch(IOException ex){
-					  JOptionPane.showMessageDialog(frame,
-						ex.getLocalizedMessage(),
-						"ili2c error",
-						JOptionPane.ERROR_MESSAGE);
-					  return;
-				}
-			  }
-			  ch.interlis.ili2c.generator.iom.IomGenerator.generate(out, desc);
-			  break;
-          default:
-            // ignore
-            break;
-        }
-		}finally{
-			if(out!=null){
-				try{
-				out.close();
-				}catch(IOException ex){
-					  JOptionPane.showMessageDialog(frame,
-						ex.getLocalizedMessage(),
-						"ili2c error",
-						JOptionPane.ERROR_MESSAGE);
-					  return;
-				}
-			}
-			out=null;
-		}
-
+      dateFormatter = DateFormat.getDateTimeInstance(DateFormat.SHORT,
+                             DateFormat.SHORT,
+                             Locale.getDefault());
+      today = new Date();
+      dateOut = dateFormatter.format(today);
+      String failed= td==null ? "failed":"done";
+      errOutput.append("--- compiler run "+failed+" "+dateOut+"\n");
   }
   private void updateTitle(){
     if(ilcFile!=null){
@@ -436,6 +281,7 @@ public class Main {
     }else{
       errButton.setSelected(true);
     }
+	autoCompleteCB.setSelected(config.isAutoCompleteModelList());
   }
   /** read all values from GUI elements that have no action listeners
    */
@@ -557,17 +403,6 @@ public class Main {
 				}
 			}
             runCompiler();
-            Date today;
-            String dateOut;
-            DateFormat dateFormatter;
-
-            dateFormatter = DateFormat.getDateTimeInstance(DateFormat.SHORT,
-                                   DateFormat.SHORT,
-                                   Locale.getDefault());
-            today = new Date();
-            dateOut = dateFormatter.format(today);
-
-            errOutput.append("--- compiler run done "+dateOut+"\n");
           }
         });
         runButton.setMnemonic(KeyEvent.VK_R);
@@ -603,6 +438,17 @@ public class Main {
     cnstr.gridy=0;
     cnstr.anchor=java.awt.GridBagConstraints.NORTHWEST;
 
+    cnstr.gridwidth=2;
+    autoCompleteCB=new JCheckBox("auto complete fileset");
+    autoCompleteCB.addActionListener(new ActionListener(){
+        public void actionPerformed(java.awt.event.ActionEvent e){
+          config.setAutoCompleteModelList(autoCompleteCB.isSelected());
+        }
+      });
+    inputPane.add(autoCompleteCB,cnstr);
+    cnstr.gridy+=1;
+    
+    
     cnstr.gridwidth=2;
     JLabel label = new JLabel("Files");
     inputPane.add(label,cnstr);
@@ -860,6 +706,7 @@ public class Main {
   }
   public Main(){
      fc=new FileChooser();
+     config.setAutoCompleteModelList(true);
   }
   public static void main(String[] args) {
     Main instance=new Main();

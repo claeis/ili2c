@@ -266,21 +266,7 @@ public class Main
 	  Configuration config=null;
       if(doAuto){
 		// get dirs
-		ArrayList ilipathv=new ArrayList();
-		java.util.HashSet seenDirs=new java.util.HashSet();
-		Iterator ilifilei=ilifilev.iterator();
-		while(ilifilei.hasNext()){
-			String ilifile=(String)ilifilei.next();
-			String parentdir=new java.io.File(ilifile).getAbsoluteFile().getParent();
-			if(!seenDirs.contains(parentdir)){
-				seenDirs.add(parentdir);
-				ilipathv.add(parentdir);
-			}
-		}
-		String ili2cHome=getIli2cHome();
-		if(ili2cHome!=null){
-			ilipathv.add(ili2cHome+java.io.File.separator+"standard");
-		}
+		ArrayList ilipathv = getIliLookupPaths(ilifilev);
 		// scan models
 		config=ModelScan.getConfigWithFiles(ilipathv,ilifilev);
 		if(config==null){
@@ -383,6 +369,25 @@ public class Main
       EhiLogger.logError(progName + ":An internal error has occured. Please notify " + notifyOnError,ex);
     }
   }
+
+public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
+	ArrayList ilipathv=new ArrayList();
+	java.util.HashSet seenDirs=new java.util.HashSet();
+	Iterator ilifilei=ilifilev.iterator();
+	while(ilifilei.hasNext()){
+		String ilifile=(String)ilifilei.next();
+		String parentdir=new java.io.File(ilifile).getAbsoluteFile().getParent();
+		if(!seenDirs.contains(parentdir)){
+			seenDirs.add(parentdir);
+			ilipathv.add(parentdir);
+		}
+	}
+	String ili2cHome=getIli2cHome();
+	if(ili2cHome!=null){
+		ilipathv.add(ili2cHome+java.io.File.separator+"standard");
+	}
+	return ilipathv;
+}
   static public String getIli2cHome()
   {
 	String classpath = System.getProperty("java.class.path");
@@ -395,6 +400,38 @@ public class Main
 	return null;
   }
   static public TransferDescription runCompiler(Configuration config){
+	  
+	  ArrayList filev=new ArrayList();
+	  if(config.isAutoCompleteModelList()){
+		  ArrayList ilifilev=new ArrayList();
+	        Iterator filei=config.iteratorFileEntry();
+	        while(filei.hasNext()){
+	          FileEntry e=(FileEntry)filei.next();
+	          if(e.getKind()==FileEntryKind.ILIMODELFILE){
+	            String fileName = e.getFilename();
+	            ilifilev.add(fileName);
+	          }
+	        }
+			ArrayList modeldirv = getIliLookupPaths(ilifilev);
+		  ch.interlis.ili2c.config.Configuration files=ch.interlis.ili2c.ModelScan.getConfigWithFiles(modeldirv,ilifilev);
+		  if(files==null){
+ 			EhiLogger.logError("ili-file scan failed");
+			  return null;
+		  }
+		  logIliFiles(files);
+		  // copy result of scan to original config
+	        filei=files.iteratorFileEntry();
+	        while(filei.hasNext()){
+	          FileEntry e=(FileEntry)filei.next();
+			  filev.add(e);
+	        }
+	  }else{
+	        Iterator filei=config.iteratorFileEntry();
+	        while(filei.hasNext()){
+	          FileEntry e=(FileEntry)filei.next();
+	          filev.add(e);
+	        }
+	  }
       TransferDescription   desc = new TransferDescription ();
       boolean emitPredefined=config.isIncPredefModel();
       boolean checkMetaObjs=config.isCheckMetaObjs();
@@ -410,7 +447,7 @@ public class Main
 
         // model and metadata files
         double version=0.0;
-        Iterator filei=config.iteratorFileEntry();
+        Iterator filei=filev.iterator();
         while(filei.hasNext()){
           FileEntry e=(FileEntry)filei.next();
           if(e.getKind()==FileEntryKind.METADATAFILE){
