@@ -1,7 +1,7 @@
 // Copyright (c) 2002, Eisenhut Informatik
 // All rights reserved.
-// $Date: 2007-03-07 08:36:07 $
-// $Revision: 1.2 $
+// $Date: 2007-06-29 08:04:20 $
+// $Revision: 1.3 $
 //
 
 // -beg- preserve=no 3C625EF103C7 package "Configuration"
@@ -398,6 +398,17 @@ public class Configuration
       checkMetaObjs = value1;
     }
   }
+  private boolean autoCompleteModelList=false;
+
+  /** tests, if compiler looks automatically after required models.
+   */
+public boolean isAutoCompleteModelList() {
+	return autoCompleteModelList;
+}
+
+public void setAutoCompleteModelList(boolean autoCompleteModelList) {
+	this.autoCompleteModelList = autoCompleteModelList;
+}
 
   // -end- 3C625EF103C7 detail_end "Configuration"
 

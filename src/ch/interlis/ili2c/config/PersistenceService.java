@@ -21,7 +21,8 @@ import java.io.*;
 
 public class PersistenceService {
 
-  static public Configuration readConfig(String filename)
+  private static final String AUTO_COMPLETE_MODELS = "--auto-complete-models";
+static public Configuration readConfig(String filename)
     throws IOException, FileNotFoundException
   {
         File inputFile = new File(filename);
@@ -85,6 +86,8 @@ public class PersistenceService {
               //config.setIncPredefModel(true);
              }else if(arg.startsWith("--check-metaobj")){
               config.setCheckMetaObjs(true);
+             }else if(arg.startsWith(AUTO_COMPLETE_MODELS)){
+                 config.setAutoCompleteModelList(true);
              }else if(arg.startsWith("--without-warnings")){
               config.setGenerateWarnings(false);
              }else{
@@ -119,6 +122,10 @@ public class PersistenceService {
           out.write("--check-metaobj");
           out.newLine();
         }
+        if(config.isAutoCompleteModelList()){
+            out.write(AUTO_COMPLETE_MODELS);
+            out.newLine();
+          }
 
         // boid  to basket mappings
         java.util.Iterator boidi=config.iteratorBoidEntry();
