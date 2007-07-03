@@ -23,37 +23,19 @@ import javax.swing.JTextArea;
 
 /**
  * @author ce
- * @version $Revision: 1.2 $ $Date: 2007-03-29 15:36:02 $
+ * @version $Revision: 1.3 $ $Date: 2007-07-03 12:56:35 $
  */
-public class LogListener implements ch.ehi.basics.logging.LogListener {
+public class LogListener extends ch.ehi.basics.logging.AbstractStdListener {
 
-	private boolean errors=false;
-	public void logEvent(LogEvent event){
-		switch(event.getEventKind()){
-			case LogEvent.ERROR:
-				errors=true;
-				break;
-			default:
-				break;
-		}
-		ArrayList msgv=StdListener.formatOutput(event,true,!EhiLogger.getInstance().getTraceFiler());
-		Iterator msgi=msgv.iterator();
-		while(msgi.hasNext()){
-			String msg=(String)msgi.next();
-			System.err.println(msg);
-			if(errOutput!=null){
-				if(msg.endsWith("\n")){
-					errOutput.append(msg);
-				}else{
-					errOutput.append(msg+"\n");
-				}
+	public void outputMsgLine(int arg0, int arg1, String msg) {
+		System.err.println(msg);
+		if(errOutput!=null){
+			if(msg.endsWith("\n")){
+				errOutput.append(msg);
+			}else{
+				errOutput.append(msg+"\n");
 			}
 		}
-	}
-	/** have there been errors logged?
-	 */
-	public static boolean hasSeenErrors(){
-		return getInstance().errors;
 	}
 	/** LogListener is a singleton.
 	 */
