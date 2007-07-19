@@ -2395,30 +2395,100 @@ protected numericConst[Container scope]
 protected formattedType[Container scope, Type extending]
 	returns [FormattedType ft]
 	{
-		ft=null;
+		ft=new FormattedType();
+		Domain domain=null;
+		Table struct=null;
+		FormattedTypeBaseAttrRef baseAttr=null;
 	}
 	: 
-	(( "FORMAT" "BASED")=>( "FORMAT" "BASED" "ON" structureRef[scope] 
+	(( "FORMAT" "BASED")=>( "FORMAT" "BASED" "ON" struct=structureRef[scope] 
+		{
+			ft=new FormattedType();
+			ft.setBaseClass(struct);
+		}
 		LPAREN ("INHERITANCE")?
-                  ( STRING )? ( baseAttrRef[scope] (STRING)? )*
+                  ( prefix:STRING )? ( baseAttr=baseAttrRef[struct] (postfix:STRING)?
+		  		{ 	if(postfix!=null){
+						baseAttr.setPostfix(postfix.getText());
+					}
+					ft.addBaseAttrRef(baseAttr);
+				}
+		  	)*
                              RPAREN
-		( STRING DOTDOT STRING )?
+		( min:STRING DOTDOT max:STRING )?
+		{ 
+			if(min!=null){
+				ft.setMinimum(min.getText());
+				ft.setMaximum(max.getText());
+			}
+			if(prefix!=null){
+				ft.setPrefix(prefix.getText());
+			}
+		}
 	) 
-	| ( STRING DOTDOT STRING 
+	| ( min2:STRING DOTDOT max2:STRING 
+		{
+			ft=new FormattedType();
+			ft.setMinimum(min2.getText());
+			ft.setMaximum(max2.getText());
+		}
 	)
-	| ( "FORMAT" domainRef[scope] STRING DOTDOT STRING
+	| ( "FORMAT" domain=domainRef[scope] min3:STRING DOTDOT max3:STRING
+		{
+			ft=new FormattedType();
+			ft.setMinimum(min3.getText());
+			ft.setMaximum(max3.getText());
+			ft.setBaseDomain(domain);
+		}
 	))
-	{ // TODO formattedTyp
-		ft=new FormattedType();
-	}
 	;
 
-protected baseAttrRef[Container scope]
+protected baseAttrRef[Table scope]
+	returns [FormattedTypeBaseAttrRef baseAttr]
+	{
+		baseAttr=null;
+		Domain domain=null;
+		int intPos=0;
+	}
 :
- ( 
- (NAME SLASH NAME) => (NAME SLASH domainRef[scope] )
- | NAME ( SLASH posInteger )? )
+ 
+ (NAME SLASH NAME) => (name:NAME SLASH domain=domainRef[scope] )
+ 	{
+			AttributeDef attrdef=findAttribute(scope,name.getText());
+			if(attrdef==null){
+				reportError (formatMessage ("err_formattedType_unknownAttr", name.getText(),
+				scope.toString()), name.getLine());
+			}
+			Type type=attrdef.getDomain();
+			if(type instanceof CompositionType){
+				reportError (formatMessage ("err_formattedType_StructAttrRequired", name.getText(),
+				scope.toString()), name.getLine());
+			}
+			if(((CompositionType)type).getCardinality().getMaximum()>1){
+				reportError (formatMessage ("err_formattedType_maxCard1", name.getText(),
+				scope.toString()), name.getLine());
+			}
+			baseAttr=new FormattedTypeBaseAttrRef();
+			baseAttr.setAttr(attrdef);
+			baseAttr.setFormatted(domain);
+	}
+ | (name2:NAME ( SLASH intPos=posInteger )? )
 	{ // TODO formattedTyp
+			AttributeDef attrdef=findAttribute(scope,name2.getText());
+			if(attrdef==null){
+				reportError (formatMessage ("err_formattedType_unknownAttr", name2.getText(),
+				scope.toString()), name2.getLine());
+			}
+			Type type=attrdef.getDomainResolvingAliases();
+			if(!(type instanceof NumericType)){
+				reportError (formatMessage ("err_formattedType_NumericAttrRequired", name2.getText(),
+				scope.toString()), name2.getLine());
+			}
+			baseAttr=new FormattedTypeBaseAttrRef();
+			baseAttr.setAttr(attrdef);
+			if(intPos>0){
+				baseAttr.setIntPos(intPos);
+			}
 	}
  ;
 
@@ -4380,9 +4450,10 @@ protected argumentType[Container scope,int line]
 	{
 		Viewable ref=null;
 		domain=null;
+		boolean objects=false;
 	}
 	:	domain=attrTypeDef[scope,true,null,line]
-	| ("OBJECT" | "OBJECTS" ) "OF" (
+	| ("OBJECT" {objects=false;}| "OBJECTS" {objects=true;}) "OF" (
 		/*
 		** restrictedClassOrAssRef
                 ** | restrictedStructureRef
@@ -4393,8 +4464,7 @@ protected argumentType[Container scope,int line]
 		| "ANYSTRUCTURE" {ref=modelInterlis.ANYSTRUCTURE;}
 		)
 	       {
-	       	// TODO argumentType OBJECTS vs OBJECT
-	       		domain=new ObjectType(ref);
+	       		domain=new ObjectType(ref,objects);
 	       }
 	| "ENUMVAL" { /* TODO */ }
 	| "ENUMTREEVAL" { /* TODO */ }
@@ -5933,6 +6003,7 @@ protected ili1_attribute [Table table]
   AttributeDef attrib = null;
   Model model = (Model) table.getContainer (Model.class);
   Topic topic = (Topic) table.getContainer (Topic.class);
+  
   String explText=null;
 }
   : attributeName:NAME
