@@ -31,7 +31,7 @@ import java.util.Iterator;
 
 /**
  * @author ce
- * @version $Revision: 1.3 $ $Date: 2007-03-29 15:36:02 $
+ * @version $Revision: 1.4 $ $Date: 2007-07-19 14:46:43 $
  */
 public class ModelScan {
 
@@ -85,11 +85,11 @@ public class ModelScan {
 	public static HashSet scanIliFileDir(File dir,HashSet skipFiles){
 		HashSet ret=new HashSet();
 		if(!dir.exists()){
-			EhiLogger.logAdaption(dir.getAbsoluteFile()+" doesn't exist; ignored");
+			EhiLogger.logAdaption("Folder "+dir.getAbsoluteFile()+" doesn't exist; ignored");
 			return ret;
 		}
 		if(!dir.isDirectory()){
-			EhiLogger.logAdaption(dir.getAbsoluteFile()+" isn't a directory; ignored");
+			EhiLogger.logAdaption(dir.getAbsoluteFile()+" isn't a file; ignored");
 			return ret;
 		}
 		File filev[]=dir.listFiles(new ch.ehi.basics.view.GenericFileFilter("INTERLIS models (*.ili)","ili"));
