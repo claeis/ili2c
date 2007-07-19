@@ -470,7 +470,10 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
               EhiLogger.logError(ex);
               return null;
             }
+			ch.ehi.basics.logging.ErrorTracker tracker=null;
 			try{
+				tracker=new ch.ehi.basics.logging.ErrorTracker();
+				EhiLogger.getInstance().addListener(tracker);
 				if(version==2.2){
 					if (!Ili22Parser.parseIliFile (desc,streamName, stream, checkMetaObjs)){
 					   return null;
@@ -480,10 +483,17 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
 					   return null;
 					}
 				}
+				if(tracker.hasSeenErrors()){
+					return null;
+				}
 			}catch(java.lang.Exception ex){
 			  EhiLogger.logError(ex);
 			  return null;
 			}finally{
+				if(tracker!=null){
+					EhiLogger.getInstance().removeListener(tracker);
+					tracker=null;
+				}
 				try{
 				  stream.close();
 				}catch(java.io.IOException ex){
