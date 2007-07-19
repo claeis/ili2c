@@ -8,14 +8,23 @@ package ch.interlis.ili2c.metamodel;
 public class ObjectType extends Type
 {
 	private Viewable ref;
+	private boolean objects=false;
 	public ObjectType(Viewable ref)
 	{
 		this.ref=ref;
+	}
+	public ObjectType(Viewable ref,boolean objects)
+	{
+		this.ref=ref;
+		this.objects=objects;
 	}
         public Viewable getRef()
         {
           return ref;
         }
+		public boolean isObjects() {
+			return objects;
+		}
 }
 
 

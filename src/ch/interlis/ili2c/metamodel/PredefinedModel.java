@@ -149,6 +149,7 @@ public class PredefinedModel extends DataModel
   public final Function isSubClass = new Function();
   public final Function isOfClass = new Function();
   public final Function elementCount = new Function();
+  public final Function objectCount = new Function();
   public final Function convertUnit = new Function();
 
   public final Table ANYCLASS = new Table ();
@@ -362,6 +363,16 @@ Liefert die Anzahl Elemente, die der Bag (oder die Liste) enthält.
       elementCount.setDomain(new NumericType());
       add(elementCount);
 
+/* FUNCTION objectCount (Objects: OBJECTS OF ANYCLASS): NUMERIC;
+Liefert die Anzahl Objekte, welche die gegebene Objektmentmenge enthält
+*/
+      objectCount.setName("objectCount");
+      objectCount.setArguments(new FormalArgument[]{
+        new FormalArgument("Objects",new ObjectType (ANYCLASS,true))
+        });
+      objectCount.setDomain(new NumericType());
+      add(objectCount);
+      
 /* FUNCTION convertUnit (from: NUMERIC): NUMERIC;
 Rechnet den numerischen Wert des Parameters "from" in den numerischen
 Rückgabewert um und be-rücksichtigt dabei die Einheiten, die mit dem

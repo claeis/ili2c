@@ -1700,7 +1700,11 @@ private void setup(
       }
     }else if(dd instanceof ObjectType){
       ObjectType ot=(ObjectType)dd;
-      ipw.print ("OBJECT OF ");
+      if(ot.isObjects()){
+          ipw.print ("OBJECTS OF ");
+      }else{
+          ipw.print ("OBJECT OF ");
+      }
       Viewable ref=ot.getRef();
       if(ref==modelInterlis.ANYCLASS){
         ipw.print ("ANYCLASS");
