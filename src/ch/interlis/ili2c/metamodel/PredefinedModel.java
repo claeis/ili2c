@@ -661,7 +661,7 @@ einer gemeinsamen Einheit abgeleitet werden.
 	gregoriandatetime_hours.setName ("Hours");
 	gregoriandatetime_hours.setDomain (typ);
 	gregoriandatetime_hours.setSubdivision(true);
-	TimeOfDay.add (gregoriandatetime_hours);
+	GregorianDateTime.add (gregoriandatetime_hours);
 
 	typ=new NumericType(new PrecisionDecimal("0"),new PrecisionDecimal("59"));
 	((NumericType) typ).setUnit (Minute);
@@ -671,7 +671,7 @@ einer gemeinsamen Einheit abgeleitet werden.
 	gregoriandatetime_minutes.setDomain (typ);
 	gregoriandatetime_minutes.setSubdivision(true);
 	gregoriandatetime_minutes.setContinuous(true);
-	TimeOfDay.add (gregoriandatetime_minutes);
+	GregorianDateTime.add (gregoriandatetime_minutes);
 
 	typ=new NumericType(new PrecisionDecimal("0.000"),new PrecisionDecimal("59.999"));
 	((NumericType) typ).setUnit (SECOND);
@@ -681,7 +681,7 @@ einer gemeinsamen Einheit abgeleitet werden.
 	gregoriandatetime_seconds.setDomain (typ);
 	gregoriandatetime_seconds.setSubdivision(true);
 	gregoriandatetime_seconds.setContinuous(true);
-	TimeOfDay.add (gregoriandatetime_seconds);
+	GregorianDateTime.add (gregoriandatetime_seconds);
   }    
   add(GregorianDateTime); // TODO set metaobjref UTC
 
