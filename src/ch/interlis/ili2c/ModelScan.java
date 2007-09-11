@@ -18,6 +18,7 @@
 package ch.interlis.ili2c;
 
 import java.io.*;
+
 import ch.ehi.basics.tools.TopoSort;
 import ch.ehi.basics.logging.EhiLogger;
 import ch.interlis.ili2c.parser.Ili2ModelScan;
@@ -31,17 +32,21 @@ import java.util.Iterator;
 
 /**
  * @author ce
- * @version $Revision: 1.4 $ $Date: 2007-07-19 14:46:43 $
+ * @version $Revision: 1.5 $ $Date: 2007-09-11 10:01:55 $
  */
 public class ModelScan {
 
 	public static void main(String[] args) {
-		EhiLogger.getInstance().setTraceFiler(false);
+		EhiLogger.getInstance().setTraceFilter(false);
 		ArrayList dirName = new ArrayList(Arrays.asList(args[0].split(";")));
 		String model = args[1];
 		ArrayList models=new ArrayList();
 		models.add(model);
-		getConfig(dirName,models);
+		try{
+			getConfig(dirName,models);
+		}catch(Ili2cException ex){
+			EhiLogger.logError(ex);
+		}
 	}
 	public static IliFile scanIliFile(File file){
 		IliFile iliFile=new IliFile();
@@ -82,14 +87,16 @@ public class ModelScan {
 	 * @param skipFiles skip this files. set<File iliFile>
 	 * @return set<IliFile>
 	 */
-	public static HashSet scanIliFileDir(File dir,HashSet skipFiles){
+	public static HashSet scanIliFileDir(File dir,HashSet skipFiles)
+	throws IOException
+	{
 		HashSet ret=new HashSet();
 		if(!dir.exists()){
 			EhiLogger.logAdaption("Folder "+dir.getAbsoluteFile()+" doesn't exist; ignored");
 			return ret;
 		}
 		if(!dir.isDirectory()){
-			EhiLogger.logAdaption(dir.getAbsoluteFile()+" isn't a file; ignored");
+			EhiLogger.logAdaption(dir.getAbsoluteFile()+" isn't a folder; ignored");
 			return ret;
 		}
 		File filev[]=dir.listFiles(new ch.ehi.basics.view.GenericFileFilter("INTERLIS models (*.ili)","ili"));
@@ -102,7 +109,7 @@ public class ModelScan {
 				Iterator skipFilei=skipFiles.iterator();
 				while(skipFilei.hasNext()){
 					File skipFile=(File)skipFilei.next();
-					if(filev[i].equals(skipFile)){
+					if(filev[i].getCanonicalFile().equals(skipFile.getCanonicalFile())){
 						ignoreFile=true;
 						break;
 					}
@@ -117,15 +124,24 @@ public class ModelScan {
 		}
 		return ret;
 	}
-	public static Configuration getConfig(ArrayList ilipathv,ArrayList requiredModels){
+	public static Configuration getConfig(ArrayList ilipathv,ArrayList requiredModels)
+	throws Ili2cException
+	{
 		return getConfig(ilipathv,requiredModels,0.0);
 	}
-	public static Configuration getConfig(ArrayList ilipathv,ArrayList requiredModels,double iliVersion){
+	public static Configuration getConfig(ArrayList ilipathv,ArrayList requiredModels,double iliVersion)
+	throws Ili2cException
+	{
 		ArrayList ilifiles=new ArrayList();
 		
 		// scan directories for ili-files
 		for(int i=0;i<ilipathv.size();i++){
-			ilifiles.addAll(scanIliFileDir(new File((String)ilipathv.get(i)),null));
+			String ilipath=(String)ilipathv.get(i);
+			try {
+				ilifiles.addAll(scanIliFileDir(new File(ilipath),null));
+			} catch (IOException e) {
+				throw new Ili2cException("failed to scan folder "+ilipath,e); 
+			}
 		}
 		
 		// auto determine version?
@@ -198,7 +214,9 @@ public class ModelScan {
 	 * @param requiredIliFiles list<String iliFilename>
 	 * @return
 	 */
-	public static Configuration getConfigWithFiles(ArrayList ilipaths,ArrayList requiredIliFileNames){
+	public static Configuration getConfigWithFiles(ArrayList ilipaths,ArrayList requiredIliFileNames)
+	throws Ili2cException
+	{
 		HashSet ilifiles=new HashSet();
 		HashSet toVisitFiles=new HashSet(); // set<IliFile>
 		HashSet requiredFiles=new HashSet(); // set<File>
@@ -244,7 +262,13 @@ public class ModelScan {
 		
 		// add files in given directories
 		for(Iterator i=ilipaths.iterator();i.hasNext();){
-			HashSet set=scanIliFileDir(new File((String)i.next()),requiredFiles);
+			String ilidir=(String)i.next();
+			HashSet set=null;
+			try {
+				set = scanIliFileDir(new File(ilidir),requiredFiles);
+			} catch (IOException ex) {
+				throw new Ili2cException("failed to scan folder "+ilidir,ex);
+			}
 			if(set!=null && !set.isEmpty()){
 				ilifiles.addAll(set);
 			}
