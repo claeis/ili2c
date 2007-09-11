@@ -19,8 +19,10 @@ package ch.interlis.ili2c.generator;
 
 
 import ch.interlis.ili2c.metamodel.*;
+
 import java.io.Writer;
 import java.util.*;
+
 import ch.ehi.basics.io.IndentPrintWriter;
 
 /** writes a XML-schema according to the ILi specification (ch. 3)
@@ -357,6 +359,7 @@ public final class XSDGenerator
             declareDomainDef(td.INTERLIS.URI);
             declareDomainDef(td.INTERLIS.NAME);
             declareDomainDef(td.INTERLIS.INTERLIS_1_DATE);
+            declareDomainDef(td.INTERLIS.STANDARDOID);
             declareAbstractClassDef(td.INTERLIS.METAOBJECT);
             declareAbstractClassDef(td.INTERLIS.METAOBJECT_TRANSLATION);
             declareAbstractClassDef(td.INTERLIS.AXIS);
@@ -434,7 +437,7 @@ public final class XSDGenerator
 	    Viewable v = (Viewable) tObj;
             modelelev.add(v);
             ipw.println ("<TAGENTRY FROM=\""+getTransferName(v)+"\" TO=\""+getTransferName(v)+"\"/>");
-            Iterator xvi=v.getExtensions().iterator();
+            Iterator xvi=sortMetamodelElements(v.getExtensions()).iterator();
             while(xvi.hasNext()){
               Viewable xv=(Viewable)xvi.next();
               if(xv!=v){ // v.getExtensions() liefert auch sich selbst d.h. v
@@ -465,7 +468,7 @@ public final class XSDGenerator
                   //ipw.println("-- topic");
                   ipw.println ("<TAGENTRY FROM=\""+getTransferName(topic)+"\" TO=\""+getTransferName(topic)+"\"/>");
                   // fuer alle direkten oder indirekten erweiterten Themen
-                  Iterator xtopici=topic.getExtensions().iterator();
+                  Iterator xtopici=sortMetamodelElements(topic.getExtensions()).iterator();
                   while(xtopici.hasNext()){
                     Topic xtopic=(Topic)xtopici.next();
                     if(xtopic!=topic && !suppressTopicInAliasTable(xtopic)){
@@ -482,7 +485,7 @@ public final class XSDGenerator
                       Viewable v = (Viewable) ele;
                       elev.add(v);
                       ipw.println ("<TAGENTRY FROM=\""+getTransferName(v)+"\" TO=\""+getTransferName(v)+"\"/>");
-                      Iterator xvi=v.getExtensions().iterator();
+                      Iterator xvi=sortMetamodelElements(v.getExtensions()).iterator();
                       while(xvi.hasNext()){
                         Viewable xv=(Viewable)xvi.next();
                         if(xv!=v){
@@ -507,7 +510,7 @@ public final class XSDGenerator
                   }
                   //ipw.println("-- delete elements");
                   // fuer alle direkten oder indirekten erweiterten Themen
-                  xtopici=topic.getExtensions().iterator();
+                  xtopici=sortMetamodelElements(topic.getExtensions()).iterator();
                   while(xtopici.hasNext()){
                     Topic xtopic=(Topic)xtopici.next();
                     if(xtopic!=topic && !suppressTopicInAliasTable(xtopic)){
@@ -537,6 +540,18 @@ public final class XSDGenerator
     ipw.println("    ALIAS TABLE -->");
   }
 
+  private ArrayList sortMetamodelElements(Collection c)
+  {
+	  ArrayList ret=new ArrayList(c);
+	  java.util.Collections.sort(ret,new java.util.Comparator(){
+		  public int compare(Object o1,Object o2){
+			  Element e1=(Element)o1;
+			  Element e2=(Element)o2;
+			  return e1.getScopedName(null).compareTo(e2.getScopedName(null));
+		  }
+	  });
+	  return ret;
+  }
 
 
   protected boolean suppressModel (Model model)
