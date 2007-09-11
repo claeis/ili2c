@@ -2,7 +2,7 @@ package ch.interlis.ili2c;
 
 /** signals a failure of an INTERLIS compiler run.
  */
-public class Ili2cFailure extends Exception {
+public class Ili2cFailure extends Ili2cException {
 
 	public Ili2cFailure() {
 	}
