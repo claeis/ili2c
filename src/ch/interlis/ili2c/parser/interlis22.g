@@ -1619,7 +1619,7 @@ protected roleDef[AssociationDef container]
 		int mods;
 		ReferenceType ref=null;
 		Evaluable obj=null;
-		RoleDef def=new RoleDef();
+		RoleDef def=new RoleDef(false);
 		int kind=0;
 	}
 	:
@@ -5848,7 +5848,7 @@ protected ili1_attribute [Table table]
 	}
 	ili1RoleCounter++;
         assoc.setName(thisRoleName+attributeName.getText ());
-        RoleDef role1=new RoleDef();
+        RoleDef role1=new RoleDef(false);
 	role1.setIli1AttrIdx(ili1AttrCounter);
         role1.setName(thisRoleName);
 	ReferenceType role1ref=new ReferenceType();
@@ -5856,7 +5856,7 @@ protected ili1_attribute [Table table]
         role1.setReference(role1ref);
         role1.setCardinality(new Cardinality(0, Cardinality.UNBOUND));
         assoc.add(role1);
-        RoleDef role2=new RoleDef();
+        RoleDef role2=new RoleDef(false);
         role2.setName(attributeName.getText());
 	ReferenceType role2ref=new ReferenceType();
 	role2ref.setReferred(referred);

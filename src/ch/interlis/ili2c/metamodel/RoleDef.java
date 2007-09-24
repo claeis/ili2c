@@ -28,6 +28,11 @@ public class RoleDef extends AbstractLeafElement
 		/** do not instantiate */
 		private Kind(){};
 	}
+	private RoleDef(){};
+	private boolean isIli23=true;
+	public RoleDef(boolean isIli23){
+		this.isIli23=isIli23;
+	}
 	public void setExtended(boolean v)
 	{
 		extended=v;
@@ -111,6 +116,9 @@ public class RoleDef extends AbstractLeafElement
 		}
 		if(cardinality==null){
 			if(getKind()==Kind.eCOMPOSITE){
+				if(isIli23){
+					return new Cardinality(0,1);
+				}
 				return new Cardinality(1,1);
 			}
 			return new Cardinality(0,Cardinality.UNBOUND);
