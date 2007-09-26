@@ -27,14 +27,15 @@ import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.metamodel.ErrorListener;
 import ch.interlis.ili2c.parser.Ili2Parser;
 import ch.interlis.ili2c.config.*;
-import ch.interlis.ili2c.LogListener;
 import ch.interlis.ili2c.CompilerLogEvent;
+import ch.ehi.basics.logging.TextAreaListener;
 import ch.ehi.basics.view.*;
 
 public class Main {
         private UserSettings settings;
         final static String CHECKPANEL = "Check/Generate";
         //final static String COMPAREPANEL = "Compare";
+        TextAreaListener errlistener=null;
         JFrame frame;
         JPanel cards;
         Container checkPane;
@@ -68,7 +69,6 @@ public class Main {
 
         checkPane=buildCheckPane();
         Container runPane=buildRunPane();
-        // the following leads to a blocked dialog; dont't know why
 		frame.getRootPane().setDefaultButton(runButton);
 
 
@@ -92,7 +92,9 @@ public class Main {
         buildMenu();
 
         updateUi();
-        LogListener.setSwingOutput(errOutput);
+        errlistener=new TextAreaListener();
+        errlistener.setOutputArea(errOutput);
+        ch.ehi.basics.logging.EhiLogger.getInstance().addListener(errlistener);
 		frame.setSize(508,490);
         frame.pack();
         frame.setVisible(true);
