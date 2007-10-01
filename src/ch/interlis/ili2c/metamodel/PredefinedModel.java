@@ -196,7 +196,7 @@ public class PredefinedModel extends DataModel
 		,/* extending */ null, /* abstract */ false, /* final */ false);
 	public final Domain XmlDateTime=new Domain("XMLDateTime"
 		,new FormattedType()
-		,/* extending */ null, /* abstract */ false, /* final */ false);
+		,XmlDate, /* abstract */ false, /* final */ false);
 		
   public final Table LINE_SEGMENT = new Table ();
   //public final Table START_SEGMENT = new Table ();
@@ -687,13 +687,70 @@ einer gemeinsamen Einheit abgeleitet werden.
 
   /*
   DOMAIN XMLTime = FORMAT BASED ON UTC ( Hours/2 ":" Minutes ":" Seconds );
+  */
+  {
+	  FormattedType format=(FormattedType)XmlTime.getType();
+	  format.setBaseClass(UTC);
+	  FormattedTypeBaseAttrRef baseAttr=null;
+	  baseAttr=new FormattedTypeBaseAttrRef();
+	  baseAttr.setAttr((LocalAttribute)UTC.getElement(LocalAttribute.class, "Hours"));
+	  baseAttr.setIntPos(2);
+	  baseAttr.setPostfix(":");
+	  format.addBaseAttrRef(baseAttr);
+	  baseAttr=new FormattedTypeBaseAttrRef();
+	  baseAttr.setAttr((LocalAttribute)UTC.getElement(LocalAttribute.class, "Minutes"));
+	  baseAttr.setPostfix(":");
+	  format.addBaseAttrRef(baseAttr);
+	  baseAttr=new FormattedTypeBaseAttrRef();
+	  baseAttr.setAttr((LocalAttribute)UTC.getElement(LocalAttribute.class, "Seconds"));
+	  format.addBaseAttrRef(baseAttr);
+  }
+  add(XmlTime);
+
+  /*
   DOMAIN XMLDate = FORMAT BASED ON GregorianDate ( Year "-" Month "-" Day );
+  */
+  {
+	  FormattedType format=(FormattedType)XmlDate.getType();
+	  format.setBaseClass(GregorianDate);
+	  FormattedTypeBaseAttrRef baseAttr=null;
+	  baseAttr=new FormattedTypeBaseAttrRef();
+	  baseAttr.setAttr((LocalAttribute)GregorianDate.getElement(LocalAttribute.class, "Year"));
+	  baseAttr.setPostfix("-");
+	  format.addBaseAttrRef(baseAttr);
+	  baseAttr=new FormattedTypeBaseAttrRef();
+	  baseAttr.setAttr((LocalAttribute)GregorianDate.getElement(LocalAttribute.class, "Month"));
+	  baseAttr.setPostfix("-");
+	  format.addBaseAttrRef(baseAttr);
+	  baseAttr=new FormattedTypeBaseAttrRef();
+	  baseAttr.setAttr((LocalAttribute)GregorianDate.getElement(LocalAttribute.class, "Day"));
+	  format.addBaseAttrRef(baseAttr);
+  }
+  add(XmlDate);
+  
+  /*
   DOMAIN XMLDateTime EXTENDS XMLDate = FORMAT BASED ON GregorianDateTime
 	( INHERITANCE "T" Hours/2 ":" Minutes ":" Seconds );
 
   */
-  add(XmlTime); // TODO define FormatType specifics
-  add(XmlDate); // TODO define FormatType specifics
+  {
+	  FormattedType format=(FormattedType)XmlDateTime.getType();
+	  format.setBaseClass(GregorianDateTime);
+	  format.setPrefix("T");
+	  FormattedTypeBaseAttrRef baseAttr=null;
+	  baseAttr=new FormattedTypeBaseAttrRef();
+	  baseAttr.setAttr((LocalAttribute)GregorianDateTime.getElement(LocalAttribute.class, "Hours"));
+	  baseAttr.setPostfix(":");
+	  baseAttr.setIntPos(2);
+	  format.addBaseAttrRef(baseAttr);
+	  baseAttr=new FormattedTypeBaseAttrRef();
+	  baseAttr.setAttr((LocalAttribute)GregorianDateTime.getElement(LocalAttribute.class, "Minutes"));
+	  baseAttr.setPostfix(":");
+	  format.addBaseAttrRef(baseAttr);
+	  baseAttr=new FormattedTypeBaseAttrRef();
+	  baseAttr.setAttr((LocalAttribute)GregorianDateTime.getElement(LocalAttribute.class, "Seconds"));
+	  format.addBaseAttrRef(baseAttr);
+  }
   add(XmlDateTime); // TODO define FormatType specifics
 
 
