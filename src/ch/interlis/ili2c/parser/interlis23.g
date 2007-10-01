@@ -2407,7 +2407,7 @@ protected formattedType[Container scope, Type extending]
 			ft.setBaseClass(struct);
 		}
 		LPAREN ("INHERITANCE")?
-                  ( prefix:STRING )? ( baseAttr=baseAttrRef[struct] (postfix:STRING)?
+                  ( prefix:STRING )? ( baseAttr=baseAttrRef[struct] {postfix=null;} (postfix:STRING)?
 		  		{ 	if(postfix!=null){
 						baseAttr.setPostfix(postfix.getText());
 					}
@@ -2460,7 +2460,7 @@ protected baseAttrRef[Table scope]
 				scope.toString()), name.getLine());
 			}
 			Type type=attrdef.getDomain();
-			if(type instanceof CompositionType){
+			if(!(type instanceof CompositionType)){
 				reportError (formatMessage ("err_formattedType_StructAttrRequired", name.getText(),
 				scope.toString()), name.getLine());
 			}
