@@ -2658,7 +2658,8 @@ classConst[Container scope]
 	c=null;
 	}
 : 
-">" viewableRef[scope]
+">" viewableRef[scope] {// TODO
+	}
 ;
 
 attributeConst 
@@ -2668,7 +2669,8 @@ attributeConst
 	c=null;
 	}
 :
-	">>" names2[nams]
+	">>" names2[nams] { // TODO
+	}
 	;
 	
 protected lineType [Container scope, Type extending]
@@ -3652,11 +3654,12 @@ protected existenceConstraint[Viewable v]
 protected uniquenessConstraint[Viewable v]
 	returns [UniquenessConstraint constr]
   	{
+	Evaluable preCond=null;
 		constr=new UniquenessConstraint();
 	}
 	: "UNIQUE"
-  	( "WHERE" expression[v, /* expectedType */ predefinedBooleanType,v] COLON
-		{ // TODO uniquenessConstraint WHERE
+  	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,v] COLON
+		{ constr.setPreCondition(preCond);
 		}
 	)?
 	( constr=globalUniqueness[v]
@@ -3774,16 +3777,26 @@ protected localUniqueness[Viewable start]
 	;
 
 protected setConstraint [Viewable v]
-  returns [MandatoryConstraint constr]
+  returns [SetConstraint constr]
 {
-  constr = null;
+	Evaluable preCond=null;
+	Evaluable condition=null;
+  constr = new SetConstraint();
 }
-  : "SET" "CONSTRAINT" 
-  	( "WHERE" expression[v, /* expectedType */ predefinedBooleanType,v] COLON
+  : tok:"SET" "CONSTRAINT" 
+  	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,v] COLON
+		{
+	        constr.setPreCondition(preCond);
+		}
 	)?
-	expression[v, /* expectedType */ predefinedBooleanType,v]
+	condition=expression[v, /* expectedType */ predefinedBooleanType,v]
 	SEMI
-	{ // TODO setConstraint
+	{
+      try {
+        constr.setCondition(condition);
+      } catch (Exception ex) {
+        reportError(ex, tok.getLine());
+      }
 	}
 ;
 protected constraintsDef[Container scope]
@@ -4093,7 +4106,7 @@ protected pathEl[Viewable currentViewable]
 			el=new PathElRefAttr(refattr);
 		}else if(refattr!=null && refattr.getDomainResolvingAliases() instanceof ObjectType){
 			ObjectType ref=(ObjectType)refattr.getDomainResolvingAliases();
-			el=new PathElBase(n.getText(),ref.getRef());
+			el=new PathElBase(currentViewable,n.getText(),ref.getRef());
 		}else if(currentViewable instanceof AssociationDef && currentViewable.getRealElement(RoleDef.class,n.getText())!=null){
 			// currentView is an Association? -> role name
 			el=new PathElAssocRole((RoleDef)currentViewable.getRealElement(RoleDef.class,n.getText()));
