@@ -47,4 +47,11 @@ public class UniquenessConstraint extends Constraint
    {
     return local;
    }
+   private Evaluable preCondition=null;
+public Evaluable getPreCondition() {
+	return preCondition;
+}
+public void setPreCondition(Evaluable preCondition) {
+	this.preCondition = preCondition;
+}
 }
