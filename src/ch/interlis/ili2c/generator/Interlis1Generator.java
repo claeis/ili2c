@@ -653,7 +653,7 @@ public final class Interlis1Generator
               if (path == null){
                 printError ();
               }else{
-				ipw.print(sep+((AttributeRef)path.getPathElements()[0]).getName());
+				ipw.print(sep+((PathEl)path.getPathElements()[0]).getName());
               }
 			  sep=", ";
             }
