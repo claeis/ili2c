@@ -748,13 +748,6 @@ public final class Interlis1Generator
       if (t instanceof TypeAlias)
       {
         Domain aliased = ((TypeAlias) t).getAliasing();
-		if(!genFmt){
-			if(!mand && !withoutOptional){
-				ipw.print ("OPTIONAL ");
-			}
-			ipw.print(aliased.getName());
-			return null;
-		}
         t = aliased.getType ();
       }
     } while (t instanceof TypeAlias);
@@ -766,33 +759,51 @@ public final class Interlis1Generator
         }
       }
     }
-
+    if(typ instanceof TypeAlias){
+        Domain aliased = ((TypeAlias) typ).getAliasing();
+        if(aliased==td.INTERLIS.INTERLIS_1_DATE){
+            if(genFmt){
+                ipw.print(" "+genFmtField(fmtAttrIdx,8));
+              }else{
+                ipw.print ("DATE");
+              }
+        }else if(aliased==td.INTERLIS.BOOLEAN){
+            if(genFmt){
+                ipw.print(" "+genFmtField(fmtAttrIdx,1));
+              }else{
+                ipw.print ("BOOLEAN");
+              }
+        }else if(aliased==td.INTERLIS.HALIGNMENT){
+            if(genFmt){
+                ipw.print(" "+genFmtField(fmtAttrIdx,1));
+              }else{
+                ipw.print ("HALIGNMENT");
+              }
+        }else if(aliased==td.INTERLIS.VALIGNMENT){
+            if(genFmt){
+                ipw.print(" "+genFmtField(fmtAttrIdx,1));
+              }else{
+                ipw.print ("VALIGNMENT");
+              }
+        }else{
+			ipw.print(aliased.getName());
+        }
+		return null;
+    }
     t = Type.findReal (typ);
     if (t instanceof TextType)
     {
-      if (t == typeOf_ILI1_DATE)
-      {
         if(genFmt){
-          ipw.print(" "+genFmtField(fmtAttrIdx,8));
-        }else{
-          ipw.print ("DATE");
-        }
-        return /* no comment */ null;
-      }
-      else
-      {
-        if(genFmt){
-          ipw.print(" "+genFmtField(fmtAttrIdx,((TextType) t).getMaxLength ()));
-        }else{
-          ipw.print ("TEXT*");
-          ipw.print (((TextType) t).getMaxLength ());
-        }
-        if (t == typeOf_URI)
-          comment = rsrc.getString ("comment_uri");
-        else if (t == typeOf_NAME)
-          comment = rsrc.getString ("comment_name");
-        return comment;
-      }
+            ipw.print(" "+genFmtField(fmtAttrIdx,((TextType) t).getMaxLength ()));
+          }else{
+            ipw.print ("TEXT*");
+            ipw.print (((TextType) t).getMaxLength ());
+          }
+          if (t == typeOf_URI)
+            comment = rsrc.getString ("comment_uri");
+          else if (t == typeOf_NAME)
+            comment = rsrc.getString ("comment_name");
+          return comment;
     }
     else if (t instanceof NumericType)
       return printNumericType ((NumericType) t);
@@ -800,27 +811,7 @@ public final class Interlis1Generator
       return printCoordType ((CoordType) t);
     else if (t instanceof EnumerationType)
     {
-      if (t == typeOf_BOOLEAN){
-        if(genFmt){
-          ipw.print(" "+genFmtField(fmtAttrIdx,1));
-        }else{
-          ipw.print ("BOOLEAN");
-        }
-      }else if (t == typeOf_HALIGNMENT){
-        if(genFmt){
-          ipw.print(" "+genFmtField(fmtAttrIdx,1));
-        }else{
-          ipw.print ("HALIGNMENT");
-        }
-      }else if (t == typeOf_VALIGNMENT){
-        if(genFmt){
-          ipw.print(" "+genFmtField(fmtAttrIdx,1));
-        }else{
-          ipw.print ("VALIGNMENT");
-        }
-      }else{
         printEnumeration (((EnumerationType) t).getEnumeration ());
-      }
     }
     else if (t instanceof LineType){
       if(genFmt){
