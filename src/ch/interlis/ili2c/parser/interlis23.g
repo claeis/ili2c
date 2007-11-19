@@ -541,7 +541,7 @@ options
 
   private int numIli1LineAttrStructures = 0;
 
-  private Table createImplicitLineAttrStructure (Container container, int lineNumber)
+  private Table createImplicitLineAttrStructure (Container container, Viewable table,int lineNumber)
   {
     Table result = new Table ();
 
@@ -549,10 +549,10 @@ options
     try {
       result.setName ("LineAttrib" + numIli1LineAttrStructures);
       result.setIdentifiable (false); /* make it a structure */
-      if(container instanceof Topic){
-	      ((Topic)container).addPreLast (result);
-      }else if(container instanceof Model){
-	      ((Model)container).addPreLast (result);
+      if(container instanceof Topic && table!=null){
+	      ((Topic)container).addBefore (result,table);
+      }else if(container instanceof Model && table!=null){
+	      ((Model)container).addBefore (result,table);
       }else{
 	      container.add (result);
       }
@@ -5898,7 +5898,7 @@ protected ili1_domainDefs [Container container]
     (
       domainName:NAME
       EQUALS
-      type = ili1_attributeType [model, topic]
+      type = ili1_attributeType [model, topic,null]
       SEMI
       {
         Domain domain = null;
@@ -6023,7 +6023,7 @@ protected ili1_attribute [Table table]
     col:COLON
     ( "OPTIONAL" { optional = true; } )?
 
-    ( type = ili1_localAttributeType [model, topic]
+    ( type = ili1_localAttributeType [model, topic,table]
       {
         attrib = new LocalAttribute ();
       }
@@ -6194,21 +6194,21 @@ protected ili1_identifications [Table table]
   ;
 
 
-protected ili1_localAttributeType [Model forModel, Topic forTopic]
+protected ili1_localAttributeType [Model forModel, Topic forTopic,Viewable table]
   returns [Type type]
 {
   type = null;
 }
-  : type = ili1_type [forModel, forTopic]
+  : type = ili1_type [forModel, forTopic,table]
   ;
 
 
-protected ili1_type [Model forModel, Topic forTopic]
+protected ili1_type [Model forModel, Topic forTopic,Viewable table]
   returns [Type type]
 {
   type = null;
 }
-  : type = ili1_attributeType [forModel, forTopic]
+  : type = ili1_attributeType [forModel, forTopic,table]
   | nam:NAME
     {
       Domain domain = null;
@@ -6265,14 +6265,14 @@ protected ili1_type [Model forModel, Topic forTopic]
   ;
 
 
-protected ili1_attributeType [Model forModel, Topic forTopic]
+protected ili1_attributeType [Model forModel, Topic forTopic,Viewable table]
   returns [Type type]
 {
   type = null;
 }
   : type = ili1_baseType [forModel]
   | type = ili1_lineType [forModel, forTopic]
-  | type = ili1_areaType [forModel, forTopic]
+  | type = ili1_areaType [forModel, forTopic,table]
   ;
 
 
@@ -6680,7 +6680,7 @@ protected ili1_lineType [Model forModel, Topic forTopic]
   ;
 
 
-protected ili1_areaType [Model forModel, Topic forTopic]
+protected ili1_areaType [Model forModel, Topic forTopic,Viewable table]
   returns [LineType type]
 {
   type = null;
@@ -6709,7 +6709,7 @@ protected ili1_areaType [Model forModel, Topic forTopic]
       ili1_intersectionDef [type]
     )
 
-    ( ( "LINEATTR" ) => ili1_lineAttributes [type, scope] )?
+    ( ( "LINEATTR" ) => ili1_lineAttributes [type, scope,table] )?
   ;
 
 
@@ -6803,7 +6803,7 @@ protected ili1_controlPoints [LineType lineType, Model inModel, Topic inTopic]
   Domain controlPointDomain = null;
 }
   : vertex:"VERTEX"
-    type = ili1_type [inModel, inTopic]
+    type = ili1_type [inModel, inTopic,null]
     ( ( "BASE" ) =>
       base:"BASE" EXPLANATION
       {
@@ -6877,13 +6877,13 @@ protected ili1_controlPoints [LineType lineType, Model inModel, Topic inTopic]
    Reported by: Stefan Keller <Stefan.Keller@lt.admin.ch>, 1999-10-04
    Fixed by;    Sascha Brawer <brawer@acm.org>, 1999-10-07
 */
-protected ili1_lineAttributes [LineType lineType, Container scope]
+protected ili1_lineAttributes [LineType lineType, Container scope,Viewable table]
 {
   Table lineAttrStruct = null;
 }
   : att:"LINEATTR" EQUALS
     {
-      lineAttrStruct = createImplicitLineAttrStructure (scope, att.getLine());
+      lineAttrStruct = createImplicitLineAttrStructure (scope, table, att.getLine());
       try {
         ((SurfaceOrAreaType) lineType).setLineAttributeStructure (lineAttrStruct);
       } catch (Exception ex) {

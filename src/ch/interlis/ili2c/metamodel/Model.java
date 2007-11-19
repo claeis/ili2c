@@ -239,6 +239,30 @@ public abstract class Model extends Importable
 
 
   }
+  public void addBefore(Object o,Object last)
+  {
+	  if(!((ElementDelegate)elements).checkChildElement(o)){
+		  return;
+	  }
+	    try {
+		      ((Element) o).setBeanContext(this);
+	    } catch (java.beans.PropertyVetoException pve) {
+		      throw new IllegalArgumentException(pve.getLocalizedMessage());
+	    }
+	  
+	  if (o instanceof GraphicParameterDef)
+	  {
+		runtimeParameters.add (o);
+	  }
+	    int idx=contents.indexOf(last);
+	    if(idx>-1){
+			  contents.add(idx,o);		    	
+	    }else{
+			  contents.add(o);		    			    	
+	    }
+
+
+  }
 
 
   /** Constructs a new model.

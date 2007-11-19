@@ -205,7 +205,7 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
     }
   };
 
-  public void addPreLast (Object o)
+  public void addBefore(Object o,Object last)
   {
 	  if(((ElementDelegate)elements).check(o)){
 		    try {
@@ -213,7 +213,12 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
 		    } catch (java.beans.PropertyVetoException pve) {
 			      throw new IllegalArgumentException(pve.getLocalizedMessage());
 		    }
-		  contents.add(contents.size()-1,o);
+		    int idx=contents.indexOf(last);
+		    if(idx>-1){
+				  contents.add(idx,o);		    	
+		    }else{
+				  contents.add(o);		    			    	
+		    }
 	  }
   }
 
