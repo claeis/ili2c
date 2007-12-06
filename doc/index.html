@@ -7,7 +7,7 @@
 <h2>System Requirements</h2>
 
 <p>
-For the current version of ili2c, you will need a JRE (Java Runtime Environment) installed on your system, version 1.3 or later.
+For the current version of ili2c, you will need a JRE (Java Runtime Environment) installed on your system, version 1.4.1 or later.
 </p>
 
 <h2>Installing ili2c</h2>
@@ -31,9 +31,19 @@ will appear.
 <h2>Graphical User Interface</h2>
 <h3>Input tab</h3>
 Use this tab, to define options, that the compiler will read while running.
+<h4>auto complete fileset</h4>
+<p>If this is checked, the compiler will try to find missing models from the files with extension .ili 
+that are in the folders of the files in the <code>Files</code> list.</p>
+<p>If this is unchecked, all directly or indirectly imported models, need to be 
+in the <code>Files</code> list in the correct ordering.</p>
 <h4>Files</h4>
-<p>This contains the list of INTERLIS schema and metadata basket files, that the compiler will read and
-check. The ordering of the entries is significant. Use the <code>Move up</code>
+<p>This contains the list of INTERLIS schema files, that the compiler will read and
+check. 
+If the model imports other models, or is a a translation of another model, 
+all these directly or indirectly referrenced models need to be in the list, 
+if the <code>auto complete fileset</code> is not checked.
+The ordering of the entries is significant, if the <code>auto complete fileset</code> is not checked. 
+Use the <code>Move up</code>
 and/or <code>Move down</code> buttons to reorder the list.</p>
 <h4>Add Model (.ili)...</h4>
 Use this button to add a new INTERLIS schema file to the list of files, that the
