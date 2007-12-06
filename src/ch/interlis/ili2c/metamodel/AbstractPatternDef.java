@@ -205,7 +205,7 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
     }
   };
 
-  public void addBefore(Object o,Object last)
+  public void addBefore(Object o,Object next)
   {
 	  if(((ElementDelegate)elements).check(o)){
 		    try {
@@ -213,9 +213,25 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
 		    } catch (java.beans.PropertyVetoException pve) {
 			      throw new IllegalArgumentException(pve.getLocalizedMessage());
 		    }
-		    int idx=contents.indexOf(last);
+		    int idx=contents.indexOf(next);
 		    if(idx>-1){
 				  contents.add(idx,o);		    	
+		    }else{
+				  contents.add(o);		    			    	
+		    }
+	  }
+  }
+  public void addAfter(Object o,Object previous)
+  {
+	  if(((ElementDelegate)elements).check(o)){
+		    try {
+			      ((Element) o).setBeanContext(this);
+		    } catch (java.beans.PropertyVetoException pve) {
+			      throw new IllegalArgumentException(pve.getLocalizedMessage());
+		    }
+		    int idx=contents.indexOf(previous);
+		    if(idx>-1 && idx+1<contents.size()){
+				  contents.add(idx+1,o);		    	
 		    }else{
 				  contents.add(o);		    			    	
 		    }

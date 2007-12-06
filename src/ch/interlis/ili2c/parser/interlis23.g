@@ -25,12 +25,14 @@ options
   private antlr.TokenStreamHiddenTokenFilter filter;
   private Map ili1TableRefAttrs;
   private boolean checkMetaObjs;
-  /** ensure uniqueness of generate role names
-  */
-  private int ili1RoleCounter=0;
   /** helps to remember ordering of reference attributes
   */
   private int ili1AttrCounter=0;
+  
+  /** list of assocs generate from ili1 ref attrs. 
+   *  Used to fix names of assocs at end of topic parse.
+  */
+  private ArrayList ili1assocs=null;
 
   /** Parse the contents of a stream according to INTERLIS-1 or INTERLIS-2 syntax
       (the version is detected automatically by the parser) and add the
@@ -1592,6 +1594,7 @@ protected associationDef[Container scope]
 			]
 			{
 				try {
+					def.setSourceLine(n.getLine());
 					def.setDocumentation(ilidoc);
 					def.setAbstract((mods & ch.interlis.ili2c.metamodel.Properties.eABSTRACT) != 0);
 					def.setFinal((mods & ch.interlis.ili2c.metamodel.Properties.eFINAL) != 0);
@@ -1754,6 +1757,7 @@ protected roleDef[AssociationDef container]
 	)?
 	{
 		try {
+			def.setSourceLine(n.getLine());
 			boolean external=(mods & ch.interlis.ili2c.metamodel.Properties.eEXTERNAL)!=0;
 			Topic targetTopic=(Topic)ref.getReferred().getContainerOrSame(Topic.class);
 			Topic thisTopic=(Topic)container.getContainerOrSame(Topic.class);
@@ -5940,6 +5944,7 @@ protected ili1_topic [Model model]
 }
   : "TOPIC" topicName:NAME EQUALS
     {
+      ili1assocs=new ArrayList();
       topic = new Topic ();
       try {
         topic.setName (topicName.getText ());
@@ -5957,6 +5962,40 @@ protected ili1_topic [Model model]
 
     end [topic]
     DOT
+    {
+    	// fix assocs name
+	Iterator associ=ili1assocs.iterator();
+	while(associ.hasNext()){
+		AssociationDef assoc=(AssociationDef)associ.next();
+		int uniqueName=2;
+		String assocName=assoc.getName();
+		String assocBasename=assocName.substring(0,assocName.indexOf(':'));
+		assocName=assocBasename;
+		boolean assocNameConflict=false;
+		do{
+			assocNameConflict=false;
+			Iterator elei=topic.iterator();
+			while (elei.hasNext()){
+			      Element ele = (Element)elei.next();
+			      if(ele!=assoc && ele.getName().equals(assocName)){
+				assocNameConflict=true;
+				break;
+			      }
+			}
+			if(!assocNameConflict){
+				try{
+					assoc.setName(assocName);
+				}catch(java.beans.PropertyVetoException ex){
+					assocNameConflict=true;
+				}
+			}
+			if(assocNameConflict){
+				assocName=assocBasename+Integer.toString(uniqueName);
+				uniqueName++;
+			}
+		}while(assocNameConflict);
+	}
+    }
   ;
 
 
@@ -5964,7 +6003,6 @@ protected ili1_table [Topic topic]
 {
   boolean optional = false;
   Table   table = null;
-  ili1RoleCounter=0;
   ili1AttrCounter=0;
 }
   : ( "OPTIONAL" { optional = true; } )?
@@ -6032,6 +6070,7 @@ protected ili1_attribute [Table table]
       tabnam:NAME
       {
         AssociationDef assoc=new AssociationDef();
+	assoc.setSourceLine(tabnam.getLine ());
         Table referred = (Table) topic.getRealElement (Table.class, tabnam.getText ());
         if (referred == null)
         {
@@ -6047,12 +6086,37 @@ protected ili1_attribute [Table table]
 	}
         try {
 	String thisRoleName=table.getName();
-	if(ili1RoleCounter>0){
-		thisRoleName=thisRoleName+Integer.toString(ili1RoleCounter);
+	String oppendRoleName=attributeName.getText();
+	// ensure thisRoleName is unique in referred table and 
+	// that it is different from oppendRoleName
+	int uniqueName=2;
+	String thisRoleBasename=thisRoleName;
+	if(thisRoleName.equals(oppendRoleName)){
+		thisRoleName=thisRoleName+Integer.toString(uniqueName);
+		uniqueName++;
 	}
-	ili1RoleCounter++;
-        assoc.setName(thisRoleName+attributeName.getText ());
+	boolean roleNameConflict=false;
+	do{
+		roleNameConflict=false;
+		Iterator rolei=referred.getOpposideRoles();
+		while (rolei.hasNext()){
+		      RoleDef targetOppRole = (RoleDef)rolei.next();
+		      if(targetOppRole.getName().equals(thisRoleName)){
+			roleNameConflict=true;
+			break;
+		      }
+		}
+		if(roleNameConflict){
+			thisRoleName=thisRoleBasename+Integer.toString(uniqueName);
+			uniqueName++;
+		}
+	}while(roleNameConflict);
+	// ensure assocName is unique in topic
+	// use temporary/illegal name, fix it at end of topic
+	String assocName=thisRoleName+oppendRoleName+":"+ili1assocs.size();
+        assoc.setName(assocName);
         RoleDef role1=new RoleDef(true);
+	role1.setSourceLine(tabnam.getLine ());
 	role1.setIli1AttrIdx(ili1AttrCounter);
         role1.setName(thisRoleName);
 	ReferenceType role1ref=new ReferenceType();
@@ -6061,7 +6125,8 @@ protected ili1_attribute [Table table]
         role1.setCardinality(new Cardinality(0, Cardinality.UNBOUND));
         assoc.add(role1);
         RoleDef role2=new RoleDef(true);
-        role2.setName(attributeName.getText());
+	role2.setSourceLine(tabnam.getLine ());
+        role2.setName(oppendRoleName);
 	ReferenceType role2ref=new ReferenceType();
 	role2ref.setReferred(referred);
         role2.setReference(role2ref);
@@ -6069,8 +6134,13 @@ protected ili1_attribute [Table table]
         assoc.add(role2);
         assoc.fixupRoles();
         topic.add(assoc);
-	ili1TableRefAttrs.put(attributeName.getText(),role2);
+	// remember assoc to fix name at end of topic
+	ili1assocs.add(assoc);
+	// remember map from attrname to role for IDENT parsing
+	// has to be attrname (and not rolename!) to be able to find role when parsing IDENTs
+	ili1TableRefAttrs.put(attributeName.getText(),role2); 
         } catch (Exception ex) {
+	EhiLogger.debug("ex "+ex);
           reportError (ex, tabnam.getLine ());
         }
       }

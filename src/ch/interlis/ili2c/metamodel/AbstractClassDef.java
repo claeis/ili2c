@@ -29,7 +29,7 @@ public abstract class AbstractClassDef extends Viewable
               String attrName=attrOrRole.getName();
               String roleName=role.getName();
 	      if(attrOrRole.getName().equals(role.getName())){
-                throw new IllegalArgumentException (formatMessage (
+                throw new Ili2cSemanticException (role.getSourceLine(),formatMessage (
                   "err_abstractClassDef_nameConflictInOtherRoleTarget",
                   role.getName(),
                   otherRole.getName(),targetClass.getName()));
@@ -40,7 +40,7 @@ public abstract class AbstractClassDef extends Viewable
 	      RoleDef targetOppRole = (RoleDef)rolei.next();
 	      if(targetOppRole.getName().equals(role.getName())
                   && !role.isExtending(targetOppRole)){
-                throw new IllegalArgumentException (formatMessage (
+                throw new Ili2cSemanticException (role.getSourceLine(),formatMessage (
                   "err_abstractClassDef_nameConflictInOtherRoleTarget",
                   role.getName(),
                   otherRole.getName(),targetClass.getName()));

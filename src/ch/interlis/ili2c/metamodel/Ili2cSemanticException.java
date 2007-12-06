@@ -19,9 +19,10 @@ package ch.interlis.ili2c.metamodel;
 
 /** Semantic errors detected by the metamodel.
  * @author ce
- * @version $Revision: 1.1 $ $Date: 2007-03-07 09:06:21 $
+ * @version $Revision: 1.2 $ $Date: 2007-12-06 10:57:27 $
  */
 public class Ili2cSemanticException extends RuntimeException {
+	private int sourceLine=0;
 	public Ili2cSemanticException() {
 		super();
 	}
@@ -33,6 +34,25 @@ public class Ili2cSemanticException extends RuntimeException {
 	}
 	public Ili2cSemanticException(String message, Throwable cause) {
 		super(message, cause);
+	}
+	public Ili2cSemanticException(int sourceLine) {
+		super();
+		this.sourceLine=sourceLine;
+	}
+	public Ili2cSemanticException(int sourceLine,String message) {
+		super(message);
+		this.sourceLine=sourceLine;
+	}
+	public Ili2cSemanticException(int sourceLine,Throwable cause) {
+		super(cause);
+		this.sourceLine=sourceLine;
+	}
+	public Ili2cSemanticException(int sourceLine,String message, Throwable cause) {
+		super(message, cause);
+		this.sourceLine=sourceLine;
+	}
+	public int getSourceLine() {
+		return sourceLine;
 	}
 
 }
