@@ -248,7 +248,7 @@ public class Main {
 			}else{
                            ili2cHome =System.getProperty("user.dir");
                         }
-                        BrowserControl.displayURL(ili2cHome+"/doc/index.html");
+                        BrowserControl.displayURL("file://"+ili2cHome+"/doc/index.html");
         }
         });
     menu.add(menuItem);
