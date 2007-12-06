@@ -28,6 +28,7 @@ public class Enumeration
     protected String name = "";
     protected Enumeration subEnum = null;
 	private String documentation=null;
+	private int sourceLine=0;
     /** copy constructor
      */
     public Element(Element src)
@@ -37,6 +38,7 @@ public class Enumeration
       if(src.subEnum!=null){
         subEnum=new Enumeration(src.subEnum);
       }
+      sourceLine=src.sourceLine;
     }
 
     public Element (String name)
@@ -80,6 +82,14 @@ public class Enumeration
 	public void setDocumentation(String string) {
 		documentation = string;
 	}
+
+	public int getSourceLine() {
+		return sourceLine;
+	}
+
+	public void setSourceLine(int sourceLine) {
+		this.sourceLine = sourceLine;
+	}
   }
 
   private List elements; // list<Enumeration.Element>
@@ -104,6 +114,13 @@ public class Enumeration
 
   public void addElement(Element newele)
   {
+	  Iterator elei=elements.iterator();
+	  while(elei.hasNext()){
+		  Element ele=(Element)elei.next();
+		  if(ele.getName().equals(newele.getName())){
+			  throw new Ili2cSemanticException(newele.getSourceLine(),ch.interlis.ili2c.metamodel.Element.formatMessage("err_enumerationType_DupEle",newele.getName()));
+		  }
+	  }
       elements.add(newele);
   }
   public java.util.Iterator getElements()
