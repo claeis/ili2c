@@ -4480,6 +4480,8 @@ protected argumentType[Container scope,int line]
 		Viewable ref=null;
 		domain=null;
 		boolean objects=false;
+		ObjectType ot=null;
+		AbstractClassDef restrictedTo=null;
 	}
 	:	domain=attrTypeDef[scope,true,null,line]
 	| ("OBJECT" {objects=false;}| "OBJECTS" {objects=true;}) "OF" (
@@ -4490,11 +4492,17 @@ protected argumentType[Container scope,int line]
 		*/
 		ref=viewableRef[scope]
 		| "ANYCLASS" {ref=modelInterlis.ANYCLASS;}
-		| "ANYSTRUCTURE" {ref=modelInterlis.ANYSTRUCTURE;}
 		)
 	       {
-	       		domain=new ObjectType(ref,objects);
+	       		domain=ot=new ObjectType(ref,objects);
 	       }
+	       ({ref instanceof AbstractClassDef}? ("RESTRICTION" LPAREN restrictedTo=classOrAssociationRef[scope]
+			{ ot.addRestrictedTo(restrictedTo); }
+		(SEMI restrictedTo=classOrAssociationRef[scope]
+			{ ot.addRestrictedTo(restrictedTo); }
+		)*
+		RPAREN
+		)?)	       
 	| "ENUMVAL" { /* TODO */ }
 	| "ENUMTREEVAL" { /* TODO */ }
 	;
