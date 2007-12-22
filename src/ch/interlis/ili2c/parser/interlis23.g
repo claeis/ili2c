@@ -4358,9 +4358,11 @@ protected functionCall[Container ns,Container functionNs]
 protected argument[Container ns,Type expectedType,Container functionNs]
 	returns[Evaluable arg]
 	{
-	Viewable ref;
+	Viewable ref=null;
+	Viewable restrictedTo=null;
 	boolean classRequired=(expectedType instanceof ClassType);
 	arg=null;
+	Objects objs=null;
 	}
 	: {classRequired}? ref=viewableRef[functionNs]
 		{
@@ -4368,11 +4370,27 @@ protected argument[Container ns,Type expectedType,Container functionNs]
 		}
 	|   arg=expression[ns,expectedType,functionNs]
 	| ("ALL" 
-		( LPAREN  restrictedClassOrAssRef[ns] RPAREN
-		)? 
 			{
-			 // TODO argument ALL
+			 Viewable context=(Viewable)ns.getContainerOrSame(Viewable.class);
+			 arg=objs=new Objects(context);
 			}
+		( LPAREN 
+		(
+		ref=viewableRef[ns]
+		| "ANYCLASS" {ref=modelInterlis.ANYCLASS;}
+		)
+	       {
+	       		objs.setBase(ref);
+	       }
+	       ({ref instanceof AbstractClassDef}? ("RESTRICTION" LPAREN restrictedTo=classOrAssociationRef[ns]
+			{ objs.addRestrictedTo(restrictedTo); }
+		(SEMI restrictedTo=classOrAssociationRef[ns]
+			{ objs.addRestrictedTo(restrictedTo); }
+		)*
+		RPAREN
+		)?)	       
+		RPAREN
+		)? 
 		)
 	;
 
@@ -4484,7 +4502,8 @@ protected argumentType[Container scope,int line]
 		AbstractClassDef restrictedTo=null;
 	}
 	:	domain=attrTypeDef[scope,true,null,line]
-	| ("OBJECT" {objects=false;}| "OBJECTS" {objects=true;}) "OF" (
+	| ("OBJECT" {objects=false;}| "OBJECTS" {objects=true;}) "OF" 
+		(
 		/*
 		** restrictedClassOrAssRef
                 ** | restrictedStructureRef
