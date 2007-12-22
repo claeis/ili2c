@@ -4503,8 +4503,8 @@ protected argumentType[Container scope,int line]
 		)*
 		RPAREN
 		)?)	       
-	| "ENUMVAL" { /* TODO */ }
-	| "ENUMTREEVAL" { /* TODO */ }
+	| "ENUMVAL" { domain=new EnumValType(true); }
+	| "ENUMTREEVAL" { domain=new EnumValType(false); }
 	;
 
 protected viewDef[Container container]
