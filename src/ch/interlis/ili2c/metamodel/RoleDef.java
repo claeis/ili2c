@@ -11,6 +11,7 @@ public class RoleDef extends AbstractLeafElement
 	private Set extendedBy=new HashSet(2); // Set<RoleDef>
 	private boolean _abstract;
 	private boolean _final;
+	private boolean hiding=false;
 	private boolean extended;
 	private boolean ordered;
 	private int kind=Kind.eASSOCIATE;
@@ -351,4 +352,10 @@ public class RoleDef extends AbstractLeafElement
 	}
 	return rolec==2;
   }
+public boolean isHiding() {
+	return hiding;
+}
+public void setHiding(boolean hiding) {
+	this.hiding = hiding;
+}
 }

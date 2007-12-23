@@ -1778,7 +1778,7 @@ protected roleDef[AssociationDef container]
 		  def.setExtended((mods & ch.interlis.ili2c.metamodel.Properties.eEXTENDED) != 0);
 		  def.setAbstract((mods & ch.interlis.ili2c.metamodel.Properties.eABSTRACT) != 0);
 		  def.setFinal((mods & ch.interlis.ili2c.metamodel.Properties.eFINAL) != 0);
-		  // TODO handle HIDING in RoleDef
+		  def.setHiding((mods & ch.interlis.ili2c.metamodel.Properties.eHIDING) != 0);
 		  def.setOrdered((mods & ch.interlis.ili2c.metamodel.Properties.eORDERED) != 0);
 		  def.setKind(kind);
 		  if(card!=null){
