@@ -68,7 +68,7 @@ public class AssociationDef extends AbstractClassDef
           /* A non-abstract AssociationDef can not contain an abstract
              attribute. */
           if (ad.isAbstract() && !isAbstract())
-            throw new IllegalArgumentException (formatMessage (
+            throw new Ili2cSemanticException (ad.getSourceLine(),formatMessage (
               "err_abstractAttrInConcreteContainer",
               AssociationDef.this.toString()));
 	  // check that there is no role with the same name
@@ -77,7 +77,7 @@ public class AssociationDef extends AbstractClassDef
 	  {
 	      Element baseAttr = (Element)iter.next();
 	      if(baseAttr.getName().equals(ad.getName()) && !ad.isExtending(baseAttr)){
-                throw new IllegalArgumentException (formatMessage (
+                throw new Ili2cSemanticException (ad.getSourceLine(),formatMessage (
                   "err_association_nonuniqueAttributeDef",
                   ad.getName(),
                   AssociationDef.this.toString()));
@@ -89,7 +89,7 @@ public class AssociationDef extends AbstractClassDef
 	  {
 	      RoleDef role = (RoleDef)iter.next();
 	      if(role.getName().equals(ad.getName())){
-                throw new IllegalArgumentException (formatMessage (
+                throw new Ili2cSemanticException (ad.getSourceLine(),formatMessage (
                   "err_abstractClassDef_AttributeNameConflictInTarget",
                   ad.getName(),
                   AssociationDef.this.toString()));
@@ -103,14 +103,14 @@ public class AssociationDef extends AbstractClassDef
         if ((o instanceof RoleDef)){
 	  RoleDef role =(RoleDef)o;
 	  if((getExtending()!=null || isExtended())&& !role.isExtended()){
-	          throw new IllegalArgumentException (
+	          throw new Ili2cSemanticException (role.getSourceLine(),
 	            formatMessage("err_association_nonewrole",role.getName()));
 	  }
 
           Element conflicting = getElement (RoleDef.class,role.getName());
           if ((conflicting != null) && (conflicting != o)
             && !role.isExtended())
-            throw new IllegalArgumentException (formatMessage (
+            throw new Ili2cSemanticException (role.getSourceLine(),formatMessage (
               "err_association_nonuniqueRoleDef",
               role.getName(),
               AssociationDef.this.toString()));
@@ -118,7 +118,7 @@ public class AssociationDef extends AbstractClassDef
           /* A non-abstract AssociationDef can not contain an abstract
              RoleDef. */
           if (role.isAbstract() && !isAbstract())
-            throw new IllegalArgumentException (formatMessage (
+            throw new Ili2cSemanticException (role.getSourceLine(),formatMessage (
               "err_abstractRoleInConcreteContainer",
               AssociationDef.this.toString()));
 
@@ -398,13 +398,13 @@ public class AssociationDef extends AbstractClassDef
   	if(isDirty()){
   		return;
   	}
-        Iterator iter;
+        Iterator rolei;
 	// if extended
 	if(getExtending()!=null){
 		AssociationDef base=(AssociationDef)getExtending();
-	    	iter = roles.iterator();
-    		while (iter.hasNext()){
-	    		RoleDef role= (RoleDef)iter.next();
+	    	rolei = roles.iterator();
+    		while (rolei.hasNext()){
+	    		RoleDef role= (RoleDef)rolei.next();
 			RoleDef baserole=(RoleDef)base.getElement(RoleDef.class,role.getName());
 			role.setExtending(baserole);
     		}
@@ -418,19 +418,22 @@ public class AssociationDef extends AbstractClassDef
 	}
 
         // for each role, create backlink from target class
-    	iter = roles.iterator();
-	while (iter.hasNext()){
-		RoleDef role= (RoleDef)iter.next();
-		AbstractClassDef targetClass=role.getDestination();
-		targetClass.addTargetForRole(role);
+    	rolei = roles.iterator();
+	while (rolei.hasNext()){
+		RoleDef role= (RoleDef)rolei.next();
+		Iterator desti=role.iteratorDestination();
+		while(desti.hasNext()){
+			AbstractClassDef targetClass=(AbstractClassDef)desti.next();
+			targetClass.addTargetForRole(role);
+		}
 	}
 
 	// check, that there is only one aggregation or composition
-	iter = getAttributesAndRoles();
+	rolei = getAttributesAndRoles();
 	int aggc=0;
-	while (iter.hasNext())
+	while (rolei.hasNext())
 	{
-	      Object obj = iter.next();
+	      Object obj = rolei.next();
 	      if (obj instanceof RoleDef)
 	      {
 		RoleDef role = (RoleDef) obj;

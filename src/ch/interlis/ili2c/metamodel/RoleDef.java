@@ -15,7 +15,7 @@ public class RoleDef extends AbstractLeafElement
 	private boolean ordered;
 	private int kind=Kind.eASSOCIATE;
 	private Cardinality cardinality;
-	private ReferenceType end; // Table or AssociationDef
+	private ArrayList endv=new ArrayList(); // list<ReferenceType tableOrAssociationDef>
 	private ObjectPath derivedFrom;
 	private String name;
 
@@ -129,13 +129,23 @@ public class RoleDef extends AbstractLeafElement
 	{
 		return cardinality;
 	}
+	/** @deprecated
+	 */
 	public ReferenceType getReference()
 	{
-		return end;
+		if(endv.size()==0)return null;
+		return (ReferenceType)endv.get(0);
 	}
+	public Iterator iteratorReference()
+	{
+		return endv.iterator();
+	}
+	/** @deprecated
+	 */
 	public void setReference(ReferenceType ref)
 	{
-		end=ref;
+		endv.clear();
+		endv.add(ref);
                 // backlink target class to this.
                 // // end.getReferred().addTargetForRole(this);
                 // this is done in
@@ -143,13 +153,36 @@ public class RoleDef extends AbstractLeafElement
                 // associationdef the base associationdef is
                 // not known.
 	}
+	public void addReference(ReferenceType ref)
+	{
+		endv.add(ref);
+                // backlink target class to this.
+                // // end.getReferred().addTargetForRole(this);
+                // this is done in
+                // AssociationDef.fixupRoles(), because in case of an annonyous
+                // associationdef the base associationdef is
+                // not known.
+	}
+	/** @deprecated
+	 */
 	public AbstractClassDef getDestination()
 	{
-		return end.getReferred();
+		if(endv.size()==0)return null;
+		return ((ReferenceType)endv.get(0)).getReferred();
+	}
+	public Iterator iteratorDestination()
+	{
+		ArrayList destv=new ArrayList(endv.size());
+		Iterator endi=endv.iterator();
+		while(endi.hasNext()){
+			ReferenceType end=(ReferenceType)endi.next();
+			destv.add(end.getReferred());
+		}
+		return destv.iterator();
 	}
 	public boolean isExternal()
 	{
-		return end.isExternal();
+		return getReference().isExternal();
 	}
 	public void setDerivedFrom(ObjectPath v)
 	{

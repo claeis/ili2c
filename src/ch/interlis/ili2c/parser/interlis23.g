@@ -1731,10 +1731,11 @@ protected roleDef[AssociationDef container]
 		Evaluable obj=null;
 		RoleDef def=new RoleDef(true);
 		int kind=0;
+		boolean external=false;
 	  String ilidoc=null;
 	}
 	: { ilidoc=getIliDoc();}
-	n:NAME
+	n:NAME {def.setSourceLine(n.getLine());}
 	mods=properties[ch.interlis.ili2c.metamodel.Properties.eABSTRACT
 		|ch.interlis.ili2c.metamodel.Properties.eEXTENDED
 		|ch.interlis.ili2c.metamodel.Properties.eFINAL
@@ -1749,16 +1750,10 @@ protected roleDef[AssociationDef container]
 	(	card=cardinality
 	)?
 	ref=restrictedClassOrAssRef[container]
-	( "OR" restrictedClassOrAssRef[container]
-		{ // TODO RoleDef OR classRef
-		}
-	)*
-	(	 col:COLONEQUALS obj=factor[container,container]
-	)?
 	{
 		try {
-			def.setSourceLine(n.getLine());
-			boolean external=(mods & ch.interlis.ili2c.metamodel.Properties.eEXTERNAL)!=0;
+			
+			external=(mods & ch.interlis.ili2c.metamodel.Properties.eEXTERNAL)!=0;
 			Topic targetTopic=(Topic)ref.getReferred().getContainerOrSame(Topic.class);
 			Topic thisTopic=(Topic)container.getContainerOrSame(Topic.class);
 			// target in a topic and targets topic not a base of this topic 
@@ -1788,8 +1783,33 @@ protected roleDef[AssociationDef container]
 		if((ref.getReferred() instanceof Table) && !((Table)ref.getReferred()).isIdentifiable()){
 			reportError(formatMessage("err_role_toStruct",n.getText()),n.getLine());
 		}
-		  def.setReference(ref);
-		  if(obj!=null){
+		  def.addReference(ref);
+		  container.add(def);
+		} catch (Exception ex) {
+		  reportError(ex, n.getLine());
+		}
+	}
+	( "OR" ref=restrictedClassOrAssRef[container]
+		{ 
+			Topic targetTopic=(Topic)ref.getReferred().getContainerOrSame(Topic.class);
+			Topic thisTopic=(Topic)container.getContainerOrSame(Topic.class);
+			// target in a topic and targets topic not a base of this topic 
+			if(targetTopic!=null && thisTopic!=null && !thisTopic.isExtending(targetTopic)){
+				if(!external){
+					// must be external
+					reportError(formatMessage ("err_role_externalreq",""),n.getLine());
+				}
+			}
+			ref.setExternal(external);
+			if((ref.getReferred() instanceof Table) && !((Table)ref.getReferred()).isIdentifiable()){
+				reportError(formatMessage("err_role_toStruct",n.getText()),n.getLine());
+			}
+			def.addReference(ref);
+		
+		}
+	)*
+	(	 col:COLONEQUALS obj=factor[container,container]
+	{
 		  	if(!(obj instanceof ObjectPath)){
                               reportError(formatMessage ("err_role_factorNotAnObjectPath","")
 			      	,col.getLine());
@@ -1797,12 +1817,8 @@ protected roleDef[AssociationDef container]
 			}
 			// TODO check RoleDef.derivedfrom is an extension of destination
 		  	def.setDerivedFrom((ObjectPath)obj);
-		  }
-		  container.add(def);
-		} catch (Exception ex) {
-		  reportError(ex, n.getLine());
-		}
 	}
+	)?
 	SEMI
 	;
 
