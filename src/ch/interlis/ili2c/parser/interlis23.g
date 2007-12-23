@@ -71,7 +71,8 @@ options
       // connect parser to filter (instead of lexer)
       Ili2Parser parser = new Ili2Parser (filter);
       
-      parser.checkMetaObjs=checkMetaObjects;
+      // Ili2.3 always check existence of metaobject
+      parser.checkMetaObjs=true; // checkMetaObjects;
       parser.lexer=lexer;
       parser.filter=filter;
       parser.setFilename (filename);
@@ -3270,6 +3271,8 @@ protected metaDataBasketDef[Container scope]
     MetaDataUseDef def=null;
     MetaDataUseDef base=null;
     Topic topic = null;
+    Table aclass=null;
+    DataContainer basket=null;
 	  String ilidoc=null;
     }
 	:	{ ilidoc=getIliDoc();}
@@ -3301,11 +3304,45 @@ protected metaDataBasketDef[Container scope]
 		{
 			def.setTopic(topic);
 			scope.add(def);
-			DataContainer basket=td.getMetaDataContainer(def.getScopedName(null));
+			// ili2.3
+			// - create datacontainer from contents of ili-file
+			basket=new DataContainer(def.getScopedName(null), topic, getFilename() );
+			// assign data container to metadatausedef
 			def.setDataContainer(basket);
 		}
 		(
-		"OBJECTS" "OF" NAME COLON NAME (COMMA NAME)* {/* TODO */}
+		"OBJECTS" "OF" classNameTok:NAME COLON objNameTok1:NAME 
+				{
+					// find class in topic
+					String className=classNameTok.getText();
+					aclass = (Table) topic.getRealElement(Table.class, className);
+					if (aclass == null) {
+						reportError (formatMessage ("err_noSuchTable", className,
+							topic.toString()), classNameTok.getLine());
+					}else{
+						// check if aclass is an extension of INTERLIS.METAOBJECT
+						if(!aclass.isExtending(td.INTERLIS.METAOBJECT)){
+						reportError (formatMessage ("err_class_superNonMetaObject", className
+							), classNameTok.getLine());
+						}
+					}
+					// add object to basket
+					if(aclass!=null){
+						String objName=objNameTok1.getText();
+						MetaObject mo=new MetaObject(objName,aclass);
+						basket.add(mo);
+					}
+				}
+			(COMMA objNameTok2:NAME
+				{
+					// add object to basket
+					if(aclass!=null){
+						String objName=objNameTok2.getText();
+						MetaObject mo=new MetaObject(objName,aclass);
+						basket.add(mo);
+					}
+				}
+			)* 
 		)*
 		SEMI
 	;

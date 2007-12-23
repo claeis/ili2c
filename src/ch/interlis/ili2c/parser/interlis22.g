@@ -3162,7 +3162,11 @@ protected metaDataUseDef[Container scope]
 			Topic topic = resolveOrFixTopicName(model, topicName.getText(), lin);
 			def.setTopic(topic);
 			scope.add(def);
+			// ili2.2 
+			// - a datacontainer is a basket in a xml-file
+			// - the data container should already exist
 			DataContainer basket=td.getMetaDataContainer(def.getScopedName(null));
+			// assign data container to metadatausedef
 			def.setDataContainer(basket);
 		}
 	;
