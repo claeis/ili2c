@@ -22,7 +22,7 @@ import java.util.*;
 */
 public class LocalAttribute extends AttributeDef
 {
-	protected ObjectPath[] basePaths;
+	protected Evaluable[] basePaths;
 	private boolean subdivision=false;
 	private boolean continuous=false;
 
@@ -92,7 +92,7 @@ public class LocalAttribute extends AttributeDef
 
   /** attribute should take its value from the attributes referenced by the given paths
   */
-  public void setBasePaths (ObjectPath[] basePaths)
+  public void setBasePaths (Evaluable[] basePaths)
   {
 
     if ((basePaths != null) && (domain != null))
@@ -122,7 +122,7 @@ public class LocalAttribute extends AttributeDef
 
     this.basePaths = basePaths;
   }
-  public ObjectPath[] getBasePaths ()
+  public Evaluable[] getBasePaths ()
   {
     return basePaths;
   }

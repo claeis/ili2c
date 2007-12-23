@@ -1271,6 +1271,8 @@ protected attributeDef[Viewable container]
 	  boolean isContinuous=false;
 	  boolean isSubdivision=false;
 	  String ilidoc=null;
+	  Evaluable f=null;
+	  ArrayList fv=new ArrayList();
 	}
 	:	{ ilidoc=getIliDoc();}
 	( ( "CONTINUOUS" {isContinuous=true;})? "SUBDIVISION" {isSubdivision=true;})?
@@ -1321,11 +1323,18 @@ protected attributeDef[Viewable container]
                     }
 		}
 		(	COLONEQUALS
-			factor[container,container]
-				{/* TODO attributeDef factor */}
-			( COMMA factor[container,container]
-				{/* TODO attributeDef ,factor */}
+			f=factor[container,container]
+				{
+				fv.add(f);
+				}
+			( COMMA f=factor[container,container]
+				{
+				fv.add(f);
+				}
 			)*
+			{
+			attrib.setBasePaths((Evaluable[])fv.toArray(new Evaluable[0]));
+			}
 		)?
 		SEMI
     {
@@ -1815,7 +1824,6 @@ protected roleDef[AssociationDef container]
 			      	,col.getLine());
 
 			}
-			// TODO check RoleDef.derivedfrom is an extension of destination
 		  	def.setDerivedFrom((ObjectPath)obj);
 	}
 	)?
@@ -5023,6 +5031,7 @@ protected selection [Viewable view,Container functionNs]
 protected viewAttributes[Viewable view]
 	{
 		int mods=0;
+		Evaluable f=null;
 	}
 	:
 	( "ATTRIBUTE" )?
@@ -5104,7 +5113,7 @@ protected viewAttributes[Viewable view]
 		|ch.interlis.ili2c.metamodel.Properties.eTRANSIENT
 		]
 		COLONEQUALS
-		factor[view,view]
+		f=factor[view,view]
 		{/* TODO viewAttributes factor */
 			AttributeDef overriding = findOverridingAttribute (
 				view, mods, n.getText(), n.getLine());
@@ -5116,9 +5125,10 @@ protected viewAttributes[Viewable view]
 			try {
 				attrib.setName(n.getText());
 				attrib.setAbstract((mods & ch.interlis.ili2c.metamodel.Properties.eABSTRACT) != 0);
+				attrib.setTransient((mods & ch.interlis.ili2c.metamodel.Properties.eTRANSIENT) != 0);
 				// always final
 				attrib.setFinal(true);
-				// TODO handle TRANSIENT in viewAttributes
+				attrib.setBasePaths (new Evaluable[] { f });
 			} catch (Exception ex) {
 				reportError(ex, n.getLine());
 			}
