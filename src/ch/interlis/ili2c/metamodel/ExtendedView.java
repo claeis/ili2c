@@ -1,16 +1,19 @@
 package ch.interlis.ili2c.metamodel;
 
+import java.beans.PropertyVetoException;
+
 
 
 /** A view that extends another view.
  */
 public class ExtendedView extends View
 {
-  /** The base view of this one.
-  */
-  private View base=null;
   public ExtendedView(View base){
-	  this.base=base;
+	  try {
+		setExtending(base);
+	} catch (PropertyVetoException e) {
+		throw new Ili2cSemanticException(getSourceLine(),e);
+	}
   }
   private boolean extended=false;
   /** to distinguish between EXTENDS and EXTENDED
