@@ -275,6 +275,46 @@ options
                  return resolveDomainRef(scope,nams,lin);
 	}
 
+	protected GraphicParameterDef resolveRuntimeParameterRef(Container scope,String[] nams, int lin)
+	{
+	      Model model;
+	      String domainName=null;
+	      GraphicParameterDef d=null;
+
+	switch (nams.length) {
+	      case 1:
+		model = (Model) scope.getContainerOrSame(Model.class);
+		domainName = (String) nams[0];
+		break;
+
+	      case 2:
+		model = resolveOrFixModelName (scope, nams[0], lin);
+		domainName = nams[1];
+		break;
+
+	      default:
+		reportError(rsrc.getString("err_runtimeParamRef_weird"), lin);
+		model = resolveModelName (scope, nams[0]);
+		if (model == null)
+		  model = (Model) scope.getContainerOrSame(Model.class);
+		domainName = (String) nams[nams.length - 1];
+		break;
+	      }
+
+	      d = null;
+	      d = (GraphicParameterDef) model.getRealElement(GraphicParameterDef.class, domainName);
+	      if ((d == null) && (nams.length == 1)){
+	      	// unqualified name; search also in unqaulified imported models
+		d = (GraphicParameterDef) model.getImportedElement(GraphicParameterDef.class, domainName);
+	      }
+	      if (d == null)
+	      {
+		  reportError(
+		    formatMessage ("err_runtimeParamRef_notInModel", domainName, model.toString()),
+		    lin);
+	      }
+	      return d;
+	}
   public void reportError (String message)
   {
       String filename=getFilename();
@@ -4081,13 +4121,35 @@ protected factor[Container ns,Container functionNs]
 	Viewable dummy;
 	Function dummyFunc;
 	Evaluable dyEv;
-	GraphicParameterDef param;
+	GraphicParameterDef param=null;
 	List      nams = new LinkedList();
 	int lin = 0;
+	InspectionFactor inspFactor=null;
+	ObjectPath inspRestriction=null;
 	}
 	:	( xyRef LPAREN ) => ev=functionCall[ns,functionNs]
-	|	"PARAMETER" lin=names2[nams] { /* TODO */ }
-	|       ( ("INSPECTION" "OF" )=>inspection[ns] | "INSPECTION" viewableRef[ns]) ("OF" objectOrAttributePath[(Viewable)ns])? { /* TODO */ }
+	|	"PARAMETER" lin=names2[nams] 
+		{
+			param=resolveRuntimeParameterRef(ns,(String[]) nams.toArray(new String[0]),lin);
+			ev=new ParameterValue(param);
+		}
+	|       ( (("AREA")? "INSPECTION" "OF" )=>dummy=inspection[ns] 
+			{
+			DecompositionView insp=(DecompositionView)dummy;
+			ev=inspFactor=new InspectionFactor();
+			inspFactor.setRenamedViewable(insp.getRenamedViewable());
+			inspFactor.setDecomposedAttribute(insp.getDecomposedAttribute());
+			inspFactor.setAreaInspection(insp.isAreaDecomposition());
+			} 
+		| "INSPECTION" dummy=viewableRef[ns]
+			{ ev=inspFactor=new InspectionFactor();
+			inspFactor.setInspectionViewable((DecompositionView)dummy);
+			} 
+		) 
+		("OF" inspRestriction=objectOrAttributePath[(Viewable)ns]
+			{ inspFactor.setRestriction(inspRestriction); 
+			}
+		)? 
 	|	{
 			if(!(ns instanceof Viewable)){
 				reportError (formatMessage ("err_Container_currentIsNotViewable",
@@ -4875,6 +4937,7 @@ protected inspection[Container container]
 				new ObjectPath(decomposedViewable.getAliasing(),attrRef)
 				);
 			((DecompositionView) view).setAreaDecomposition(areaDecomp);
+			((DecompositionView) view).setRenamedViewable(decomposedViewable);
 			Table decomposedStruct=buildDecomposedStruct(attrdef,areaDecomp);
 			LocalAttribute attrib=new LocalAttribute();
 			attrib.setName(decomposedViewable.getName());
