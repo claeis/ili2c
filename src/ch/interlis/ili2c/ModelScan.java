@@ -32,7 +32,7 @@ import java.util.Iterator;
 
 /**
  * @author ce
- * @version $Revision: 1.5 $ $Date: 2007-09-11 10:01:55 $
+ * @version $Revision: 1.6 $ $Date: 2008-01-29 11:07:54 $
  */
 public class ModelScan {
 
@@ -48,7 +48,8 @@ public class ModelScan {
 			EhiLogger.logError(ex);
 		}
 	}
-	public static IliFile scanIliFile(File file){
+	public static IliFile scanIliFile(File file)
+	{
 		IliFile iliFile=new IliFile();
 		String streamName=file.getAbsolutePath();
 		iliFile.setFilename(file);
@@ -59,7 +60,7 @@ public class ModelScan {
 			stream.close();
 			return iliFile;
 		} catch (java.io.FileNotFoundException fnfex) {
-		  EhiLogger.logError(streamName + ":" + "There is no such file.");
+			EhiLogger.logError(streamName + ":" + "There is no such file.");
 		} catch (Exception ex) {
 			EhiLogger.logError(ex);
 		}
@@ -217,6 +218,9 @@ public class ModelScan {
 	public static Configuration getConfigWithFiles(ArrayList ilipaths,ArrayList requiredIliFileNames)
 	throws Ili2cException
 	{
+		if(requiredIliFileNames.isEmpty()){
+			throw new Ili2cException("no ili files given");
+		}
 		HashSet ilifiles=new HashSet();
 		HashSet toVisitFiles=new HashSet(); // set<IliFile>
 		HashSet requiredFiles=new HashSet(); // set<File>
@@ -228,7 +232,13 @@ public class ModelScan {
 		while(reqFileIt.hasNext()){
 			String fname=(String)reqFileIt.next();
 			File file=new File(fname);
+			if(!file.exists()){
+				throw new Ili2cException(fname + ": " + "There is no such file.");
+			}
 			IliFile iliFile=scanIliFile(file);
+			if(iliFile==null){
+				throw new Ili2cException(fname + ": " + "Failed to scan ili-file.");
+			}
 			if(iliFile!=null){
 				boolean skipThisFile=false;
 				for(Iterator modeli=iliFile.iteratorModel();modeli.hasNext();){
