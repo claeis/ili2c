@@ -5,7 +5,7 @@ import java.util.*;
 public class MetaDataUseDef extends ExtendableContainer
 {
   protected Collection createElements(){
-    return null;
+    return new java.util.ArrayList(); // list<MetaObject>
   }
   public void checkIntegrity(){
   }
@@ -21,17 +21,6 @@ public class MetaDataUseDef extends ExtendableContainer
 	/** Topic that describes this meta data.
 	*/
 	private Topic topic;
-
-
-  /* Support for the Collection interface; delegates to the
-     dataContainer member */
-  public int size() { return (dataContainer!=null) ? dataContainer.size() : 0; }
-  public boolean isEmpty() { return (dataContainer!=null) ?dataContainer.isEmpty() : true; }
-  public boolean contains(Object o) { return (dataContainer!=null) ?dataContainer.contains(o):false; }
-  public Iterator iterator() { return (dataContainer!=null) ? dataContainer.iterator(): new LinkedList().iterator(); }
-  public Object[] toArray() { return dataContainer.toArray(); }
-  public Object[] toArray(Object[] a) { return dataContainer.toArray(a); }
-
 
 	public void setName(String v)
 	{
@@ -60,6 +49,20 @@ public class MetaDataUseDef extends ExtendableContainer
 	public void setDataContainer(DataContainer concreteBasket)
 	{
 		dataContainer=concreteBasket;
+		// create proxies for real objects
+		Iterator moi=dataContainer.iterator();
+		while(moi.hasNext()){
+			Object moo=moi.next();
+			if(moo instanceof MetaObject){
+				MetaObject mo=(MetaObject)moo;
+				MetaObject moProxy=new MetaObject(mo.getName(),mo.getTable());
+				add(moProxy);
+			}
+		}
+	}
+	public DataContainer getDataContainer()
+	{
+		return dataContainer;
 	}
   public String getScopedName(Container scope) {
     Model enclosingModel, scopeModel;

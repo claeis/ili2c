@@ -12,11 +12,7 @@
 package ch.interlis.ili2c.metamodel;
 
 
-/** A reference system, coordinate system, axis, sign or other meta object.
-    All of these have in common that they need to be supplied as data to the INTERLIS
-    compiler.
-
-    @author <a href="sb@adasys.ch">Sascha Brawer</a>, Adasys AG, CH-8006 Zurich
+/** Proxy to the real metaobject
 */
 public class MetaObject extends AbstractLeafElement
 {

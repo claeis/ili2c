@@ -509,10 +509,8 @@ options
 
   protected MetaObject resolveMetaObject (MetaDataUseDef basket, Table polymorphicTo, String name, int line)
   {
-    if(!checkMetaObjs){
-    	return new MetaObject(name,polymorphicTo);
-    }
-    List matching = basket.findMatchingMetaObjects (polymorphicTo, name);
+
+  List matching = basket.findMatchingMetaObjects (polymorphicTo, name);
     if (matching.size() >= 2)
     {
       reportError (formatMessage ("err_metaObject_refAmbiguous",
@@ -1644,14 +1642,14 @@ protected associationDef[Container scope]
 			]
 			{
 				try {
-					def.setSourceLine(n.getLine());
+					def.setSourceLine(a.getLine());
 					def.setDocumentation(ilidoc);
 					def.setAbstract((mods & ch.interlis.ili2c.metamodel.Properties.eABSTRACT) != 0);
 					def.setFinal((mods & ch.interlis.ili2c.metamodel.Properties.eFINAL) != 0);
 	    				def.setExtended((mods & ch.interlis.ili2c.metamodel.Properties.eEXTENDED) != 0);
 	    				def.setIdentifiable((mods & ch.interlis.ili2c.metamodel.Properties.eOID) != 0);
 				} catch (Exception ex) {
-					reportError(ex, n.getLine());
+					reportError(ex, a.getLine());
 				}
 			}
 		( extToken:"EXTENDS" extending=associationRef[scope]
@@ -3312,7 +3310,6 @@ protected metaDataBasketDef[Container scope]
     MetaDataUseDef base=null;
     Topic topic = null;
     Table aclass=null;
-    DataContainer basket=null;
 	  String ilidoc=null;
     }
 	:	{ ilidoc=getIliDoc();}
@@ -3345,10 +3342,8 @@ protected metaDataBasketDef[Container scope]
 			def.setTopic(topic);
 			scope.add(def);
 			// ili2.3
-			// - create datacontainer from contents of ili-file
-			basket=new DataContainer(def.getScopedName(null), topic, getFilename() );
-			// assign data container to metadatausedef
-			def.setDataContainer(basket);
+			// - add proxies from contents of ili-file
+			// (no data container)
 		}
 		(
 		"OBJECTS" "OF" classNameTok:NAME COLON objNameTok1:NAME 
@@ -3370,7 +3365,7 @@ protected metaDataBasketDef[Container scope]
 					if(aclass!=null){
 						String objName=objNameTok1.getText();
 						MetaObject mo=new MetaObject(objName,aclass);
-						basket.add(mo);
+						def.add(mo);
 					}
 				}
 			(COMMA objNameTok2:NAME
@@ -3379,7 +3374,7 @@ protected metaDataBasketDef[Container scope]
 					if(aclass!=null){
 						String objName=objNameTok2.getText();
 						MetaObject mo=new MetaObject(objName,aclass);
-						basket.add(mo);
+						def.add(mo);
 					}
 				}
 			)* 
@@ -6180,6 +6175,7 @@ protected ili1_table [Topic topic]
       try {
         table.setName (tableName.getText ());
         table.setAbstract (false);
+	table.setIli1Optional(optional);
         topic.add (table);
       } catch (Exception ex) {
         reportError (ex, tableName.getLine ());
