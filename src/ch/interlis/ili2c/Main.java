@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import ch.interlis.ili2c.config.*;
 import ch.ehi.basics.logging.EhiLogger;
+import ch.ehi.basics.logging.TextAreaListener;
 
 public class Main
 {
@@ -59,22 +60,22 @@ public class Main
     System.err.println ("EXAMPLES");
     System.err.println ();
     System.err.println ("Check whether an INTERLIS definition in \"file1.ili\" is valid:");
-    System.err.println ("    " + progName + " file1.ili");
+    System.err.println ("    java -jar " + progName + " file1.ili");
     System.err.println ();
     System.err.println ("Check whether a definition distributed over several files is valid:");
-    System.err.println ("    " + progName + " file1.ili file2.ili");
+    System.err.println ("    java -jar " + progName + " file1.ili file2.ili");
     System.err.println ();
     System.err.println ("Generate an INTERLIS-1 definition:");
-    System.err.println ("    " + progName + " -o1 file1.ili file2.ili");
+    System.err.println ("    java -jar " + progName + " -o1 file1.ili file2.ili");
     System.err.println ();
     System.err.println ("Generate an INTERLIS-2 definition:");
-    System.err.println ("    " + progName + " -o2 file1.ili file2.ili");
+    System.err.println ("    java -jar " + progName + " -o2 file1.ili file2.ili");
     System.err.println ();
     System.err.println ("Generate a definition of the predefined MODEL INTERLIS:");
-    System.err.println ("    " + progName + " -o2 --with-predefined");
+    System.err.println ("    java -jar " + progName + " -o2 --with-predefined");
     System.err.println ();
     System.err.println ("Generate an XML-Schema:");
-    System.err.println ("    " + progName + " -oXSD file1.ili file2.ili");
+    System.err.println ("    java -jar " + progName + " -oXSD file1.ili file2.ili");
     System.err.println ();
   }
 
@@ -92,9 +93,6 @@ public class Main
     int     numErrorsWhileGenerating = 0;
     String  progName = "ili2c";
     String  notifyOnError = "compiler@interlis.ch";
-
-	EhiLogger.getInstance().addListener(LogListener.getInstance());
-	EhiLogger.getInstance().removeListener(ch.ehi.basics.logging.StdListener.getInstance());
 	
 	if(args.length==0){
 	        ch.interlis.ili2c.gui.Main.main(args);
@@ -131,6 +129,7 @@ public class Main
       System.err.println("--without-warnings    Report only errors, no warnings. Usually,");
       System.err.println("                      warnings are generated as well.");
 	  System.err.println("--trace               Display detailed trace messages.");
+	  System.err.println("--quiet               Suppress info messages.");
       System.err.println("-h|--help             Display this help text.");
       System.err.println("-u|--usage            Display short information about usage.");
       System.err.println("-v|--version          Display the version of " + progName + ".");
@@ -160,7 +159,12 @@ public class Main
         }
 		if (args[i].equals("--trace"))
 		{
-		  EhiLogger.getInstance().setTraceFiler(false);
+		  EhiLogger.getInstance().setTraceFilter(false);
+		  continue;
+		}
+		if (args[i].equals("--quiet"))
+		{
+		  ch.ehi.basics.logging.StdListener.getInstance().skipInfo(true);
 		  continue;
 		}
 		if (args[i].equals("--no-auto"))
@@ -271,7 +275,7 @@ public class Main
 		config=ModelScan.getConfigWithFiles(ilipathv,ilifilev);
 		if(config==null){
 			EhiLogger.logError("ili-file scan failed");
-			return;
+			System.exit(1);
 		}
 		if(emitVersion >0 
 			|| emitXSD
@@ -301,64 +305,48 @@ public class Main
       
 		// compile models
 		TransferDescription td=runCompiler(config);
+		if(td==null){
+			EhiLogger.logError("compiler failed");
+			System.exit(1);
+		}
 
       switch (emitVersion)
       {
       case 1:
-      	try{
 			numErrorsWhileGenerating = ch.interlis.ili2c.generator.Interlis1Generator.generate(
-			  new java.io.PrintWriter(System.out), td);
-      	}catch(Exception ex){
-      		EhiLogger.logError(ex);
-      	}
+					  new java.io.PrintWriter(System.out), td);
         break;
 
       case 2:
-		  try{
 			ch.interlis.ili2c.generator.Interlis2Generator gen=new ch.interlis.ili2c.generator.Interlis2Generator();
 			numErrorsWhileGenerating = gen.generate(
 			  new java.io.PrintWriter(System.out), td, emitPredefined);
-		  }catch(Exception ex){
-			  EhiLogger.logError(ex);
-		  }
         break;
 
       default:
 	  	java.io.PrintWriter out=new java.io.PrintWriter(System.out);
 		if (emitXSD) {
-			try{
-				if(td.getLastModel().getIliVersion().equals("2.2")){
-					numErrorsWhileGenerating =
-						ch.interlis.ili2c.generator.XSD22Generator.generate(
-							out,
-							td);
-				}else{
-					numErrorsWhileGenerating =
-						ch.interlis.ili2c.generator.XSDGenerator.generate(
-							out,
-							td);
-				}
-			}catch(Exception ex){
-				EhiLogger.logError(ex);
+			if(td.getLastModel().getIliVersion().equals("2.2")){
+				numErrorsWhileGenerating =
+					ch.interlis.ili2c.generator.XSD22Generator.generate(
+						out,
+						td);
+			}else{
+				numErrorsWhileGenerating =
+					ch.interlis.ili2c.generator.XSDGenerator.generate(
+						out,
+						td);
 			}
 		} else if (emitFMT) {
-			try{
-				numErrorsWhileGenerating =
-					ch.interlis.ili2c.generator.Interlis1Generator.generateFmt(
-						out,
-						td);
-			}catch(Exception ex){
-				EhiLogger.logError(ex);
-			}
+			numErrorsWhileGenerating =
+				ch.interlis.ili2c.generator.Interlis1Generator.generateFmt(
+					out,
+					td);
 		} else if (emitIOM) {
-			try{
-				numErrorsWhileGenerating =
-					ch.interlis.ili2c.generator.iom.IomGenerator.generate(
-						out,
-						td);
-			}catch(Exception ex){
-				EhiLogger.logError(ex);
-			}
+			numErrorsWhileGenerating =
+				ch.interlis.ili2c.generator.iom.IomGenerator.generate(
+					out,
+					td);
 		}
 		out.close();
         break;
@@ -366,7 +354,8 @@ public class Main
     }
     catch(Exception ex)
     {
-      EhiLogger.logError(progName + ":An internal error has occured. Please notify " + notifyOnError,ex);
+      EhiLogger.logError(progName + ": An internal error has occured. Please notify " + notifyOnError,ex);
+      System.exit(1);
     }
   }
 
@@ -413,7 +402,13 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
 	          }
 	        }
 			ArrayList modeldirv = getIliLookupPaths(ilifilev);
-		  ch.interlis.ili2c.config.Configuration files=ch.interlis.ili2c.ModelScan.getConfigWithFiles(modeldirv,ilifilev);
+		  ch.interlis.ili2c.config.Configuration files;
+		try {
+			files = ModelScan.getConfigWithFiles(modeldirv,ilifilev);
+		} catch (Ili2cException ex) {
+ 			EhiLogger.logError("ili-file scan failed",ex);
+			return null;
+		}
 		  if(files==null){
  			EhiLogger.logError("ili-file scan failed");
 			  return null;
@@ -604,7 +599,7 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
   }
   public static String getVersion() {
         if(version==null){
-	  java.util.ResourceBundle resVersion = java.util.ResourceBundle.getBundle("ch/interlis/ili2c/Version");
+	  java.util.ResourceBundle resVersion = java.util.ResourceBundle.getBundle("ch.interlis.ili2c.Version");
           // Major version numbers identify significant functional changes.
           // Minor version numbers identify smaller extensions to the functionality.
           // Micro versions are even finer grained versions.
@@ -623,7 +618,13 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
   /** compiles a set of ili models.
    */
   static public TransferDescription compileIliModels(ArrayList modelv,ArrayList modeldirv,String ilxFile){
-	  ch.interlis.ili2c.config.Configuration config=ch.interlis.ili2c.ModelScan.getConfig(modeldirv,modelv);
+	  ch.interlis.ili2c.config.Configuration config=null;
+	try {
+		config = ch.interlis.ili2c.ModelScan.getConfig(modeldirv,modelv);
+	} catch (Ili2cException ex) {
+		EhiLogger.logError("ili-file scan failed",ex);
+		return null;
+	}
 	  if(config==null){
 		  return null;
 	  }
@@ -642,7 +643,13 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
    */
   static public TransferDescription compileIliFiles(ArrayList filev,ArrayList modeldirv,String ilxFile){
 
-	  ch.interlis.ili2c.config.Configuration config=ch.interlis.ili2c.ModelScan.getConfigWithFiles(modeldirv,filev);
+	  ch.interlis.ili2c.config.Configuration config=null;
+	try {
+		config = ch.interlis.ili2c.ModelScan.getConfigWithFiles(modeldirv,filev);
+	} catch (Ili2cException ex) {
+		EhiLogger.logError("ili-file scan failed",ex);
+		return null;
+	}
 	  if(config==null){
 		  return null;
 	  }
