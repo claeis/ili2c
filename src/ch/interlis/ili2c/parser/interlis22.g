@@ -447,9 +447,6 @@ options
 
   protected MetaObject resolveMetaObject (MetaDataUseDef basket, Table polymorphicTo, String name, int line)
   {
-    if(!checkMetaObjs){
-    	return new MetaObject(name,polymorphicTo);
-    }
     List matching = basket.findMatchingMetaObjects (polymorphicTo, name);
     if (matching.size() >= 2)
     {
@@ -464,6 +461,11 @@ options
       return (MetaObject) matching.get(0);
     else
     {
+	    if(!checkMetaObjs){
+		MetaObject mo=new MetaObject(name,polymorphicTo);
+		basket.add(mo);
+		return mo;
+	    }
       /* Nothing found. */
       reportError (formatMessage ("err_metaObject_unknownName",
                                   name,
@@ -1499,7 +1501,7 @@ protected associationDef[Container scope]
 					def.setFinal((mods & ch.interlis.ili2c.metamodel.Properties.eFINAL) != 0);
 	    				def.setExtended((mods & ch.interlis.ili2c.metamodel.Properties.eEXTENDED) != 0);
 				} catch (Exception ex) {
-					reportError(ex, n.getLine());
+					reportError(ex, a.getLine());
 				}
 			}
 		( extToken:"EXTENDS" extending=associationRef[scope]
@@ -3165,9 +3167,11 @@ protected metaDataUseDef[Container scope]
 			// ili2.2 
 			// - a datacontainer is a basket in a xml-file
 			// - the data container should already exist
-			DataContainer basket=td.getMetaDataContainer(def.getScopedName(null));
-			// assign data container to metadatausedef
-			def.setDataContainer(basket);
+			if(checkMetaObjs){
+				DataContainer basket=td.getMetaDataContainer(def.getScopedName(null));
+				// assign data container to metadatausedef
+				def.setDataContainer(basket);
+			}
 		}
 	;
 
