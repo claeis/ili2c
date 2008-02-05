@@ -24,8 +24,6 @@ public abstract class Constant extends Evaluable
   {
   };
 
-
-
   /** The constant for the <code>UNDEFINED</code> value.
   */
   public static class Undefined extends Constant
@@ -175,7 +173,32 @@ public abstract class Constant extends Evaluable
   }
 
 
-
+  public static class Class extends Constant 
+  {
+	  private Viewable value=null;
+	  public Class(Viewable value)
+	  {
+		  this.value=value;
+	  }
+	  public Viewable getValue()
+	  {
+		  return value;
+	  }
+	  
+  }
+  public static class AttributePath extends Constant 
+  {
+	  private AttributeDef value=null;
+	  public AttributePath(AttributeDef attr)
+	  {
+		  value=attr;
+	  }
+	  public AttributeDef getValue()
+	  {
+		  return value;
+	  }
+	  
+  }
   /** A numeric constant.
   */
   public static class Numeric extends Constant

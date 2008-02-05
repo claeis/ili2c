@@ -2027,7 +2027,7 @@ protected constant [Container scope]
 //	|	c=formattedConst[scope] same as textConst
 	|	c=enumerationConst
 	|	c=classConst[scope]
-	|	c=attributeConst
+	|	c=attributeConst[scope]
 	;
 
 protected textType[Type extending]
@@ -2735,20 +2735,36 @@ classConst[Container scope]
 	returns [Constant c]
 	{
 	c=null;
+	Viewable ref=null;
 	}
 : 
-GREATER viewableRef[scope] {// TODO
+GREATER ref=viewableRef[scope] 
+	{
+	c=new Constant.Class(ref);
 	}
 ;
 
-attributeConst 
+attributeConst[Container scope] 
 	returns [Constant c]
 	{
-	  List      nams = new LinkedList();
 	c=null;
+	Viewable ref=null;
+	AttributeDef attr=null;
 	}
 :
-	">>" names2[nams] { // TODO
+	">>" ((xyRef POINTSTO)=> ref=viewableRef[scope] POINTSTO )? n:NAME 
+	{ 
+	if(ref!=null){
+		scope=ref;
+	}
+	// find attribute in scope
+	attr=findAttribute(scope,n.getText());
+	if(attr==null){
+		reportError (formatMessage ("err_attributePathConst_unknownAttr", n.getText(),
+		scope.toString()), n.getLine());
+	}
+	
+	c=new Constant.AttributePath(attr);
 	}
 	;
 	
