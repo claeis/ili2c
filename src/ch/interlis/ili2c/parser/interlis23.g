@@ -2737,7 +2737,7 @@ classConst[Container scope]
 	c=null;
 	}
 : 
-">" viewableRef[scope] {// TODO
+GREATER viewableRef[scope] {// TODO
 	}
 ;
 
@@ -4123,12 +4123,12 @@ protected factor[Container ns,Container functionNs]
 	ObjectPath inspRestriction=null;
 	}
 	:	( xyRef LPAREN ) => ev=functionCall[ns,functionNs]
-	|	"PARAMETER" lin=names2[nams] 
+	|	("PARAMETER" lin=names2[nams]) 
 		{
 			param=resolveRuntimeParameterRef(ns,(String[]) nams.toArray(new String[0]),lin);
 			ev=new ParameterValue(param);
 		}
-	|       ( (("AREA")? "INSPECTION" "OF" )=>dummy=inspection[ns] 
+	|       (( (("AREA")? "INSPECTION" "OF" )=>dummy=inspection[ns] 
 			{
 			DecompositionView insp=(DecompositionView)dummy;
 			ev=inspFactor=new InspectionFactor();
@@ -4144,16 +4144,17 @@ protected factor[Container ns,Container functionNs]
 		("OF" inspRestriction=objectOrAttributePath[(Viewable)ns]
 			{ inspFactor.setRestriction(inspRestriction); 
 			}
-		)? 
-	|	{
+		)?) 
+	|	({
 			if(!(ns instanceof Viewable)){
 				reportError (formatMessage ("err_Container_currentIsNotViewable",
 				ns.toString()), LT(1).getLine());
 			}
 		}
-		(ev=objectOrAttributePath[(Viewable)ns]
+		ev=objectOrAttributePath[(Viewable)ns]
 		)
 	|	ev=constant[ns]
+		
 	;
 
 protected objectOrAttributePath[Viewable start]
@@ -4482,11 +4483,8 @@ protected argument[Container ns,Type expectedType,Container functionNs]
 	arg=null;
 	Objects objs=null;
 	}
-	: {classRequired}? ref=viewableRef[functionNs]
-		{
-			arg=new ViewableAlias(null,ref);
-		}
-	|   arg=expression[ns,expectedType,functionNs]
+	: 
+	   arg=expression[ns,expectedType,functionNs]
 	| ("ALL" 
 			{
 			 Viewable context=(Viewable)ns.getContainerOrSame(Viewable.class);
