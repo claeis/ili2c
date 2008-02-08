@@ -360,36 +360,38 @@ END B;<br></pre></code>
 					}
 				}
 			}
-			// for all, at this level defined/extended, embedded associations
-			List embv = ((AbstractClassDef) v).getDefinedLightweightAssociations();
-			// sort them according to name of opposide role
-			java.util.Collections.sort(embv,new java.util.Comparator(){
-				public int compare(Object o1,Object o2){
-					RoleDef role1=((RoleDef)o1).getOppEnd();
-					RoleDef role2=((RoleDef)o2).getOppEnd();
-					return role1.getName().compareTo(role2.getName());
-				}
-			});
-			attri=embv.iterator();
-			while (attri.hasNext()) {
-				RoleDef role = (RoleDef) attri.next();
-				RoleDef oppend = role.getOppEnd();
-				int idx=0;
-				boolean found=false;
-				for(Iterator resi=result.iterator();resi.hasNext();idx++){  					
-					Object res=resi.next();
-					// extended/specialized role?
-					if((((ViewableTransferElement)res).obj instanceof RoleDef && ((RoleDef)((ViewableTransferElement)res).obj).getName().equals(oppend.getName()))){
-						found=true;
-						ViewableTransferElement ele=(ViewableTransferElement)result.get(idx);
-						ele.obj=oppend;
-						ele.embedded=true;
-						break;
+			if(v instanceof AbstractClassDef){
+				// for all, at this level defined/extended, embedded associations
+				List embv = ((AbstractClassDef) v).getDefinedLightweightAssociations();
+				// sort them according to name of opposide role
+				java.util.Collections.sort(embv,new java.util.Comparator(){
+					public int compare(Object o1,Object o2){
+						RoleDef role1=((RoleDef)o1).getOppEnd();
+						RoleDef role2=((RoleDef)o2).getOppEnd();
+						return role1.getName().compareTo(role2.getName());
 					}
-				}
-				// new role?
-				if(!found){
-					result.add(new ViewableTransferElement(oppend,true));
+				});
+				attri=embv.iterator();
+				while (attri.hasNext()) {
+					RoleDef role = (RoleDef) attri.next();
+					RoleDef oppend = role.getOppEnd();
+					int idx=0;
+					boolean found=false;
+					for(Iterator resi=result.iterator();resi.hasNext();idx++){  					
+						Object res=resi.next();
+						// extended/specialized role?
+						if((((ViewableTransferElement)res).obj instanceof RoleDef && ((RoleDef)((ViewableTransferElement)res).obj).getName().equals(oppend.getName()))){
+							found=true;
+							ViewableTransferElement ele=(ViewableTransferElement)result.get(idx);
+							ele.obj=oppend;
+							ele.embedded=true;
+							break;
+						}
+					}
+					// new role?
+					if(!found){
+						result.add(new ViewableTransferElement(oppend,true));
+					}
 				}
 			}
 		}
@@ -421,22 +423,24 @@ END B;<br></pre></code>
 					result.add(new ViewableTransferElement(obj));
 				}
 			}
-			// for all, at this level defined/extended, embedded associations
-			List embv = ((AbstractClassDef) v).getDefinedLightweightAssociations();
-			// sort them according to name of opposide role
-			java.util.Collections.sort(embv,new java.util.Comparator(){
-				public int compare(Object o1,Object o2){
-					RoleDef role1=((RoleDef)o1).getOppEnd();
-					RoleDef role2=((RoleDef)o2).getOppEnd();
-					return role1.getName().compareTo(role2.getName());
+			if(v instanceof AbstractClassDef){
+				// for all, at this level defined/extended, embedded associations
+				List embv = ((AbstractClassDef) v).getDefinedLightweightAssociations();
+				// sort them according to name of opposide role
+				java.util.Collections.sort(embv,new java.util.Comparator(){
+					public int compare(Object o1,Object o2){
+						RoleDef role1=((RoleDef)o1).getOppEnd();
+						RoleDef role2=((RoleDef)o2).getOppEnd();
+						return role1.getName().compareTo(role2.getName());
+					}
+				});
+				attri=embv.iterator();
+				while (attri.hasNext()) {
+					RoleDef role = (RoleDef) attri.next();
+					RoleDef oppend = role.getOppEnd();
+					result.add(new ViewableTransferElement(oppend,true));
 				}
-			});
-			attri=embv.iterator();
-			while (attri.hasNext()) {
-				RoleDef role = (RoleDef) attri.next();
-				RoleDef oppend = role.getOppEnd();
-				result.add(new ViewableTransferElement(oppend,true));
-		}
+			}
 		return result.iterator ();
 	}
   }
