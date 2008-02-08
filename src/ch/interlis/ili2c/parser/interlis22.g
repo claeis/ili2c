@@ -4593,6 +4593,7 @@ protected inspection[Container container]
 				new ObjectPath(decomposedViewable.getAliasing(),attrRef)
 				);
 			((DecompositionView) view).setAreaDecomposition(areaDecomp);
+			((DecompositionView) view).setRenamedViewable(decomposedViewable);
 			Table decomposedStruct=buildDecomposedStruct(attrdef,areaDecomp);
 			LocalAttribute attrib=new LocalAttribute();
 			attrib.setName(decomposedViewable.getName());
