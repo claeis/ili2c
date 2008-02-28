@@ -23,6 +23,7 @@ import java.util.*;
  */
 public class Table extends AbstractClassDef
 {
+	private boolean ili1Optional=false;
   /** Indicates whether or not table instances are identifiable.
       This is the difference between an Interlis <code>TABLE</code>
       and an Interlis <code>STRUCTURE</code>. The default value
@@ -554,6 +555,18 @@ public class Table extends AbstractClassDef
 		newele.setAlias(alias);
 		newele.setNext(this);
 		return newele;
+	}
+
+
+
+	public boolean isIli1Optional() {
+		return ili1Optional;
+	}
+
+
+
+	public void setIli1Optional(boolean ili1Optional) {
+		this.ili1Optional = ili1Optional;
 	}
 
 
