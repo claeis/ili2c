@@ -183,7 +183,7 @@ public class FormattedType extends BaseType {
 			if(baseAttrRef.getFormatted()!=null){
 				fmt.append(((FormattedType)baseAttrRef.getFormatted().getType()).getRegExp());
 			}else{
-				fmt.append("([0-9\\.]+)");
+				fmt.append("([\\+\\-0-9\\.]+)");
 			}
 			if(baseAttrRef.getPostfix()!=null){
 				fmt.append(baseAttrRef.getPostfix());
