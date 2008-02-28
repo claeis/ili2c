@@ -199,9 +199,9 @@ public class PredefinedModel extends DataModel
 		,XmlDate, /* abstract */ false, /* final */ false);
 		
   public final Table LINE_SEGMENT = new Table ();
-  //public final Table START_SEGMENT = new Table ();
-  //public final Table STRAIGHT_SEGMENT = new Table ();
-  //public final Table ARC_SEGMENT = new Table ();
+  public final Table START_SEGMENT = new Table ();
+  public final Table STRAIGHT_SEGMENT = new Table ();
+  public final Table ARC_SEGMENT = new Table ();
   public final Table SURFACE_EDGE = new Table ();
   public final Table SURFACE_BOUNDARY = new Table ();
   public final Table LINE_GEOMETRY = new Table ();
@@ -391,11 +391,9 @@ einer gemeinsamen Einheit abgeleitet werden.
 
 
       ANYCLASS.setName ("ANYCLASS");
-      ANYCLASS.setAbstract (true);
       add (ANYCLASS);
 
       ANYSTRUCTURE.setName ("ANYSTRUCTURE");
-      ANYSTRUCTURE.setAbstract (true);
       ANYSTRUCTURE.setIdentifiable (false);
       add (ANYSTRUCTURE);
 
@@ -550,6 +548,11 @@ einer gemeinsamen Einheit abgeleitet werden.
   BaseTimeSystems.setName("BaseTimeSystems");
   BaseTimeSystems.setTopic(TIMESYSTEMS);
   add(BaseTimeSystems); // TODO metaobjs
+	MetaObject mo=new MetaObject("GregorianCalendar",TIMESYSTEMS.CALENDAR);
+	BaseTimeSystems.add(mo);
+	mo=new MetaObject("UTC",TIMESYSTEMS.TIMEOFDAYSYS);
+	BaseTimeSystems.add(mo);
+
 
   /*
   STRUCTURE TimeOfDay (ABSTRACT) =
@@ -777,17 +780,31 @@ einer gemeinsamen Einheit abgeleitet werden.
 	STRUCTURE StartSegment EXTENDS LineSegment (FINAL) =
 	END StartSegment;
   */
+	START_SEGMENT.setName("StartSegment");
+	START_SEGMENT.setExtending(LINE_SEGMENT);
+	START_SEGMENT.setFinal(true);
+	START_SEGMENT.setIdentifiable(false);
+	add(START_SEGMENT);
   /*
 	STRUCTURE StraightSegment EXTENDS LineSegment (FINAL) =
 	END StraightSegment;
   */
+	STRAIGHT_SEGMENT.setName("StraightSegment");
+	STRAIGHT_SEGMENT.setExtending(LINE_SEGMENT);
+	STRAIGHT_SEGMENT.setFinal(true);
+	STRAIGHT_SEGMENT.setIdentifiable(false);
+	add(STRAIGHT_SEGMENT);
   /*
 	STRUCTURE ArcSegment EXTENDS LineSegment (FINAL) =
 	  ArcPoint: MANDATORY LineCoord;
 	  Radius: Length;
 	END ArcSegment;
   */
-
+	ARC_SEGMENT.setName("ArcSegment");
+	ARC_SEGMENT.setExtending(LINE_SEGMENT);
+	ARC_SEGMENT.setFinal(true);
+	ARC_SEGMENT.setIdentifiable(false);
+	add(ARC_SEGMENT);
   /*
 	STRUCTURE SurfaceEdge =
 	  Geometry: DIRECTED POLYLINE;
@@ -795,14 +812,12 @@ einer gemeinsamen Einheit abgeleitet werden.
 	END SurfaceEdge;
   */
 	SURFACE_EDGE.setName ("SurfaceEdge");
-	SURFACE_EDGE.setAbstract(true);
 	SURFACE_EDGE.setIdentifiable (false);
 	LocalAttribute surfaceEdge_geometry = new LocalAttribute ();
-	surfaceEdge_geometry.setAbstract(true);
-	PolylineType geomType = new PolylineType ();
+	PolylineType geomType = new PolylineType();
 	geomType.setDirected (true);
 	surfaceEdge_geometry.setName ("Geometry");
-	surfaceEdge_geometry.setDomain (geomType);
+	surfaceEdge_geometry.setDomain (geomType,true);
 	SURFACE_EDGE.add (surfaceEdge_geometry);
 	LocalAttribute surfaceEdge_lineAttrs = new LocalAttribute ();
 	typ = new CompositionType ();
@@ -844,7 +859,7 @@ einer gemeinsamen Einheit abgeleitet werden.
 	LocalAttribute lineGeometry_segments;
 	lineGeometry_segments = new LocalAttribute ();
 	lineGeometry_segments.setName ("Segments");
-	lineGeometry_segments.setDomain (ct);
+	lineGeometry_segments.setDomain (ct,true);
 	LINE_GEOMETRY.add(lineGeometry_segments);
 	add(LINE_GEOMETRY);
 

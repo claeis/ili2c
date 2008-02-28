@@ -509,6 +509,11 @@ public abstract class AttributeDef
                  and does not agree with the change.
   */
   public void setDomain (Type domain)
+  throws java.beans.PropertyVetoException
+  {
+	  setDomain(domain,false);
+  }
+  public void setDomain (Type domain,boolean acceptAbstract)
     throws java.beans.PropertyVetoException
   {
     Type oldValue = this.domain;
@@ -521,11 +526,13 @@ public abstract class AttributeDef
     if (oldValue == newValue)
       return;
 
-    if ((newValue != null)
-        && newValue.isAbstract()
-        && !this.isAbstract())
-      throw new IllegalArgumentException (formatMessage (
-        "err_attributeDef_domainIsAbstractButAttrIsNot", this.toString()));
+    if(!acceptAbstract){
+        if ((newValue != null)
+                && newValue.isAbstract()
+                && !this.isAbstract())
+              throw new Ili2cSemanticException (getSourceLine(),formatMessage (
+                "err_attributeDef_domainIsAbstractButAttrIsNot", this.toString()));
+    }
 
     fireVetoableChange ("domain", oldValue, newValue);
 

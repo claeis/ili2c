@@ -151,9 +151,17 @@ public class CompositionType extends Type
     return ordered;
   }
 
+  
+
+  public boolean isAbstract() {
+	if(getComponentType()!=null){
+		return getComponentType().isAbstract();
+	}
+	return super.isAbstract();
+}
 
 
-  /** Sets whether or not this composition type is ordered.
+/** Sets whether or not this composition type is ordered.
   */
   public void setOrdered(boolean ordered)
     throws java.beans.PropertyVetoException
