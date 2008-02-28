@@ -4756,19 +4756,24 @@ protected viewDef[Container container]
 		        {
 		          reportError(rsrc.getString("err_extendedWithExtends"),
 		                      extToken.getLine());
-		        }
-			try {
-				view=new ExtendedView(base);
-			} catch (Exception ex) {
-				reportError(ex, extToken.getLine());
+				// create a dummy view
+				view=new Projection(); 
+		        }else{
+				try {
+					view=new ExtendedView(base);
+				} catch (Exception ex) {
+					reportError(ex, extToken.getLine());
+				}
+				((ExtendedView)view).setExtended(false);
 			}
-			((ExtendedView)view).setExtended(false);
 		}
 	| /* empty */
 		{ if((props&ch.interlis.ili2c.metamodel.Properties.eEXTENDED)==0){
 			reportError(formatMessage("err_view_missingFormationdef",n.getText()),n.getLine());
-		}
-		// check if base topic contains a viewdef with the same name
+			// create a dummy view
+			view=new Projection(); 
+		}else{
+			// check if base topic contains a viewdef with the same name
 			base = null;
 			AbstractPatternDef baseTopic=(AbstractPatternDef)((AbstractPatternDef)container).getExtending();
 			if(baseTopic!=null){
@@ -4791,7 +4796,7 @@ protected viewDef[Container container]
 				}
 				((ExtendedView)view).setExtended(true);
 			  }
-		
+		}
 		}
 	) {
 		try {
