@@ -83,6 +83,10 @@ options
       int line=ex.getLine();
       CompilerLogEvent.logError(filename,line,ex.getLocalizedMessage());
       return false;
+    }catch(Ili2cSemanticException ex){
+	      int line=((Ili2cSemanticException)ex).getSourceLine();
+	      CompilerLogEvent.logError(filename,line,ex.getLocalizedMessage());
+	      return false;
     }catch(antlr.TokenStreamRecognitionException ex){
     	if(ex.recog instanceof antlr.NoViableAltForCharException){
 		antlr.NoViableAltForCharException ex2=(antlr.NoViableAltForCharException)ex.recog;
@@ -1460,7 +1464,7 @@ protected attrType[Container  scope,
 	:	typ=type[scope,extending]
 	//|	domainRef
 	//|	restrictedStructureRef
-	| lin = names2[nams]
+	| (lin = names2[nams]
 		{
 			Table s;
 			Element e=resolveStructureOrDomainRef(scope,(String[]) nams.toArray(new String[0]),lin);
@@ -1494,6 +1498,17 @@ protected attrType[Container  scope,
 			}
 
 		}
+		| as:"ANYSTRUCTURE" {
+				ct=new CompositionType();
+				try{
+					ct.setCardinality(new Cardinality(0,1));
+					ct.setComponentType(modelInterlis.ANYSTRUCTURE);
+				}catch(Exception ex){
+				    reportError(ex, as.getLine());
+				}
+				typ=ct;
+		}
+		)
 		(
 		{ct!=null}?
 		"RESTRICTION" LPAREN restrictedTo=structureRef[scope]
@@ -4264,12 +4279,6 @@ protected pathEl[Viewable currentViewable]
 		}else if(currentViewable instanceof AbstractClassDef && ((AbstractClassDef)currentViewable).findOpposideRole(n.getText())!=null){
 			// currentView is an AbstractClassDef -> role name
 			RoleDef oppend=((AbstractClassDef)currentViewable).findOpposideRole(n.getText());
-			// check if only one link object
-			if(oppend.getCardinality().getMaximum()>1){
-				// rolename leads to multiple objects
-				reportError (formatMessage ("err_pathEl_rolenameMultipleObjects",
-					n.getText(),currentViewable.toString()), n.getLine());
-			}
 			el=new PathElAbstractClassRole(oppend);
 		}else{
 			reportError (formatMessage ("err_pathEl_wrongName",
@@ -4298,12 +4307,6 @@ protected associationPath[Viewable currentViewable]
 			if(targetRole==null){
 				// no role with given name
 				reportError (formatMessage ("err_associationPath_noRole",
-					roleName.getText(),currentViewable.toString()), roleName.getLine());
-			}
-			// check if only one link object
-			if(targetRole.getCardinality().getMaximum()>1){
-				// association path leads to multiple objects
-				reportError (formatMessage ("err_associationPath_multipleObjects",
 					roleName.getText(),currentViewable.toString()), roleName.getLine());
 			}
 			el=new AssociationPath(targetRole);
@@ -4691,8 +4694,12 @@ protected viewDef[Container container]
 		          reportError(rsrc.getString("err_extendedWithExtends"),
 		                      extToken.getLine());
 		        }
-		view=new ExtendedView(base);
-		((ExtendedView)view).setExtended(false);
+			try {
+				view=new ExtendedView(base);
+			} catch (Exception ex) {
+				reportError(ex, extToken.getLine());
+			}
+			((ExtendedView)view).setExtended(false);
 		}
 	| /* empty */
 		{ if((props&ch.interlis.ili2c.metamodel.Properties.eEXTENDED)==0){
@@ -4714,13 +4721,18 @@ protected viewDef[Container container]
 			  }
 			  else
 			  {
-			  	view=new ExtendedView(base);
+				try {
+					view=new ExtendedView(base);
+				} catch (Exception ex) {
+					reportError(ex, n.getLine());
+				}
 				((ExtendedView)view).setExtended(true);
 			  }
 		
 		}
 	) {
 		try {
+			view.setSourceLine(n.getLine());
 			view.setName(n.getText());
 			view.setAbstract((props & ch.interlis.ili2c.metamodel.Properties.eABSTRACT) != 0);
 			view.setFinal((props & ch.interlis.ili2c.metamodel.Properties.eFINAL) != 0);
