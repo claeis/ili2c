@@ -2493,15 +2493,24 @@ protected formattedType[Container scope, Type extending]
 		Domain domain=null;
 		Table struct=null;
 		FormattedTypeBaseAttrRef baseAttr=null;
+		int line=0;
 	}
 	: 
-	(( "FORMAT" "BASED")=>( "FORMAT" "BASED" "ON" struct=structureRef[scope] 
+	(( "FORMAT" "BASED")=>( format_kw:"FORMAT" "BASED" "ON" struct=structureRef[scope] 
 		{
+			line=format_kw.getLine();
 			ft=new FormattedType();
-			ft.setBaseClass(struct);
+			if(extending!=null){
+				try{
+				ft.setExtending(extending);
+				}catch(Exception ex){
+					reportError(ex,line);
+				}
+			}
+			ft.setBaseStruct(struct);
 		}
 		LPAREN ("INHERITANCE")?
-                  ( prefix:STRING )? ( baseAttr=baseAttrRef[struct] {postfix=null;} (postfix:STRING)?
+                  ( prefix:STRING )? ( baseAttr=baseAttrRef[ft,struct] {postfix=null;} (postfix:STRING)?
 		  		{ 	if(postfix!=null){
 						baseAttr.setPostfix(postfix.getText());
 					}
@@ -2511,33 +2520,93 @@ protected formattedType[Container scope, Type extending]
                              RPAREN
 		( min:STRING DOTDOT max:STRING )?
 		{ 
-			if(min!=null){
-				ft.setMinimum(min.getText());
-				ft.setMaximum(max.getText());
-			}
 			if(prefix!=null){
 				ft.setPrefix(prefix.getText());
+			}
+			if(min!=null){
+				try{
+					if(!ft.isValueInRange(min.getText())){
+						reportError(formatMessage("err_formattedType_valueOutOfRange",min.getText()),min.getLine());
+					}
+				}catch(NumberFormatException ex){
+					reportError(formatMessage("err_formattedType_illegalFormat",min.getText()),min.getLine());
+				}
+				try{
+					if(!ft.isValueInRange(max.getText())){
+						reportError(formatMessage("err_formattedType_valueOutOfRange",max.getText()),max.getLine());
+					}
+				}catch(NumberFormatException ex){
+					reportError(formatMessage("err_formattedType_illegalFormat",max.getText()),max.getLine());
+				}
+				ft.setMinimum(min.getText());
+				ft.setMaximum(max.getText());
 			}
 		}
 	) 
 	| ( min2:STRING DOTDOT max2:STRING 
 		{
+			line=min2.getLine();
 			ft=new FormattedType();
+			if(extending!=null){
+				//EhiLogger.debug("extending baseStruct "+((FormattedType)extending).getBaseStruct().getScopedName(null));
+				//EhiLogger.debug("extending format "+((FormattedType)extending).getFormat());
+				try{
+				ft.setExtending(extending);
+				}catch(Exception ex){
+					reportError(ex,line);
+				}
+			}
+			try{
+				if(!ft.isValueInRange(min2.getText())){
+					reportError(formatMessage("err_formattedType_valueOutOfRange",min2.getText()),min2.getLine());
+				}
+			}catch(NumberFormatException ex){
+				reportError(formatMessage("err_formattedType_illegalFormat",min2.getText()),min2.getLine());
+			}
+			try{
+				if(!ft.isValueInRange(max2.getText())){
+					reportError(formatMessage("err_formattedType_valueOutOfRange",max2.getText()),max2.getLine());
+				}
+			}catch(NumberFormatException ex){
+				reportError(formatMessage("err_formattedType_illegalFormat",max2.getText()),max2.getLine());
+			}
 			ft.setMinimum(min2.getText());
 			ft.setMaximum(max2.getText());
 		}
 	)
 	| ( "FORMAT" domain=domainRef[scope] min3:STRING DOTDOT max3:STRING
 		{
+			line=min3.getLine();
 			ft=new FormattedType();
+			if(extending!=null){
+				try{
+				ft.setExtending(extending);
+				}catch(Exception ex){
+					reportError(ex,line);
+				}
+			}
+			ft.setBaseDomain(domain);
+			try{
+				if(!ft.isValueInRange(min3.getText())){
+					reportError(formatMessage("err_formattedType_valueOutOfRange",min3.getText()),min3.getLine());
+				}
+			}catch(NumberFormatException ex){
+				reportError(formatMessage("err_formattedType_illegalFormat",min3.getText()),min3.getLine());
+			}
+			try{
+				if(!ft.isValueInRange(max3.getText())){
+					reportError(formatMessage("err_formattedType_valueOutOfRange",max3.getText()),max3.getLine());
+				}
+			}catch(NumberFormatException ex){
+				reportError(formatMessage("err_formattedType_illegalFormat",max3.getText()),max3.getLine());
+			}
 			ft.setMinimum(min3.getText());
 			ft.setMaximum(max3.getText());
-			ft.setBaseDomain(domain);
 		}
 	))
 	;
 
-protected baseAttrRef[Table scope]
+protected baseAttrRef[FormattedType ft,Table scope]
 	returns [FormattedTypeBaseAttrRef baseAttr]
 	{
 		baseAttr=null;
@@ -2562,9 +2631,7 @@ protected baseAttrRef[Table scope]
 				reportError (formatMessage ("err_formattedType_maxCard1", name.getText(),
 				scope.toString()), name.getLine());
 			}
-			baseAttr=new FormattedTypeBaseAttrRef();
-			baseAttr.setAttr(attrdef);
-			baseAttr.setFormatted(domain);
+			baseAttr=new FormattedTypeBaseAttrRef(ft,attrdef,domain);
 	}
  | (name2:NAME ( SLASH intPos=posInteger )? )
 	{ // TODO formattedTyp
@@ -2578,11 +2645,7 @@ protected baseAttrRef[Table scope]
 				reportError (formatMessage ("err_formattedType_NumericAttrRequired", name2.getText(),
 				scope.toString()), name2.getLine());
 			}
-			baseAttr=new FormattedTypeBaseAttrRef();
-			baseAttr.setAttr(attrdef);
-			if(intPos>0){
-				baseAttr.setIntPos(intPos);
-			}
+			baseAttr=new FormattedTypeBaseAttrRef(ft,attrdef,intPos);
 	}
  ;
 

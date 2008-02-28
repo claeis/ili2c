@@ -693,19 +693,21 @@ einer gemeinsamen Einheit abgeleitet werden.
   */
   {
 	  FormattedType format=(FormattedType)XmlTime.getType();
-	  format.setBaseClass(UTC);
+	  format.setBaseStruct(UTC);
 	  FormattedTypeBaseAttrRef baseAttr=null;
-	  baseAttr=new FormattedTypeBaseAttrRef();
-	  baseAttr.setAttr((LocalAttribute)UTC.getElement(LocalAttribute.class, "Hours"));
-	  baseAttr.setIntPos(2);
+	  baseAttr=new FormattedTypeBaseAttrRef(format
+	  	,(LocalAttribute)UTC.getElement(LocalAttribute.class, "Hours")
+	  	,2);
 	  baseAttr.setPostfix(":");
 	  format.addBaseAttrRef(baseAttr);
-	  baseAttr=new FormattedTypeBaseAttrRef();
-	  baseAttr.setAttr((LocalAttribute)UTC.getElement(LocalAttribute.class, "Minutes"));
+	  baseAttr=new FormattedTypeBaseAttrRef(format
+	  	,(LocalAttribute)UTC.getElement(LocalAttribute.class, "Minutes")
+	  	,0);
 	  baseAttr.setPostfix(":");
 	  format.addBaseAttrRef(baseAttr);
-	  baseAttr=new FormattedTypeBaseAttrRef();
-	  baseAttr.setAttr((LocalAttribute)UTC.getElement(LocalAttribute.class, "Seconds"));
+	  baseAttr=new FormattedTypeBaseAttrRef(format
+	  	,(LocalAttribute)UTC.getElement(LocalAttribute.class, "Seconds")
+	  	,0);
 	  format.addBaseAttrRef(baseAttr);
   }
   add(XmlTime);
@@ -715,18 +717,21 @@ einer gemeinsamen Einheit abgeleitet werden.
   */
   {
 	  FormattedType format=(FormattedType)XmlDate.getType();
-	  format.setBaseClass(GregorianDate);
+	  format.setBaseStruct(GregorianDate);
 	  FormattedTypeBaseAttrRef baseAttr=null;
-	  baseAttr=new FormattedTypeBaseAttrRef();
-	  baseAttr.setAttr((LocalAttribute)GregorianDate.getElement(LocalAttribute.class, "Year"));
+	  baseAttr=new FormattedTypeBaseAttrRef(format
+	  	,(LocalAttribute)GregorianDate.getElement(LocalAttribute.class, "Year")
+	  	,0);
 	  baseAttr.setPostfix("-");
 	  format.addBaseAttrRef(baseAttr);
-	  baseAttr=new FormattedTypeBaseAttrRef();
-	  baseAttr.setAttr((LocalAttribute)GregorianDate.getElement(LocalAttribute.class, "Month"));
+	  baseAttr=new FormattedTypeBaseAttrRef(format
+	  	,(LocalAttribute)GregorianDate.getElement(LocalAttribute.class, "Month")
+	  	,0);
 	  baseAttr.setPostfix("-");
 	  format.addBaseAttrRef(baseAttr);
-	  baseAttr=new FormattedTypeBaseAttrRef();
-	  baseAttr.setAttr((LocalAttribute)GregorianDate.getElement(LocalAttribute.class, "Day"));
+	  baseAttr=new FormattedTypeBaseAttrRef(format
+	  	,(LocalAttribute)GregorianDate.getElement(LocalAttribute.class, "Day")
+	  	,0);
 	  format.addBaseAttrRef(baseAttr);
   }
   add(XmlDate);
@@ -738,20 +743,22 @@ einer gemeinsamen Einheit abgeleitet werden.
   */
   {
 	  FormattedType format=(FormattedType)XmlDateTime.getType();
-	  format.setBaseClass(GregorianDateTime);
+	  format.setBaseStruct(GregorianDateTime);
 	  format.setPrefix("T");
 	  FormattedTypeBaseAttrRef baseAttr=null;
-	  baseAttr=new FormattedTypeBaseAttrRef();
-	  baseAttr.setAttr((LocalAttribute)GregorianDateTime.getElement(LocalAttribute.class, "Hours"));
-	  baseAttr.setPostfix(":");
-	  baseAttr.setIntPos(2);
-	  format.addBaseAttrRef(baseAttr);
-	  baseAttr=new FormattedTypeBaseAttrRef();
-	  baseAttr.setAttr((LocalAttribute)GregorianDateTime.getElement(LocalAttribute.class, "Minutes"));
+	  baseAttr=new FormattedTypeBaseAttrRef(format
+	  	,(LocalAttribute)GregorianDateTime.getElement(LocalAttribute.class, "Hours")
+	  	,2);
 	  baseAttr.setPostfix(":");
 	  format.addBaseAttrRef(baseAttr);
-	  baseAttr=new FormattedTypeBaseAttrRef();
-	  baseAttr.setAttr((LocalAttribute)GregorianDateTime.getElement(LocalAttribute.class, "Seconds"));
+	  baseAttr=new FormattedTypeBaseAttrRef(format
+	  	,(LocalAttribute)GregorianDateTime.getElement(LocalAttribute.class, "Minutes")
+	  	,0);
+	  baseAttr.setPostfix(":");
+	  format.addBaseAttrRef(baseAttr);
+	  baseAttr=new FormattedTypeBaseAttrRef(format
+	  	,(LocalAttribute)GregorianDateTime.getElement(LocalAttribute.class, "Seconds")
+	  	,0);
 	  format.addBaseAttrRef(baseAttr);
   }
   add(XmlDateTime); // TODO define FormatType specifics

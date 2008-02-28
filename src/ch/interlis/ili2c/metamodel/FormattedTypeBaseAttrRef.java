@@ -5,6 +5,29 @@ public class FormattedTypeBaseAttrRef {
 	private AttributeDef attr=null;
 	private int intPos=0;
 	private Domain formatted=null;
+	private FormattedType parent=null;
+	public FormattedTypeBaseAttrRef(FormattedType parent,AttributeDef attr,int intPos)
+	{
+		this.parent = parent;
+		this.attr = attr;
+		this.intPos = intPos;
+	}
+	public FormattedTypeBaseAttrRef(FormattedType parent,AttributeDef attr,Domain formatted)
+	{
+		this.parent = parent;
+		this.attr = attr;
+		this.formatted = formatted;
+	}
+
+	public AttributeDef getAttr() {
+		return attr;
+	}
+	public Domain getFormatted() {
+		return formatted;
+	}
+	public int getIntPos() {
+		return intPos;
+	}
 
 	public String getPostfix() {
 		return postfix;
@@ -13,28 +36,8 @@ public class FormattedTypeBaseAttrRef {
 	public void setPostfix(String postfix) {
 		this.postfix = postfix;
 	}
-
-	public AttributeDef getAttr() {
-		return attr;
-	}
-
-	public void setAttr(AttributeDef attr) {
-		this.attr = attr;
-	}
-
-	public Domain getFormatted() {
-		return formatted;
-	}
-
-	public void setFormatted(Domain formatted) {
-		this.formatted = formatted;
-	}
-
-	public int getIntPos() {
-		return intPos;
-	}
-
-	public void setIntPos(int intPos) {
-		this.intPos = intPos;
+	public FormattedType getParent()
+	{
+		return parent;
 	}
 }
