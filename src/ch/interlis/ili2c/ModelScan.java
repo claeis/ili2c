@@ -32,7 +32,7 @@ import java.util.Iterator;
 
 /**
  * @author ce
- * @version $Revision: 1.6 $ $Date: 2008-01-29 11:07:54 $
+ * @version $Revision: 1.7 $ $Date: 2008-02-28 17:20:54 $
  */
 public class ModelScan {
 
@@ -270,19 +270,23 @@ public class ModelScan {
 			}
 		}
 		
-		// add files in given directories
-		for(Iterator i=ilipaths.iterator();i.hasNext();){
-			String ilidir=(String)i.next();
-			HashSet set=null;
-			try {
-				set = scanIliFileDir(new File(ilidir),requiredFiles);
-			} catch (IOException ex) {
-				throw new Ili2cException("failed to scan folder "+ilidir,ex);
-			}
-			if(set!=null && !set.isEmpty()){
-				ilifiles.addAll(set);
+		// check if fileset complete
+		if(!isFileSetComplete(ilifiles,availablemodels)){
+			// add files in given directories
+			for(Iterator i=ilipaths.iterator();i.hasNext();){
+				String ilidir=(String)i.next();
+				HashSet set=null;
+				try {
+					set = scanIliFileDir(new File(ilidir),requiredFiles);
+				} catch (IOException ex) {
+					throw new Ili2cException("failed to scan folder "+ilidir,ex);
+				}
+				if(set!=null && !set.isEmpty()){
+					ilifiles.addAll(set);
+				}
 			}
 		}
+		
 
 		// build map of modelname -> ilifile
 		HashMap models=new HashMap();
@@ -298,6 +302,25 @@ public class ModelScan {
 			}
 		}
 		return createConfig(toVisitFiles,models);
+	}
+	static private boolean isFileSetComplete(HashSet ilifiles,HashSet availablemodels)
+	{
+		Iterator it=ilifiles.iterator();
+		while(it.hasNext()){
+			IliFile ilifile=(IliFile)it.next();
+			Iterator modeli=ilifile.iteratorModel();
+			while(modeli.hasNext()){
+				IliModel model=(IliModel)modeli.next();
+				Iterator depi=model.getDependencies().iterator();
+				while(depi.hasNext()){
+					String dep=(String)depi.next();
+					if(!availablemodels.contains(dep)){
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 	/**
 	 * 
@@ -366,7 +389,7 @@ public class ModelScan {
 		while(resi.hasNext()){
 		  IliFile res=(IliFile)resi.next();
 		  File iliFile=res.getFilename();
-		  EhiLogger.debug(iliFile.getAbsolutePath());
+		  //EhiLogger.debug(iliFile.getAbsolutePath());
 		  config.addFileEntry(new ch.interlis.ili2c.config.FileEntry(
 			  iliFile.getAbsolutePath(),ch.interlis.ili2c.config.FileEntryKind.ILIMODELFILE));
 		}
