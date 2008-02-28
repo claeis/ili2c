@@ -116,54 +116,6 @@ public abstract class View extends Viewable
     }
   }
 
-
-
-  /** Causes this view to extend another view.
-
-
-      <p>In JavaBeans terminology, the <code>extending</code>
-      property is both <em>bound</em> and <em>constrained</em>.
-      This means that any interested party can ask for being
-      informed about changes of the property value by registering
-      as a <code>PropertyChangeListener</code>. In addition,
-      subscribers may oppose to changes by registering as a
-      <code>VetoableChangeListener</code>.
-
-
-      @param extending  The new view being extended, or
-                        <code>null</code> if this view is
-                        going to be independent of other views.
-
-
-      @exception java.lang.IllegalArgumentException if
-                 <code>extending</code> is not <code>null</code>,
-                 as Views are not extensible.
-
-
-      @exception java.beans.PropertyVetoException if some
-                 VetoableChangeListener has registered for changes
-                 of the <code>extending</code> property
-                 and does not agree with the change. Actually,
-                 this should not happen in the case of Views,
-                 because they can't really change the value
-                 of the <code>extending</code> property.
-                 Nevertheless, it must be declared in order
-                 to inherit from Viewable.
-  */
-  public void setExtending (Element extending)
-    throws java.beans.PropertyVetoException
-  {
-    if (extending != null)
-      throw new IllegalArgumentException (
-        formatMessage ("err_view_notExtensible", this.toString(),
-                       extending.toString()));
-
-
-    super.setExtending ((View) extending);
-  }
-
-
-
   /** Determines whether or not <code>this</code> is dependent on
       <code>other</code>. Dependent elements are required to follow
       their base elements in an Interlis description file.
@@ -202,5 +154,8 @@ public abstract class View extends Viewable
   }
   public void setTransient(boolean transient1){
 	  propTransient=transient1;
+  }
+  public boolean isTransient(){
+	  return propTransient;
   }
 }

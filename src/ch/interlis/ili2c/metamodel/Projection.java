@@ -20,7 +20,7 @@ import java.util.*;
 
     @author Sascha Brawer, sb@adasys.ch
  */
-public class Projection extends View
+public class Projection extends UnextendableView
 {
   protected ViewableAlias selected = null;
 

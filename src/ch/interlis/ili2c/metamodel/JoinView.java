@@ -16,7 +16,7 @@ package ch.interlis.ili2c.metamodel;
 
 /** @author Sascha Brawer, sb@adasys.ch
  */
-public class JoinView extends View
+public class JoinView extends UnextendableView
 {
   protected ViewableAlias[] joining = new ViewableAlias[0];
 

@@ -18,7 +18,7 @@ package ch.interlis.ili2c.metamodel;
     @author Sascha Brawer, sb@adasys.ch
     @version 1.0 - July 1, 1999
  */
-public class UnionView extends View
+public class UnionView extends UnextendableView
 {
   protected ViewableAlias[] united = new ViewableAlias[0];
 

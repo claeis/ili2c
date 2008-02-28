@@ -17,7 +17,7 @@ import java.util.*;
 
     @author Sascha Brawer, sb@adasys.ch
  */
-public class SelectionView extends View
+public class SelectionView extends UnextendableView
 {
   protected ViewableAlias selected = null;
   

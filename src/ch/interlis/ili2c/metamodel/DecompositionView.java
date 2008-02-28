@@ -19,8 +19,9 @@ import java.util.*;
 
     @author Sascha Brawer, sb@adasys.ch
  */
-public class DecompositionView extends View
+public class DecompositionView extends UnextendableView
 {
+	private ViewableAlias renamedViewable=null;
   protected ObjectPath decomposedAttribute = null;
 
 
@@ -180,5 +181,17 @@ public class DecompositionView extends View
         this.toString(), decomposedAttribute.toString()));
     }
   }
+
+
+
+public ViewableAlias getRenamedViewable() {
+	return renamedViewable;
+}
+
+
+
+public void setRenamedViewable(ViewableAlias renamedViewable) {
+	this.renamedViewable = renamedViewable;
+}
 
 }

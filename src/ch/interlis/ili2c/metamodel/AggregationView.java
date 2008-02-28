@@ -1,7 +1,7 @@
 package ch.interlis.ili2c.metamodel;
 
 
-public class AggregationView extends View
+public class AggregationView extends UnextendableView
 {
 	private ViewableAlias base=null;
 	// columns may be null == ALL OF
@@ -14,6 +14,10 @@ public class AggregationView extends View
         public void setEqual(UniqueEl cols)
         {
           columns=cols;
+        }
+        public UniqueEl getEqual()
+        {
+          return columns;
         }
 	public ViewableAlias getBase()
 	{
