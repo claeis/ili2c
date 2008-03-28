@@ -401,6 +401,7 @@ public final class Interlis1Generator
 
 
 	List tables=topic.getViewables();
+	// INTERLIS 2 model?
 	if(!((Model)topic.getContainer()).getIliVersion().equals(Model.ILI1)){
 		TopoSort sortDefs=new TopoSort();
 		defi = topic.getViewables().iterator();
@@ -767,28 +768,34 @@ public final class Interlis1Generator
               }else{
                 ipw.print ("DATE");
               }
+    		return null;
         }else if(aliased==td.INTERLIS.BOOLEAN){
             if(genFmt){
                 ipw.print(" "+genFmtField(fmtAttrIdx,1));
               }else{
                 ipw.print ("BOOLEAN");
               }
+    		return null;
         }else if(aliased==td.INTERLIS.HALIGNMENT){
             if(genFmt){
                 ipw.print(" "+genFmtField(fmtAttrIdx,1));
               }else{
                 ipw.print ("HALIGNMENT");
               }
+    		return null;
         }else if(aliased==td.INTERLIS.VALIGNMENT){
             if(genFmt){
                 ipw.print(" "+genFmtField(fmtAttrIdx,1));
               }else{
                 ipw.print ("VALIGNMENT");
               }
+    		return null;
         }else{
-			ipw.print(aliased.getName());
+        	if(!genFmt){
+    			ipw.print(aliased.getName());
+    			return null;
+        	}
         }
-		return null;
     }
     t = Type.findReal (typ);
     if (t instanceof TextType)
