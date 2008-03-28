@@ -2798,7 +2798,7 @@ protected attributePathType  [Container scope, Type extending]
 sutype=null;
 }
 : "ATTRIBUTE" 
-	( "OF" (attributePath[(Viewable)scope] | "@" NAME)
+	( "OF" (attributePath[(Viewable)scope] | AT NAME)
 	)?
 	( "RESTRICTION" lp:LPAREN attrTypeDef[scope,/* alias ok */ true, null,
                      lp.getLine()]
