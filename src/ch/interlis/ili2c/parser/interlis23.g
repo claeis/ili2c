@@ -2022,7 +2022,7 @@ protected baseType [Container scope, Type extending]
 	|	bt=enumTreeValueType[scope,extending]
 	|	bt=alignmentType
 	|	bt=booleanType
-	|	bt=numericType[scope,extending]
+	|	bt=numericType[scope,extending,false]
 	|	bt=formattedType[scope,extending]
 	|	bt=coordinateType[scope,extending]
 	|	bt=oIDType[scope,extending]
@@ -2311,7 +2311,7 @@ protected booleanType
     }
   ;
 
-protected numericType [Container scope, Type extending]
+protected numericType [Container scope, Type extending,boolean isCoord]
   returns [NumericType ntyp]
 {
   PrecisionDecimal min = null, max = null;
@@ -2364,7 +2364,7 @@ protected numericType [Container scope, Type extending]
         rotation = NumericalType.ROTATION_COUNTERCLOCKWISE;
         rotationLine = ccw.getLine();
       }
-    |  referenceSystem = refSys [scope]
+    |  referenceSystem = refSys [scope,isCoord]
     )?
 
     {
@@ -2395,7 +2395,7 @@ protected numericType [Container scope, Type extending]
     }
   ;
 
-protected refSys[Container scope]
+protected refSys[Container scope,boolean isCoord]
 	returns [RefSystemRef rsr]
 	{
 	rsr = null;
@@ -2407,7 +2407,8 @@ protected refSys[Container scope]
 
 	:
 	lpar:LCURLY
-           ((NAME (DOT NAME)* LBRACE)=>(system=metaObjectRef[scope,predefinedCoordSystemClass]
+           ({isCoord}?     /* "((NAME (DOT NAME)* LBRACE)=>" commented because syntactic predicate superfluous for single alternative */
+	      (system=metaObjectRef[scope,predefinedCoordSystemClass]
 		 slash1:LBRACE axisNumber=posInteger RBRACE
 		      { 
 			try {
@@ -2418,8 +2419,8 @@ protected refSys[Container scope]
 			}
 		      }
 	     )
-	     
-	  | system=metaObjectRef[scope,predefinedScalSystemClass]
+	     )
+	  | {!isCoord}? system=metaObjectRef[scope,predefinedScalSystemClass]
 		      {
 			try {
 			  if (system != null)
@@ -2683,13 +2684,13 @@ protected coordinateType [Container scope, Type extending]
   }
 }
   : coord:"COORD"
-    nt1 = numericType [scope, ext_nt1]
+    nt1 = numericType [scope, ext_nt1,true]
     ( COMMA
-      nt2 = numericType [scope, ext_nt2]
+      nt2 = numericType [scope, ext_nt2,true]
       (
         COMMA
         ( rots=rotationDef
-        | (nt3=numericType [scope, ext_nt3] (COMMA rots=rotationDef)?)
+        | (nt3=numericType [scope, ext_nt3,true] (COMMA rots=rotationDef)?)
         )
       )?
     )?
@@ -2748,7 +2749,7 @@ protected oIDType[Container scope,Type extending]
 	: "OID"
 	( "ANY" { bt=new AnyOIDType(); }
 	| t=textType[extendingOidType] { bt=new TextOIDType(t); }
-	| nt=numericType[scope,extendingOidType] { bt=new NumericOIDType(nt); }
+	| nt=numericType[scope,extendingOidType,false] { bt=new NumericOIDType(nt); }
 	)
 	;
 
