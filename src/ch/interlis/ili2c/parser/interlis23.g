@@ -1472,6 +1472,7 @@ protected attrType[Container  scope,
 				s=(Table)e;
 				ct=new CompositionType();
 				try{
+					ct.setSourceLine(lin);
 					ct.setCardinality(new Cardinality(0,1));
 					ct.setComponentType(s);
 				}catch(Exception ex){
@@ -1501,6 +1502,7 @@ protected attrType[Container  scope,
 		| as:"ANYSTRUCTURE" {
 				ct=new CompositionType();
 				try{
+					ct.setSourceLine(as.getLine());
 					ct.setCardinality(new Cardinality(0,1));
 					ct.setComponentType(modelInterlis.ANYSTRUCTURE);
 				}catch(Exception ex){
@@ -1614,6 +1616,7 @@ protected restrictedStructureRef[Container scope]
 			{
 				ct=new CompositionType();
 				try{
+					ct.setSourceLine(line);
 					ct.setComponentType(ref);
 				}catch(Exception ex){
 					reportError(ex, line);
@@ -2407,7 +2410,7 @@ protected refSys[Container scope,boolean isCoord]
 
 	:
 	lpar:LCURLY
-           ({isCoord}?     /* "((NAME (DOT NAME)* LBRACE)=>" commented because syntactic predicate superfluous for single alternative */
+           ({isCoord}?     // "((NAME (DOT NAME)* LBRACE)=>" commented because syntactic predicate superfluous for single alternative
 	      (system=metaObjectRef[scope,predefinedCoordSystemClass]
 		 slash1:LBRACE axisNumber=posInteger RBRACE
 		      { 
@@ -2418,7 +2421,6 @@ protected refSys[Container scope,boolean isCoord]
 			  reportError (ex, slash1.getLine ());
 			}
 		      }
-	     )
 	     )
 	  | {!isCoord}? system=metaObjectRef[scope,predefinedScalSystemClass]
 		      {

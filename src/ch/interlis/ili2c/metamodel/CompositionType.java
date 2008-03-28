@@ -15,6 +15,8 @@ package ch.interlis.ili2c.metamodel;
 
 import java.util.*;
 
+import sun.security.action.GetLongAction;
+
 
 /** The domain of a structure attribute.
 */
@@ -155,7 +157,21 @@ public class CompositionType extends Type
 
   public boolean isAbstract() {
 	if(getComponentType()!=null){
-		return getComponentType().isAbstract();
+		if(getComponentType().isAbstract()){
+			// check if restricted to only non-abstract classes
+			boolean isAbstract=true;
+			Iterator resti=iteratorRestrictedTo();
+			while(resti.hasNext()){
+				Table rest=(Table)resti.next();
+				if(rest.isAbstract()){
+					return true;
+				}else{
+					isAbstract=false;
+				}
+			}
+			return isAbstract;
+		}
+		return false;
 	}
 	return super.isAbstract();
 }
@@ -238,8 +254,8 @@ public class CompositionType extends Type
   {
 	  restrictedTo.add(structure);
 	  // check if structure is a valid extension
-	  if(!structure.isExtending(componentType)){
-		throw new IllegalArgumentException (formatMessage (
+	  if(!componentType.getScopedName(null).equals("INTERLIS.ANYSTRUCTURE") && !structure.isExtending(componentType)){
+		throw new Ili2cSemanticException (getSourceLine(),formatMessage (
 			"err_compositionType_restriction",
 			structure.toString(), componentType.toString()));
 
