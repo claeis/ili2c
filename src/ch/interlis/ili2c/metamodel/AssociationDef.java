@@ -412,7 +412,7 @@ public class AssociationDef extends AbstractClassDef
 		// no base definition
 		// at least two roles required
 		if(roles.size()<2){
-			throw new IllegalStateException (formatMessage (
+			throw new Ili2cSemanticException (getSourceLine(),formatMessage (
 			  "err_association_twoRoleDef"));
 		}
 	}
