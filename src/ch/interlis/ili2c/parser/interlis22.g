@@ -469,7 +469,7 @@ options
       /* Nothing found. */
       reportError (formatMessage ("err_metaObject_unknownName",
                                   name,
-                                  basket.getScopedName(null)),
+                                  basket.getScopedName(null),polymorphicTo.getScopedName(null)),
                    line);
       return null;
     }
