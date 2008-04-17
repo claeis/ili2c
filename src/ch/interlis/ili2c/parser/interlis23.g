@@ -358,6 +358,11 @@ options
 	      CompilerLogEvent.logError(filename,lineNumber,ex);
       }
   }
+  protected void reportError (Ili2cSemanticException ex)
+  {
+      String filename=getFilename();
+      CompilerLogEvent.logError(filename,ex.getSourceLine(),ex.getLocalizedMessage());
+  }
   public void reportError (antlr.RecognitionException ex)
   {
       String filename=getFilename();
@@ -1742,6 +1747,8 @@ protected associationDef[Container scope]
 		  	try{
 			    // check roleDefs
 			    def.fixupRoles();
+			}catch(Ili2cSemanticException ex){
+		            reportError(ex);
 			}catch(Exception ex){
 		            reportError(ex, a.getLine());
 			}
@@ -3758,6 +3765,7 @@ protected runTimeParameterDef[Container scope]
         ( n:NAME COLON
                 {
 			def=new GraphicParameterDef();
+			def.setSourceLine(n.getLine());
 			def.setName(n.getText());
 			def.setDocumentation(ilidoc);
                 }
@@ -7443,7 +7451,10 @@ ILI_DOC
    the Java syntax.
 */
 ML_COMMENT
-  : "/*" ~'*'
+  : "/*" ('\r' '\n'  {newline();}
+      | '\r'       {newline();}
+      | '\n'       {newline();}
+      | ~('*'|'\n'|'\r'))
     ( /* '\r' '\n' can be matched in one alternative or by matching
          '\r' in one iteration and '\n' in another.  I am trying to
          handle any flavor of newline that comes in, but the language
