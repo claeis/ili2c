@@ -99,7 +99,8 @@ CONTRACTED SYMBOLOGY MODEL StandardSymbology (en)
       Name        : TEXT*40; !! Symbol name, if known
       UCS4        : 0 .. 4000000000; !! only for text symbols (characters)
       Spacing     : SS_Float; !! only for text symbols (characters)
-      Geometry    : LIST OF FontSymbol_Geometry;
+      Geometry    : LIST OF FontSymbol_Geometry
+                    RESTRICTION (FontSymbol_Polyline; FontSymbol_Surface);
     END FontSymbol;
 
     CLASS Font =
