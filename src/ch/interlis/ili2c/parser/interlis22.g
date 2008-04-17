@@ -61,6 +61,10 @@ options
       int line=ex.getLine();
       CompilerLogEvent.logError(filename,line,ex.getLocalizedMessage());
       return false;
+    }catch(Ili2cSemanticException ex){
+	      int line=((Ili2cSemanticException)ex).getSourceLine();
+	      CompilerLogEvent.logError(filename,line,ex.getLocalizedMessage());
+	      return false;
     }catch(antlr.TokenStreamRecognitionException ex){
     	if(ex.recog instanceof antlr.NoViableAltForCharException){
 		antlr.NoViableAltForCharException ex2=(antlr.NoViableAltForCharException)ex.recog;
@@ -3443,6 +3447,7 @@ protected runTimeParameterDef[Container scope]
         ( n:NAME COLON
                 {
 			def=new GraphicParameterDef();
+			def.setSourceLine(n.getLine());
 			def.setName(n.getText());
                 }
             domain=attrTypeDef[scope,true,null,n.getLine()]

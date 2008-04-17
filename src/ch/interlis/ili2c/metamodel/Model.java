@@ -84,7 +84,7 @@ public abstract class Model extends Importable
 	{
 		  Element conflicting = getElement ( e.getName());
 		  if ((conflicting != null) && (conflicting != e))
-			throw new IllegalArgumentException (formatMessage (
+			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_nonuniqueMetaDataUseDefName",
 			  e.getName(),
 			  Model.this.toString()));
@@ -96,7 +96,7 @@ public abstract class Model extends Importable
 		{
 		  Element conflicting = getElement (e.getName());
 		  if ((conflicting != null) && (conflicting != e))
-			throw new IllegalArgumentException (formatMessage (
+			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_duplicateUnitName",
 			  e.getName(),
 			  Model.this.toString()));
@@ -111,7 +111,7 @@ public abstract class Model extends Importable
 
 
 		  if (!isContracted() && !(Model.this instanceof PredefinedModel))
-			throw new IllegalArgumentException (formatMessage (
+			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_model_functionButNoContract",
 			  e.toString(),
 			  Model.this.toString()));
@@ -119,7 +119,7 @@ public abstract class Model extends Importable
 
 		  Element conflicting = getElement (e.getName());
 		  if ((conflicting != null) && (conflicting != e))
-			throw new IllegalArgumentException (formatMessage (
+			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_function_duplicateName",
 			  e.getName(),
 			  Model.this.toString(),
@@ -136,14 +136,14 @@ public abstract class Model extends Importable
 
 
 		  if (!isContracted() && !(Model.this instanceof PredefinedModel))
-			throw new IllegalArgumentException (formatMessage (
+			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_lineForm_inUnconctractedModel",
 			  Model.this.toString()));
 
 
 		  Element conflicting = getElement (e.getName());
 		  if ((conflicting != null) && (conflicting != e))
-			throw new IllegalArgumentException (formatMessage (
+			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_lineForm_duplicateName",
 			  e.getName(),
 			  Model.this.toString(),
@@ -158,7 +158,7 @@ public abstract class Model extends Importable
 		{
 		  Element conflicting = getElement (e.getName());
 		  if ((conflicting != null) && (conflicting != e))
-			throw new IllegalArgumentException (formatMessage (
+			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_duplicateDomainName",
 			  e.getName(),
 			  Model.this.toString()));
@@ -173,7 +173,7 @@ public abstract class Model extends Importable
 		{
 		  Element conflicting = getRuntimeParameter ( e.getName());
 		  if ((conflicting != null) && (conflicting != e))
-			throw new IllegalArgumentException (formatMessage (
+			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_graphicparam_nonunique",
 			  e.getName(),
 			  Model.this.toString()));
@@ -186,13 +186,13 @@ public abstract class Model extends Importable
 		if (o instanceof Topic)
 		{
 		  if (Model.this instanceof TypeModel)
-			throw new IllegalArgumentException (formatMessage (
+			throw new Ili2cSemanticException (e.getSourceLine(), formatMessage (
 			  "err_typeModel_addTopic",
 			  o.toString (),
 			  Model.this.toString ()));
 		  Element conflicting = getElement ( e.getName());
 		  if ((conflicting != null) && (conflicting != e))
-			throw new IllegalArgumentException (formatMessage (
+			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_topic_nonunique",
 			  e.getName(),
 			  Model.this.toString()));
@@ -205,7 +205,7 @@ public abstract class Model extends Importable
 	if(o instanceof Table){
 		  Element conflicting = getElement ( e.getName());
 		  if ((conflicting != null) && (conflicting != e))
-			throw new IllegalArgumentException (formatMessage (
+			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_table_nonunique",
 			  e.getName(),
 			  Model.this.toString()));
