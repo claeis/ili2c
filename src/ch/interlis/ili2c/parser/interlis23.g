@@ -1589,10 +1589,16 @@ protected classOrAssociationRef[Container scope]
 	{
 	def=null;
 	Viewable ref;
+	int line=0;
 	}
-	:	ref=viewableRef[scope]
+	:	{line=LT(1).getLine();}
+		ref=viewableRef[scope]
 		{
-			def=(AbstractClassDef)ref;
+			if(ref instanceof AbstractClassDef){
+				def=(AbstractClassDef)ref;
+			}else{
+				reportError(formatMessage ("err_classOrAssociationRef",ref.getScopedName(null)),line);
+			}
 		}
 	;
 
