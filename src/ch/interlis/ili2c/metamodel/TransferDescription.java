@@ -68,7 +68,7 @@ public class TransferDescription extends Container
           Model model = (Model) o;
           Model conflicting = (Model) getElement (Model.class, model.getName());
           if (conflicting != null)
-            throw new IllegalArgumentException (formatMessage (
+            throw new Ili2cSemanticException(model.getSourceLine(),formatMessage (
               "err_model_duplicateName",
               conflicting.toString ()));
 
