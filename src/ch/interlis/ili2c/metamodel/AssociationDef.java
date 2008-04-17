@@ -398,16 +398,21 @@ public class AssociationDef extends AbstractClassDef
   	if(isDirty()){
   		return;
   	}
-        Iterator rolei;
-	// if extended
+    Iterator rolei;
+	// if extended assoc?
 	if(getExtending()!=null){
 		AssociationDef base=(AssociationDef)getExtending();
-	    	rolei = roles.iterator();
-    		while (rolei.hasNext()){
-	    		RoleDef role= (RoleDef)rolei.next();
-			RoleDef baserole=(RoleDef)base.getElement(RoleDef.class,role.getName());
+		rolei = roles.iterator();
+		while (rolei.hasNext()){
+			RoleDef role= (RoleDef)rolei.next();
+			Element baseEle=base.getElement(RoleDef.class,role.getName());
+			if(baseEle==null){
+				throw new Ili2cSemanticException (role.getSourceLine(),formatMessage (
+				  "err_association_noRoleToExtend",role.getName(),base.getScopedName(null)));
+			}
+			RoleDef baserole=(RoleDef)baseEle;
 			role.setExtending(baserole);
-    		}
+		}
 	}else{
 		// no base definition
 		// at least two roles required
@@ -443,7 +448,7 @@ public class AssociationDef extends AbstractClassDef
 	      }
        }
        if(aggc>1){
-        throw new IllegalStateException (formatMessage (
+        throw new Ili2cSemanticException (getSourceLine(),formatMessage (
           "err_association_multipleAggregations"));
        }
 
