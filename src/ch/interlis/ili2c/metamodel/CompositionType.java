@@ -1,13 +1,3 @@
-/*****************************************************************************
- *
- * CompositionType.java
- * --------------------
- *
- * Copyright (C) 1999 Adasys AG, Kronenstr. 38, 8006 Zurich, Switzerland
- *
- * Revision 0.2  February 1999    Sascha Brawer <sb@adasys.ch>
- *
- *****************************************************************************/
 
 
 package ch.interlis.ili2c.metamodel;
@@ -154,27 +144,6 @@ public class CompositionType extends Type
   }
 
   
-
-  public boolean isAbstract() {
-	if(getComponentType()!=null){
-		if(getComponentType().isAbstract()){
-			// check if restricted to only non-abstract classes
-			boolean isAbstract=true;
-			Iterator resti=iteratorRestrictedTo();
-			while(resti.hasNext()){
-				Table rest=(Table)resti.next();
-				if(rest.isAbstract()){
-					return true;
-				}else{
-					isAbstract=false;
-				}
-			}
-			return isAbstract;
-		}
-		return false;
-	}
-	return super.isAbstract();
-}
 
 
 /** Sets whether or not this composition type is ordered.
