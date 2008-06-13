@@ -398,6 +398,9 @@ public class AssociationDef extends AbstractClassDef
   	if(isDirty()){
   		return;
   	}
+  	if(getContainer()==null){
+  		throw new IllegalStateException("AssociationDef without container");
+  	}
     Iterator rolei;
 	// if extended assoc?
 	if(getExtending()!=null){

@@ -6404,15 +6404,14 @@ protected ili1_attribute [Table table]
         role2.setReference(role2ref);
         role2.setCardinality(new Cardinality(optional?0:1, 1));
         assoc.add(role2);
-        assoc.fixupRoles();
         topic.add(assoc);
+        assoc.fixupRoles();
 	// remember assoc to fix name at end of topic
 	ili1assocs.add(assoc);
 	// remember map from attrname to role for IDENT parsing
 	// has to be attrname (and not rolename!) to be able to find role when parsing IDENTs
 	ili1TableRefAttrs.put(attributeName.getText(),role2); 
         } catch (Exception ex) {
-	EhiLogger.debug("ex "+ex);
           reportError (ex, tabnam.getLine ());
         }
       }
