@@ -25,15 +25,15 @@ public abstract class AbstractClassDef extends Viewable
         AbstractClassDef targetClass=otherRole.getDestination();
         Iterator attri=targetClass.getAttributesAndRoles();
         while (attri.hasNext()){
-	      Element attrOrRole = (Element)attri.next();
-              String attrName=attrOrRole.getName();
-              String roleName=role.getName();
-	      if(attrOrRole.getName().equals(role.getName())){
+        	Element attrOrRole = (Element)attri.next();
+            String attrName=attrOrRole.getName();
+            String roleName=role.getName();
+            if(attrOrRole.getName().equals(role.getName())){
                 throw new Ili2cSemanticException (role.getSourceLine(),formatMessage (
                   "err_abstractClassDef_nameConflictInOtherRoleTarget",
                   role.getName(),
                   otherRole.getName(),targetClass.getName()));
-	      }
+            }
         }
         Iterator rolei=targetClass.getOpposideRoles();
         while (rolei.hasNext()){
@@ -46,7 +46,6 @@ public abstract class AbstractClassDef extends Viewable
                   otherRole.getName(),targetClass.getName()));
 	      }
         }
-
       }
     }
 

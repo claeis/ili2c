@@ -9,6 +9,7 @@ public class ObjectType extends Type
 {
 	private Viewable ref;
 	private boolean objects=false;
+	private java.util.ArrayList restrictedTo=new java.util.ArrayList();
 	public ObjectType(Viewable ref)
 	{
 		this.ref=ref;
@@ -25,6 +26,14 @@ public class ObjectType extends Type
 		public boolean isObjects() {
 			return objects;
 		}
+		  public void addRestrictedTo(AbstractClassDef classOrAssociation)
+		  {
+			  restrictedTo.add(classOrAssociation);
+		  }
+		  public java.util.Iterator iteratorRestrictedTo()
+		  {
+		  	return restrictedTo.iterator();
+		  }
 }
 
 

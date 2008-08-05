@@ -51,7 +51,9 @@ public abstract class Element implements BeanContextChild,ElementAlias {
 	/** true, if definition somewhat incomplete due to (compile) errors.
 	 */
 	private boolean dirty=false;
-
+	/** source line in ili-file.
+	 */
+	private int sourceLine=0;
   static final String formatMessage(String msg, Object[] args) {
     try {
       java.text.MessageFormat mess = new java.text.MessageFormat(
@@ -787,6 +789,16 @@ public void setDocumentation(String string) {
 
 	public void setDirty(boolean b) {
 		dirty = b;
+	}
+
+
+	public int getSourceLine() {
+		return sourceLine;
+	}
+
+
+	public void setSourceLine(int sourceLine) {
+		this.sourceLine = sourceLine;
 	}
 
 }

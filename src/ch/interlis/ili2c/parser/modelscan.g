@@ -72,7 +72,7 @@ file
 			model=new IliModel();
 			model.setName(n.getText());
 			model.setIliVersion(version);
-			//EhiLogger.debug(n.getText());
+			//EhiLogger.debug(iliFile.getFilename().toString() +", "+n.getText());
 		}
 	| ("TRANSLATION" "OF" trsl:NAME
 		{

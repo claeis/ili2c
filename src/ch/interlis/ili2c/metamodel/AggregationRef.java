@@ -28,6 +28,10 @@ public class AggregationRef extends AbstractAttributeRef
       }
       return domain;
     }
+	public AggregationView getBase() {
+		return base;
+	}
+    
 
 }
 

@@ -59,18 +59,18 @@ public class NumericType extends NumericalType
   public NumericType (PrecisionDecimal minimum, PrecisionDecimal maximum)
   {
     if ((minimum == null) || (maximum == null))
-      throw new IllegalArgumentException (rsrc.getString (
+      throw new Ili2cSemanticException (rsrc.getString (
         "err_nullNotAcceptable"));
       
     if (minimum.compareTo(maximum) == +1)
     {
-      throw new IllegalArgumentException(
+      throw new Ili2cSemanticException(
         rsrc.getString ("err_numericType_minGreaterMax"));
     }
     
     /* Check whether precision is the same. */
     if (minimum.scale() != maximum.scale())
-      throw new IllegalArgumentException (rsrc.getString (
+      throw new Ili2cSemanticException (rsrc.getString (
         "err_numericType_precisionMismatch"));
     
     this.minimum = minimum;
@@ -123,7 +123,7 @@ public class NumericType extends NumericalType
       return;
     
     if ((newValue != null) && (this.minimum != null) && newValue.isAbstract())
-      throw new IllegalArgumentException (formatMessage (
+      throw new Ili2cSemanticException (formatMessage (
         "err_numericType_concreteWithAbstractUnit",
         newValue.toString()));
 
@@ -172,12 +172,12 @@ public class NumericType extends NumericalType
       return;
     
     if (!(wantToExtend instanceof NumericType))
-      throw new IllegalArgumentException (rsrc.getString (
+      throw new Ili2cSemanticException (rsrc.getString (
         "err_numericType_ExtOther"));
 
     general = (NumericType) wantToExtend;
     if (this.isAbstract() && !general.isAbstract())
-      throw new IllegalArgumentException (rsrc.getString (
+      throw new Ili2cSemanticException (rsrc.getString (
         "err_numericType_abstractExtConcrete"));
     
     if ((minimum != null) && (maximum != null)
@@ -191,7 +191,7 @@ public class NumericType extends NumericalType
                                       BigDecimal.ROUND_HALF_UP);
       
       if (min_rounded.compareTo (general.minimum) == -1)
-        throw new IllegalArgumentException (formatMessage (
+        throw new Ili2cSemanticException (formatMessage (
           "err_numericType_minLessInheritedMin",
           Integer.toString (general.minimum.scale()),
           minimum.toString(),
@@ -199,7 +199,7 @@ public class NumericType extends NumericalType
           general.minimum.toString()));
 
       if (max_rounded.compareTo (general.maximum) == +1)
-        throw new IllegalArgumentException (formatMessage (
+        throw new Ili2cSemanticException (formatMessage (
           "err_numericType_maxGreaterInheritedMax",
           Integer.toString (general.maximum.scale()),
           maximum.toString(),
@@ -212,14 +212,14 @@ public class NumericType extends NumericalType
       Unit generalUnit = general.getUnit();
       
       if (!general.isAbstract() && (generalUnit == null))
-        throw new IllegalArgumentException (rsrc.getString (
+        throw new Ili2cSemanticException (rsrc.getString (
           "err_numericType_withUnitExtWithoutUnit"));
       
       if ((generalUnit != null)
           && generalUnit.isAbstract()
           && !this.unit.isExtendingIndirectly(generalUnit))
       {
-        throw new IllegalArgumentException (formatMessage (
+        throw new Ili2cSemanticException (formatMessage (
           "err_numericType_unitNotExtAbstractBaseUnit",
           this.unit.toString(),
           generalUnit.toString()));
@@ -229,7 +229,7 @@ public class NumericType extends NumericalType
           && !generalUnit.isAbstract()
           && (generalUnit != this.unit))
       {
-        throw new IllegalArgumentException (formatMessage (
+        throw new Ili2cSemanticException (formatMessage (
           "err_numericType_unitExtConcreteBaseUnit",
           this.unit.toString(),
           generalUnit.toString()));
@@ -281,6 +281,6 @@ public class NumericType extends NumericalType
     } /* switch (this.getRotation ()) */
     
     if (errorString != null)
-      throw new IllegalArgumentException (rsrc.getString (errorString));
+      throw new Ili2cSemanticException (rsrc.getString (errorString));
   }
 }
