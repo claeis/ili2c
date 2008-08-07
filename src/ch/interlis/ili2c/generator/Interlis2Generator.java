@@ -101,9 +101,9 @@ private void setup(
 
 
   protected void printModifiers(boolean _abstract,
-    boolean _final, boolean _extended,boolean _ordered, boolean _external)
+    boolean _final, boolean _extended,boolean _ordered, boolean _external,boolean _transient)
   {
-    if (!_abstract && !_final && !_extended && !_ordered && !_external){
+    if (!_abstract && !_final && !_extended && !_ordered && !_external && !_transient){
 		return;
     }
 
@@ -115,6 +115,7 @@ private void setup(
     first = printModifierHelper(first, _extended, "EXTENDED");
 	first = printModifierHelper(first, _ordered, "ORDERED");
 	first = printModifierHelper(first, _external, "EXTERNAL");
+	first = printModifierHelper(first, _transient, "TRANSIENT");
     ipw.print(')');
   }
 
@@ -134,7 +135,7 @@ private void setup(
     ipw.print("TOPIC ");
     ipw.print(topic.getName());
     printModifiers(topic.isAbstract(), topic.isFinal(),
-      /* EXTENDED */false, /*ORDERED*/false,/*EXTERNAL*/false);
+      /* EXTENDED */false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
 
 
     if (extending != null)
@@ -312,7 +313,11 @@ private void setup(
     ipw.print (keyword);
     ipw.print (' ');
     ipw.print (ec.getName());
-    printModifiers (ec.isAbstract(), ec.isFinal(), extendingSameName, /*ORDERED*/false,/*EXTERNAL*/false);
+    boolean _transient=false;
+    if(ec instanceof View){
+    	_transient=((View)ec).isTransient();
+    }
+    printModifiers (ec.isAbstract(), ec.isFinal(), extendingSameName, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/_transient);
 
 
     if ((extending != null) && !extendingSameName)
@@ -874,7 +879,7 @@ private void setup(
 
     ipw.print(mu.getName());
 
-    printModifiers(/*ABSTRACT*/false, mu.isFinal(),/*EXTENDED*/false, /*ORDERED*/false,/*EXTERNAL*/false);
+    printModifiers(/*ABSTRACT*/false, mu.isFinal(),/*EXTENDED*/false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
 
     /* TODO ce 2002-05-07 handle EXTENDS in MetaDataUseDef
     MetaDataUseDef extending = (MetaDataUseDef) mu.getExtending();
@@ -915,7 +920,7 @@ private void setup(
     }
 
 
-    printModifiers (u.isAbstract(), /* FINAL */ false, /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false);
+    printModifiers (u.isAbstract(), /* FINAL */ false, /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
 
 
     if ((extending != null) && (extending != anyUnit) && (!(u instanceof DerivedUnit)))
@@ -1106,7 +1111,7 @@ private void setup(
 	printDocumentation(role.getDocumentation());
 	ipw.print(role.getName());
 	printModifiers(role.isAbstract(), role.isFinal(),
-	  role.isExtended(),role.isOrdered(),role.isExternal());
+	  role.isExtended(),role.isOrdered(),role.isExternal(),/*TRANSIENT*/false);
 	String kind="";
 	switch(role.getKind()){
 	  case RoleDef.Kind.eASSOCIATE:
@@ -1160,7 +1165,7 @@ private void setup(
 	}
     ipw.print(attrib.getName());
     printModifiers(attrib.isAbstract(), attrib.isFinal(),
-      /* EXTENDED */ attrib.getExtending() != null, /*ORDERED*/false,/*EXTERNAL*/false);
+      /* EXTENDED */ attrib.getExtending() != null, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/attrib.isTransient());
     ipw.print(" : ");
 
 
@@ -1193,7 +1198,7 @@ private void setup(
 	printDocumentation(attrib.getDocumentation());
     ipw.print(attrib.getName());
     printModifiers(/* ABSTRACT */ false, /* FINAL */ false,
-      /* EXTENDED */ extending != null, /*ORDERED*/false,/*EXTERNAL*/false);
+      /* EXTENDED */ extending != null, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
 
 
     if ((extending == null)
@@ -1402,7 +1407,7 @@ private void setup(
 	printDocumentation(dd.getDocumentation());
     ipw.print (dd.getName());
     printModifiers (dd.isAbstract(), dd.isFinal(),
-      /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false);
+      /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
 
 
     if (extending != null)
@@ -1698,6 +1703,9 @@ private void setup(
         printRef(scope,rest);
         next=" ,";
       }
+    }else if(dd instanceof AttributePathType){
+    	AttributePathType ct=(AttributePathType)dd;
+        ipw.print ("ATTRIBUTE");
     }else if(dd instanceof ObjectType){
       ObjectType ot=(ObjectType)dd;
       if(ot.isObjects()){
