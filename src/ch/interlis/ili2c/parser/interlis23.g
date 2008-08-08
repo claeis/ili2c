@@ -1794,10 +1794,17 @@ protected associationRef[Container scope]
 	returns[AssociationDef ref]
 	{ ref=null;
 	Viewable t;
+	int refline=0;
 	}
-	:	t=viewableRef[scope]
+	:
+		{refline=LT(1).getLine();}
+		t=viewableRef[scope]
 		{
-			ref=(AssociationDef)t;
+			if(t instanceof AssociationDef){
+				ref=(AssociationDef)t;
+			}else{
+				reportError(formatMessage ("err_assocref_notAnAssoc",t.getScopedName(null)),refline);
+			}
 		}
 	;
 
