@@ -1384,6 +1384,11 @@ protected attributeDef[Viewable container]
 			attrib.setBasePaths((Evaluable[])fv.toArray(new Evaluable[0]));
 			}
 		)?
+		{
+			if(attrib.isTransient() && f==null){
+				reportError(formatMessage("err_attributeDef_transientWoFactor",n.getText()),n.getLine());
+			}
+		}
 		SEMI
     {
         try {
