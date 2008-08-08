@@ -2821,7 +2821,7 @@ sutype=null;
 		)*
 		RPAREN
 	)?
-	{ // TODO attributeType
+	{ sutype=new AttributePathType();
 	}
 ;
 
@@ -2846,7 +2846,7 @@ attributeConst[Container scope]
 	AttributeDef attr=null;
 	}
 :
-	">>" ((xyRef POINTSTO)=> ref=viewableRef[scope] POINTSTO )? n:NAME 
+	GREATERGREATER ((xyRef POINTSTO)=> ref=viewableRef[scope] POINTSTO )? n:NAME 
 	{ 
 	if(ref!=null){
 		scope=ref;
@@ -7569,6 +7569,9 @@ LESSEQUAL options { paraphrase = "'<='"; }
   : "<="
   ;
 
+GREATERGREATER options { paraphrase = "'>>'"; }
+  : ">>"
+  ;
 GREATER options { paraphrase = "'>'"; }
   : '>'
   ;
