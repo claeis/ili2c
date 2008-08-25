@@ -670,7 +670,9 @@ public final class XSDGenerator
 		ViewableTransferElement obj = (ViewableTransferElement)iter.next();
 		if (obj.obj instanceof AttributeDef) {
 			AttributeDef attr = (AttributeDef) obj.obj;
-			declareAttribute(attr);
+			if(!attr.isTransient()){
+				declareAttribute(attr);
+			}
 		}
 		if(obj.obj instanceof RoleDef){
 			RoleDef role = (RoleDef) obj.obj;

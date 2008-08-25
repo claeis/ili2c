@@ -5,9 +5,11 @@ ili2c 3.6.8 (2008-08-xx)
 - bug: failed to recognize >> in AttributePathConst
 - bug: ClassCastException if assocRef doesn't reference an assoc
 - bug: didn't detect TRANSIENT attr without factor
+- bug: didn't detect changed TRANSIENT mode in extended attr
 - bug: failed to filter "Info:" messages with option --quiet
 - ili2exp: added AttributePathType
 - ili2exp: added spaces between arg name and type in FunctionDef
+- ili2xsd: skip TRANSIENT attributes
 
 ili2c 3.6.7 (2008-06-13)
 ----------------------------
