@@ -677,7 +677,7 @@ options
   protected AttributeDef findOverridingAttribute (
     Viewable container, int mods, String name, int line)
   {
-    boolean      declaredExtended = (mods & 4) != 0;
+    boolean      declaredExtended = (mods & ch.interlis.ili2c.metamodel.Properties.eEXTENDED) != 0;
     AttributeDef overriding;
 
     overriding =  (AttributeDef) container.getRealElement (AttributeDef.class, name);
@@ -1351,7 +1351,7 @@ protected attributeDef[Viewable container]
         }
     }
 	type=attrTypeDef[container,/* alias ok */ true, overridingDomain,
-                     n.getLine()]
+                     n.getLine(),null]
 		{
                     if(type!=null){
 		    	if(type instanceof ReferenceType){
@@ -1385,7 +1385,7 @@ protected attributeDef[Viewable container]
 			}
 		)?
 		{
-			if(attrib.isTransient() && f==null){
+			if(attrib.isTransient() && f==null && !attrib.isAbstract()){
 				reportError(formatMessage("err_attributeDef_transientWoFactor",n.getText()),n.getLine());
 			}
 		}
@@ -1403,7 +1403,8 @@ protected attributeDef[Viewable container]
 protected attrTypeDef[Container  scope,
 	boolean    allowAliases,
 	Type       extending,
-	int        line]
+	int        line,
+	ArrayList formalArgs]
 	returns [Type typ]
 	{
 		typ=null;
@@ -1413,7 +1414,7 @@ protected attrTypeDef[Container  scope,
 	}
 	:	
 	"MANDATORY" (	
-		typ=attrType[scope,allowAliases,extending,line]
+		typ=attrType[scope,allowAliases,extending,line,formalArgs]
 		| /* empty */
 		    {
 		      if (extending != null){
@@ -1438,7 +1439,7 @@ protected attrTypeDef[Container  scope,
 		reportError(ex, line);
 	      }
 	    }
-	|	typ=attrType[scope,allowAliases,extending,line] 
+	|	typ=attrType[scope,allowAliases,extending,line,formalArgs] 
 	|	(	"BAG" {ordered=false;}
 		|	"LIST" {ordered=true;}
 		)
@@ -1462,7 +1463,8 @@ protected attrTypeDef[Container  scope,
 protected attrType[Container  scope,
 	boolean    allowAliases,
 	Type       extending,
-	int        line]
+	int        line,
+	ArrayList formalArgs]
 	returns [Type typ]
 	{
 		List nams = new LinkedList();
@@ -1471,7 +1473,7 @@ protected attrType[Container  scope,
 		int lin=0;
 		CompositionType ct=null;
 	}
-	:	typ=type[scope,extending]
+	:	typ=type[scope,extending,formalArgs]
 	//|	domainRef
 	//|	restrictedStructureRef
 	| (lin = names2[nams]
@@ -1955,8 +1957,8 @@ protected domainDef[Container container]
 		      }
 		)?
 		eq:EQUALS
-		(	"MANDATORY" (declared=type[container,extendingType])?
-		|	declared=type[container,extendingType]
+		(	"MANDATORY" (declared=type[container,extendingType,null])?
+		|	declared=type[container,extendingType,null]
 		)
 		SEMI
 		{
@@ -2015,11 +2017,11 @@ protected domainDefs[Container container]
 	:	"DOMAIN" ( domainDef[container] )*
 	;
 
-protected type[Container scope,Type extending]
+protected type[Container scope,Type extending,ArrayList formalArgs]
 	returns [Type typ]
 	{ typ=null;
 	}
-	:	(	typ=baseType[scope,extending]
+	:	(	typ=baseType[scope,extending,formalArgs]
 		|	typ=lineType[scope,extending]
 		)
 
@@ -2040,7 +2042,7 @@ protected domainRef [Container scope]
     }
   ;
 
-protected baseType [Container scope, Type extending]
+protected baseType [Container scope, Type extending,ArrayList formalArgs]
 	returns [Type bt]
 	{
 		bt = null;
@@ -2056,7 +2058,7 @@ protected baseType [Container scope, Type extending]
 	|	bt=oIDType[scope,extending]
 	|	bt=blackboxType[scope,extending]
 	|	bt=classType[scope,extending]
-	|	bt=attributePathType[scope,extending]
+	|	bt=attributePathType[scope,extending,formalArgs]
 	;
 
 protected constant [Container scope]
@@ -2817,23 +2819,71 @@ protected classType[Container scope,Type extending]
 	)
 	;
 
-protected attributePathType  [Container scope, Type extending]
+protected attributePathType  [Container scope, Type extending,ArrayList formalArgs]
   returns [AttributePathType sutype]
 {
-sutype=null;
+	sutype=null;
+	ObjectPath attrRestr=null;
+	Type type=null;
+	ArrayList typev=new ArrayList();
+	FormalArgument argRestr=null;
 }
 : "ATTRIBUTE" 
-	( "OF" ({scope instanceof Viewable}? attributePath[(Viewable)scope] | {!(scope instanceof Viewable)}? AT NAME)
+	( of:"OF" (
+		({scope instanceof Viewable}? attrRestr=attributePath[(Viewable)scope]
+		{
+			Type attrType=null;
+			try{
+			  attrType=attrRestr.getType();
+			}catch(Exception ex){
+				reportError(ex,of.getLine());
+				attrRestr=null;
+			}
+			if(attrType!=null && !(attrType instanceof ClassType)){
+				reportError(formatMessage ("err_objectPath_targetAttrNotClassType",attrRestr.toString()), of.getLine());
+				attrRestr=null;
+			}
+		})?
+		({formalArgs!=null}? AT n:NAME
+		{	
+			  for(int argi=0;argi<formalArgs.size();argi++){
+			  	FormalArgument arg=(FormalArgument)formalArgs.get(argi);
+				  if(arg.getName().equals(n.getText())){
+					 argRestr=arg;
+					 break;
+				  }
+			  }
+			if(argRestr==null){
+				reportError (formatMessage ("err_function_noSuchArgWoScope", n.getText()), n.getLine());
+			}
+		}
+		)?
+		)
 	)?
-	( "RESTRICTION" lp:LPAREN attrTypeDef[scope,/* alias ok */ true, null,
-                     lp.getLine()]
-
-		( semi:SEMI attrTypeDef[scope,/* alias ok */ true, null,
-                     semi.getLine()]
+	( "RESTRICTION" lp:LPAREN type=attrTypeDef[scope,/* alias ok */ true, null,
+                     lp.getLine(),null]
+		{ 
+			typev.add(type);
+		}
+		( semi:SEMI type=attrTypeDef[scope,/* alias ok */ true, null,
+                     semi.getLine(),null]
+		     {
+		     	typev.add(type);
+		     }
 		)*
 		RPAREN
 	)?
-	{ sutype=new AttributePathType();
+	{ 
+		sutype=new AttributePathType();
+		if(attrRestr!=null){
+			sutype.setAttrRestriction(attrRestr);
+		}else if(argRestr!=null){
+			sutype.setArgRestriction(argRestr);
+		}
+		if(typev.size()>0){
+			sutype.setTypeRestriction((Type[])typev.toArray(new Type[0]));
+		}
+
 	}
 ;
 
@@ -3745,7 +3795,7 @@ protected parameterDef[Table container]
 					}
 					type = reference;
 				}
-		| type=attrTypeDef[container,true,overridingDomain,n.getLine()]
+		| type=attrTypeDef[container,true,overridingDomain,n.getLine(),null]
 		)
     {
       Parameter p = new Parameter();
@@ -3781,7 +3831,7 @@ protected runTimeParameterDef[Container scope]
 			def.setName(n.getText());
 			def.setDocumentation(ilidoc);
                 }
-            domain=attrTypeDef[scope,true,null,n.getLine()]
+            domain=attrTypeDef[scope,true,null,n.getLine(),null]
                 {
                   def.setDomain(domain);
                   scope.add(def);
@@ -4626,7 +4676,7 @@ protected functionDef[Container container]
   Type t = null;
   FormalArgument arg=null;
   Function f = null;
-  List     args = null;
+  ArrayList     args = null;
 	  String ilidoc=null;
 }
   : { ilidoc=getIliDoc();}
@@ -4634,7 +4684,7 @@ protected functionDef[Container container]
     fn:NAME
     {
       f = new Function ();
-      args = new LinkedList ();
+      args = new ArrayList ();
       try {
         f.setName(fn.getText());
 	f.setDocumentation(ilidoc);
@@ -4645,7 +4695,7 @@ protected functionDef[Container container]
     }
 
     lpar:LPAREN
-    arg = formalArgument[container, lpar.getLine()]
+    arg = formalArgument[container, lpar.getLine(),args]
     {
       try {
         args.add (arg);
@@ -4654,7 +4704,7 @@ protected functionDef[Container container]
 	return;
       }
     }
-    ( sem:SEMI arg = formalArgument[container, sem.getLine()]
+    ( sem:SEMI arg = formalArgument[container, sem.getLine(),args]
       {
         try {
           args.add (arg);
@@ -4668,7 +4718,7 @@ protected functionDef[Container container]
 
     col:COLON
 
-    t = argumentType [container, col.getLine()]
+    t = argumentType[container, col.getLine(),null]
     {
       try {
         f.setArguments ((FormalArgument[]) args.toArray (new FormalArgument[0]));
@@ -4708,18 +4758,18 @@ protected functionDef[Container container]
     }
   ;
 
-protected formalArgument[Container scope, int line]
+protected formalArgument[Container scope, int line,ArrayList formalArgs]
 	returns[FormalArgument arg]
 	{ arg=null;
 	Type domain=null;
 	}
-	: n:NAME COLON domain=argumentType[scope,line]
+	: n:NAME COLON domain=argumentType[scope,line,formalArgs]
 		{
 			arg=new FormalArgument(n.getText(),domain);
 		}
 	;
 
-protected argumentType[Container scope,int line]
+protected argumentType[Container scope,int line,ArrayList formalArgs]
 	returns[Type domain]
 	{
 		Viewable ref=null;
@@ -4728,7 +4778,7 @@ protected argumentType[Container scope,int line]
 		ObjectType ot=null;
 		AbstractClassDef restrictedTo=null;
 	}
-	:	domain=attrTypeDef[scope,true,null,line]
+	:	domain=attrTypeDef[scope,true,null,line,formalArgs]
 	| ("OBJECT" {objects=false;}| "OBJECTS" {objects=true;}) "OF" 
 		(
 		/*

@@ -171,7 +171,18 @@ public class Function extends AbstractLeafElement
   {
     return arguments;
   }
-  
+  /** finds a formal argument.
+   * @param name of formal argument
+   * @return formal argument or null if none with given name
+   */
+  public FormalArgument getArgument(String name){
+	  for(int argi=0;argi<arguments.length;argi++){
+		  if(arguments[argi].getName().equals(name)){
+			  return arguments[argi];
+		  }
+	  }
+	  return null;
+  }
   public void setArguments (FormalArgument[] arguments)
     throws java.beans.PropertyVetoException
   {

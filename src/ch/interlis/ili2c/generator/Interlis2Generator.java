@@ -1706,6 +1706,26 @@ private void setup(
     }else if(dd instanceof AttributePathType){
     	AttributePathType ct=(AttributePathType)dd;
         ipw.print ("ATTRIBUTE");
+        FormalArgument argRestr=ct.getArgRestriction();
+        ObjectPath attrRestr=ct.getAttrRestriction();
+        if(argRestr!=null){
+            ipw.print (" OF @ ");
+        	ipw.print(argRestr.getName());
+        }else if(attrRestr!=null){
+            ipw.print (" OF ");
+        	printAttributePath(scope,attrRestr);
+        }
+        Type[] typeRestr=ct.getTypeRestriction();
+        if(typeRestr!=null){
+            ipw.print (" RESTRICTION ( ");
+        	String sep="";
+        	for(int typei=0;typei<typeRestr.length;typei++){
+                ipw.print (sep);
+        		printType(scope,typeRestr[typei]);
+        		sep=";";
+        	}
+            ipw.print (" )");
+        }
     }else if(dd instanceof ObjectType){
       ObjectType ot=(ObjectType)dd;
       if(ot.isObjects()){
@@ -1879,7 +1899,7 @@ private void setup(
 	printDocumentation(f.getDocumentation());
     ipw.print("FUNCTION ");
     ipw.print(f.getName());
-    ipw.print(" (");
+    ipw.print("(");
 
 
     FormalArgument[] args = f.getArguments ();
@@ -1887,12 +1907,12 @@ private void setup(
       printError ();
     else
     {
+    	String sep=" ";
       for (int i = 0; i < args.length; i++)
       {
-        if (i > 0)
-          ipw.print("; ");
-      	ipw.print ( args[i].getName()+":");
+      	ipw.print ( sep+args[i].getName()+" : ");
         printType (scope, args[i].getType());
+        sep="; ";
       }
     }
 

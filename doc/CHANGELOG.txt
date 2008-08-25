@@ -1,3 +1,14 @@
+ili2c 3.6.8 (2008-08-xx)
+----------------------------
+- bug: added AttributePathType to parser
+- bug ili2exp: added TRANSIENT
+- bug: failed to recognize >> in AttributePathConst
+- bug: ClassCastException if assocRef doesn't reference an assoc
+- bug: didn't detect TRANSIENT attr without factor
+- bug: failed to filter "Info:" messages with option --quiet
+- ili2exp: added AttributePathType
+- ili2exp: added spaces between arg name and type in FunctionDef
+
 ili2c 3.6.7 (2008-06-13)
 ----------------------------
 - bug: lost ili1 ref attrs
