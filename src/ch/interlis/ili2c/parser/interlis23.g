@@ -1388,6 +1388,11 @@ protected attributeDef[Viewable container]
 			if(attrib.isTransient() && f==null && !attrib.isAbstract()){
 				reportError(formatMessage("err_attributeDef_transientWoFactor",n.getText()),n.getLine());
 			}
+			if(overriding!=null){
+				if(overriding.isTransient()!=attrib.isTransient()){
+					reportError(formatMessage("err_attributeDef_transientModeChange",n.getText()),n.getLine());
+				}
+			}
 		}
 		SEMI
     {
