@@ -2,8 +2,10 @@ package ch.interlis.ili2c.generator;
 
 
 import ch.interlis.ili2c.metamodel.*;
+
 import java.io.Writer;
 import java.util.*;
+
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.io.IndentPrintWriter;
 
@@ -28,6 +30,7 @@ public final class Gml32Generator
   {
     this.td = td;
     this.outdir = outdir;
+    setupNameMapping();
   }
 
   public static int generate (TransferDescription td,String outdir)
@@ -75,10 +78,9 @@ public final class Gml32Generator
 
     throw new IllegalArgumentException ();
   }
-
+  private Model currentModel=null;
   private void printXSD (TransferDescription td)
   {
-
 		Iterator modeli = td.iterator();
 		while (modeli.hasNext()) {
 			Object mObj = modeli.next();
@@ -88,10 +90,76 @@ public final class Gml32Generator
 					printModel(model);
 			}
 		}
+	  
+  }
 
+  HashMap def2name=new HashMap(); // map<Element def,String name>
+  private void setupNameMapping()
+  {
+
+		Iterator modeli = td.iterator();
+		while (modeli.hasNext()) {
+			Object modelo = modeli.next();
+			if ((modelo instanceof Model)
+				&& !(modelo instanceof PredefinedModel)) {
+					Model model = (Model) modelo;
+					HashMap name2def=new HashMap();
+					Iterator topici = model.iterator();
+					while (topici.hasNext()) {
+						Element topic = (Element)topici.next();
+					    String topicName=topic.getName();
+				    	name2def.put(topicName, topic);
+				    	def2name.put(topic, topicName);
+					}
+					topici = model.iterator();
+					while (topici.hasNext()) {
+						Object topico = topici.next();
+						if (topico instanceof Topic) {
+							Topic topic = (Topic) topico;
+						    String topicName=topic.getName();
+							   Iterator classi = topic.iterator();
+							   while (classi.hasNext())
+							   {
+							     Element aclass = (Element)classi.next();
+							     String className=aclass.getName();
+							     if(name2def.containsKey(className)){
+							    	 	String scopedName=topicName+"."+className;
+								    	name2def.put(scopedName, aclass);							    	 
+								    	def2name.put(aclass, scopedName);
+							     }else{
+								    	name2def.put(className, aclass);
+								    	def2name.put(aclass, className);
+							     }
+							   }
+						}
+					}
+			}
+		}
+
+  }
+  private String getScopedName(Element elt)
+  {
+	  if(!def2name.containsKey(elt)){
+		  throw new IllegalArgumentException("unexpected model element: "+elt.getScopedName(null));
+	  }
+	  Model eleModel=(Model)elt.getContainer(Model.class);
+	  String eleName=(String)def2name.get(elt);
+	  if(eleModel==currentModel){
+		  return eleName;
+	  }
+	  return eleModel.getName()+":"+eleName;
+  }
+  private String getName(Element elt)
+  {
+	  if(!def2name.containsKey(elt)){
+		  throw new IllegalArgumentException("unexpected model element: "+elt.getScopedName(null));
+	  }
+	  String eleName=(String)def2name.get(elt);
+	  return eleName;
   }
   private void printModel(Model model)
   {
+	// setup output
 	String filename=outdir+"/"+model.getName()+".xsd";
 	try{
 		ipw=new IndentPrintWriter(new java.io.BufferedWriter(new java.io.FileWriter(filename)));
@@ -99,16 +167,69 @@ public final class Gml32Generator
 		EhiLogger.logError(ex);
 		return;
 	}
+	
+	// init globals
+	currentModel=model;
+	codelists=new ArrayList();
+	surfaceOrAreaAttrs=new ArrayList();
+	
+	// start output
 	ipw.println("<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"");
 	ipw.indent();
-	ipw.println("xmlns=\"http://www.interlis.ch/INTERLIS2.3/GML32\""
-	  +" targetNamespace=\"http://www.interlis.ch/INTERLIS2.3/GML32\""
+	ipw.println("xmlns=\"http://www.interlis.ch/INTERLIS2.3/GML32/"+model.getName()+"\""
+	  +" targetNamespace=\"http://www.interlis.ch/INTERLIS2.3/GML32/"+model.getName()+"\""
 	  +" elementFormDefault=\"qualified\" attributeFormDefault=\"unqualified\"");
-	ipw.println("xmlns:gml=\"http://www.opengis.net/gml/3.2\"");
+		// xmlns declartion of GML
+		ipw.println("xmlns:gml=\"http://www.opengis.net/gml/3.2\"");
+		// xmlns declaration of base ILIGML schema
+		ipw.println("xmlns:ili=\"http://www.interlis.ch/INTERLIS2.3/GML32/INTERLIS\"");
+		ipw.println("xmlns:ili2c=\"http://www.interlis.ch/ili2c\"");
+		// xmlns declartion of imported ili-models
+		Model importedModels[]=model.getImporting();
+		for(int modeli=0;modeli<importedModels.length;modeli++){
+			if(importedModels[modeli]!=td.INTERLIS){
+				ipw.println("xmlns:"+importedModels[modeli].getName()+"=\"http://www.interlis.ch/INTERLIS2.3/GML32/"+importedModels[modeli].getName()+"\"");
+			}
+		}
 	ipw.println(">");
 	ipw.unindent();
-	//ipw.println("<import namespace=\"http://www.opengis.net/gml\" schemaLocation=\"../ feature.xsd\"/>");
+
+    // compiler info
+	ipw.println ("<xsd:annotation>");
+	ipw.indent ();
+	ipw.print("<xsd:appinfo source=\"http://www.interlis.ch/ili2c/ili2cversion\">");
+	ipw.print(ch.interlis.ili2c.Main.getVersion());
+	ipw.println ("</xsd:appinfo>");
+	
+	// ilimodel info
+	ipw.println("<xsd:appinfo source=\"http://www.interlis.ch/ili2c\">");
+	ipw.indent();
+	ipw.println("<ili2c:model>"+model.getName()+"</ili2c:model>");
+	if(model.getIliVersion().equals(Model.ILI1)){
+		// ili1 model has no issuer+version
+	}else{
+		ipw.println("<ili2c:modelVersion>"+model.getModelVersion()+"</ili2c:modelVersion>");
+		if(model.getModelVersionExpl()!=null){
+			ipw.println("<ili2c:modelVersionExplanation>"+model.getModelVersionExpl()+"</ili2c:modelVersionExplanation>");
+		}
+		ipw.println("<ili2c:modelAt>"+model.getIssuer()+"</ili2c:modelAt>");
+	}
+	ipw.unindent();
+	ipw.println ("</xsd:appinfo>");
+	ipw.unindent();
+	ipw.println ("</xsd:annotation>");
+
+	
+	// import of GML schema
 	ipw.println("<xsd:import namespace=\"http://www.opengis.net/gml/3.2\"/>");
+	// import of base ILIGML schema
+	ipw.println("<xsd:import namespace=\"http://www.interlis.ch/INTERLIS2.3/GML32/INTERLIS\"/>");
+	// import schemas of imported ili-models
+	for(int modeli=0;modeli<importedModels.length;modeli++){
+		if(importedModels[modeli]!=td.INTERLIS){
+			ipw.println("<xsd:import namespace=\"http://www.interlis.ch/INTERLIS2.3/GML32/"+importedModels[modeli].getName()+"\"/>");
+		}
+	}
 	Iterator topici = model.iterator();
 	while (topici.hasNext()) {
 		Object tObj = topici.next();
@@ -129,112 +250,30 @@ public final class Gml32Generator
 			declareTopic(topic);
 		}
 	}
-	declareCurveSegmentWithLineAttr();
+	declareLinetables();
+	declareCodelists();
 	ipw.println ("</xsd:schema>");
 	ipw.close();
   }
-  private boolean suppressModel (Model model)
-  {
-    if (model == null)
-      return true;
-
-
-    if (model == td.INTERLIS)
-      return true;
-
-
-    if ((model instanceof TypeModel) || (model instanceof PredefinedModel))
-      return true;
-
-
-    return false;
-  }
-
-
-
-  private boolean suppressTopic (Topic topic)
-  {
-    if (topic == null)
-      return true;
-
-
-    if (topic.isAbstract ())
-      return true;
-
-
-    return false;
-  }
-  private boolean suppressTopicInAliasTable (Topic topic)
-  {
-    return suppressTopic(topic);
-  }
-
-
-  private boolean suppressViewableInTopic (Viewable v)
-  {
-    if (v == null)
-      return true;
-
-
-    if (v.isAbstract())
-      return true;
-
-    if(v instanceof AssociationDef && isLightweightAssociation(((AssociationDef)v))){
-      return true;
-    }
-
-    Topic topic;
-    if ((v instanceof View) && ((topic=(Topic)v.getContainer (Topic.class)) != null)
-	    && !topic.isViewTopic())
-      return true;
-
-
-    /* STRUCTUREs do not need to be printed with their INTERLIS container,
-       but where they are used. */
-    if ((v instanceof Table) && !((Table)v).isIdentifiable())
-      return true;
-
-
-    return false;
-  }
-
-  private boolean suppressViewableInAliasTable(Viewable v)
-  {
-    if (v == null)
-      return true;
-
-    if (v.isAbstract())
-      return true;
-
-    Topic topic;
-    if ((v instanceof View) && ((topic=(Topic)v.getContainer (Topic.class)) != null)
-	    && !topic.isViewTopic())
-      return true;
-
-    return false;
-  }
-
-
 
   private void declareTopic (Topic topic)
   {
 
    Iterator iter = topic.iterator();
-   while (iter.hasNext())
-   {
-     Object obj = iter.next();
-     if(obj instanceof Domain){
-      declareDomainDef((Domain)obj);
-     }
-     if(obj instanceof AbstractClassDef){
-	declareAbstractClassDef((AbstractClassDef)obj);
-     }
-     // no LineForm at topic level
-     //if(obj instanceof LineForm){
-   }
+		while (iter.hasNext()) {
+			Object obj = iter.next();
+			if (obj instanceof Domain) {
+				declareDomainDef((Domain) obj);
+			}
+			if (obj instanceof AbstractClassDef) {
+				declareAbstractClassDef((AbstractClassDef) obj);
+			}
+			// no LineForm at topic level
+			// if(obj instanceof LineForm){
+		}
 
 	// member
-	 ipw.println ("<xsd:complexType name=\""+getTransferName(topic)+"MemberType\">");
+	 ipw.println ("<xsd:complexType name=\""+getName(topic)+"MemberType\">");
 	 ipw.indent ();
 	 ipw.println ("<xsd:complexContent>");
 	 ipw.indent ();
@@ -248,11 +287,21 @@ public final class Gml32Generator
 	 iter = topic.getViewables().iterator();
 	 while (iter.hasNext()) {
 		 Object obj = iter.next();
-		 if ((obj instanceof Viewable) && !suppressViewableInTopic((Viewable) obj)) {
+	      if ((obj instanceof Viewable) && !AbstractPatternDef.suppressViewableInTransfer((Viewable)obj)){
 			 Viewable v = (Viewable) obj;
-			 ipw.println("<xsd:element ref=\"" + getTransferName(v) + "\"/>");
+			 ipw.println("<xsd:element ref=\"" + getScopedName(v) + "\"/>");
 		 }
 	 }
+	 // add line tables
+	  Iterator attri=surfaceOrAreaAttrs.iterator();
+	  while(attri.hasNext()){
+		  AttributeDef attr=(AttributeDef)attri.next();
+		  AbstractClassDef aclass=(AbstractClassDef)attr.getContainer();
+		  if(aclass.getContainer()==topic){
+			  String linetableName=getName(aclass)+"."+getTransferName(attr);
+			  ipw.println("<xsd:element ref=\"" + linetableName + "\"/>");
+		  }
+	  }
 	ipw.unindent();
 	ipw.println ("</xsd:choice>");
 	ipw.unindent();
@@ -262,18 +311,25 @@ public final class Gml32Generator
 	 ipw.unindent();
 	 ipw.println("</xsd:complexContent>");
 	 ipw.unindent();
-	 // TODO: add owns fixed to "true" 
 	 ipw.println ("</xsd:complexType>");
 	
-   ipw.println("<xsd:element name=\""+getTransferName(topic)+"\" type=\""+getTransferName(topic)+"Type\"/>");
-    ipw.println ("<xsd:complexType name=\""+getTransferName(topic)+"Type\">");
+   ipw.println("<xsd:element name=\""+getName(topic)+"\" type=\""+getName(topic)+"Type\" substitutionGroup=\"gml:AbstractFeature\"/>");
+    ipw.println ("<xsd:complexType name=\""+getName(topic)+"Type\">");
+	ipw.indent ();
+    ipw.println ("<xsd:complexContent>");
+	ipw.indent ();
+    ipw.println ("<xsd:extension base=\"gml:AbstractFeatureType\">");
 	ipw.indent ();
 	ipw.println ("<xsd:sequence>");
 	ipw.indent ();
-	ipw.println ("<xsd:element name=\"member\" type=\""+getTransferName(topic)+"MemberType\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
+	ipw.println ("<xsd:element name=\"member\" type=\""+getName(topic)+"MemberType\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
 	ipw.unindent ();
 	ipw.println ("</xsd:sequence>");
 	ipw.println ("<xsd:attributeGroup ref=\"gml:AggregationAttributeGroup\"/>");
+	ipw.unindent ();
+	ipw.println ("</xsd:extension>");
+	ipw.unindent ();
+	ipw.println ("</xsd:complexContent>");
 	ipw.unindent ();
 	ipw.println ("</xsd:complexType>");
 
@@ -283,64 +339,141 @@ public final class Gml32Generator
 
   private void declareAbstractClassDef(Viewable v)
   {
+	  if(v instanceof AssociationDef){ 
+		  AssociationDef assoc=(AssociationDef)v;
+		  if(assoc.getDerivedFrom()!=null){
+			  // derived; skip it
+			  return;
+		  }
+		  if(v.isFinal() && !v.getAttributes().hasNext() && assoc.isLightweight()){
+			  // final lightweight without attributes
+			  // skip it
+			  return;
+		  }
+	  }
   	String baseElement="gml:AbstractFeature";
   	Viewable baseType=(Viewable)v.getExtending();
   	if(baseType!=null){
-  		baseElement=getTransferName(baseType);
+  		baseElement=getScopedName(baseType);
   	}
-	ipw.println("<xsd:element name=\""+getTransferName(v)+"\" type=\""+getTransferName(v)+"Type\" substitutionGroup=\""+baseElement+"\"/>");
-	ipw.println("<xsd:complexType  name=\"" + getTransferName(v) + "Type\">");
+	ipw.println("<xsd:element name=\""+getName(v)+"\" type=\""+getName(v)+"Type\" substitutionGroup=\""+baseElement+"\"/>");
+	ipw.println("<xsd:complexType  name=\"" + getName(v) + "Type\">");
 	ipw.indent ();
 	ipw.println ("<xsd:complexContent>");
   	ipw.indent ();
   	String baseXsdType="gml:AbstractFeatureType";
 	if(baseType!=null){
-		baseXsdType=getTransferName(baseType)+"Type";
+		baseXsdType=getScopedName(baseType)+"Type";
 	}
 	ipw.println ("<xsd:extension base=\""+baseXsdType+"\">");
 	ipw.indent ();
 	ipw.println("<xsd:sequence>");
 	ipw.indent();
 	/* Find which attributes are going to be elements of this class. */
-	Iterator iter = v.iterator();
+	Iterator iter = v.getAttributesAndRoles2();
 	while (iter.hasNext()) {
-		Object obj = iter.next();
-		if (obj instanceof AttributeDef) {
-			AttributeDef attr = (AttributeDef) obj;
-			if(attr.getExtending()==null){
+		ViewableTransferElement obj = (ViewableTransferElement)iter.next();
+		if (obj.obj instanceof AttributeDef) {
+			AttributeDef attr = (AttributeDef) obj.obj;
+			if(attr.getExtending()==null && attr.getContainer()==v && !attr.isTransient()){
 				// define only new attrs (==not EXTENDED)
 				declareAttribute(attr);
 			}
 		}
-		if(obj instanceof RoleDef){
-			RoleDef role = (RoleDef) obj;
-
-			// roledef not defined in a lightweight association?
-			// lightweigth according to this encoding!
-			if (!isLightweightAssociation((AssociationDef)v)){
-				ipw.println(
-					"<xsd:element name=\""
-						+ getTransferName(role)
-						+ "\" type=\"gml:ReferenceType\">");
+		if(obj.obj instanceof RoleDef){
+			RoleDef role = (RoleDef) obj.obj;
+			
+			// not an embedded role and roledef not defined in a lightweight association?
+			if (!obj.embedded && !((AssociationDef)v).isLightweight() && v.getExtending()==null){
+				if(role.isOrdered()){
+					ipw.println("<xsd:element name=\""+ getTransferName(role)+ ">");
+				}else{
+					ipw.println("<xsd:element name=\""+ getTransferName(role)+ "\" type=\"gml:ReferenceType\">");
+				}
 				ipw.indent();
 				ipw.println("<xsd:annotation>");
 					ipw.indent();
 					ipw.println("<xsd:appinfo>");
 						ipw.indent();
-						ipw.println("<gml:targetElement>"+getTransferName(role.getDestination())+"</gml:targetElement>");
+						ipw.println("<gml:targetElement>"+getScopedName(role.getDestination())+"</gml:targetElement>");
 						ipw.unindent();
 					ipw.println("</xsd:appinfo>");
 					ipw.unindent();
 				ipw.println("</xsd:annotation>");
-   				//ipw.println("<!-- "+PRBLMTAG+" unable to express ordering kind -->");
+				if(role.isOrdered()){
+					ipw.println("<xsd:complexType>");
+					ipw.indent();
+					ipw.println("<xsd:sequence/>");
+					ipw.println("<xsd:attributeGroup ref=\"gml:OwnershipAttributeGroup\"/>");
+					ipw.println("<xsd:attributeGroup ref=\"gml:AssociationAttributeGroup\"/>");
+					ipw.println("<xsd:attribute ref=\"ili:ORDER_POS\"/>");					
+					ipw.unindent();
+					ipw.println("</xsd:complexType>");
+				}
 				//ipw.println("<!-- "+PRBLMTAG+" unable to express aggregation kind -->");
 				//ipw.println("<!-- "+PRBLMTAG+" unable to express cardinality -->");
 				ipw.unindent();
 				ipw.println("</xsd:element>");
 			}
+			// a role of an embedded association?
+			if(obj.embedded){
+				AssociationDef roleOwner = (AssociationDef) role.getContainer();
+				if(roleOwner.getDerivedFrom()==null && roleOwner.getExtending()==null){
+					// role is oppend;
+					RoleDef oppend=role.getOppEnd();
+					Cardinality card = role.getCardinality();
+					String minOccurs = "";
+					if (card.getMinimum() == 0) {
+						minOccurs = " minOccurs=\"0\"";
+					}
+					if(oppend.isOrdered()){
+						ipw.println("<xsd:element name=\""+ getTransferName(role)+"\""+ minOccurs+">");
+					}else{
+						ipw.println("<xsd:element name=\""+ getTransferName(role)+ "\" type=\"gml:ReferenceType\""+minOccurs+">");
+					}
+					ipw.indent();
+					ipw.println("<xsd:annotation>");
+						ipw.indent();
+						ipw.println("<xsd:appinfo>");
+							ipw.indent();
+							ipw.println("<gml:targetElement>"+getScopedName(role.getDestination())+"</gml:targetElement>");
+							ipw.unindent();
+						ipw.println("</xsd:appinfo>");
+						ipw.unindent();
+					ipw.println("</xsd:annotation>");
+					if(oppend.isOrdered()){
+						ipw.println("<xsd:complexType>");
+						ipw.indent();
+						ipw.println("<xsd:sequence/>");
+						ipw.println("<xsd:attributeGroup ref=\"gml:OwnershipAttributeGroup\"/>");
+						ipw.println("<xsd:attributeGroup ref=\"gml:AssociationAttributeGroup\"/>");
+						ipw.println("<xsd:attribute ref=\"ili:ORDER_POS\"/>");					
+						ipw.unindent();
+						ipw.println("</xsd:complexType>");
+					}
+					//ipw.println("<!-- "+PRBLMTAG+" unable to express aggregation kind -->");
+					//ipw.println("<!-- "+PRBLMTAG+" unable to express cardinality -->");
+					ipw.unindent();
+					ipw.println("</xsd:element>");
+					if(!roleOwner.isFinal() || roleOwner.getAttributes().hasNext()){
+						ipw.println("<xsd:element name=\""+ getTransferName(role)+ ".LINK_DATA\" minOccurs=\"0\">");
+						ipw.indent();
+						ipw.println("<xsd:complexType>");
+						ipw.indent();
+						ipw.println("<xsd:sequence>");
+						ipw.indent();
+						ipw.println("<xsd:element ref=\""+ getScopedName(roleOwner)+ "\"/>");
+						ipw.unindent();
+						ipw.println("</xsd:sequence>");
+						ipw.unindent();
+						ipw.println("</xsd:complexType>");
+						ipw.unindent();
+						ipw.println("</xsd:element>");
+					}
+				}
+			}
 		}
 	}
-	// TODO implement lightweight associations
 	ipw.unindent();
 	ipw.println("</xsd:sequence>");
 	ipw.unindent();
@@ -352,10 +485,6 @@ public final class Gml32Generator
 
   }
 
-  private boolean isLightweightAssociation(AssociationDef v)
-  {
-  	return false;
-  }
   private void declareDomainDef (Domain domain)
   {
   	Type type=domain.getType();
@@ -363,7 +492,125 @@ public final class Gml32Generator
 	//}else if (type instanceof PolylineType){
 	//}else if (type instanceof SurfaceOrAreaType){
 	//}  	
-    declareType(type,domain);
+    if(type instanceof TypeAlias){
+    	Domain realDomain=((TypeAlias)type).getAliasing();
+    	Type realType=realDomain.getType();
+    	/*
+    	URI (FINAL) = TEXT*1023;
+    	NAME (FINAL) = TEXT*255;
+    	INTERLIS_1_DATE (FINAL) = TEXT*8;
+    	BOOLEAN (FINAL) = (
+    	HALIGNMENT (FINAL) = (
+    	VALIGNMENT (FINAL) = (
+    	ANYOID = OID ANY;
+    	I32OID = OID 0 .. 2147483647;
+    	STANDARDOID = OID TEXT*16;
+    	UUIDOID = OID TEXT*36;
+    	LineCoord (ABSTRACT) = COORD NUMERIC, NUMERIC;
+    	GregorianYear = 1582 .. 2999
+    	XMLTime = FORMAT BASED ON UTC ( Hours/2 ":" Minutes ":" Seconds );
+    	XMLDate = FORMAT BASED ON GregorianDate ( Year "-" Month "-" Day );
+    	XMLDateTime EXTENDS XMLDate = FORMAT BASED ON GregorianDateTime
+    	*/
+    	// only the following can apprea in a DomainDef
+    	// URI, NAME, INTERLIS_1_DATE, BOOLEAN, HALIGNMENT, VALIGNMENT
+    	String base=null;
+    	String facets=null;
+    	if(realDomain==td.INTERLIS.URI){
+    		base="xsd:anyURI";
+    		facets="<xsd:maxLength value=\"1023\"/>";
+    	}else if(realDomain==td.INTERLIS.NAME){
+    		base="xsd:token";
+    		facets="<xsd:maxLength value=\"255\"/><xsd:pattern value=\"[a-zA-Z][a-zA-Z0-9_]*\"/>";
+    	}else if(realDomain==td.INTERLIS.INTERLIS_1_DATE){
+    		base="xsd:date";
+    	}else if(realDomain==td.INTERLIS.BOOLEAN){
+    		base="xsd:boolean";
+    	}else if(realDomain==td.INTERLIS.HALIGNMENT){
+    		base="ili:HALIGNMENT";
+    	}else if(realDomain==td.INTERLIS.VALIGNMENT){
+    		base="ili:VALIGNMENT";
+        }else{
+        	throw new IllegalArgumentException(realDomain.getScopedName(null)+": type "+type.getClass()+" not yet supported");
+        }
+    	  ipw.println("<xsd:simpleType name=\""+getName(domain)+"\">");
+      	  ipw.indent();
+      	  if(facets==null){
+          	  ipw.println("<xsd:restriction base=\""+base+"\"/>");
+      	  }else{
+          	  ipw.println("<xsd:restriction base=\""+base+"\">");
+          	  ipw.indent();
+          	  ipw.println(facets);
+          	  ipw.unindent();
+          	  ipw.println("</xsd:restriction>");
+      	  }
+      	  ipw.unindent();
+      	  ipw.println("</xsd:simpleType>");
+    }else{
+        declareType(type,domain);
+    }
+  }
+  private ArrayList surfaceOrAreaAttrs=null; // array<AttributeDef attr>
+  private void declareLinetables(){
+	  Iterator attri=surfaceOrAreaAttrs.iterator();
+	  while(attri.hasNext()){
+		  AttributeDef attr=(AttributeDef)attri.next();
+		  AbstractClassDef aclass=(AbstractClassDef)attr.getContainer();
+		  String linetableName=getName(aclass)+"."+getTransferName(attr);
+		  	String baseElement="gml:AbstractFeature";
+			ipw.println("<xsd:element name=\""+linetableName+"\" type=\""+linetableName+"Type\" substitutionGroup=\""+baseElement+"\"/>");
+			ipw.println("<xsd:complexType  name=\"" + linetableName + "Type\">");
+			ipw.indent ();
+			ipw.println ("<xsd:complexContent>");
+		  	ipw.indent ();
+		  	String baseXsdType="gml:AbstractFeatureType";
+			ipw.println ("<xsd:extension base=\""+baseXsdType+"\">");
+			ipw.indent ();
+			ipw.println("<xsd:sequence>");
+			ipw.indent();
+			ipw.println("<xsd:element name=\"mainTable\" type=\"gml:ReferenceType\">");
+			ipw.indent();
+			ipw.println("<xsd:annotation>");
+			ipw.indent();
+			ipw.println("<xsd:appinfo>");
+			ipw.indent();
+			ipw.println("<gml:targetElement>"+getName(aclass)+"</gml:targetElement>");
+			ipw.unindent();
+			ipw.println("</xsd:appinfo>");
+			ipw.unindent();
+			ipw.println("</xsd:annotation>");
+			ipw.unindent();
+			ipw.println("</xsd:element>");
+			ipw.println("<xsd:element name=\"geometry\" type=\"gml:CurvePropertyType\"/>");
+			SurfaceOrAreaType type=(SurfaceOrAreaType)attr.getDomainResolvingAliases();
+			Table lineattrs=type.getLineAttributeStructure();
+			if(lineattrs!=null){
+				ipw.println("<xsd:element name=\"lineattr\">");
+				ipw.indent();
+				ipw.println("<xsd:complexType>");
+				ipw.indent();
+				ipw.println("<xsd:sequence>");
+				ipw.indent();
+				ipw.println("<xsd:element ref=\""+getScopedName(lineattrs)+"\"/>");
+				ipw.unindent();
+				ipw.println("</xsd:sequence>");
+				ipw.println("<xsd:attributeGroup ref=\"gml:OwnershipAttributeGroup\"/>");
+				ipw.unindent();
+				ipw.println("</xsd:complexType>");
+				ipw.unindent();
+				ipw.println("</xsd:element>");
+			}
+			
+			ipw.unindent();
+			ipw.println("</xsd:sequence>");
+			ipw.unindent();
+			ipw.println("</xsd:extension>");
+			ipw.unindent();
+			ipw.println("</xsd:complexContent>");
+			ipw.unindent();
+			ipw.println("</xsd:complexType>");
+		  
+	  }
   }
   private void declareAttribute (AttributeDef attribute)
   {
@@ -374,12 +621,68 @@ public final class Gml32Generator
     Type type= attribute.getDomain();
     if(type instanceof TypeAlias){
     	Domain realDomain=((TypeAlias)type).getAliasing();
-    	Type realType=realDomain.getType();
-        if(realDomain==td.INTERLIS.BOOLEAN){
-      	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"xsd:boolean\""+minOccurs+"/>");
+    	
+    	String base=null;
+    	String facets=null;
+    	if(realDomain==td.INTERLIS.URI){
+    		base="xsd:anyURI";
+    		facets="<xsd:maxLength value=\"1023\"/>";
+    	}else if(realDomain==td.INTERLIS.NAME){
+    		base="xsd:token";
+    		facets="<xsd:maxLength value=\"255\"/><xsd:pattern value=\"[a-zA-Z][a-zA-Z0-9_]*\"/>";
+    	}else if(realDomain==td.INTERLIS.INTERLIS_1_DATE){
+    		base="xsd:date";
+    	}else if(realDomain==td.INTERLIS.BOOLEAN){
+    		base="xsd:boolean";
+    	}else if(realDomain==td.INTERLIS.HALIGNMENT){
+    		base="ili:HALIGNMENT";
+    	}else if(realDomain==td.INTERLIS.VALIGNMENT){
+    		base="ili:VALIGNMENT";
+    	}else if(realDomain==td.INTERLIS.ANYOID){
+    		base="xsd:token";
+    	}else if(realDomain==td.INTERLIS.I32OID){
+    		base="ili:I32OID";
+    	}else if(realDomain==td.INTERLIS.STANDARDOID){
+    		base="ili:STANDARDOID";
+    	}else if(realDomain==td.INTERLIS.UUIDOID){
+    		base="ili:UUIDOID";
+    	//}else if(realDomain==td.INTERLIS.LineCoord){
+        	/*
+        	LineCoord (ABSTRACT) = COORD NUMERIC, NUMERIC;
+        	*/
+    	//	base="ili:VALIGNMENT";
+    	}else if(realDomain==td.INTERLIS.GregorianYear){
+    		base="xsd:gYear";
+    	}else if(realDomain==td.INTERLIS.XmlTime){
+    		base="xsd:time";
+    	}else if(realDomain==td.INTERLIS.XmlDate){
+    		base="xsd:date";
+    	}else if(realDomain==td.INTERLIS.XmlDateTime){
+    		base="xsd:dateTime";
         }else{
-      	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\""+getTransferName(((TypeAlias)type).getAliasing())+"\""+minOccurs+"/>");
+        	base=getScopedName(realDomain);
+        	if(realDomain.getType() instanceof SurfaceOrAreaType){
+    			// remember to create linetable
+        		surfaceOrAreaAttrs.add(attribute);
+        	}
         }
+    	if(facets==null){
+        	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\""+base+"\""+minOccurs+"/>");
+    	}else{
+      	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+minOccurs+"/>");
+       	  ipw.indent();
+      	  ipw.println("<xsd:simpleType>");
+      	  ipw.indent();
+      	  ipw.println("<xsd:restriction base=\""+base+"\">");
+      	  ipw.indent();
+      	  ipw.println(facets);
+      	  ipw.unindent();
+      	  ipw.println("</xsd:restriction>");
+      	  ipw.unindent();
+      	  ipw.println("</xsd:simpleType>");
+      	  ipw.unindent();
+      	  ipw.println("</xsd:element>");
+    	}
     }else{
 		if (type instanceof CoordType){
 			ipw.println(
@@ -429,6 +732,8 @@ public final class Gml32Generator
 			//}
 			ipw.unindent();
 			ipw.println("</xsd:element>");
+			// remember to create linetable
+       		surfaceOrAreaAttrs.add(attribute);
 		}else if (type instanceof CompositionType){
 			CompositionType composition=(CompositionType)type;
 			Table part=composition.getComponentType();
@@ -447,13 +752,17 @@ public final class Gml32Generator
 				}
 			}
 			ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\""+minOccurs+maxOccurs+">");
+			ipw.indent ();
+			ipw.println ("<xsd:complexType>");
 				ipw.indent ();
 				ipw.println ("<xsd:sequence>");
 					ipw.indent ();
-					ipw.println ("<xsd:element ref=\""+getTransferName(part)+"\"/>");
+					ipw.println ("<xsd:element ref=\""+getScopedName(part)+"\"/>");
 					ipw.unindent ();
 				ipw.println ("</xsd:sequence>");
 				ipw.unindent ();
+			ipw.println ("</xsd:complexType>");
+			ipw.unindent ();
 			ipw.println ("</xsd:element>");
 		}else if (type instanceof ReferenceType){
 			ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"gml:ReferenceType\""+minOccurs+">");
@@ -462,13 +771,16 @@ public final class Gml32Generator
 					ipw.indent ();
 					ipw.println("<xsd:appinfo>");
 						ipw.indent ();
-						ipw.println("<gml:targetElement>"+getTransferName(((ReferenceType)type).getReferred())+"</gml:targetElement>");
+						ipw.println("<gml:targetElement>"+getScopedName(((ReferenceType)type).getReferred())+"</gml:targetElement>");
 						ipw.unindent ();
 					ipw.println("</xsd:appinfo>");
 					ipw.unindent ();
 				ipw.println("</xsd:annotation>");
 				ipw.unindent ();
 			ipw.println ("</xsd:element>");
+		}else if (type instanceof EnumerationType && !attribute.isFinal()){
+  	      ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"gml:CodeWithAuthorityType\""+minOccurs+"/>");
+	      codelists.add(attribute);
 		}else{
 			ipw.println(
 				"<xsd:element name=\""
@@ -483,11 +795,73 @@ public final class Gml32Generator
 		}
     }
   }
+  private ArrayList codelists=null; // array<Domain | AttributeDef>
+  private void declareCodelists()
+  {
+	  if(codelists.size()>0){
+		  
+		  
+			ipw.println ("<xsd:annotation>");
+			ipw.indent ();
+			
+			ipw.println("<xsd:appinfo source=\"http://www.interlis.ch/ili2c\">");
+			ipw.indent();
+
+			String modelName=currentModel.getName();
+			int oid=1;
+			Iterator codelisti=codelists.iterator();
+			while(codelisti.hasNext()){
+				Element codelisto=(Element)codelisti.next();
+				String enumName=null;
+				EnumerationType type=null;
+				if(codelisto instanceof Domain){
+					Domain domain=(Domain)codelisto;
+					enumName=getName(domain);
+					type=(EnumerationType)domain.getType();
+				}else{
+					AttributeDef attr=(AttributeDef)codelisto;
+					enumName=getName(attr.getContainer())+"."+getTransferName(attr);
+					type=(EnumerationType)attr.getDomain();
+				}
+				ipw.println("<gml:Dictionary gml:id=\"o"+ oid++ +"\">");
+				ipw.indent();
+				ipw.println("<gml:identifier codeSpace=\"http://www.interlis.ch/INTERLIS2.3/GML32/"+modelName+"\">"+enumName+"</gml:identifier>");
+				String codeSpace="http://www.interlis.ch/INTERLIS2.3/GML32/"+modelName+"/"+enumName;
+				
+				java.util.ArrayList ev = new java.util.ArrayList();
+				buildEnumList(ev, "", type.getConsolidatedEnumeration());
+				Iterator iter = ev.iterator();
+				while (iter.hasNext()) {
+					String enumVal = (String) iter.next();
+					ipw.println("<gml:dictionaryEntry>");
+					ipw.indent();
+					ipw.println("<gml:Definition gml:id=\"o"+ oid++ +"\">");
+					ipw.indent();
+					ipw.println("<gml:identifier codeSpace=\""+codeSpace+"\">"+enumVal+"</gml:identifier>");
+					ipw.unindent();
+					ipw.println("</gml:Definition>");
+					ipw.unindent();
+					ipw.println("</gml:dictionaryEntry>");
+				}
+				
+				ipw.unindent();
+				ipw.println("</gml:Dictionary>");
+			
+			}
+
+			ipw.unindent();
+			ipw.println ("</xsd:appinfo>");
+			ipw.unindent();
+			ipw.println ("</xsd:annotation>");
+		  
+	  }
+	  
+  }
   private void declareType (Type type,Domain domain)
   {
     String typeName="";
     if(domain!=null){
-      typeName=" name=\""+getTransferName(domain)+"\"";
+      typeName=" name=\""+getName(domain)+"\"";
     }
     if (type instanceof PolylineType){
 		ipw.println ("<xsd:complexType"+typeName+">");
@@ -508,12 +882,17 @@ public final class Gml32Generator
 			ipw.indent ();
 			String base;
 			if(domain!=null && domain.getExtending()!=null){
-				base=getTransferName(domain.getExtending());
+				base=getScopedName(domain.getExtending());
 			}else{
 				base="gml:PointPropertyType";
 			}
 			ipw.println ("<xsd:restriction base=\""+base+"\">");
 			ipw.indent ();
+			ipw.println("<xsd:sequence>");
+			ipw.indent ();
+			ipw.println("<xsd:element ref=\"gml:Point\"/>");
+			ipw.unindent ();
+			ipw.println("</xsd:sequence>");
 			//ipw.println("<!-- "+PRBLMTAG+" unable to express domain of values -->");
 			//ipw.println("<!-- "+PRBLMTAG+" unable to express unit of values -->");
 			//ipw.println("<!-- "+PRBLMTAG+" unable to express CRS -->");
@@ -525,42 +904,83 @@ public final class Gml32Generator
 		    ipw.unindent ();
 	    ipw.println ("</xsd:complexType>");
     }else if(type instanceof EnumerationType){
-      ipw.println ("<xsd:simpleType"+typeName+">");
-        ipw.indent ();
-        ipw.println ("<xsd:restriction base=\"xsd:normalizedString\">");
-        if(domain!=null && domain.isFinal()){
-          ipw.indent ();
-          java.util.ArrayList ev=new java.util.ArrayList();
-          buildEnumList(ev,"",((EnumerationType)type).getConsolidatedEnumeration());
-          Iterator iter=ev.iterator();
-          while(iter.hasNext()){
-            String value=(String)iter.next();
-            ipw.println ("<xsd:enumeration value=\""+value+"\"/>");
-          }
-          ipw.unindent ();
-		}else{
-			//ipw.println("<!-- "+PRBLMTAG+" unable to express elements of an extendable enumeration -->");
-		}
-        ipw.println ("</xsd:restriction>");
-        ipw.unindent ();
-      ipw.println ("</xsd:simpleType>");
+    	if(domain!=null && !domain.isFinal()){
+  		ipw.println ("<xsd:complexType"+typeName+">");
+		    ipw.indent ();
+			ipw.println ("<xsd:simpleContent>");
+			ipw.indent ();
+			String base;
+			if(domain!=null && domain.getExtending()!=null){
+				base=getScopedName(domain.getExtending());
+			}else{
+				base="gml:CodeWithAuthorityType";
+			}
+			ipw.println ("<xsd:restriction base=\""+base+"\">");
+			ipw.indent ();
+			ipw.println ("<xsd:attribute name=\"codeSpace\" type=\"xsd:anyURI\" use=\"required\"/>");
+			ipw.unindent ();
+			ipw.println ("</xsd:restriction>");
+			ipw.unindent ();
+			ipw.println ("</xsd:simpleContent>");
+		    ipw.unindent ();
+		  ipw.println ("</xsd:complexType>");
+	      codelists.add(domain);
+    	}else{
+    	      ipw.println ("<xsd:simpleType"+typeName+">");
+    	        ipw.indent ();
+    	        ipw.println ("<xsd:restriction base=\"xsd:normalizedString\">");
+    	          ipw.indent ();
+    	          java.util.ArrayList ev=new java.util.ArrayList();
+    	          buildEnumList(ev,"",((EnumerationType)type).getConsolidatedEnumeration());
+    	          Iterator iter=ev.iterator();
+    	          while(iter.hasNext()){
+    	            String value=(String)iter.next();
+    	            ipw.println ("<xsd:enumeration value=\""+value+"\"/>");
+    	          }
+    	          ipw.unindent ();
+    	        ipw.println ("</xsd:restriction>");
+    	        ipw.unindent ();
+    	      ipw.println ("</xsd:simpleType>");
+    	}
     }else if(type instanceof NumericType){
       ipw.println ("<xsd:simpleType"+typeName+">");
         ipw.indent ();
-        ipw.println ("<xsd:restriction base=\"xsd:double\">");
-        if(!type.isAbstract()){
-          ipw.indent ();
-          ipw.println ("<xsd:minInclusive value=\""+((NumericType)type).getMinimum().doubleValue()+"\"/>");
-          ipw.println ("<xsd:maxInclusive value=\""+((NumericType)type).getMaximum().doubleValue()+"\"/>");
-          ipw.unindent ();
+        if(type.isAbstract()){
+			ipw.println ("<xsd:restriction base=\"xsd:double\">");
+			ipw.println ("</xsd:restriction>");
+        }else{
+			PrecisionDecimal min=((NumericType)type).getMinimum();
+			if(min.getAccuracy()>0){
+				if(min.getExponent()!=0){
+					ipw.println ("<xsd:restriction base=\"xsd:double\">");
+				}else{
+					ipw.println ("<xsd:restriction base=\"xsd:decimal\">");
+				}
+		          ipw.indent ();
+		          ipw.println ("<xsd:minInclusive value=\""+((NumericType)type).getMinimum().doubleValue()+"\"/>");
+		          ipw.println ("<xsd:maxInclusive value=\""+((NumericType)type).getMaximum().doubleValue()+"\"/>");
+		          ipw.unindent ();
+	            ipw.println ("</xsd:restriction>");
+			}else{
+				ipw.println ("<xsd:restriction base=\"xsd:integer\">");
+		          ipw.indent ();
+		          ipw.println ("<xsd:minInclusive value=\""+(int)((NumericType)type).getMinimum().doubleValue()+"\"/>");
+		          ipw.println ("<xsd:maxInclusive value=\""+(int)((NumericType)type).getMaximum().doubleValue()+"\"/>");
+		          ipw.unindent ();
+	            ipw.println ("</xsd:restriction>");
+				
+			}
         }
-        ipw.println ("</xsd:restriction>");
         ipw.unindent ();
       ipw.println ("</xsd:simpleType>");
     }else if(type instanceof TextType){
       ipw.println ("<xsd:simpleType"+typeName+">");
         ipw.indent ();
-        ipw.println ("<xsd:restriction base=\"xsd:normalizedString\">");
+        if(((TextType)type).isNormalized()){
+            ipw.println ("<xsd:restriction base=\"xsd:normalizedString\">");
+        }else{
+            ipw.println ("<xsd:restriction base=\"xsd:string\">");
+        }
         if(((TextType)type).getMaxLength()>0){
           ipw.indent ();
           ipw.println ("<xsd:maxLength value=\""+((TextType)type).getMaxLength()+"\"/>");
@@ -569,6 +989,79 @@ public final class Gml32Generator
         ipw.println ("</xsd:restriction>");
         ipw.unindent ();
       ipw.println ("</xsd:simpleType>");
+	}else if(type instanceof FormattedType){
+		ipw.println ("<xsd:simpleType"+typeName+">");
+		  ipw.indent ();
+			String base;
+			Domain baseDomain=((FormattedType)type).getDefinedBaseDomain();
+			if(baseDomain==td.INTERLIS.XmlDate){
+				base="xsd:date";
+			}else if(baseDomain==td.INTERLIS.XmlDateTime){
+				base="xsd:dateTime";
+			}else if(baseDomain==td.INTERLIS.XmlTime){
+				base="xsd:time";
+			}else{
+				baseDomain=null;
+				base="xsd:normalizedString";
+			}
+		  ipw.println("<xsd:restriction base=\""+base+"\">");
+		  if(baseDomain==null){
+			  ipw.println("<xsd:pattern value=\""+((FormattedType)type).getRegExp()+"\"/>");
+		  }
+		  ipw.println ("</xsd:restriction>");
+		  ipw.unindent ();
+		ipw.println ("</xsd:simpleType>");
+	}else if(type instanceof BlackboxType){
+		if(((BlackboxType)type).getKind()==BlackboxType.eXML){
+			ipw.println ("<xsd:complexType "+typeName+">");
+			ipw.indent();
+			ipw.println ("<xsd:sequence>");
+			ipw.indent();
+			ipw.println ("<xsd:any namespace=\"##any\" minOccurs=\"0\" maxOccurs=\"unbounded\" processContents=\"lax\"/>");
+			ipw.unindent();
+			ipw.println ("</xsd:sequence>");
+			ipw.unindent();
+			ipw.println ("</xsd:complexType>");
+		}else{
+			ipw.println ("<xsd:simpleType "+typeName+">");
+			ipw.indent();
+			ipw.println ("<xsd:restriction base=\"xsd:base64Binary\">");
+			ipw.println ("</xsd:restriction>");
+			ipw.unindent();
+			ipw.println ("</xsd:simpleType>");
+		}
+	}else if(type instanceof ClassType){
+		ipw.println ("<xsd:simpleType"+typeName+">");
+		  ipw.indent ();
+			String base;
+				base="xsd:normalizedString";
+		  ipw.println("<xsd:restriction base=\""+base+"\"/>");
+		  ipw.unindent ();
+		ipw.println ("</xsd:simpleType>");
+	}else if(type instanceof AttributePathType){
+		ipw.println ("<xsd:simpleType"+typeName+">");
+		  ipw.indent ();
+			String base;
+				base="xsd:normalizedString";
+		  ipw.println("<xsd:restriction base=\""+base+"\"/>");
+		  ipw.unindent ();
+		ipw.println ("</xsd:simpleType>");
+	}else if(type instanceof NumericOIDType){
+		ipw.println ("<xsd:simpleType"+typeName+">");
+		  ipw.indent ();
+			String base;
+				base="xsd:int";
+		  ipw.println("<xsd:restriction base=\""+base+"\"/>");
+		  ipw.unindent ();
+		ipw.println ("</xsd:simpleType>");
+	}else if(type instanceof TextOIDType){
+		ipw.println ("<xsd:simpleType"+typeName+">");
+		  ipw.indent ();
+			String base;
+				base="xsd:token";
+		  ipw.println("<xsd:restriction base=\""+base+"\"/>");
+		  ipw.unindent ();
+		ipw.println ("</xsd:simpleType>");
     }else{
     	throw new IllegalArgumentException("type "+type.getClass()+" not yet supported");
 	}
@@ -582,7 +1075,7 @@ public final class Gml32Generator
 	ipw.indent ();
 	String base;
 	if(domain!=null && domain.getExtending()!=null){
-		base=getTransferName(domain.getExtending());
+		base=getScopedName(domain.getExtending());
 	}else{
 		if (type instanceof SurfaceOrAreaType){
 			base="gml:SurfacePropertyType";
@@ -592,6 +1085,15 @@ public final class Gml32Generator
 	}
 	ipw.println ("<xsd:restriction base=\""+base+"\">");
 	ipw.indent ();
+	ipw.println("<xsd:sequence>");
+	ipw.indent ();
+	if (type instanceof SurfaceOrAreaType){
+		ipw.println("<xsd:element ref=\"gml:Polygon\"/>"); // gml:AbstractSurface
+	}else{
+		ipw.println("<xsd:element ref=\"gml:AbstractCurve\"/>"); // 
+	}
+	ipw.unindent ();
+	ipw.println("</xsd:sequence>");
 	//ipw.println("<!-- "+PRBLMTAG+" unable to express domain/unit/crs of control points -->");
 	//ipw.println("<!-- "+PRBLMTAG+" unable to express allowed line forms -->");
 	//ipw.println("<!-- "+PRBLMTAG+" unable to express line attributes -->");
@@ -603,21 +1105,10 @@ public final class Gml32Generator
 	ipw.println ("</xsd:restriction>");
 	ipw.unindent ();
 	ipw.println ("</xsd:complexContent>");
-	if (type instanceof SurfaceOrAreaType){
-	    Table part=((SurfaceOrAreaType)type).getLineAttributeStructure();
-	    if(part!=null){
-          addCurveSegmentWithLineAttr(type);
-	    }
-	}
   }
   private void declareLineForm(LineForm form)
   {
-  }
-  private HashSet lineAttrs=new HashSet();
-  private void addCurveSegmentWithLineAttr(LineType domain){
-  	
-  }
-  private void declareCurveSegmentWithLineAttr(){
+	  EhiLogger.logAdaption("User defined line form "+form.getScopedName(null)+" not yet supported");
   }
 
   private void buildEnumList(java.util.List accu,String prefix1,ch.interlis.ili2c.metamodel.Enumeration enumer){

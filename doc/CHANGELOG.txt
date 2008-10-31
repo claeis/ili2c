@@ -1,4 +1,8 @@
-ili2c 3.6.8 (2008-08-xx)
+ili2c 4.0.0 (2008-10-31)
+----------------------------
+- GML: updated to draft ILIGML spec (BETA)
+
+ili2c 3.6.8 (2008-08-25)
 ----------------------------
 - bug: added AttributePathType to parser
 - bug ili2exp: added TRANSIENT

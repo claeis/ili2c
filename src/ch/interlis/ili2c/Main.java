@@ -82,11 +82,6 @@ public class Main
   public static void main (String[] args)
   {
     boolean emitPredefined = false;
-    int     emitVersion = 0;
-    boolean emitXSD = false;
-    boolean emitFMT = false;
-    boolean emitJAVA = false;
-	boolean emitIOM = false;
 	boolean doAuto=true;
     boolean checkMetaObjs=false;
     boolean withWarnings=true;
@@ -124,6 +119,7 @@ public class Main
       System.err.println("-oFMT                 Generate an INTERLIS-1 Format.");
       System.err.println("-oJAVA                Generate JAVA classes.");
 	  System.err.println("-oIOM                 Generate Model as INTERLIS-Transfer (XTF).");
+	  System.err.println("--out file/dir        file or folder for output.");
       System.err.println("--with-predefined     Include the predefined MODEL INTERLIS in");
       System.err.println("                      the output. Usually, this is omitted.");
       System.err.println("--without-warnings    Report only errors, no warnings. Usually,");
@@ -145,7 +141,9 @@ public class Main
     }
 
     try {
-	
+    	String outfile=null;
+    	int outputKind=GenerateOutputKind.NOOUTPUT;
+
 		ArrayList ilifilev=new ArrayList();
       for (int i = 0; i < args.length; i++)
       {
@@ -172,67 +170,45 @@ public class Main
 		  doAuto=false;
 		  continue;
 		}
+		if (args[i].equals("--out"))
+		{
+			i++;
+			outfile=args[i];
+			continue;
+		}
         else if (args[i].equals("-o0"))
         {
-          emitVersion = 0;
-          emitXSD = false;
-          emitFMT = false;
-          emitJAVA = false;
-		  emitIOM = false;
+        	outputKind=GenerateOutputKind.NOOUTPUT;
           continue;
         }
         else if (args[i].equals("-o1"))
         {
-          emitVersion = 1;
-          emitXSD = false;
-          emitFMT = false;
-          emitJAVA = false;
-		  emitIOM = false;
+        	outputKind=GenerateOutputKind.ILI1;
           continue;
         }
         else if (args[i].equals("-o2"))
         {
-          emitVersion = 2;
-          emitXSD = false;
-          emitFMT = false;
-          emitJAVA = false;
-		  emitIOM = false;
+        	outputKind=GenerateOutputKind.ILI2;
           continue;
         }
         else if (args[i].equals("-oXSD"))
         {
-          emitVersion = 0;
-          emitXSD = true;
-          emitFMT = false;
-          emitJAVA = false;
-		  emitIOM = false;
+        	outputKind=GenerateOutputKind.XMLSCHEMA;
           continue;
         }
         else if (args[i].equals("-oFMT"))
         {
-          emitVersion = 0;
-          emitXSD = false;
-          emitFMT = true;
-          emitJAVA = false;
-		  emitIOM = false;
+        	outputKind=GenerateOutputKind.ILI1FMTDESC;
           continue;
         }
-        else if (args[i].equals("-oJAVA"))
+        else if (args[i].equals("-oGML"))
         {
-          emitVersion = 0;
-          emitXSD = false;
-          emitFMT = false;
-          emitJAVA = true;
-		  emitIOM = false;
+        	outputKind=GenerateOutputKind.GML32;
           continue;
         }
 		else if (args[i].equals("-oIOM"))
 		{
-		  emitVersion = 0;
-		  emitXSD = false;
-		  emitFMT = false;
-		  emitJAVA = false;
-		  emitIOM = true;
+        	outputKind=GenerateOutputKind.IOM;
 		  continue;
 		}
         else if (args[i].equals("-"))
@@ -277,11 +253,7 @@ public class Main
 			EhiLogger.logError("ili-file scan failed");
 			System.exit(1);
 		}
-		if(emitVersion >0 
-			|| emitXSD
-			|| emitFMT
-			|| emitJAVA
-			|| emitIOM){
+		if(outputKind!=GenerateOutputKind.NOOUTPUT){
 			// skip listing of used ili-files
 		}else{
 			Iterator filei=config.iteratorFileEntry();
@@ -310,47 +282,94 @@ public class Main
 			System.exit(1);
 		}
 
-      switch (emitVersion)
-      {
-      case 1:
-			numErrorsWhileGenerating = ch.interlis.ili2c.generator.Interlis1Generator.generate(
-					  new java.io.PrintWriter(System.out), td);
-        break;
-
-      case 2:
-			ch.interlis.ili2c.generator.Interlis2Generator gen=new ch.interlis.ili2c.generator.Interlis2Generator();
-			numErrorsWhileGenerating = gen.generate(
-			  new java.io.PrintWriter(System.out), td, emitPredefined);
-        break;
-
-      default:
-	  	java.io.PrintWriter out=new java.io.PrintWriter(System.out);
-		if (emitXSD) {
-			if(td.getLastModel().getIliVersion().equals("2.2")){
-				numErrorsWhileGenerating =
-					ch.interlis.ili2c.generator.XSD22Generator.generate(
-						out,
-						td);
-			}else{
-				numErrorsWhileGenerating =
-					ch.interlis.ili2c.generator.XSDGenerator.generate(
-						out,
-						td);
+		if(outputKind==GenerateOutputKind.GML32){
+			if(outfile==null){
+				EhiLogger.logError("missing output folder specification (--out folder)");
+				System.exit(1);
 			}
-		} else if (emitFMT) {
-			numErrorsWhileGenerating =
-				ch.interlis.ili2c.generator.Interlis1Generator.generateFmt(
-					out,
-					td);
-		} else if (emitIOM) {
-			numErrorsWhileGenerating =
-				ch.interlis.ili2c.generator.iom.IomGenerator.generate(
-					out,
-					td);
+			java.io.File outdir=new java.io.File(outfile);
+			if(outdir.exists()){
+				if(!outdir.isDirectory()){
+					EhiLogger.logError(outdir+" is not a folder");
+					System.exit(1);
+				}
+			}else{
+				if(!outdir.mkdirs()){
+					EhiLogger.logError("failed to create output folder "+outdir);
+					System.exit(1);
+				}
+			}
+			ch.interlis.ili2c.generator.Gml32Generator.generate(td, outfile);
+		}else if(outputKind==GenerateOutputKind.NOOUTPUT){
+			// do nothing
+		}else{
+			// ASSERT: output to a file
+	        BufferedWriter out=null;
+	        if(outfile==null){
+	              out=new BufferedWriter(new OutputStreamWriter(System.out));
+	        }else{
+              try{
+                out = new BufferedWriter(new FileWriter(outfile));
+              }catch(IOException ex){
+                EhiLogger.logError(ex);
+    			System.exit(1);
+              }
+	        }
+	        try{
+			      switch (outputKind)
+			      {
+			      case GenerateOutputKind.ILI1:
+						numErrorsWhileGenerating = ch.interlis.ili2c.generator.Interlis1Generator.generate(
+								  out, td);
+			        break;
+
+			      case GenerateOutputKind.ILI2:
+						ch.interlis.ili2c.generator.Interlis2Generator gen=new ch.interlis.ili2c.generator.Interlis2Generator();
+						numErrorsWhileGenerating = gen.generate(
+						  out, td, emitPredefined);
+			        break;
+
+			      case GenerateOutputKind.XMLSCHEMA:
+			      {
+			  			if(td.getLastModel().getIliVersion().equals("2.2")){
+			  				numErrorsWhileGenerating =
+			  					ch.interlis.ili2c.generator.XSD22Generator.generate(
+			  						out,
+			  						td);
+			  			}else{
+			  				numErrorsWhileGenerating =
+			  					ch.interlis.ili2c.generator.XSDGenerator.generate(
+			  						out,
+			  						td);
+			  			}
+			      }
+			      break;
+			      case GenerateOutputKind.ILI1FMTDESC:
+			      {
+		    			numErrorsWhileGenerating =
+		    				ch.interlis.ili2c.generator.Interlis1Generator.generateFmt(
+		    					out,
+		    					td);
+			      }
+			      break;
+			      case GenerateOutputKind.IOM:
+			      {
+						numErrorsWhileGenerating =
+							ch.interlis.ili2c.generator.iom.IomGenerator.generate(
+								out,
+								td);
+			      }
+			      break;
+			      default:
+			    	  // do nothing
+			    	  break;
+			      }
+	        	
+	        }finally{
+	        	if(out!=null)out.close();
+	        }
+			
 		}
-		out.close();
-        break;
-      }
     }
     catch(Exception ex)
     {
