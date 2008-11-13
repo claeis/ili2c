@@ -385,51 +385,11 @@ public final class Gml32Generator
 			
 			// not an embedded role and roledef not defined in a lightweight association?
 			if (!obj.embedded && !((AssociationDef)v).isLightweight() && v.getExtending()==null){
-				if(role.isOrdered()){
-					ipw.println("<xsd:element name=\""+ getTransferName(role)+ ">");
-				}else{
-					ipw.println("<xsd:element name=\""+ getTransferName(role)+ "\" type=\"gml:ReferenceType\">");
-				}
-				ipw.indent();
-				ipw.println("<xsd:annotation>");
-					ipw.indent();
-					ipw.println("<xsd:appinfo>");
-						ipw.indent();
-						ipw.println("<gml:targetElement>"+getScopedName(role.getDestination())+"</gml:targetElement>");
-						ipw.unindent();
-					ipw.println("</xsd:appinfo>");
-					ipw.unindent();
-				ipw.println("</xsd:annotation>");
-				if(role.isOrdered()){
-					ipw.println("<xsd:complexType>");
-					ipw.indent();
-					ipw.println("<xsd:sequence/>");
-					ipw.println("<xsd:attributeGroup ref=\"gml:OwnershipAttributeGroup\"/>");
-					ipw.println("<xsd:attributeGroup ref=\"gml:AssociationAttributeGroup\"/>");
-					ipw.println("<xsd:attribute ref=\"ili:ORDER_POS\"/>");					
-					ipw.unindent();
-					ipw.println("</xsd:complexType>");
-				}
-				//ipw.println("<!-- "+PRBLMTAG+" unable to express aggregation kind -->");
-				//ipw.println("<!-- "+PRBLMTAG+" unable to express cardinality -->");
-				ipw.unindent();
-				ipw.println("</xsd:element>");
-			}
-			// a role of an embedded association?
-			if(obj.embedded){
-				AssociationDef roleOwner = (AssociationDef) role.getContainer();
-				if(roleOwner.getDerivedFrom()==null && roleOwner.getExtending()==null){
-					// role is oppend;
-					RoleDef oppend=role.getOppEnd();
-					Cardinality card = role.getCardinality();
-					String minOccurs = "";
-					if (card.getMinimum() == 0) {
-						minOccurs = " minOccurs=\"0\"";
-					}
-					if(oppend.isOrdered()){
-						ipw.println("<xsd:element name=\""+ getTransferName(role)+"\""+ minOccurs+">");
+				if(role.getExtending()==null){
+					if(role.isOrdered()){
+						ipw.println("<xsd:element name=\""+ getTransferName(role)+ ">");
 					}else{
-						ipw.println("<xsd:element name=\""+ getTransferName(role)+ "\" type=\"gml:ReferenceType\""+minOccurs+">");
+						ipw.println("<xsd:element name=\""+ getTransferName(role)+ "\" type=\"gml:ReferenceType\">");
 					}
 					ipw.indent();
 					ipw.println("<xsd:annotation>");
@@ -441,7 +401,7 @@ public final class Gml32Generator
 						ipw.println("</xsd:appinfo>");
 						ipw.unindent();
 					ipw.println("</xsd:annotation>");
-					if(oppend.isOrdered()){
+					if(role.isOrdered()){
 						ipw.println("<xsd:complexType>");
 						ipw.indent();
 						ipw.println("<xsd:sequence/>");
@@ -455,20 +415,64 @@ public final class Gml32Generator
 					//ipw.println("<!-- "+PRBLMTAG+" unable to express cardinality -->");
 					ipw.unindent();
 					ipw.println("</xsd:element>");
-					if(!roleOwner.isFinal() || roleOwner.getAttributes().hasNext()){
-						ipw.println("<xsd:element name=\""+ getTransferName(role)+ ".LINK_DATA\" minOccurs=\"0\">");
+				}
+			}
+			// a role of an embedded association?
+			if(obj.embedded){
+				AssociationDef roleOwner = (AssociationDef) role.getContainer();
+				if(roleOwner.getDerivedFrom()==null){
+					// role is oppend;
+					RoleDef oppend=role.getOppEnd();
+					if(oppend.getExtending()==null && oppend.getDestination()==v){
+						Cardinality card = role.getCardinality();
+						String minOccurs = "";
+						if (card.getMinimum() == 0) {
+							minOccurs = " minOccurs=\"0\"";
+						}
+						if(oppend.isOrdered()){
+							ipw.println("<xsd:element name=\""+ getTransferName(role)+"\""+ minOccurs+">");
+						}else{
+							ipw.println("<xsd:element name=\""+ getTransferName(role)+ "\" type=\"gml:ReferenceType\""+minOccurs+">");
+						}
 						ipw.indent();
-						ipw.println("<xsd:complexType>");
-						ipw.indent();
-						ipw.println("<xsd:sequence>");
-						ipw.indent();
-						ipw.println("<xsd:element ref=\""+ getScopedName(roleOwner)+ "\"/>");
-						ipw.unindent();
-						ipw.println("</xsd:sequence>");
-						ipw.unindent();
-						ipw.println("</xsd:complexType>");
+						ipw.println("<xsd:annotation>");
+							ipw.indent();
+							ipw.println("<xsd:appinfo>");
+								ipw.indent();
+								ipw.println("<gml:targetElement>"+getScopedName(role.getDestination())+"</gml:targetElement>");
+								ipw.unindent();
+							ipw.println("</xsd:appinfo>");
+							ipw.unindent();
+						ipw.println("</xsd:annotation>");
+						if(oppend.isOrdered()){
+							ipw.println("<xsd:complexType>");
+							ipw.indent();
+							ipw.println("<xsd:sequence/>");
+							ipw.println("<xsd:attributeGroup ref=\"gml:OwnershipAttributeGroup\"/>");
+							ipw.println("<xsd:attributeGroup ref=\"gml:AssociationAttributeGroup\"/>");
+							ipw.println("<xsd:attribute ref=\"ili:ORDER_POS\"/>");					
+							ipw.unindent();
+							ipw.println("</xsd:complexType>");
+						}
+						//ipw.println("<!-- "+PRBLMTAG+" unable to express aggregation kind -->");
+						//ipw.println("<!-- "+PRBLMTAG+" unable to express cardinality -->");
 						ipw.unindent();
 						ipw.println("</xsd:element>");
+						if(!roleOwner.isFinal() || roleOwner.getAttributes().hasNext()){
+							ipw.println("<xsd:element name=\""+ getTransferName(role)+ ".LINK_DATA\" minOccurs=\"0\">");
+							ipw.indent();
+							ipw.println("<xsd:complexType>");
+							ipw.indent();
+							ipw.println("<xsd:sequence>");
+							ipw.indent();
+							ipw.println("<xsd:element ref=\""+ getScopedName(roleOwner)+ "\"/>");
+							ipw.unindent();
+							ipw.println("</xsd:sequence>");
+							ipw.unindent();
+							ipw.println("</xsd:complexType>");
+							ipw.unindent();
+							ipw.println("</xsd:element>");
+						}
 					}
 				}
 			}

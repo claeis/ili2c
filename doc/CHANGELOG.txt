@@ -1,3 +1,7 @@
+ili2c 4.0.1 (2008-10-xx)
+----------------------------
+- bug GML: generated extended RoleDef/AttributeDef 
+
 ili2c 4.0.0 (2008-10-31)
 ----------------------------
 - GML: updated to draft ILIGML spec (BETA)
