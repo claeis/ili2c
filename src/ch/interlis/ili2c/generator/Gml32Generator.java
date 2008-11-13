@@ -527,7 +527,8 @@ public final class Gml32Generator
     		base="xsd:token";
     		facets="<xsd:maxLength value=\"255\"/><xsd:pattern value=\"[a-zA-Z][a-zA-Z0-9_]*\"/>";
     	}else if(realDomain==td.INTERLIS.INTERLIS_1_DATE){
-    		base="xsd:date";
+    		base="xsd:token";
+    		facets="<xsd:maxLength value=\"8\"/><xsd:pattern value=\"[0-9]*\"/>";
     	}else if(realDomain==td.INTERLIS.BOOLEAN){
     		base="xsd:boolean";
     	}else if(realDomain==td.INTERLIS.HALIGNMENT){
@@ -635,7 +636,8 @@ public final class Gml32Generator
     		base="xsd:token";
     		facets="<xsd:maxLength value=\"255\"/><xsd:pattern value=\"[a-zA-Z][a-zA-Z0-9_]*\"/>";
     	}else if(realDomain==td.INTERLIS.INTERLIS_1_DATE){
-    		base="xsd:date";
+    		base="xsd:token";
+    		facets="<xsd:maxLength value=\"8\"/><xsd:pattern value=\"[0-9]*\"/>";
     	}else if(realDomain==td.INTERLIS.BOOLEAN){
     		base="xsd:boolean";
     	}else if(realDomain==td.INTERLIS.HALIGNMENT){
@@ -673,7 +675,7 @@ public final class Gml32Generator
     	if(facets==null){
         	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\""+base+"\""+minOccurs+"/>");
     	}else{
-      	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+minOccurs+"/>");
+      	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\""+minOccurs+">");
        	  ipw.indent();
       	  ipw.println("<xsd:simpleType>");
       	  ipw.indent();

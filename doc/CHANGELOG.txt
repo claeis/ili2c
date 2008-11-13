@@ -1,6 +1,8 @@
 ili2c 4.0.1 (2008-10-xx)
 ----------------------------
 - bug GML: generated extended RoleDef/AttributeDef 
+- GML: declare INTERLIS_1_DATE as xsd:token
+- bug GML: missing " in xsd:name if ili-attribute with inline xsd type declaration 
 
 ili2c 4.0.0 (2008-10-31)
 ----------------------------
