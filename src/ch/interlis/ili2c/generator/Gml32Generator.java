@@ -15,6 +15,13 @@ import ch.ehi.basics.io.IndentPrintWriter;
  */
 public final class Gml32Generator
 {
+    public static final String ILIGML_XMLNSBASE="http://www.interlis.ch/INTERLIS2.3/GML32";
+    public static final String BASKETMEMBER="member";
+    public static final String TRANSFER="TRANSFER";
+    public static final String TRANSFERMEMBER="baskets";
+    public static final String ORDER_POS="ORDER_POS";
+    public static final String LINK_DATA="LINK_DATA";
+    
   IndentPrintWriter   ipw;
   TransferDescription td;
   String outdir;
@@ -93,10 +100,32 @@ public final class Gml32Generator
 	  
   }
 
-  HashMap def2name=new HashMap(); // map<Element def,String name>
+  HashMap def2name=null; // map<Element def,String name>
   private void setupNameMapping()
   {
+	  def2name=createDef2NameMapping(td);
+  }
+  /** create mapping from qualified ili name to name.
+   * @return map<String iliQualifiedName,String name>
+   */
+  public static HashMap createName2NameMapping(TransferDescription td)
+  {
+	  HashMap def2name=createDef2NameMapping(td);
+	  HashMap ret=new HashMap();
+	  Iterator defi=def2name.keySet().iterator();
+	  while(defi.hasNext()){
+		  Element def=(Element)defi.next();
+		  ret.put(def.getScopedName(null), def2name.get(def));
+	  }
+	  return ret;
+  }
+  /** create mapping from definition to name.
+   * @return map<Element def,String name>
+   */
+  public static HashMap createDef2NameMapping(TransferDescription td)
+  {
 
+	  HashMap def2name=new HashMap(); // map<Element def,String name>
 		Iterator modeli = td.iterator();
 		while (modeli.hasNext()) {
 			Object modelo = modeli.next();
@@ -134,7 +163,7 @@ public final class Gml32Generator
 					}
 			}
 		}
-
+		return def2name;
   }
   private String getScopedName(Element elt)
   {
@@ -175,19 +204,19 @@ public final class Gml32Generator
 	// start output
 	ipw.println("<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"");
 	ipw.indent();
-	ipw.println("xmlns=\"http://www.interlis.ch/INTERLIS2.3/GML32/"+model.getName()+"\""
-	  +" targetNamespace=\"http://www.interlis.ch/INTERLIS2.3/GML32/"+model.getName()+"\""
+	ipw.println("xmlns=\""+ILIGML_XMLNSBASE+"/"+model.getName()+"\""
+	  +" targetNamespace=\""+ILIGML_XMLNSBASE+"/"+model.getName()+"\""
 	  +" elementFormDefault=\"qualified\" attributeFormDefault=\"unqualified\"");
 		// xmlns declartion of GML
 		ipw.println("xmlns:gml=\"http://www.opengis.net/gml/3.2\"");
 		// xmlns declaration of base ILIGML schema
-		ipw.println("xmlns:INTERLIS=\"http://www.interlis.ch/INTERLIS2.3/GML32/INTERLIS\"");
+		ipw.println("xmlns:INTERLIS=\""+ILIGML_XMLNSBASE+"/INTERLIS\"");
 		ipw.println("xmlns:ili2c=\"http://www.interlis.ch/ili2c\"");
 		// xmlns declartion of imported ili-models
 		Model importedModels[]=model.getImporting();
 		for(int modeli=0;modeli<importedModels.length;modeli++){
 			if(importedModels[modeli]!=td.INTERLIS){
-				ipw.println("xmlns:"+importedModels[modeli].getName()+"=\"http://www.interlis.ch/INTERLIS2.3/GML32/"+importedModels[modeli].getName()+"\"");
+				ipw.println("xmlns:"+importedModels[modeli].getName()+"=\""+ILIGML_XMLNSBASE+"/"+importedModels[modeli].getName()+"\"");
 			}
 		}
 	ipw.println(">");
@@ -222,11 +251,11 @@ public final class Gml32Generator
 	// import of GML schema
 	ipw.println("<xsd:import namespace=\"http://www.opengis.net/gml/3.2\"/>");
 	// import of base ILIGML schema
-	ipw.println("<xsd:import namespace=\"http://www.interlis.ch/INTERLIS2.3/GML32/INTERLIS\"/>");
+	ipw.println("<xsd:import namespace=\""+ILIGML_XMLNSBASE+"/INTERLIS\"/>");
 	// import schemas of imported ili-models
 	for(int modeli=0;modeli<importedModels.length;modeli++){
 		if(importedModels[modeli]!=td.INTERLIS){
-			ipw.println("<xsd:import namespace=\"http://www.interlis.ch/INTERLIS2.3/GML32/"+importedModels[modeli].getName()+"\"/>");
+			ipw.println("<xsd:import namespace=\""+ILIGML_XMLNSBASE+"/"+importedModels[modeli].getName()+"\"/>");
 		}
 	}
 	Iterator topici = model.iterator();
@@ -321,7 +350,7 @@ public final class Gml32Generator
 	ipw.indent ();
 	ipw.println ("<xsd:sequence>");
 	ipw.indent ();
-	ipw.println ("<xsd:element name=\"member\" type=\""+getName(topic)+"MemberType\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
+	ipw.println ("<xsd:element name=\""+BASKETMEMBER+"\" type=\""+getName(topic)+"MemberType\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
 	ipw.unindent ();
 	ipw.println ("</xsd:sequence>");
 	ipw.println ("<xsd:attributeGroup ref=\"gml:AggregationAttributeGroup\"/>");
@@ -406,7 +435,7 @@ public final class Gml32Generator
 						ipw.println("<xsd:sequence/>");
 						ipw.println("<xsd:attributeGroup ref=\"gml:OwnershipAttributeGroup\"/>");
 						ipw.println("<xsd:attributeGroup ref=\"gml:AssociationAttributeGroup\"/>");
-						ipw.println("<xsd:attribute ref=\"INTERLIS:ORDER_POS\"/>");					
+						ipw.println("<xsd:attribute ref=\"INTERLIS:"+ORDER_POS+"\"/>");					
 						ipw.unindent();
 						ipw.println("</xsd:complexType>");
 					}
@@ -449,7 +478,7 @@ public final class Gml32Generator
 							ipw.println("<xsd:sequence/>");
 							ipw.println("<xsd:attributeGroup ref=\"gml:OwnershipAttributeGroup\"/>");
 							ipw.println("<xsd:attributeGroup ref=\"gml:AssociationAttributeGroup\"/>");
-							ipw.println("<xsd:attribute ref=\"INTERLIS:ORDER_POS\"/>");					
+							ipw.println("<xsd:attribute ref=\"INTERLIS:"+ORDER_POS+"\"/>");					
 							ipw.unindent();
 							ipw.println("</xsd:complexType>");
 						}
@@ -458,7 +487,7 @@ public final class Gml32Generator
 						ipw.unindent();
 						ipw.println("</xsd:element>");
 						if(!roleOwner.isFinal() || roleOwner.getAttributes().hasNext()){
-							ipw.println("<xsd:element name=\""+ getTransferName(role)+ ".LINK_DATA\" minOccurs=\"0\">");
+							ipw.println("<xsd:element name=\""+ getTransferName(role)+ "."+LINK_DATA+"\" minOccurs=\"0\">");
 							ipw.indent();
 							ipw.println("<xsd:complexType>");
 							ipw.indent();
@@ -830,8 +859,8 @@ public final class Gml32Generator
 				}
 				ipw.println("<gml:Dictionary gml:id=\"o"+ oid++ +"\">");
 				ipw.indent();
-				ipw.println("<gml:identifier codeSpace=\"http://www.interlis.ch/INTERLIS2.3/GML32/"+modelName+"\">"+enumName+"</gml:identifier>");
-				String codeSpace="http://www.interlis.ch/INTERLIS2.3/GML32/"+modelName+"/"+enumName;
+				ipw.println("<gml:identifier codeSpace=\""+ILIGML_XMLNSBASE+"/"+modelName+"\">"+enumName+"</gml:identifier>");
+				String codeSpace=ILIGML_XMLNSBASE+"/"+modelName+"/"+enumName;
 				
 				java.util.ArrayList ev = new java.util.ArrayList();
 				buildEnumList(ev, "", type.getConsolidatedEnumeration());
