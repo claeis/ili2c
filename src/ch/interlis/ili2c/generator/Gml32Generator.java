@@ -100,8 +100,7 @@ public final class Gml32Generator
 		Iterator modeli = td.iterator();
 		while (modeli.hasNext()) {
 			Object modelo = modeli.next();
-			if ((modelo instanceof Model)
-				&& !(modelo instanceof PredefinedModel)) {
+			if (modelo instanceof Model) {
 					Model model = (Model) modelo;
 					HashMap name2def=new HashMap();
 					Iterator topici = model.iterator();
@@ -182,7 +181,7 @@ public final class Gml32Generator
 		// xmlns declartion of GML
 		ipw.println("xmlns:gml=\"http://www.opengis.net/gml/3.2\"");
 		// xmlns declaration of base ILIGML schema
-		ipw.println("xmlns:ili=\"http://www.interlis.ch/INTERLIS2.3/GML32/INTERLIS\"");
+		ipw.println("xmlns:INTERLIS=\"http://www.interlis.ch/INTERLIS2.3/GML32/INTERLIS\"");
 		ipw.println("xmlns:ili2c=\"http://www.interlis.ch/ili2c\"");
 		// xmlns declartion of imported ili-models
 		Model importedModels[]=model.getImporting();
@@ -407,7 +406,7 @@ public final class Gml32Generator
 						ipw.println("<xsd:sequence/>");
 						ipw.println("<xsd:attributeGroup ref=\"gml:OwnershipAttributeGroup\"/>");
 						ipw.println("<xsd:attributeGroup ref=\"gml:AssociationAttributeGroup\"/>");
-						ipw.println("<xsd:attribute ref=\"ili:ORDER_POS\"/>");					
+						ipw.println("<xsd:attribute ref=\"INTERLIS:ORDER_POS\"/>");					
 						ipw.unindent();
 						ipw.println("</xsd:complexType>");
 					}
@@ -450,7 +449,7 @@ public final class Gml32Generator
 							ipw.println("<xsd:sequence/>");
 							ipw.println("<xsd:attributeGroup ref=\"gml:OwnershipAttributeGroup\"/>");
 							ipw.println("<xsd:attributeGroup ref=\"gml:AssociationAttributeGroup\"/>");
-							ipw.println("<xsd:attribute ref=\"ili:ORDER_POS\"/>");					
+							ipw.println("<xsd:attribute ref=\"INTERLIS:ORDER_POS\"/>");					
 							ipw.unindent();
 							ipw.println("</xsd:complexType>");
 						}
@@ -532,9 +531,9 @@ public final class Gml32Generator
     	}else if(realDomain==td.INTERLIS.BOOLEAN){
     		base="xsd:boolean";
     	}else if(realDomain==td.INTERLIS.HALIGNMENT){
-    		base="ili:HALIGNMENT";
+    		base="INTERLIS:HALIGNMENT";
     	}else if(realDomain==td.INTERLIS.VALIGNMENT){
-    		base="ili:VALIGNMENT";
+    		base="INTERLIS:VALIGNMENT";
         }else{
         	throw new IllegalArgumentException(realDomain.getScopedName(null)+": type "+type.getClass()+" not yet supported");
         }
@@ -641,22 +640,22 @@ public final class Gml32Generator
     	}else if(realDomain==td.INTERLIS.BOOLEAN){
     		base="xsd:boolean";
     	}else if(realDomain==td.INTERLIS.HALIGNMENT){
-    		base="ili:HALIGNMENT";
+    		base="INTERLIS:HALIGNMENT";
     	}else if(realDomain==td.INTERLIS.VALIGNMENT){
-    		base="ili:VALIGNMENT";
+    		base="INTERLIS:VALIGNMENT";
     	}else if(realDomain==td.INTERLIS.ANYOID){
     		base="xsd:token";
     	}else if(realDomain==td.INTERLIS.I32OID){
-    		base="ili:I32OID";
+    		base="INTERLIS:I32OID";
     	}else if(realDomain==td.INTERLIS.STANDARDOID){
-    		base="ili:STANDARDOID";
+    		base="INTERLIS:STANDARDOID";
     	}else if(realDomain==td.INTERLIS.UUIDOID){
-    		base="ili:UUIDOID";
+    		base="INTERLIS:UUIDOID";
     	//}else if(realDomain==td.INTERLIS.LineCoord){
         	/*
         	LineCoord (ABSTRACT) = COORD NUMERIC, NUMERIC;
         	*/
-    	//	base="ili:VALIGNMENT";
+    	//	base="INTERLIS:VALIGNMENT";
     	}else if(realDomain==td.INTERLIS.GregorianYear){
     		base="xsd:gYear";
     	}else if(realDomain==td.INTERLIS.XmlTime){
