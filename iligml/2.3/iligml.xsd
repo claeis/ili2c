@@ -7,6 +7,9 @@
     attributeFormDefault="unqualified"
     xmlns:gml="http://www.opengis.net/gml/3.2"
   >
+  <!-- DRAFT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+  <!-- DRAFT !!! may change without xmlns change !!! -->
+  <!-- DRAFT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
   <xsd:annotation>
     <xsd:appinfo source="http://www.interlis.ch/ili2c">
       <ili2c:model>INTERLIS</ili2c:model>
@@ -82,5 +85,301 @@
     </xsd:extension>
   </xsd:complexContent>
 </xsd:complexType>
+
+<xsd:element name="METAOBJECT" type="METAOBJECTType" substitutionGroup="gml:AbstractFeature"/>
+<xsd:complexType  name="METAOBJECTType">
+  <xsd:complexContent>
+    <xsd:extension base="gml:AbstractFeatureType">
+      <xsd:sequence>
+        <xsd:element name="Name">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+              <xsd:maxLength value="255"/><xsd:pattern value="[a-zA-Z][a-zA-Z0-9_]*"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="METAOBJECT_TRANSLATION" type="METAOBJECT_TRANSLATIONType" substitutionGroup="gml:AbstractFeature"/>
+<xsd:complexType  name="METAOBJECT_TRANSLATIONType">
+  <xsd:complexContent>
+    <xsd:extension base="gml:AbstractFeatureType">
+      <xsd:sequence>
+        <xsd:element name="Name">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+              <xsd:maxLength value="255"/><xsd:pattern value="[a-zA-Z][a-zA-Z0-9_]*"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="NameInBaseLanguage">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:token">
+              <xsd:maxLength value="255"/><xsd:pattern value="[a-zA-Z][a-zA-Z0-9_]*"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="AXIS" type="AXISType" substitutionGroup="gml:AbstractFeature"/>
+<xsd:complexType  name="AXISType">
+  <xsd:complexContent>
+    <xsd:extension base="gml:AbstractFeatureType">
+      <xsd:sequence>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="REFSYSTEM" type="REFSYSTEMType" substitutionGroup="METAOBJECT"/>
+<xsd:complexType  name="REFSYSTEMType">
+  <xsd:complexContent>
+    <xsd:extension base="METAOBJECTType">
+      <xsd:sequence>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="COORDSYSTEM" type="COORDSYSTEMType" substitutionGroup="REFSYSTEM"/>
+<xsd:complexType  name="COORDSYSTEMType">
+  <xsd:complexContent>
+    <xsd:extension base="REFSYSTEMType">
+      <xsd:sequence>
+        <xsd:element name="Axis" maxOccurs="3">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element ref="AXIS"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="SCALSYSTEM" type="SCALSYSTEMType" substitutionGroup="REFSYSTEM"/>
+<xsd:complexType  name="SCALSYSTEMType">
+  <xsd:complexContent>
+    <xsd:extension base="REFSYSTEMType">
+      <xsd:sequence>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="SIGN" type="SIGNType" substitutionGroup="METAOBJECT"/>
+<xsd:complexType  name="SIGNType">
+  <xsd:complexContent>
+    <xsd:extension base="METAOBJECTType">
+      <xsd:sequence>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="CALENDAR" type="CALENDARType" substitutionGroup="SCALSYSTEM"/>
+<xsd:complexType  name="CALENDARType">
+  <xsd:complexContent>
+    <xsd:extension base="SCALSYSTEMType">
+      <xsd:sequence>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="TIMEOFDAYSYS" type="TIMEOFDAYSYSType" substitutionGroup="SCALSYSTEM"/>
+<xsd:complexType  name="TIMEOFDAYSYSType">
+  <xsd:complexContent>
+    <xsd:extension base="SCALSYSTEMType">
+      <xsd:sequence>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:complexType name="TIMESYSTEMSMemberType">
+  <xsd:complexContent>
+    <xsd:extension base="gml:AbstractFeatureMemberType">
+      <xsd:sequence>
+        <xsd:choice>
+          <xsd:element ref="CALENDAR"/>
+          <xsd:element ref="TIMEOFDAYSYS"/>
+        </xsd:choice>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="TIMESYSTEMS" type="TIMESYSTEMSType" substitutionGroup="gml:AbstractFeature"/>
+<xsd:complexType name="TIMESYSTEMSType">
+  <xsd:complexContent>
+    <xsd:extension base="gml:AbstractFeatureType">
+      <xsd:sequence>
+        <xsd:element name="member" type="TIMESYSTEMSMemberType" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+      <xsd:attributeGroup ref="gml:AggregationAttributeGroup"/>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="TimeOfDay" type="TimeOfDayType" substitutionGroup="gml:AbstractFeature"/>
+<xsd:complexType  name="TimeOfDayType">
+  <xsd:complexContent>
+    <xsd:extension base="gml:AbstractFeatureType">
+      <xsd:sequence>
+        <xsd:element name="Hours" minOccurs="0">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:integer">
+              <xsd:minInclusive value="0"/>
+              <xsd:maxInclusive value="23"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="Minutes" minOccurs="0">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:integer">
+              <xsd:minInclusive value="0"/>
+              <xsd:maxInclusive value="59"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="Seconds" minOccurs="0">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:decimal">
+              <xsd:minInclusive value="0.0"/>
+              <xsd:maxInclusive value="59.999"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="UTC" type="UTCType" substitutionGroup="TimeOfDay"/>
+<xsd:complexType  name="UTCType">
+  <xsd:complexContent>
+    <xsd:extension base="TimeOfDayType">
+      <xsd:sequence>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="GregorianDate" type="GregorianDateType" substitutionGroup="gml:AbstractFeature"/>
+<xsd:complexType  name="GregorianDateType">
+  <xsd:complexContent>
+    <xsd:extension base="gml:AbstractFeatureType">
+      <xsd:sequence>
+        <xsd:element name="Year" type="xsd:gYear" minOccurs="0"/>
+        <xsd:element name="Month" minOccurs="0">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:integer">
+              <xsd:minInclusive value="1"/>
+              <xsd:maxInclusive value="12"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="Day" minOccurs="0">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:integer">
+              <xsd:minInclusive value="1"/>
+              <xsd:maxInclusive value="31"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="GregorianDateTime" type="GregorianDateTimeType" substitutionGroup="GregorianDate"/>
+<xsd:complexType  name="GregorianDateTimeType">
+  <xsd:complexContent>
+    <xsd:extension base="GregorianDateType">
+      <xsd:sequence>
+        <xsd:element name="Hours" minOccurs="0">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:integer">
+              <xsd:minInclusive value="0"/>
+              <xsd:maxInclusive value="23"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="Minutes" minOccurs="0">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:integer">
+              <xsd:minInclusive value="0"/>
+              <xsd:maxInclusive value="59"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="Seconds" minOccurs="0">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:decimal">
+              <xsd:minInclusive value="0.0"/>
+              <xsd:maxInclusive value="59.999"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="LineSegment" type="LineSegmentType" substitutionGroup="gml:AbstractFeature"/>
+<xsd:complexType  name="LineSegmentType">
+  <xsd:complexContent>
+    <xsd:extension base="gml:AbstractFeatureType">
+      <xsd:sequence>
+        <xsd:element name="SegmentEndPoint" type="gml:PointPropertyType">
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="SurfaceEdge" type="SurfaceEdgeType" substitutionGroup="gml:AbstractFeature"/>
+<xsd:complexType  name="SurfaceEdgeType">
+  <xsd:complexContent>
+    <xsd:extension base="gml:AbstractFeatureType">
+      <xsd:sequence>
+        <xsd:element name="Geometry" minOccurs="0" type="gml:CurvePropertyType"/>
+        <xsd:element name="LineAttrs">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element ref="gml:AbstractFeature"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="SurfaceBoundary" type="SurfaceBoundaryType" substitutionGroup="gml:AbstractFeature"/>
+<xsd:complexType  name="SurfaceBoundaryType">
+  <xsd:complexContent>
+    <xsd:extension base="gml:AbstractFeatureType">
+      <xsd:sequence>
+        <xsd:element name="Lines" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element ref="SurfaceEdge"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="LineGeometry" type="LineGeometryType" substitutionGroup="gml:AbstractFeature"/>
+<xsd:complexType  name="LineGeometryType">
+  <xsd:complexContent>
+    <xsd:extension base="gml:AbstractFeatureType">
+      <xsd:sequence>
+        <xsd:element name="Segments" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element ref="LineSegment"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+
+
 </xsd:schema>
 
