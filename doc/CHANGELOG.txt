@@ -1,4 +1,4 @@
-ili2c 4.0.1 (2008-10-xx)
+ili2c 4.0.1 (2008-11-19)
 ----------------------------
 - bug GML: generated extended RoleDef/AttributeDef 
 - GML: declare INTERLIS_1_DATE as xsd:token
