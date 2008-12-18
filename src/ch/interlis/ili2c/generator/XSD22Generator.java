@@ -1046,9 +1046,6 @@ public final class XSD22Generator
 		Object mObj = modeli.next ();
 		if(mObj instanceof Model){
 		  Model model=(Model)mObj;
-		  if(model instanceof TypeModel){
-			  continue;
-		  }
 		  Iterator topici=model.iterator();
 		  while(topici.hasNext()){
 			Object tObj=topici.next();
