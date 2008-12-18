@@ -1,3 +1,8 @@
+ili2c 4.0.2 (2008-12-xx)
+----------------------------
+- bug GML: Exception if ili22:StructUnitType
+
+
 ili2c 4.0.1 (2008-11-19)
 ----------------------------
 - bug GML: generated extended RoleDef/AttributeDef 

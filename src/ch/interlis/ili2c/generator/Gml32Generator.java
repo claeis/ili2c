@@ -1096,6 +1096,14 @@ public final class Gml32Generator
 		  ipw.println("<xsd:restriction base=\""+base+"\"/>");
 		  ipw.unindent ();
 		ipw.println ("</xsd:simpleType>");
+	}else if(type instanceof StructuredUnitType){ // available only in ili2.2 models
+		ipw.println ("<xsd:simpleType"+typeName+">");
+		  ipw.indent ();
+			String base;
+			base="xsd:token";
+		  ipw.println("<xsd:restriction base=\""+base+"\"/>");
+		  ipw.unindent ();
+		ipw.println ("</xsd:simpleType>");
     }else{
     	throw new IllegalArgumentException("type "+type.getClass()+" not yet supported");
 	}
