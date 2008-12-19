@@ -274,6 +274,9 @@ options
       if ((t == null) && (nams.length == 1))
         t = (Table) model.getImportedElement (Table.class, tableName);
         if(t!=null){
+		if(t.isIdentifiable()){
+			reportError(formatMessage("err_structRef_StructRequired",t.getScopedName(null)),lin);
+		}
           return t;
         }
                  return resolveDomainRef(scope,nams,lin);
@@ -1303,8 +1306,15 @@ protected structureRef[Container scope]
   returns [Table t]
   	{
 	t=null;
+	int refto=0;
 	}
-	:	t=classRef[scope]
+	:	{refto=LT(1).getLine();}
+		t=classRef[scope]
+		{
+		if(t.isIdentifiable()){
+			reportError(formatMessage("err_structRef_StructRequired",t.getScopedName(null)),refto);
+		}
+		}
 	;
 
 protected attributeDef[Viewable container]
