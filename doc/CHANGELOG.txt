@@ -1,8 +1,7 @@
-ili2c 4.0.2 (2008-12-xx)
+ili2c 4.0.2 (2008-12-19)
 ----------------------------
 - bug GML: Exception if ili22:StructUnitType
 - bug: failed to detect (illegal) use of a class-name in a StructureRef
-
 
 ili2c 4.0.1 (2008-11-19)
 ----------------------------
