@@ -35,6 +35,24 @@
     	<arg value="${src}/ch/interlis/ili2c/parser/interlis22.g"/>
     </java>
   </target>
+  
+  <target depends="init" name="genmetavalue">
+    <mkdir dir="${build}/src/ch/interlis/ili2c/parser"/>
+    <java classname="antlr.Tool" classpath="${java.class.path}" fork="yes">
+    	<arg value="-o"/>
+        <arg value="${build}/src/ch/interlis/ili2c/parser"/>
+    	<arg value="${src}/ch/interlis/ili2c/parser/metavalue.g"/>
+    </java>
+  </target>
+  
+  <target depends="init" name="genparser1">
+    <mkdir dir="${build}/src/ch/interlis/ili2c/parser"/>
+    <java classname="antlr.Tool" classpath="${java.class.path}" fork="yes">
+    	<arg value="-o"/>
+        <arg value="${build}/src/ch/interlis/ili2c/parser"/>
+    	<arg value="${src}/ch/interlis/ili2c/parser/interlis1.g"/>
+    </java>
+  </target>
 
   <target depends="init" name="genmodelscan">
     <mkdir dir="${build}/src/ch/interlis/ili2c/parser"/>
@@ -56,7 +74,7 @@
     </java>
   </target>
 
-  <target depends="init,genparser,genparser22,genmodelscan,ili1undef" name="compile">
+  <target depends="init,genparser,genparser1,genparser22,genmetavalue,genmodelscan,ili1undef" name="compile">
     <!-- Compile the java code from ${src} into ${build}/classes -->
     <mkdir dir="${build}/classes"/>
     <javac destdir="${build}/classes" includes="**/*.java" debug="on"  source="1.4" target="1.4">

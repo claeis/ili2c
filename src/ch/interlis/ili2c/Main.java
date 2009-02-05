@@ -4,6 +4,7 @@ import java.io.*;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.metamodel.ErrorListener;
 import ch.interlis.ili2c.parser.Ili2Parser;
+import ch.interlis.ili2c.parser.Ili1Parser;
 import ch.interlis.ili2c.parser.Ili22Parser;
 import java.util.List;
 import java.util.LinkedList;
@@ -490,6 +491,10 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
 				EhiLogger.getInstance().addListener(tracker);
 				if(version==2.2){
 					if (!Ili22Parser.parseIliFile (desc,streamName, stream, checkMetaObjs)){
+					   return null;
+					}
+				}else if(version==1.0){
+					if (!Ili1Parser.parseIliFile (desc,streamName, stream)){
 					   return null;
 					}
 				}else{

@@ -48,6 +48,7 @@ public abstract class Element implements BeanContextChild,ElementAlias {
                                  java.util.Locale.getDefault());
 
 	private String documentation=null;
+	private ch.ehi.basics.settings.Settings metaValues=null;
 	/** true, if definition somewhat incomplete due to (compile) errors.
 	 */
 	private boolean dirty=false;
@@ -799,6 +800,16 @@ public void setDocumentation(String string) {
 
 	public void setSourceLine(int sourceLine) {
 		this.sourceLine = sourceLine;
+	}
+
+
+	public ch.ehi.basics.settings.Settings getMetaValues() {
+		return metaValues;
+	}
+
+
+	public void setMetaValues(ch.ehi.basics.settings.Settings metaValues) {
+		this.metaValues = metaValues;
 	}
 
 }

@@ -1,3 +1,11 @@
+Known Issues:
+- "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
+
+ili2c 4.1.0 (2009-02-xx)
+----------------------------
+- bug ili1: split ili1 and ili2 parser/lexer so that ili1 can parse NULL as a valid ili1-name
+- added support to define meta-attributes in a ili file
+
 ili2c 4.0.2 (2008-12-19)
 ----------------------------
 - bug GML: Exception if ili22:StructUnitType

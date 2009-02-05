@@ -28,6 +28,7 @@ public class Enumeration
     protected String name = "";
     protected Enumeration subEnum = null;
 	private String documentation=null;
+	private ch.ehi.basics.settings.Settings metaValues=null;
 	private int sourceLine=0;
     /** copy constructor
      */
@@ -39,6 +40,7 @@ public class Enumeration
         subEnum=new Enumeration(src.subEnum);
       }
       sourceLine=src.sourceLine;
+      metaValues=new ch.ehi.basics.settings.Settings(src.metaValues);
     }
 
     public Element (String name)
@@ -89,6 +91,12 @@ public class Enumeration
 
 	public void setSourceLine(int sourceLine) {
 		this.sourceLine = sourceLine;
+	}
+	public ch.ehi.basics.settings.Settings getMetaValues() {
+		return metaValues;
+	}
+	public void setMetaValues(ch.ehi.basics.settings.Settings metaValues) {
+		this.metaValues = metaValues;
 	}
   }
 
