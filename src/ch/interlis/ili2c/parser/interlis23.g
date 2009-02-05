@@ -2798,7 +2798,7 @@ protected attributePathType  [Container scope, Type extending,ArrayList formalAr
 			try{
 			  attrType=attrRestr.getType();
 			}catch(Exception ex){
-				reportError(ex,of.getLine());
+				reportError(ex.getLocalizedMessage(),of.getLine());
 				attrRestr=null;
 			}
 			if(attrType!=null && !(attrType instanceof ClassType)){
