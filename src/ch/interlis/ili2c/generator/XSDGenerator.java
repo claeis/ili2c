@@ -154,7 +154,44 @@ public final class XSDGenerator
                     ipw.println ("</xsd:restriction>");
 		    ipw.unindent ();
 	    ipw.println ("</xsd:simpleType>");
+	    
+	    ipw.println ("<xsd:simpleType name=\"OperationType\">");
+	    ipw.indent ();
+                ipw.println ("<xsd:restriction base=\"xsd:string\">");
+                ipw.indent ();
+                  ipw.println ("<xsd:enumeration value=\"INSERT\"/>");
+                  ipw.println ("<xsd:enumeration value=\"UPDATE\"/>");
+                  ipw.println ("<xsd:enumeration value=\"DELETE\"/>");
+                ipw.unindent ();
+                ipw.println ("</xsd:restriction>");
+	    ipw.unindent ();
+	    ipw.println ("</xsd:simpleType>");
 
+	    ipw.println ("<xsd:simpleType name=\"TransferKindType\">");
+	    ipw.indent ();
+                ipw.println ("<xsd:restriction base=\"xsd:string\">");
+                ipw.indent ();
+                  ipw.println ("<xsd:enumeration value=\"FULL\"/>");
+                  ipw.println ("<xsd:enumeration value=\"INITIAL\"/>");
+                  ipw.println ("<xsd:enumeration value=\"UPDATE\"/>");
+                ipw.unindent ();
+                ipw.println ("</xsd:restriction>");
+	    ipw.unindent ();
+	    ipw.println ("</xsd:simpleType>");
+	    
+	    ipw.println ("<xsd:simpleType name=\"ConsistencyType\">");
+	    ipw.indent ();
+                ipw.println ("<xsd:restriction base=\"xsd:string\">");
+                ipw.indent ();
+                  ipw.println ("<xsd:enumeration value=\"COMPLETE\"/>");
+                  ipw.println ("<xsd:enumeration value=\"INCOMPLETE\"/>");
+                  ipw.println ("<xsd:enumeration value=\"INCONSISTENT\"/>");
+                  ipw.println ("<xsd:enumeration value=\"ADAPTED\"/>");
+                ipw.unindent ();
+                ipw.println ("</xsd:restriction>");
+	    ipw.unindent ();
+	    ipw.println ("</xsd:simpleType>");
+	    
 	    ipw.println ("<xsd:complexType name=\"Transfer\">");
 		    ipw.indent ();
 		    ipw.println ("<xsd:sequence>");
@@ -403,7 +440,7 @@ public final class XSDGenerator
 
 	    ipw.unindent ();
     ipw.println ("</xsd:schema>");
-
+    ipw.flush();
 
   }
 
@@ -647,10 +684,10 @@ public final class XSDGenerator
 	    ipw.println ("</xsd:sequence>");
 	    ipw.println ("<xsd:attribute name=\"BID\" type=\"IliID\" use=\"required\"/>");
 	    ipw.println ("<xsd:attribute name=\"TOPICS\" type=\"xsd:string\"/>");
-	    ipw.println ("<xsd:attribute name=\"KIND\" type=\"xsd:string\"/>");
+	    ipw.println ("<xsd:attribute name=\"KIND\" type=\"TransferKindType\"/>");
 	    ipw.println ("<xsd:attribute name=\"STARTSTATE\" type=\"xsd:string\"/>");
 	    ipw.println ("<xsd:attribute name=\"ENDSTATE\" type=\"xsd:string\"/>");
-		ipw.println ("<xsd:attribute name=\"CONSISTENCY\" type=\"xsd:string\"/>");
+		ipw.println ("<xsd:attribute name=\"CONSISTENCY\" type=\"ConsistencyType\"/>");
 	    ipw.unindent ();
     ipw.println ("</xsd:complexType>");
 
@@ -743,8 +780,8 @@ public final class XSDGenerator
 		// Objects have an ID and an operation flag to allow incremental update
 		ipw.println ("<xsd:attribute name=\"TID\" type=\"IliID\" use=\"required\"/>");
 		ipw.println ("<xsd:attribute name=\"BID\" type=\"IliID\"/>");
-		ipw.println ("<xsd:attribute name=\"OPERATION\" type=\"xsd:string\"/>");
-		ipw.println ("<xsd:attribute name=\"CONSISTENCY\" type=\"xsd:string\"/>");
+		ipw.println ("<xsd:attribute name=\"OPERATION\" type=\"OperationType\"/>");
+		ipw.println ("<xsd:attribute name=\"CONSISTENCY\" type=\"ConsistencyType\"/>");
 	}
 	ipw.unindent();
 	ipw.println("</xsd:complexType>");
