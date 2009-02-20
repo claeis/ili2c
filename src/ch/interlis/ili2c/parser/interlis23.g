@@ -3032,9 +3032,9 @@ protected lineFormTypeDef[Model model]
 	  String ilidoc=null;
 	  Settings metaValues=null;
 }
-  : { ilidoc=getIliDoc();metaValues=getMetaValues();}
+  : 
   	linform:"LINE" "FORM"
-    (
+    ( { ilidoc=getIliDoc();metaValues=getMetaValues();}
       nam:NAME
       COLON lineStructure:NAME
       SEMI
@@ -3793,9 +3793,10 @@ protected runTimeParameterDef[Container scope]
 	  String ilidoc=null;
 	  Settings metaValues=null;
 	}
-	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
+	: 
 	"PARAMETER"
-        ( n:NAME COLON
+        ( { ilidoc=getIliDoc();metaValues=getMetaValues();}
+	  n:NAME COLON
                 {
 			def=new GraphicParameterDef();
 			def.setSourceLine(n.getLine());
