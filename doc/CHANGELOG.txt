@@ -1,6 +1,11 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.1.1 (2009-02-20)
+----------------------------
+- bug: failed to scan ili1 model (unexpected token "TRANSFER")
+- runtimeParameterDef, lineFormTypeDef: parse metaAttribute after keyword 
+
 ili2c 4.1.0 (2009-02-05)
 ----------------------------
 - bug ili1: split ili1 and ili2 parser/lexer so that ili1 can parse NULL as a valid ili1-name
