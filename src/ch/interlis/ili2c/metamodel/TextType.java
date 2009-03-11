@@ -87,7 +87,7 @@ public class TextType extends BaseType
       return;
     
     if (!(wantToExtend instanceof TextType))
-      throw new IllegalArgumentException (rsrc.getString (
+      throw new Ili2cSemanticException (rsrc.getString (
         "err_textType_ExtOther"));
 
 	TextType   general;
@@ -95,19 +95,19 @@ public class TextType extends BaseType
     if (general.maxLength != -1)
     {
       if (this.maxLength == -1){
-		throw new IllegalArgumentException (formatMessage (
+		throw new Ili2cSemanticException (formatMessage (
 		  "err_textType_longerExtShorter",
 		  this.toString(), general.toString()));
       }
       
       if (this.maxLength > general.maxLength){
-		throw new IllegalArgumentException (formatMessage (
+		throw new Ili2cSemanticException (formatMessage (
 		  "err_textType_longerExtShorter",
 		  this.toString(), general.toString()));
       }
     }
     if(general.normalized!=this.normalized){
-		throw new IllegalArgumentException (formatMessage (
+		throw new Ili2cSemanticException (formatMessage (
 		  "err_textType_kindMismatch",
 		  this.toString(), general.toString()));
     }
