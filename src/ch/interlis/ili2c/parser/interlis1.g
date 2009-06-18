@@ -42,7 +42,21 @@ options
   */
   static public boolean parseIliFile (TransferDescription td
     ,String filename
+    ,java.io.Reader stream
+    )
+  {
+  	return parseIliFile(td,filename,new Ili1Lexer(stream));
+  }
+  static public boolean parseIliFile (TransferDescription td
+    ,String filename
     ,java.io.InputStream stream
+    )
+  {
+  	return parseIliFile(td,filename,new Ili1Lexer(stream));
+  }
+  static public boolean parseIliFile (TransferDescription td
+    ,String filename
+    ,Ili1Lexer lexer
     )
   {
 
@@ -50,7 +64,6 @@ options
 	if ((filename != null) && "".equals (td.getName())){
 		td.setName(filename);
 	}
-      Ili1Lexer lexer = new Ili1Lexer(stream);
       
       //
       // setup token stream splitting to filter out comments

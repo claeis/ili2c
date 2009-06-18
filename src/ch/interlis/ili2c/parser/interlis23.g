@@ -35,7 +35,21 @@ options
   */
   static public boolean parseIliFile (TransferDescription td
     ,String filename
+    ,java.io.Reader stream
+    ,boolean checkMetaObjects)
+  {
+  	return parseIliFile (td,filename,new Ili2Lexer (stream),checkMetaObjects);
+  }
+  static public boolean parseIliFile (TransferDescription td
+    ,String filename
     ,java.io.InputStream stream
+    ,boolean checkMetaObjects)
+  {
+  	return parseIliFile (td,filename,new Ili2Lexer (stream),checkMetaObjects);
+  }
+  static public boolean parseIliFile (TransferDescription td
+    ,String filename
+    ,Ili2Lexer lexer
     ,boolean checkMetaObjects)
   {
 
@@ -43,7 +57,6 @@ options
 	if ((filename != null) && "".equals (td.getName())){
 		td.setName(filename);
 	}
-      Ili2Lexer lexer = new Ili2Lexer(stream);
       
       //
       // setup token stream splitting to filter out comments

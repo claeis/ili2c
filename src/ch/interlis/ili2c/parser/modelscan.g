@@ -19,11 +19,22 @@ options
   private IliFile iliFile=null;
   private IliModel model=null;
   static public void mergeFile(IliFile iliFile1,
+    java.io.Reader stream
+    )
+  {
+  	mergeFile(iliFile1,new IliScanLexer (stream));
+  }
+  static public void mergeFile(IliFile iliFile1,
     java.io.InputStream stream
     )
   {
+  	mergeFile(iliFile1,new IliScanLexer (stream));
+  }
+  static public void mergeFile(IliFile iliFile1,
+    IliScanLexer lexer
+    )
+  {
     try{
-		IliScanLexer lexer = new IliScanLexer (stream);
 		Ili2ModelScan parser = new Ili2ModelScan(lexer);
 		parser.iliFile=iliFile1;
 		  parser.file();
@@ -42,11 +53,18 @@ options
 		EhiLogger.logError(ex);
      }
   }
-  static public double getIliVersion(java.io.InputStream stream
+  static public double getIliVersion(java.io.Reader stream)
+  {
+  	return getIliVersion(new IliScanLexer (stream));
+  }
+  static public double getIliVersion(java.io.InputStream stream)
+  {
+  	return getIliVersion(new IliScanLexer (stream));
+  }
+  static public double getIliVersion(IliScanLexer lexer
     )
   {
   	try{
-		IliScanLexer lexer = new IliScanLexer (stream);
 		Ili2ModelScan parser = new Ili2ModelScan(lexer);
 		double version=parser.version();
 		return version;

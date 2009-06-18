@@ -40,7 +40,21 @@ options
   */
   static public boolean parseIliFile (TransferDescription td
     ,String filename
+    ,java.io.Reader stream
+    ,boolean checkMetaObjects)
+  {
+  	return parseIliFile (td,filename,new Ili22Lexer (stream),checkMetaObjects);
+  }
+  static public boolean parseIliFile (TransferDescription td
+    ,String filename
     ,java.io.InputStream stream
+    ,boolean checkMetaObjects)
+  {
+  	return parseIliFile (td,filename,new Ili22Lexer (stream),checkMetaObjects);
+  }
+  static public boolean parseIliFile (TransferDescription td
+    ,String filename
+    ,Ili22Lexer lexer
     ,boolean checkMetaObjects)
   {
 
@@ -48,7 +62,6 @@ options
 	if ((filename != null) && "".equals (td.getName())){
 		td.setName(filename);
 	}
-      Ili22Lexer lexer = new Ili22Lexer (stream);
 
       Ili22Parser parser = new Ili22Parser (lexer);
       parser.checkMetaObjs=checkMetaObjects;
