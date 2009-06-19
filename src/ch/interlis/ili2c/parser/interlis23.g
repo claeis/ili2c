@@ -36,21 +36,27 @@ options
   static public boolean parseIliFile (TransferDescription td
     ,String filename
     ,java.io.Reader stream
-    ,boolean checkMetaObjects)
+    ,boolean checkMetaObjects
+    ,int line0Offest
+    )
   {
-  	return parseIliFile (td,filename,new Ili2Lexer (stream),checkMetaObjects);
+  	return parseIliFile (td,filename,new Ili2Lexer (stream),checkMetaObjects,line0Offest);
   }
   static public boolean parseIliFile (TransferDescription td
     ,String filename
     ,java.io.InputStream stream
-    ,boolean checkMetaObjects)
+    ,boolean checkMetaObjects
+    ,int line0Offest
+    )
   {
-  	return parseIliFile (td,filename,new Ili2Lexer (stream),checkMetaObjects);
+  	return parseIliFile (td,filename,new Ili2Lexer (stream),checkMetaObjects,line0Offest);
   }
   static public boolean parseIliFile (TransferDescription td
     ,String filename
     ,Ili2Lexer lexer
-    ,boolean checkMetaObjects)
+    ,boolean checkMetaObjects
+    ,int line0Offest
+    )
   {
 
     try {

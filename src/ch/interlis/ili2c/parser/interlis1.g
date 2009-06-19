@@ -43,20 +43,23 @@ options
   static public boolean parseIliFile (TransferDescription td
     ,String filename
     ,java.io.Reader stream
+    ,int line0Offest
     )
   {
-  	return parseIliFile(td,filename,new Ili1Lexer(stream));
+  	return parseIliFile(td,filename,new Ili1Lexer(stream),line0Offest);
   }
   static public boolean parseIliFile (TransferDescription td
     ,String filename
     ,java.io.InputStream stream
+    ,int line0Offest
     )
   {
-  	return parseIliFile(td,filename,new Ili1Lexer(stream));
+  	return parseIliFile(td,filename,new Ili1Lexer(stream),line0Offest);
   }
   static public boolean parseIliFile (TransferDescription td
     ,String filename
     ,Ili1Lexer lexer
+    ,int line0Offest
     )
   {
 

@@ -490,15 +490,15 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
 				tracker=new ch.ehi.basics.logging.ErrorTracker();
 				EhiLogger.getInstance().addListener(tracker);
 				if(version==2.2){
-					if (!Ili22Parser.parseIliFile (desc,streamName, stream, checkMetaObjs)){
+					if (!Ili22Parser.parseIliFile (desc,streamName, stream, checkMetaObjs,0)){
 					   return null;
 					}
 				}else if(version==1.0){
-					if (!Ili1Parser.parseIliFile (desc,streamName, stream)){
+					if (!Ili1Parser.parseIliFile (desc,streamName, stream,0)){
 					   return null;
 					}
 				}else{
-					if (!Ili2Parser.parseIliFile (desc,streamName, stream, checkMetaObjs)){
+					if (!Ili2Parser.parseIliFile (desc,streamName, stream, checkMetaObjs,0)){
 					   return null;
 					}
 				}
