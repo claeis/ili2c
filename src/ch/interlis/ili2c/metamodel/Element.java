@@ -804,12 +804,23 @@ public void setDocumentation(String string) {
 
 
 	public ch.ehi.basics.settings.Settings getMetaValues() {
+		if(metaValues==null){
+			metaValues=new ch.ehi.basics.settings.Settings();
+		}
 		return metaValues;
 	}
 
 
 	public void setMetaValues(ch.ehi.basics.settings.Settings metaValues) {
 		this.metaValues = metaValues;
+	}
+	public String getMetaValue(String name)
+	{
+		return getMetaValues().getValue(name);
+	}
+	public void setMetaValue(String name,String value)
+	{
+		getMetaValues().setValue(name,value);
 	}
 
 }
