@@ -35,7 +35,13 @@ public final class XSDGenerator
   TransferDescription td;
   int                 numErrors = 0;
 
-
+  private boolean addAllInterlisTypes=false;
+  private boolean addAliasTable=false;
+	boolean supportSourceBasketId=false;
+  	boolean supportIncrementalTransfer=false;
+  	boolean supportInconsistentTransfer=false;
+    boolean supportPolymorphicRead=false;
+    public final String ILI2C_TEXTMINIMALCHARSET="ili2c.textMinimalCharset";
   static ResourceBundle rsrc = ResourceBundle.getBundle(
     Interlis1Generator.class.getName(),
     Locale.getDefault());
@@ -102,7 +108,6 @@ public final class XSDGenerator
 
     throw new IllegalArgumentException ();
   }
-
   private void printXSD (TransferDescription td)
   {
     ipw.println("<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
@@ -111,6 +116,7 @@ public final class XSDGenerator
       +" elementFormDefault=\"qualified\" attributeFormDefault=\"unqualified\""
       +">");
 	    ipw.indent ();
+	    
 		ipw.println ("<xsd:annotation>");
 		ipw.indent ();
 		ipw.print("<xsd:appinfo source=\"http://www.interlis.ch/ili2c/ili2cversion\">");
@@ -134,6 +140,12 @@ public final class XSDGenerator
 						ipw.println("<ili2c:modelVersionExplanation>"+model.getModelVersionExpl()+"</ili2c:modelVersionExplanation>");
 					}
 					ipw.println("<ili2c:modelAt>"+model.getIssuer()+"</ili2c:modelAt>");
+					String textMinimalCharset=model.getMetaValue(ILI2C_TEXTMINIMALCHARSET);
+					if(textMinimalCharset!=null){
+						ipw.println("<ili2c:textMinimalCharset>"+textMinimalCharset+"</ili2c:textMinimalCharset>");
+					}else{
+						ipw.println("<ili2c:textMinimalCharset>ili23AnnexB</ili2c:textMinimalCharset>");
+					}
 					ipw.unindent();
 					ipw.println ("</xsd:appinfo>");
 				}
@@ -142,7 +154,6 @@ public final class XSDGenerator
 		ipw.unindent ();
 		ipw.println ("</xsd:annotation>");
 
-	    ipw.indent ();
 	    ipw.println ("<xsd:element name=\"TRANSFER\" type=\"Transfer\"/>");
 
 	    ipw.println ("<xsd:simpleType name=\"IliID\">");
@@ -155,42 +166,46 @@ public final class XSDGenerator
 		    ipw.unindent ();
 	    ipw.println ("</xsd:simpleType>");
 	    
-	    ipw.println ("<xsd:simpleType name=\"OperationType\">");
-	    ipw.indent ();
-                ipw.println ("<xsd:restriction base=\"xsd:string\">");
-                ipw.indent ();
-                  ipw.println ("<xsd:enumeration value=\"INSERT\"/>");
-                  ipw.println ("<xsd:enumeration value=\"UPDATE\"/>");
-                  ipw.println ("<xsd:enumeration value=\"DELETE\"/>");
-                ipw.unindent ();
-                ipw.println ("</xsd:restriction>");
-	    ipw.unindent ();
-	    ipw.println ("</xsd:simpleType>");
+	  	if(addAllInterlisTypes || supportIncrementalTransfer){
+		    ipw.println ("<xsd:simpleType name=\"OperationType\">");
+		    ipw.indent ();
+	                ipw.println ("<xsd:restriction base=\"xsd:string\">");
+	                ipw.indent ();
+	                  ipw.println ("<xsd:enumeration value=\"INSERT\"/>");
+	                  ipw.println ("<xsd:enumeration value=\"UPDATE\"/>");
+	                  ipw.println ("<xsd:enumeration value=\"DELETE\"/>");
+	                ipw.unindent ();
+	                ipw.println ("</xsd:restriction>");
+		    ipw.unindent ();
+		    ipw.println ("</xsd:simpleType>");
+		    ipw.println ("<xsd:simpleType name=\"TransferKindType\">");
+		    ipw.indent ();
+	                ipw.println ("<xsd:restriction base=\"xsd:string\">");
+	                ipw.indent ();
+	                  ipw.println ("<xsd:enumeration value=\"FULL\"/>");
+	                  ipw.println ("<xsd:enumeration value=\"INITIAL\"/>");
+	                  ipw.println ("<xsd:enumeration value=\"UPDATE\"/>");
+	                ipw.unindent ();
+	                ipw.println ("</xsd:restriction>");
+		    ipw.unindent ();
+		    ipw.println ("</xsd:simpleType>");
+	  	}
+	  	if(addAllInterlisTypes || supportInconsistentTransfer){
+		    ipw.println ("<xsd:simpleType name=\"ConsistencyType\">");
+		    ipw.indent ();
+	                ipw.println ("<xsd:restriction base=\"xsd:string\">");
+	                ipw.indent ();
+	                  ipw.println ("<xsd:enumeration value=\"COMPLETE\"/>");
+	                  ipw.println ("<xsd:enumeration value=\"INCOMPLETE\"/>");
+	                  ipw.println ("<xsd:enumeration value=\"INCONSISTENT\"/>");
+	                  ipw.println ("<xsd:enumeration value=\"ADAPTED\"/>");
+	                ipw.unindent ();
+	                ipw.println ("</xsd:restriction>");
+		    ipw.unindent ();
+		    ipw.println ("</xsd:simpleType>");
+	  	}
 
-	    ipw.println ("<xsd:simpleType name=\"TransferKindType\">");
-	    ipw.indent ();
-                ipw.println ("<xsd:restriction base=\"xsd:string\">");
-                ipw.indent ();
-                  ipw.println ("<xsd:enumeration value=\"FULL\"/>");
-                  ipw.println ("<xsd:enumeration value=\"INITIAL\"/>");
-                  ipw.println ("<xsd:enumeration value=\"UPDATE\"/>");
-                ipw.unindent ();
-                ipw.println ("</xsd:restriction>");
-	    ipw.unindent ();
-	    ipw.println ("</xsd:simpleType>");
 	    
-	    ipw.println ("<xsd:simpleType name=\"ConsistencyType\">");
-	    ipw.indent ();
-                ipw.println ("<xsd:restriction base=\"xsd:string\">");
-                ipw.indent ();
-                  ipw.println ("<xsd:enumeration value=\"COMPLETE\"/>");
-                  ipw.println ("<xsd:enumeration value=\"INCOMPLETE\"/>");
-                  ipw.println ("<xsd:enumeration value=\"INCONSISTENT\"/>");
-                  ipw.println ("<xsd:enumeration value=\"ADAPTED\"/>");
-                ipw.unindent ();
-                ipw.println ("</xsd:restriction>");
-	    ipw.unindent ();
-	    ipw.println ("</xsd:simpleType>");
 	    
 	    ipw.println ("<xsd:complexType name=\"Transfer\">");
 		    ipw.indent ();
@@ -202,23 +217,11 @@ public final class XSDGenerator
 		    ipw.println ("</xsd:sequence>");
 		    ipw.unindent ();
 	    ipw.println ("</xsd:complexType>");
-
+	    
+	    if(addAliasTable){
             generateAliasTable();
+	    }
 
-	    ipw.println ("<xsd:complexType name=\"HeaderSection\">");
-		    ipw.indent ();
-		    ipw.println ("<xsd:sequence>");
-			    ipw.indent ();
-				ipw.println ("<xsd:element name=\"MODELS\" type=\"Models\"/>");
-		    	ipw.println ("<xsd:element name=\"ALIAS\" type=\"Alias\" minOccurs=\"0\"/>");
-				ipw.println ("<xsd:element name=\"OIDSPACES\" type=\"OidSpaces\" minOccurs=\"0\"/>");
-		    	ipw.println ("<xsd:element name=\"COMMENT\" type=\"xsd:string\" minOccurs=\"0\"/>");
-			    ipw.unindent ();
-		    ipw.println ("</xsd:sequence>");
-		    ipw.println ("<xsd:attribute name=\"VERSION\" type=\"xsd:decimal\" use=\"required\" fixed=\"2.3\"/>");
-		    ipw.println ("<xsd:attribute name=\"SENDER\" type=\"xsd:string\" use=\"required\"/>");
-		    ipw.unindent ();
-	    ipw.println ("</xsd:complexType>");
 
 
 		ipw.println ("<xsd:complexType name=\"Models\">");
@@ -239,7 +242,8 @@ public final class XSDGenerator
 			ipw.unindent ();
 		ipw.println ("</xsd:complexType>");
 	
-	    ipw.println ("<xsd:complexType name=\"Alias\">");
+	    if(addAliasTable){
+		    ipw.println ("<xsd:complexType name=\"Alias\">");
 		    ipw.indent ();
 		    ipw.println ("<xsd:sequence>");
 			    ipw.indent ();
@@ -292,53 +296,8 @@ public final class XSDGenerator
 			ipw.println ("<xsd:attribute name=\"ATTR\" type=\"xsd:string\"/>");
 		    ipw.unindent ();
 	    ipw.println ("</xsd:complexType>");
-
-
-	ipw.println ("<xsd:complexType name=\"OidSpaces\">");
-		ipw.indent ();
-		ipw.println ("<xsd:sequence>");
-			ipw.indent ();
-			ipw.println ("<xsd:element name=\"OIDSPACE\" type=\"OidSpace\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
-			ipw.unindent ();
-		ipw.println ("</xsd:sequence>");
-		ipw.unindent ();
-	ipw.println ("</xsd:complexType>");
-		
-	ipw.println ("<xsd:complexType name=\"OidSpace\">");
-		ipw.indent ();
-		ipw.println ("<xsd:attribute name=\"NAME\" type=\"xsd:string\" use=\"required\"/>");
-		ipw.println ("<xsd:attribute name=\"OIDDOMAIN\" type=\"xsd:string\" use=\"required\"/>");
-		ipw.unindent ();
-	ipw.println ("</xsd:complexType>");
-
-		ipw.println ("<xsd:complexType name=\"CoordValue\">");
-		    ipw.indent ();
-		    ipw.println ("<xsd:sequence>");
-			    ipw.indent ();
-  		            ipw.println ("<xsd:element name=\"C1\" type=\"xsd:double\"/>");
-  		            ipw.println ("<xsd:element name=\"C2\" type=\"xsd:double\" minOccurs=\"0\"/>");
-  		            ipw.println ("<xsd:element name=\"C3\" type=\"xsd:double\" minOccurs=\"0\"/>");
-        		    ipw.unindent ();
-		    ipw.println ("</xsd:sequence>");
-		    ipw.unindent ();
-	    ipw.println ("</xsd:complexType>");
-
-
-		ipw.println ("<xsd:complexType name=\"ArcPoint\">");
-		    ipw.indent ();
-		    ipw.println ("<xsd:sequence>");
-			    ipw.indent ();
-  		            ipw.println ("<xsd:element name=\"C1\" type=\"xsd:double\"/>");
-  		            ipw.println ("<xsd:element name=\"C2\" type=\"xsd:double\"/>");
-  		            ipw.println ("<xsd:element name=\"C3\" type=\"xsd:double\" minOccurs=\"0\"/>");
-  		            ipw.println ("<xsd:element name=\"A1\" type=\"xsd:double\"/>");
-  		            ipw.println ("<xsd:element name=\"A2\" type=\"xsd:double\"/>");
-  		            ipw.println ("<xsd:element name=\"R\" type=\"xsd:double\" minOccurs=\"0\"/>");
-        		    ipw.unindent ();
-		    ipw.println ("</xsd:sequence>");
-		    ipw.unindent ();
-	    ipw.println ("</xsd:complexType>");
-
+	    	
+	    }
 
 	    ipw.println ("<xsd:complexType name=\"RoleType\">");
 		    ipw.indent ();
@@ -391,26 +350,6 @@ public final class XSDGenerator
 	    ipw.println ("</xsd:complexType>");
 
             // declare XML-Schema types
-            declareDomainDef(td.INTERLIS.HALIGNMENT);
-            declareDomainDef(td.INTERLIS.VALIGNMENT);
-            declareDomainDef(td.INTERLIS.URI);
-            declareDomainDef(td.INTERLIS.NAME);
-            declareDomainDef(td.INTERLIS.INTERLIS_1_DATE);
-            declareDomainDef(td.INTERLIS.STANDARDOID);
-            declareAbstractClassDef(td.INTERLIS.METAOBJECT);
-            declareAbstractClassDef(td.INTERLIS.METAOBJECT_TRANSLATION);
-            declareAbstractClassDef(td.INTERLIS.AXIS);
-            declareAbstractClassDef(td.INTERLIS.REFSYSTEM);
-            declareAbstractClassDef(td.INTERLIS.COORDSYSTEM);
-            declareAbstractClassDef(td.INTERLIS.SCALSYSTEM);
-            declareAbstractClassDef(td.INTERLIS.SIGN);
-			declareAbstractClassDef(td.INTERLIS.TIMESYSTEMS.CALENDAR);
-			declareAbstractClassDef(td.INTERLIS.TIMESYSTEMS.TIMEOFDAYSYS);
-			declareAbstractClassDef(td.INTERLIS.TimeOfDay);
-			declareAbstractClassDef(td.INTERLIS.UTC);
-			declareDomainDef(td.INTERLIS.GregorianYear);
-			declareAbstractClassDef(td.INTERLIS.GregorianDate);
-			declareAbstractClassDef(td.INTERLIS.GregorianDateTime);
 
 	    modeli = td.iterator ();
 	    while (modeli.hasNext ())
@@ -437,7 +376,136 @@ public final class XSDGenerator
 	      	}
 	      }
 	    }
+	    	if(addAllInterlisTypes || refCoordValue){
+	    		ipw.println ("<xsd:complexType name=\"CoordValue\">");
+			    ipw.indent ();
+			    ipw.println ("<xsd:sequence>");
+				    ipw.indent ();
+	  		            ipw.println ("<xsd:element name=\"C1\" type=\"xsd:double\"/>");
+	  		            ipw.println ("<xsd:element name=\"C2\" type=\"xsd:double\" minOccurs=\"0\"/>");
+	  		            ipw.println ("<xsd:element name=\"C3\" type=\"xsd:double\" minOccurs=\"0\"/>");
+	        		    ipw.unindent ();
+			    ipw.println ("</xsd:sequence>");
+			    ipw.unindent ();
+			    ipw.println ("</xsd:complexType>");
+	    	}
+	    	if(addAllInterlisTypes || refArcPoint){
+	    		ipw.println ("<xsd:complexType name=\"ArcPoint\">");
+			    ipw.indent ();
+			    ipw.println ("<xsd:sequence>");
+				    ipw.indent ();
+	  		            ipw.println ("<xsd:element name=\"C1\" type=\"xsd:double\"/>");
+	  		            ipw.println ("<xsd:element name=\"C2\" type=\"xsd:double\"/>");
+	  		            ipw.println ("<xsd:element name=\"C3\" type=\"xsd:double\" minOccurs=\"0\"/>");
+	  		            ipw.println ("<xsd:element name=\"A1\" type=\"xsd:double\"/>");
+	  		            ipw.println ("<xsd:element name=\"A2\" type=\"xsd:double\"/>");
+	  		            ipw.println ("<xsd:element name=\"R\" type=\"xsd:double\" minOccurs=\"0\"/>");
+	        		    ipw.unindent ();
+			    ipw.println ("</xsd:sequence>");
+			    ipw.unindent ();
+		    ipw.println ("</xsd:complexType>");
+	    	}
+	    	
+	        declareDomainDef(td.INTERLIS.NAME); // define always because of MODELS
 
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.METAOBJECT)){
+	            declareAbstractClassDef(td.INTERLIS.METAOBJECT);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.METAOBJECT_TRANSLATION)){
+	            declareAbstractClassDef(td.INTERLIS.METAOBJECT_TRANSLATION);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.AXIS)){
+	            declareAbstractClassDef(td.INTERLIS.AXIS);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.REFSYSTEM)){
+	            declareAbstractClassDef(td.INTERLIS.REFSYSTEM);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.COORDSYSTEM)){
+	            declareAbstractClassDef(td.INTERLIS.COORDSYSTEM);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.SCALSYSTEM)){
+	            declareAbstractClassDef(td.INTERLIS.SCALSYSTEM);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.SIGN)){
+	            declareAbstractClassDef(td.INTERLIS.SIGN);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.TIMESYSTEMS.CALENDAR)){
+				declareAbstractClassDef(td.INTERLIS.TIMESYSTEMS.CALENDAR);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.TIMESYSTEMS.TIMEOFDAYSYS)){
+				declareAbstractClassDef(td.INTERLIS.TIMESYSTEMS.TIMEOFDAYSYS);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.TimeOfDay)){
+				declareAbstractClassDef(td.INTERLIS.TimeOfDay);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.UTC)){
+				declareAbstractClassDef(td.INTERLIS.UTC);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.GregorianDate)){
+				declareAbstractClassDef(td.INTERLIS.GregorianDate);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.GregorianDateTime)){
+				declareAbstractClassDef(td.INTERLIS.GregorianDateTime);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.HALIGNMENT)){
+	    		declareDomainDef(td.INTERLIS.HALIGNMENT);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.VALIGNMENT)){
+	            declareDomainDef(td.INTERLIS.VALIGNMENT);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.URI)){
+	            declareDomainDef(td.INTERLIS.URI);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.INTERLIS_1_DATE)){
+	            declareDomainDef(td.INTERLIS.INTERLIS_1_DATE);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.STANDARDOID)){
+	            declareDomainDef(td.INTERLIS.STANDARDOID);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.GregorianYear)){
+				declareDomainDef(td.INTERLIS.GregorianYear);
+	    	}
+
+		    ipw.println ("<xsd:complexType name=\"HeaderSection\">");
+		    ipw.indent ();
+		    ipw.println ("<xsd:sequence>");
+			    ipw.indent ();
+				ipw.println ("<xsd:element name=\"MODELS\" type=\"Models\"/>");
+
+			    if(addAliasTable){
+			    	ipw.println ("<xsd:element name=\"ALIAS\" type=\"Alias\" minOccurs=\"0\"/>");
+			    }
+			    if(refOidSpaces){
+			    	ipw.println ("<xsd:element name=\"OIDSPACES\" type=\"OidSpaces\" minOccurs=\"0\"/>");
+			    }
+		    	ipw.println ("<xsd:element name=\"COMMENT\" type=\"xsd:string\" minOccurs=\"0\"/>");
+			    ipw.unindent ();
+		    ipw.println ("</xsd:sequence>");
+		    ipw.println ("<xsd:attribute name=\"VERSION\" type=\"xsd:decimal\" use=\"required\" fixed=\"2.3\"/>");
+		    ipw.println ("<xsd:attribute name=\"SENDER\" type=\"xsd:string\" use=\"required\"/>");
+		    ipw.unindent ();
+	    ipw.println ("</xsd:complexType>");
+	    
+	    if(refOidSpaces){
+			ipw.println ("<xsd:complexType name=\"OidSpaces\">");
+			ipw.indent ();
+			ipw.println ("<xsd:sequence>");
+				ipw.indent ();
+				ipw.println ("<xsd:element name=\"OIDSPACE\" type=\"OidSpace\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
+				ipw.unindent ();
+			ipw.println ("</xsd:sequence>");
+			ipw.unindent ();
+		ipw.println ("</xsd:complexType>");
+			
+		ipw.println ("<xsd:complexType name=\"OidSpace\">");
+			ipw.indent ();
+			ipw.println ("<xsd:attribute name=\"NAME\" type=\"xsd:string\" use=\"required\"/>");
+			ipw.println ("<xsd:attribute name=\"OIDDOMAIN\" type=\"xsd:string\" use=\"required\"/>");
+			ipw.unindent ();
+		ipw.println ("</xsd:complexType>");
+	    	
+	    }
+	    	
 	    ipw.unindent ();
     ipw.println ("</xsd:schema>");
     ipw.flush();
@@ -650,6 +718,7 @@ public final class XSDGenerator
   protected void declareTopic (Topic topic)
   {
 
+    
    Iterator iter = topic.iterator();
    while (iter.hasNext())
    {
@@ -675,7 +744,35 @@ public final class XSDGenerator
 			      if ((obj instanceof Viewable) && !AbstractPatternDef.suppressViewableInTransfer((Viewable)obj))
 			      {
 						Viewable v = (Viewable) obj;		
-		    	        ipw.println ("<xsd:element name=\""+getTransferName(v)+"\" type=\""+getTransferName(v)+"\"/>");
+	                	if(supportSourceBasketId || supportIncrementalTransfer || supportInconsistentTransfer){
+			    	        ipw.println ("<xsd:element name=\""+getTransferName(v)+"\">");
+					          ipw.indent ();
+			                          ipw.println ("<xsd:complexType>");
+					            ipw.indent ();
+				                    ipw.println ("<xsd:complexContent>");
+					              ipw.indent ();
+				                      ipw.println ("<xsd:extension base=\""+getTransferName(v)+"\">");
+					                ipw.indent ();
+					                	if(supportSourceBasketId){
+					    	    			ipw.println ("<xsd:attribute name=\"BID\" type=\"IliID\"/>");
+					                	}
+				    	    		    if(supportIncrementalTransfer){
+					    	    			ipw.println ("<xsd:attribute name=\"OPERATION\" type=\"OperationType\"/>");
+				    	    		    }
+				    	    		    if(supportInconsistentTransfer){
+					    	    			ipw.println ("<xsd:attribute name=\"CONSISTENCY\" type=\"ConsistencyType\"/>");
+				    	    		    }
+					                ipw.unindent ();
+				                      ipw.println ("</xsd:extension>");
+				                      ipw.unindent ();
+				                    ipw.println ("</xsd:complexContent>");
+				                    ipw.unindent ();
+				                  ipw.println ("</xsd:complexType>");
+				                  ipw.unindent ();
+				    	        ipw.println ("</xsd:element>");
+						}else{
+			    	        ipw.println ("<xsd:element name=\""+getTransferName(v)+"\" type=\""+getTransferName(v)+"\"/>");
+						}
 			      }
 			    }
 			    ipw.unindent ();
@@ -683,11 +780,17 @@ public final class XSDGenerator
 		    ipw.unindent ();
 	    ipw.println ("</xsd:sequence>");
 	    ipw.println ("<xsd:attribute name=\"BID\" type=\"IliID\" use=\"required\"/>");
-	    ipw.println ("<xsd:attribute name=\"TOPICS\" type=\"xsd:string\"/>");
-	    ipw.println ("<xsd:attribute name=\"KIND\" type=\"TransferKindType\"/>");
-	    ipw.println ("<xsd:attribute name=\"STARTSTATE\" type=\"xsd:string\"/>");
-	    ipw.println ("<xsd:attribute name=\"ENDSTATE\" type=\"xsd:string\"/>");
-		ipw.println ("<xsd:attribute name=\"CONSISTENCY\" type=\"ConsistencyType\"/>");
+	    if(supportPolymorphicRead){
+		    ipw.println ("<xsd:attribute name=\"TOPICS\" type=\"xsd:string\"/>");
+	    }
+	    if(supportIncrementalTransfer){
+		    ipw.println ("<xsd:attribute name=\"KIND\" type=\"TransferKindType\"/>");
+		    ipw.println ("<xsd:attribute name=\"STARTSTATE\" type=\"xsd:string\"/>");
+		    ipw.println ("<xsd:attribute name=\"ENDSTATE\" type=\"xsd:string\"/>");
+	    }
+	    if(supportInconsistentTransfer){
+			ipw.println ("<xsd:attribute name=\"CONSISTENCY\" type=\"ConsistencyType\"/>");
+	    }
 	    ipw.unindent ();
     ipw.println ("</xsd:complexType>");
 
@@ -779,9 +882,6 @@ public final class XSDGenerator
 		&&	!((v instanceof Table) && !((Table)v).isIdentifiable())){
 		// Objects have an ID and an operation flag to allow incremental update
 		ipw.println ("<xsd:attribute name=\"TID\" type=\"IliID\" use=\"required\"/>");
-		ipw.println ("<xsd:attribute name=\"BID\" type=\"IliID\"/>");
-		ipw.println ("<xsd:attribute name=\"OPERATION\" type=\"OperationType\"/>");
-		ipw.println ("<xsd:attribute name=\"CONSISTENCY\" type=\"ConsistencyType\"/>");
 	}
 	ipw.unindent();
 	ipw.println("</xsd:complexType>");
@@ -835,7 +935,7 @@ public final class XSDGenerator
 					"<xsd:element name=\""
 						+ getTransferName(attribute)
 						+ "\" type=\""
-						+ getTransferName(((TypeAlias) type).getAliasing())
+						+ getDomainRef(((TypeAlias) type).getAliasing())
 						+ "\""
 						+ minOccurs
 						+ "/>");
@@ -921,7 +1021,7 @@ public final class XSDGenerator
 		    ipw.indent ();
 		    ipw.println ("<xsd:sequence>");
 			    ipw.indent ();
-				ipw.println ("<xsd:element name=\"COORD\" type=\"CoordValue\"/>");
+				ipw.println ("<xsd:element name=\"COORD\" type=\"CoordValue\"/>"); refCoordValue=true;
 			    ipw.unindent ();
 		    ipw.println ("</xsd:sequence>");
 		    ipw.unindent ();
@@ -955,12 +1055,12 @@ public final class XSDGenerator
 						Iterator exti=extv.iterator();
 						while(exti.hasNext()){
 							Table ext=(Table)exti.next();
-							ipw.println ("<xsd:element name=\""+getTransferName(ext)+"\" type=\""+getTransferName(ext)+"\"/>");
+							ipw.println ("<xsd:element name=\""+getTransferName(ext)+"\" type=\""+getStructureRef(ext)+"\"/>");
 						}
 						ipw.unindent ();
 					ipw.println ("</xsd:choice>");
 			    }else{
-					ipw.println ("<xsd:element name=\""+getTransferName(part)+"\" type=\""+getTransferName(part)+"\""+minOccurs+maxOccurs+"/>");
+					ipw.println ("<xsd:element name=\""+getTransferName(part)+"\" type=\""+getStructureRef(part)+"\""+minOccurs+maxOccurs+"/>");
 			    }
 		        ipw.unindent ();
 		    ipw.println ("</xsd:sequence>");
@@ -979,6 +1079,7 @@ public final class XSDGenerator
 			ipw.println ("<xsd:attribute name=\"OID\" type=\"IliID\" use=\"required\"/>");
 			ipw.unindent ();
 		ipw.println ("</xsd:complexType>");
+		refOidSpaces=true;
     }else if(type instanceof EnumerationType){
       ipw.println ("<xsd:simpleType"+typeName+">");
         ipw.indent ();
@@ -1042,7 +1143,7 @@ public final class XSDGenerator
 		  ipw.indent ();
 		  ipw.println ("<xsd:restriction base=\"xsd:normalizedString\">");
 			  ipw.indent ();
-			  ipw.println ("<!-- FIXME -->");
+			  // TODO add regexp facet
 			  ipw.unindent ();
 		  ipw.println ("</xsd:restriction>");
 		  ipw.unindent ();
@@ -1079,7 +1180,7 @@ public final class XSDGenerator
 						    ipw.indent ();
 						    ipw.println ("<xsd:sequence>");
 						      ipw.indent ();
-						      ipw.println ("<xsd:element name=\""+getTransferName(part)+"\" type=\""+getTransferName(part)+"\"/>");
+						      ipw.println ("<xsd:element name=\""+getTransferName(part)+"\" type=\""+getStructureRef(part)+"\"/>");
 					              ipw.unindent ();
 						    ipw.println ("</xsd:sequence>");
 						    ipw.unindent ();
@@ -1090,10 +1191,11 @@ public final class XSDGenerator
 			}
 				        ipw.println ("<xsd:choice minOccurs=\"2\" maxOccurs=\"unbounded\">");
 					    ipw.indent ();
-						ipw.println ("<xsd:element name=\"COORD\" type=\"CoordValue\"/>");
+						ipw.println ("<xsd:element name=\"COORD\" type=\"CoordValue\"/>"); refCoordValue=true;
                                                 Set lfv=new HashSet(Arrays.asList(domain.getLineForms()));
                                                 if(lfv.contains(td.INTERLIS.ARCS)){
 						  ipw.println ("<xsd:element name=\"ARC\" type=\"ArcPoint\"/>");
+						  						refArcPoint=true;
                                                 }
                                                 Iterator it=lfv.iterator();
                                                 while(it.hasNext()){
@@ -1102,7 +1204,7 @@ public final class XSDGenerator
                                                     continue;
                                                   }
                                                 Table segmentStruct=lf.getSegmentStructure();
-						ipw.println ("<xsd:element name=\""+getTransferName(segmentStruct)+"\" type=\""+getTransferName(segmentStruct)+"\"/>");
+						ipw.println ("<xsd:element name=\""+getTransferName(segmentStruct)+"\" type=\""+getStructureRef(segmentStruct)+"\"/>");
                                                 }
 
 					    ipw.unindent ();
@@ -1167,5 +1269,18 @@ public final class XSDGenerator
 	  }
 	  return ret;
   }
-
+  private boolean refCoordValue=false;
+  private boolean refArcPoint=false;
+  private boolean refOidSpaces=false;
+  private HashSet referencedTypes=new HashSet();
+  private String getDomainRef(Domain ele)
+  {
+	  referencedTypes.add(ele);
+	  return getTransferName(ele);
+  }
+  private String getStructureRef(Viewable ele)
+  {
+	  referencedTypes.add(ele);
+	  return getTransferName(ele);
+  }
 }
