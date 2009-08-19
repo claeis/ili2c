@@ -727,7 +727,20 @@ public final class XSDGenerator
       declareDomainDef((Domain)obj);
      }
      if(obj instanceof AbstractClassDef){
-	declareAbstractClassDef((AbstractClassDef)obj);
+    	 if(obj instanceof AssociationDef){
+    		 AssociationDef assoc=(AssociationDef)obj;
+    		 if(assoc.isLightweight()
+    			 && !assoc.getAttributes().hasNext()
+ 				 && !assoc.getLightweightAssociations().iterator().hasNext()){
+    			 // assoc is encode as just a ref
+    			 // complexType is superficial, will not be referenced
+    		 }else{
+    			 // assoc is not just a ref, complexType will be referenced
+     			declareAbstractClassDef(assoc);
+    		 }
+    	 }else{
+    			declareAbstractClassDef((AbstractClassDef)obj);
+    	 }
      }
    }
     ipw.println ("<xsd:complexType name=\""+getTransferName(topic)+"\">");
