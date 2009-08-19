@@ -24,6 +24,7 @@ import java.io.Writer;
 import java.util.*;
 
 import ch.ehi.basics.io.IndentPrintWriter;
+import ch.ehi.basics.logging.EhiLogger;
 
 /** writes a XML-schema according to the ILi specification (ch. 3)
  * 
@@ -35,13 +36,13 @@ public final class XSDGenerator
   TransferDescription td;
   int                 numErrors = 0;
 
-  private boolean addAllInterlisTypes=false;
-  private boolean addAliasTable=false;
-	boolean supportSourceBasketId=false;
-  	boolean supportIncrementalTransfer=false;
-  	boolean supportInconsistentTransfer=false;
-    boolean supportPolymorphicRead=false;
     public final String ILI2C_TEXTMINIMALCHARSET="ili2c.textMinimalCharset";
+    public final String ILI2C_ILI23XML_SUPPORTSOURCEBASKETID="ili2c.ili23xml.supportSourceBasketId";
+    public final String ILI2C_ILI23XML_SUPPORTINCRMENTALTRANSFER="ili2c.ili23xml.supportIncrementalTransfer";
+    public final String ILI2C_ILI23XML_SUPPORTINCONSISTENTTRANSFER="ili2c.ili23xml.supportInconsistentTransfer";
+    public final String ILI2C_ILI23XML_SUPPORTPOLYMORPHICREAD="ili2c.ili23xml.supportPolymorphicRead";
+    public final String ILI2C_ILI23XSD_ADDALIASTABLEDEFAULT="ili2c.ili23xsd.addAliasTableDefault";
+    public final String ILI2C_ILI23XSD_ADDALLINTERLISTYPESDEFAULT="ili2c.ili23xsd.addAllInterlisTypesDefault";
   static ResourceBundle rsrc = ResourceBundle.getBundle(
     Interlis1Generator.class.getName(),
     Locale.getDefault());
@@ -110,6 +111,14 @@ public final class XSDGenerator
   }
   private void printXSD (TransferDescription td)
   {
+	  
+	  boolean addAllInterlisTypes=false;
+	  boolean addAliasTable=false;
+	  Model lastModel=td.getLastModel();
+	  if(lastModel!=null){
+		  addAllInterlisTypes=getMetaValueBoolean(lastModel,ILI2C_ILI23XSD_ADDALLINTERLISTYPESDEFAULT,false);
+		  addAliasTable=getMetaValueBoolean(lastModel,ILI2C_ILI23XSD_ADDALIASTABLEDEFAULT,false);
+	  }
     ipw.println("<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
       +" xmlns=\"http://www.interlis.ch/INTERLIS2.3\" xmlns:ili2c=\"http://www.interlis.ch/ili2c\""
       +" targetNamespace=\"http://www.interlis.ch/INTERLIS2.3\""
@@ -166,44 +175,6 @@ public final class XSDGenerator
 		    ipw.unindent ();
 	    ipw.println ("</xsd:simpleType>");
 	    
-	  	if(addAllInterlisTypes || supportIncrementalTransfer){
-		    ipw.println ("<xsd:simpleType name=\"OperationType\">");
-		    ipw.indent ();
-	                ipw.println ("<xsd:restriction base=\"xsd:string\">");
-	                ipw.indent ();
-	                  ipw.println ("<xsd:enumeration value=\"INSERT\"/>");
-	                  ipw.println ("<xsd:enumeration value=\"UPDATE\"/>");
-	                  ipw.println ("<xsd:enumeration value=\"DELETE\"/>");
-	                ipw.unindent ();
-	                ipw.println ("</xsd:restriction>");
-		    ipw.unindent ();
-		    ipw.println ("</xsd:simpleType>");
-		    ipw.println ("<xsd:simpleType name=\"TransferKindType\">");
-		    ipw.indent ();
-	                ipw.println ("<xsd:restriction base=\"xsd:string\">");
-	                ipw.indent ();
-	                  ipw.println ("<xsd:enumeration value=\"FULL\"/>");
-	                  ipw.println ("<xsd:enumeration value=\"INITIAL\"/>");
-	                  ipw.println ("<xsd:enumeration value=\"UPDATE\"/>");
-	                ipw.unindent ();
-	                ipw.println ("</xsd:restriction>");
-		    ipw.unindent ();
-		    ipw.println ("</xsd:simpleType>");
-	  	}
-	  	if(addAllInterlisTypes || supportInconsistentTransfer){
-		    ipw.println ("<xsd:simpleType name=\"ConsistencyType\">");
-		    ipw.indent ();
-	                ipw.println ("<xsd:restriction base=\"xsd:string\">");
-	                ipw.indent ();
-	                  ipw.println ("<xsd:enumeration value=\"COMPLETE\"/>");
-	                  ipw.println ("<xsd:enumeration value=\"INCOMPLETE\"/>");
-	                  ipw.println ("<xsd:enumeration value=\"INCONSISTENT\"/>");
-	                  ipw.println ("<xsd:enumeration value=\"ADAPTED\"/>");
-	                ipw.unindent ();
-	                ipw.println ("</xsd:restriction>");
-		    ipw.unindent ();
-		    ipw.println ("</xsd:simpleType>");
-	  	}
 
 	    
 	    
@@ -505,6 +476,44 @@ public final class XSDGenerator
 		ipw.println ("</xsd:complexType>");
 	    	
 	    }
+	  	if(addAllInterlisTypes || refIncrementalTypes){
+		    ipw.println ("<xsd:simpleType name=\"OperationType\">");
+		    ipw.indent ();
+	                ipw.println ("<xsd:restriction base=\"xsd:string\">");
+	                ipw.indent ();
+	                  ipw.println ("<xsd:enumeration value=\"INSERT\"/>");
+	                  ipw.println ("<xsd:enumeration value=\"UPDATE\"/>");
+	                  ipw.println ("<xsd:enumeration value=\"DELETE\"/>");
+	                ipw.unindent ();
+	                ipw.println ("</xsd:restriction>");
+		    ipw.unindent ();
+		    ipw.println ("</xsd:simpleType>");
+		    ipw.println ("<xsd:simpleType name=\"TransferKindType\">");
+		    ipw.indent ();
+	                ipw.println ("<xsd:restriction base=\"xsd:string\">");
+	                ipw.indent ();
+	                  ipw.println ("<xsd:enumeration value=\"FULL\"/>");
+	                  ipw.println ("<xsd:enumeration value=\"INITIAL\"/>");
+	                  ipw.println ("<xsd:enumeration value=\"UPDATE\"/>");
+	                ipw.unindent ();
+	                ipw.println ("</xsd:restriction>");
+		    ipw.unindent ();
+		    ipw.println ("</xsd:simpleType>");
+	  	}
+	  	if(addAllInterlisTypes || refConsistencyType){
+		    ipw.println ("<xsd:simpleType name=\"ConsistencyType\">");
+		    ipw.indent ();
+	                ipw.println ("<xsd:restriction base=\"xsd:string\">");
+	                ipw.indent ();
+	                  ipw.println ("<xsd:enumeration value=\"COMPLETE\"/>");
+	                  ipw.println ("<xsd:enumeration value=\"INCOMPLETE\"/>");
+	                  ipw.println ("<xsd:enumeration value=\"INCONSISTENT\"/>");
+	                  ipw.println ("<xsd:enumeration value=\"ADAPTED\"/>");
+	                ipw.unindent ();
+	                ipw.println ("</xsd:restriction>");
+		    ipw.unindent ();
+		    ipw.println ("</xsd:simpleType>");
+	  	}
 	    	
 	    ipw.unindent ();
     ipw.println ("</xsd:schema>");
@@ -713,12 +722,55 @@ public final class XSDGenerator
     return false;
   }
 
-
-
+  private void reportError(String msg)
+  {
+	EhiLogger.logError(msg);
+	numErrors++;
+  }
+  private boolean getMetaValueBoolean(Element topic,String metaAttrName,boolean defVal)
+  {
+	  String val=topic.getMetaValue(metaAttrName);
+	  if(val!=null){
+		  if(val.equals("true")){
+			  return true;
+		  }
+		  if(val.equals("false")){
+			  return false;
+		  }
+		  reportError(topic.getScopedName(null)+": unexpected value <"+val+"> for "+metaAttrName);
+	  }
+	  return defVal;
+  }
+  private boolean getInheritedMetaValueBoolean(Topic topic,String metaAttrName,boolean defVal)
+  {
+	  String val=topic.getMetaValue(metaAttrName);
+	  if(val==null){
+		  val=topic.getContainer().getMetaValue(metaAttrName);
+	  }
+	  if(val!=null){
+		  if(val.equals("true")){
+			  return true;
+		  }
+		  if(val.equals("false")){
+			  return false;
+		  }
+		  reportError(topic.getScopedName(null)+": unexpected value <"+val+"> for "+metaAttrName);
+	  }
+	  return defVal;
+  }
   protected void declareTopic (Topic topic)
   {
 
-    
+	boolean supportSourceBasketId=getInheritedMetaValueBoolean(topic,ILI2C_ILI23XML_SUPPORTSOURCEBASKETID,false);
+  	boolean supportIncrementalTransfer=getInheritedMetaValueBoolean(topic,ILI2C_ILI23XML_SUPPORTINCRMENTALTRANSFER,false);
+  	boolean supportInconsistentTransfer=getInheritedMetaValueBoolean(topic,ILI2C_ILI23XML_SUPPORTINCONSISTENTTRANSFER,false);
+    boolean supportPolymorphicRead=getInheritedMetaValueBoolean(topic,ILI2C_ILI23XML_SUPPORTPOLYMORPHICREAD,false);
+    if(supportIncrementalTransfer){
+    	refIncrementalTypes=true;
+    }
+    if(supportInconsistentTransfer){
+    	refConsistencyType=true;
+    }
    Iterator iter = topic.iterator();
    while (iter.hasNext())
    {
@@ -1282,6 +1334,8 @@ public final class XSDGenerator
 	  }
 	  return ret;
   }
+  private boolean refConsistencyType=false;
+  private boolean refIncrementalTypes=false;
   private boolean refCoordValue=false;
   private boolean refArcPoint=false;
   private boolean refOidSpaces=false;
