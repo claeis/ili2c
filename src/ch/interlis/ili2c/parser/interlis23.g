@@ -2973,7 +2973,7 @@ protected lineType [Container scope, Type extending]
 
     (
       att:"LINE" "ATTRIBUTES"
-      lineAttrStructure=classRef[scope]
+      lineAttrStructure=structureRef[scope]
       {
       /* TODO als Verweis ist hier nur ein Name auf eine STRUCTURE zulaessig
       */
