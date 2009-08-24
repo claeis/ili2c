@@ -8,6 +8,7 @@ ili2c 4.2.0 (2009-02-xx)
 - added metaAttribute to define minimal charset
 - bug ili2: failed to check that LINE ATTRIBUTE requires a structure
 - bug ili2: failed to check that a coord type can only extend coord type
+- bug ili2: wrong report of duplicate name of extended attribute in an extended association
 
 ili2c 4.1.1 (2009-02-20)
 ----------------------------

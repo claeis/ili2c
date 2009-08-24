@@ -76,11 +76,16 @@ public class AssociationDef extends AbstractClassDef
 	  while (iter.hasNext())
 	  {
 	      Element baseAttr = (Element)iter.next();
-	      if(baseAttr.getName().equals(ad.getName()) && !ad.isExtending(baseAttr)){
+	      if(baseAttr instanceof RoleDef){
+	    	  if(baseAttr.getName().equals(ad.getName())){
+	      
                 throw new Ili2cSemanticException (ad.getSourceLine(),formatMessage (
                   "err_association_nonuniqueAttributeDef",
                   ad.getName(),
                   AssociationDef.this.toString()));
+	    	  }
+	      }else{
+	    	  // check for attrs with the same name is already done in parser.findOverridingAttribute()
 	      }
 	  }
           // check if there is not alreay a role pointing to this with the same name
