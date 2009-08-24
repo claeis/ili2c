@@ -1,7 +1,7 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
-ili2c 4.2.0 (2009-02-xx)
+ili2c 4.2.0 (2009-08-24)
 ----------------------------
 - failed to report line number if TEXT extends a NUMERIC type
 - use metaAttributes to finetune xsd (addAllInterlisTypes, addAliasTable, supportSourceBasketId, supportIncrementalTransfer, supportInconsistentTransfer, supportPolymorphicRead)
