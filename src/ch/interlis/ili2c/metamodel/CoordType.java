@@ -90,6 +90,16 @@ public class CoordType extends BaseType
     return false;
   }
   
+  void checkTypeExtension (Type wantToExtend)
+  {
+    if ((wantToExtend == null)
+      || ((wantToExtend = wantToExtend.resolveAliases()) == null))
+      return;
+    if (!(wantToExtend instanceof CoordType)){
+        throw new Ili2cSemanticException (rsrc.getString (
+        "err_coordType_ExtOther"));
+    }
+  } 
   public boolean checkStructuralEquivalence (Element with)
   {
     if (!super.checkStructuralEquivalence (with))

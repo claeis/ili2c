@@ -6,7 +6,8 @@ ili2c 4.2.0 (2009-02-xx)
 - failed to report line number if TEXT extends a NUMERIC type
 - use metaAttributes to finetune xsd (addAllInterlisTypes, addAliasTable, supportSourceBasketId, supportIncrementalTransfer, supportInconsistentTransfer, supportPolymorphicRead)
 - added metaAttribute to define minimal charset
-- failed to check that LINE ATTRIBUTE requires a structure
+- bug ili2: failed to check that LINE ATTRIBUTE requires a structure
+- bug ili2: failed to check that a coord type can only extend coord type
 
 ili2c 4.1.1 (2009-02-20)
 ----------------------------

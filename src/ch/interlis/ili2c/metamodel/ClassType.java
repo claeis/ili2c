@@ -27,6 +27,16 @@ public class ClassType extends Type
   {
   	return restrictedTo.iterator();
   }
+  void checkTypeExtension (Type wantToExtend)
+  {
+    if ((wantToExtend == null)
+      || ((wantToExtend = wantToExtend.resolveAliases()) == null))
+      return;
+    if (!(wantToExtend.getClass().equals(this.getClass()))){
+        throw new Ili2cSemanticException (rsrc.getString (
+        "err_type_ExtOther"));
+    }
+  } 
 }
 
 

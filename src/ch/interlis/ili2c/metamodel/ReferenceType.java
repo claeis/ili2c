@@ -80,7 +80,6 @@ public class ReferenceType extends Type
   */
   void checkTypeExtension (Type wantToExtend)
   {
-    super.checkTypeExtension (wantToExtend);
     if ((wantToExtend == null)
         || ((wantToExtend = wantToExtend.resolveAliases()) == null))
       return;

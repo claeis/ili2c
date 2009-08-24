@@ -223,7 +223,6 @@ public class EnumerationType extends BaseType {
     Enumeration       thisEnum;
     Enumeration       generalEnum;
 
-    super.checkTypeExtension (wantToExtend);
     if ((wantToExtend == null)
         || ((wantToExtend = wantToExtend.resolveAliases()) == null))
       return;

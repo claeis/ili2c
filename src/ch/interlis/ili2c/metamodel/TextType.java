@@ -81,7 +81,6 @@ public class TextType extends BaseType
   void checkTypeExtension (Type wantToExtend)
   {
     
-    super.checkTypeExtension (wantToExtend);
     if ((wantToExtend == null)
         || ((wantToExtend = wantToExtend.resolveAliases()) == null))
       return;

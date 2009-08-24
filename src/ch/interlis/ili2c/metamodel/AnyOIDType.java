@@ -13,4 +13,14 @@ public class AnyOIDType extends OIDType
 	{
 		return null;
 	}
+	  void checkTypeExtension (Type wantToExtend)
+	  {
+	    if ((wantToExtend == null)
+	      || ((wantToExtend = wantToExtend.resolveAliases()) == null))
+	      return;
+	    if (!(wantToExtend instanceof AnyOIDType)){
+	        throw new Ili2cSemanticException (rsrc.getString (
+	        "err_anyOidType_ExtOther"));
+	    }
+	  } 
 }

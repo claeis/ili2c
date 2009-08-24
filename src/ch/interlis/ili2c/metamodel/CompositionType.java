@@ -182,7 +182,6 @@ public class CompositionType extends Type
     Table             myComponent, generalComponent;
 
 
-    super.checkTypeExtension (wantToExtend);
     if ((wantToExtend == null)
         || ((wantToExtend = wantToExtend.resolveAliases()) == null))
       return;

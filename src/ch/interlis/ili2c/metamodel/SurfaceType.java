@@ -48,8 +48,9 @@ public class SurfaceType extends SurfaceOrAreaType
         || ((wantToExtend = wantToExtend.resolveAliases()) == null))
       return;
     
-    if (wantToExtend instanceof AreaType)
+    if (!(wantToExtend instanceof SurfaceType)){
       throw new IllegalArgumentException (rsrc.getString (
-        "err_lineType_surfaceExtArea"));
+        "err_surfaceType_ExtOther"));
+    }
   }
 }

@@ -132,7 +132,6 @@ public class StructuredUnitType extends NumericalType
   {
     StructuredUnitType   general;
     
-    super.checkTypeExtension (wantToExtend);
     if ((wantToExtend == null)
         || ((wantToExtend = wantToExtend.resolveAliases()) == null))
       return;

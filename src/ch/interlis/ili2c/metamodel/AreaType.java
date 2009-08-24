@@ -30,5 +30,17 @@ public class AreaType extends SurfaceOrAreaType
     return "AREA";
   }
 
+  void checkTypeExtension (Type wantToExtend)
+  {
+    super.checkTypeExtension (wantToExtend);
+    if ((wantToExtend == null)
+        || ((wantToExtend = wantToExtend.resolveAliases()) == null))
+      return;
+    
+    if (!(wantToExtend instanceof SurfaceOrAreaType)){
+      throw new IllegalArgumentException (rsrc.getString (
+        "err_areaType_ExtOther"));
+    }
+  }
 
 }

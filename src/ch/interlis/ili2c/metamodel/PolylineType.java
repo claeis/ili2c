@@ -94,36 +94,20 @@ public class PolylineType extends LineType
         || ((wantToExtend = wantToExtend.resolveAliases()) == null))
       return;
 
+    if (!(wantToExtend instanceof PolylineType))
+    {
+      throw new IllegalArgumentException (
+        rsrc.getString ("err_polylineType_ExtOther"));
+    }
     if (this.isDirected ())
     {
-      if (wantToExtend instanceof SurfaceType)
-      {
-        throw new IllegalArgumentException (
-          rsrc.getString ("err_lineType_dirpolyExtSurface"));
-      }
-      else if (wantToExtend instanceof SurfaceType)
-      {
-        throw new IllegalArgumentException (
-          rsrc.getString ("err_lineType_dirpolyExtArea"));
-      }
     }
     else
     {
-      if ((wantToExtend instanceof PolylineType)
-          && ((PolylineType) wantToExtend).isDirected())
+      if (((PolylineType) wantToExtend).isDirected())
       {
         throw new IllegalArgumentException (
-          rsrc.getString ("err_lineType_polyExtDirPoly"));
-      }
-      if (wantToExtend instanceof SurfaceType)
-      {
-        throw new IllegalArgumentException (
-          rsrc.getString ("err_lineType_polyExtSurface"));
-      }
-      else if (wantToExtend instanceof SurfaceType)
-      {
-        throw new IllegalArgumentException (
-          rsrc.getString ("err_lineType_polyExtArea"));
+          rsrc.getString ("err_polylineType_ExtDirPoly"));
       }
     }
   }

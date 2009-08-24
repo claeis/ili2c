@@ -140,15 +140,10 @@ public abstract class LineType extends Type
   {
     LineType   general;
     
-    super.checkTypeExtension (wantToExtend);
     if ((wantToExtend == null)
         || ((wantToExtend = wantToExtend.resolveAliases()) == null))
       return;
     
-    if (!(wantToExtend instanceof LineType))
-      throw new IllegalArgumentException (rsrc.getString (
-        "err_textType_ExtOther"));
-
     general = (LineType) wantToExtend;
     if (general.lineForms.length > 0)
     {
