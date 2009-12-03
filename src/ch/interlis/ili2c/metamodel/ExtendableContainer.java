@@ -425,6 +425,11 @@ public abstract class ExtendableContainer extends Container implements Extendabl
 	    return result;
   	}
   }
+  public Set getDirectExtensions()
+  {
+	  // return a copy
+	  return new HashSet(extendedBy);
+  }
 
 
   /** @see getExtensions() */
@@ -435,7 +440,6 @@ public abstract class ExtendableContainer extends Container implements Extendabl
     while (iter.hasNext())
       ((ExtendableContainer) iter.next()).getExtensions_recursiveHelper (s);
   }
-
 
   public boolean checkStructuralEquivalence (Element with)
   {

@@ -27,18 +27,38 @@ import java.util.Iterator;
  */
 public class IliFile {
 	private ArrayList modelv=new ArrayList();
+	private String pathname=null;
+	private String repositoryUri=null; // optional
+	private String md5=null; // optional
 	public void addModel(IliModel model){
 		modelv.add(model);
 	}
 	public Iterator iteratorModel(){
 		return modelv.iterator();
 	}
-	private File filename=null;
 	public File getFilename(){
-		return filename;
+		return new File(pathname);
 	}
 	public void setFilename(File file){
-		filename=file;
+		pathname=file.getPath();
+	}
+	public String getPath(){
+		return pathname;
+	}
+	public void setPath(String path){
+		this.pathname=path;
+	}
+	public String getRepositoryUri() {
+		return repositoryUri;
+	}
+	public void setRepositoryUri(String repositoryUri) {
+		this.repositoryUri = repositoryUri;
+	}
+	public String getMd5() {
+		return md5;
+	}
+	public void setMd5(String md5) {
+		this.md5 = md5;
 	}
 
 }

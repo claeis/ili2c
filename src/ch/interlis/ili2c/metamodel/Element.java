@@ -822,5 +822,13 @@ public void setDocumentation(String string) {
 	{
 		getMetaValues().setValue(name,value);
 	}
+	public Object getTransientMetaValue(String name)
+	{
+		return getMetaValues().getTransientObject(name);
+	}
+	public void setTransientMetaValue(String name,Object value)
+	{
+		getMetaValues().setTransientObject(name,value);
+	}
 
 }

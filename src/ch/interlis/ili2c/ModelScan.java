@@ -328,7 +328,7 @@ public class ModelScan {
 	 * @param models map<String modelName,IliFile iliFile>
 	 * @return
 	 */
-	private static Configuration createConfig(HashSet toVisitFiles,HashMap models)
+	public static Configuration createConfig(HashSet toVisitFiles,HashMap models)
 	{	
 		if(toVisitFiles.isEmpty()){
 			throw new IllegalStateException("toVisitFiles.isEmpty()");
