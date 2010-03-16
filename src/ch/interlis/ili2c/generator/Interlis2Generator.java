@@ -33,7 +33,13 @@ public class Interlis2Generator
 	i.setup(out,td,false);
 	return i;
   }
-
+  static public String debugToString(TransferDescription td,ch.interlis.ili2c.metamodel.Element ele)
+  {
+	java.io.StringWriter syntaxBuffer=new java.io.StringWriter();
+	Interlis2Generator makeSyntax=Interlis2Generator.generateElements(syntaxBuffer,td);
+	makeSyntax.printElement(ele.getContainer(),null,ele);
+    return syntaxBuffer.toString();
+  }
 
   private void finish ()
   {
@@ -1982,7 +1988,11 @@ private void setup(
 
 
 
-      if (elt instanceof AttributeDef)
+      lastClass = printElement(container, lastClass, elt);
+    }
+  }
+protected Class printElement(Container container, Class lastClass, ch.interlis.ili2c.metamodel.Element elt) {
+	if (elt instanceof AttributeDef)
       {
         printAttribute (container, (AttributeDef) elt);
         lastClass = AttributeDef.class;
@@ -2136,8 +2146,8 @@ private void setup(
         printSignAttribute ((Graphic) container, (SignAttribute) elt);
         lastClass = SignAttribute.class;
       }
-    }
-  }
+	return lastClass;
+}
 
 
 
