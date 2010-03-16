@@ -2,6 +2,7 @@ header
 {
 	package ch.interlis.ili2c.parser;
 	import ch.interlis.ili2c.metamodel.*;
+	import ch.interlis.ili2c.generator.Interlis2Generator;
 	import ch.interlis.ili2c.CompilerLogEvent;
 	import java.util.*;
 	import ch.ehi.basics.logging.EhiLogger;
@@ -5381,7 +5382,7 @@ protected viewAttributes[Viewable view]
 		]
 		COLONEQUALS
 		f=factor[view,view]
-		{/* TODO viewAttributes factor */
+		{
 			AttributeDef overriding = findOverridingAttribute (
 				view, mods, n.getText(), n.getLine());
 			Type overridingDomain = null;
@@ -5395,6 +5396,14 @@ protected viewAttributes[Viewable view]
 				attrib.setTransient((mods & ch.interlis.ili2c.metamodel.Properties.eTRANSIENT) != 0);
 				// always final
 				attrib.setFinal(true);
+				// TODO attrib.setDomain(type);
+				// type derived from the follwoing constructs
+				// Factor = ( ObjectOrAttributePath
+				// | ( Inspection | 'INSPECTION' Inspection-ViewableRef )
+				// [ 'OF' ObjectOrAttributePath ]
+				// | FunctionCall
+				// | 'PARAMETER' [ Model-Name '.' ] RunTimeParameter-Name
+				// | Constant ).				
 				attrib.setBasePaths (new Evaluable[] { f });
 			} catch (Exception ex) {
 				reportError(ex, n.getLine());
