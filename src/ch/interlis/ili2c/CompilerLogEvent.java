@@ -99,7 +99,16 @@ public class CompilerLogEvent extends StdLogEvent {
 	public String getEventMsg() {
 		String msg=super.getEventMsg();
 		if(msg==null){
-			return null;
+			msg=getException().getLocalizedMessage();
+			if(msg!=null){
+				msg=msg.trim();
+				if(msg.length()==0){
+					msg=null;
+				}
+			}
+			if(msg==null){
+				msg=getException().getClass().getName();
+			}
 		}
 		String fn=getFilename();
 		int line=getLine();
