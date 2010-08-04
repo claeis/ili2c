@@ -1,6 +1,13 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.3.x (2010-03-xx)
+---------------------------
+- bug fmt: NegativeArraySizeException if ili2:TEXT without maxLength
+- bug: missing filename/lineno in error message (with IllegalArgumentException)
+- enable meta attributes on MetaObjects
+- added new experminteal transferformat (ETF1)
+
 ili2c 4.3.0 (2009-11-19)
 ----------------------------
 - API: minor changes to support model repository handling

@@ -800,11 +800,15 @@ public final class Interlis1Generator
     t = Type.findReal (typ);
     if (t instanceof TextType)
     {
+    	int maxLength=((TextType) t).getMaxLength ();
+    	if(maxLength==-1){
+    		maxLength=2400;
+    	}
         if(genFmt){
-            ipw.print(" "+genFmtField(fmtAttrIdx,((TextType) t).getMaxLength ()));
+            ipw.print(" "+genFmtField(fmtAttrIdx,maxLength));
           }else{
             ipw.print ("TEXT*");
-            ipw.print (((TextType) t).getMaxLength ());
+            ipw.print (maxLength);
           }
           if (t == typeOf_URI)
             comment = rsrc.getString ("comment_uri");
