@@ -160,7 +160,10 @@ public abstract class Viewable extends ExtendableContainer
 	        + "." + getName();
   }
 
-
+  public Iterator getDefinedAttributes()
+  {
+	  return attributes.iterator();
+  }
 
 
 
@@ -447,7 +450,7 @@ END B;<br></pre></code>
   /** gets RoleDef's defined by this. 
    * This is a hotspot for getAttributesAndRoles2().
    */
-	Iterator getRolesIterator(){
+	public Iterator getRolesIterator(){
 		return null;
 	}
 

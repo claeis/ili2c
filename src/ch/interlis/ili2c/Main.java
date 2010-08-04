@@ -207,6 +207,11 @@ public class Main
         	outputKind=GenerateOutputKind.GML32;
           continue;
         }
+        else if (args[i].equals("-oETF1"))
+        {
+        	outputKind=GenerateOutputKind.ETF1;
+          continue;
+        }
 		else if (args[i].equals("-oIOM"))
 		{
         	outputKind=GenerateOutputKind.IOM;
@@ -301,6 +306,24 @@ public class Main
 				}
 			}
 			ch.interlis.ili2c.generator.Gml32Generator.generate(td, outfile);
+		}else if(outputKind==GenerateOutputKind.ETF1){
+				if(outfile==null){
+					EhiLogger.logError("missing output folder specification (--out folder)");
+					System.exit(1);
+				}
+				java.io.File outdir=new java.io.File(outfile);
+				if(outdir.exists()){
+					if(!outdir.isDirectory()){
+						EhiLogger.logError(outdir+" is not a folder");
+						System.exit(1);
+					}
+				}else{
+					if(!outdir.mkdirs()){
+						EhiLogger.logError("failed to create output folder "+outdir);
+						System.exit(1);
+					}
+				}
+				ch.interlis.ili2c.generator.ETF1Generator.generate(td, outfile);
 		}else if(outputKind==GenerateOutputKind.NOOUTPUT){
 			// do nothing
 		}else{
@@ -590,6 +613,9 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
             break;
 		  case GenerateOutputKind.GML32:
 			  ch.interlis.ili2c.generator.Gml32Generator.generate(desc, config.getOutputFile());
+			  break;
+		  case GenerateOutputKind.ETF1:
+			  ch.interlis.ili2c.generator.ETF1Generator.generate(desc, config.getOutputFile());
 			  break;
 		  case GenerateOutputKind.IOM:
 				  if("-".equals(config.getOutputFile())){

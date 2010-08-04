@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
     @version  February 8, 1999
     @see      java.util.Iterator
 */
-final class CombiningIterator implements Iterator
+final public class CombiningIterator implements Iterator
 {
   private Iterator metaIter;
   private Iterator curIter;

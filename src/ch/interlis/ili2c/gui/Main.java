@@ -385,7 +385,8 @@ public class Main {
 					// ask user to overwrite
 					int n;
 					if(config.getOutputKind()==GenerateOutputKind.ILI1FMTDESC
-							|| config.getOutputKind()==GenerateOutputKind.GML32){
+							|| config.getOutputKind()==GenerateOutputKind.GML32
+							|| config.getOutputKind()==GenerateOutputKind.ETF1){
 						n = JOptionPane.showConfirmDialog(
 							frame,
 							"Overwrite files in "+outfile.getAbsolutePath()+"?",
@@ -513,6 +514,9 @@ public class Main {
 			}else if(kind==GenerateOutputKind.GML32){
 			   outputFileUi.setEditable(true);
 			   fileLabel.setText("Output directory");
+			}else if(kind==GenerateOutputKind.ETF1){
+				   outputFileUi.setEditable(true);
+				   fileLabel.setText("Output directory");
             }else{
             }
             config.setOutputKind(kind);
@@ -543,6 +547,8 @@ public class Main {
 			  fc.addChoosableFileFilter(GenericFileFilter.createXmlFilter());
 			}else if(config.getOutputKind()==GenerateOutputKind.GML32){
 			  useDir=true;
+			}else if(config.getOutputKind()==GenerateOutputKind.ETF1){
+				  useDir=true;
             }else{
               fc.addChoosableFileFilter(new GenericFileFilter("INTERLIS models (*.ili)","ili"));
             }

@@ -142,7 +142,7 @@ public class AssociationDef extends AbstractClassDef
     };
   }
 
-	Iterator getRolesIterator(){
+	public Iterator getRolesIterator(){
 		return roles.iterator();
 	}
 
