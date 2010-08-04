@@ -3506,7 +3506,10 @@ protected metaDataBasketDef[Container scope]
 			// (no data container)
 		}
 		(
-		"OBJECTS" "OF" classNameTok:NAME COLON objNameTok1:NAME 
+		"OBJECTS" "OF" classNameTok:NAME COLON
+			{ ilidoc=getIliDoc(); metaValues=getMetaValues();
+			}
+			objNameTok1:NAME 
 				{
 					// find class in topic
 					String className=classNameTok.getText();
@@ -3525,15 +3528,22 @@ protected metaDataBasketDef[Container scope]
 					if(aclass!=null){
 						String objName=objNameTok1.getText();
 						MetaObject mo=new MetaObject(objName,aclass);
+						mo.setDocumentation(ilidoc);
+						mo.setMetaValues(metaValues);
 						def.add(mo);
 					}
 				}
-			(COMMA objNameTok2:NAME
+			(COMMA 
+				{ ilidoc=getIliDoc(); metaValues=getMetaValues();
+				}
+			objNameTok2:NAME
 				{
 					// add object to basket
 					if(aclass!=null){
 						String objName=objNameTok2.getText();
 						MetaObject mo=new MetaObject(objName,aclass);
+						mo.setDocumentation(ilidoc);
+						mo.setMetaValues(metaValues);
 						def.add(mo);
 					}
 				}
