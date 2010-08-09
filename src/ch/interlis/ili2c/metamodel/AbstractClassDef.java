@@ -16,6 +16,8 @@ public abstract class AbstractClassDef extends Viewable
 
     // check role name is unique with respect to attributes and roles in other roles target
     AssociationDef assoc=(AssociationDef)role.getContainer();
+    RoleDef rootRole=role.getRootExtending();
+    if(rootRole==null)rootRole=role;
     Iterator iter = assoc.getAttributesAndRoles();
     while (iter.hasNext()){
       Object obj = iter.next();
@@ -38,8 +40,10 @@ public abstract class AbstractClassDef extends Viewable
         Iterator rolei=targetClass.getOpposideRoles();
         while (rolei.hasNext()){
 	      RoleDef targetOppRole = (RoleDef)rolei.next();
+	      RoleDef rootTargetOppRole = targetOppRole.getRootExtending();
+	      if(rootTargetOppRole==null)rootTargetOppRole=targetOppRole;
 	      if(targetOppRole.getName().equals(role.getName())
-                  && !role.isExtending(targetOppRole)){
+                  && rootRole!=rootTargetOppRole){
                 throw new Ili2cSemanticException (role.getSourceLine(),formatMessage (
                   "err_abstractClassDef_nameConflictInOtherRoleTarget",
                   role.getName(),
