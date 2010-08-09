@@ -84,7 +84,7 @@ public class Table extends AbstractClassDef
       public boolean add (Object o)
       {
         if ((o instanceof UniquenessConstraint) && !Table.this.isIdentifiable())
-          throw new IllegalArgumentException (formatMessage (
+          throw new Ili2cSemanticException (formatMessage (
             "err_structure_unique",
             Table.this.toString ()));
 
@@ -109,7 +109,7 @@ public class Table extends AbstractClassDef
           /* A non-abstract TABLE/STRUCTURE can not contain an abstract
              attribute. */
           if (ad.isAbstract() && !Table.this.isAbstract()){
-              throw new IllegalArgumentException (formatMessage (
+              throw new Ili2cSemanticException (formatMessage (
                 "err_abstractAttrInConcreteContainer",
                 Table.this.toString()));
           }
@@ -119,7 +119,7 @@ public class Table extends AbstractClassDef
 	  {
 	      RoleDef role = (RoleDef)iter.next();
 	      if(role.getName().equals(ad.getName())){
-                throw new IllegalArgumentException (formatMessage (
+                throw new Ili2cSemanticException (formatMessage (
                   "err_abstractClassDef_AttributeNameConflictInTarget",
                   ad.getName(),
                   Table.this.toString()));
@@ -137,7 +137,7 @@ public class Table extends AbstractClassDef
 
 
         if (o == null)
-          throw new IllegalArgumentException (
+          throw new Ili2cSemanticException (
             rsrc.getString ("err_nullNotAcceptable"));
 
 

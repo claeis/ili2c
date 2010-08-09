@@ -216,14 +216,14 @@ public class RoleDef extends AbstractLeafElement
 	{
 		RoleDef base=(RoleDef)ext;
 		if (base.isFinal()){
-			throw new IllegalArgumentException(
+			throw new Ili2cSemanticException(getSourceLine(),
 				formatMessage ("err_cantExtendFinal", base.toString()));
 		}
 
 	  	// check cardinality
 		if(cardinality!=null){
 	    		if (!base.getCardinality().isGeneralizing(this.getCardinality())){
-	      			throw new IllegalArgumentException (formatMessage (
+	      			throw new Ili2cSemanticException (getSourceLine(),formatMessage (
 			        "err_role_cardExtMismatch",
 			        this.getCardinality().toString(), base.getCardinality().toString()));
 			}
@@ -238,18 +238,18 @@ public class RoleDef extends AbstractLeafElement
 		}
     		if (card.getMaximum()>1 && !this.isOrdered()
 			&& base.isOrdered()){
-    			  throw new IllegalArgumentException (rsrc.getString (
+    			  throw new Ili2cSemanticException (getSourceLine(),rsrc.getString (
     			    "err_role_UnorderedExtOrdered"));
 		}
 		// check aggregation kind
     		if (this.kind<base.kind){
-    			  throw new IllegalArgumentException (rsrc.getString (
+    			  throw new Ili2cSemanticException (getSourceLine(),rsrc.getString (
     			    "err_role_WeakerExtStronger"));
 		}
 		// check destination
 		if (!getDestination().isExtending (base.getDestination()))
     		{
-     			 throw new IllegalArgumentException (formatMessage (
+     			 throw new Ili2cSemanticException (getSourceLine(),formatMessage (
      			   "err_role_componentNotExt",
      			   getDestination().toString(), base.getDestination().toString()));
     		}
