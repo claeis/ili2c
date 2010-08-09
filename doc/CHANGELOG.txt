@@ -5,6 +5,9 @@ ili2c 4.3.x (2010-03-xx)
 ---------------------------
 - bug fmt: NegativeArraySizeException if ili2:TEXT without maxLength
 - bug: missing filename/lineno in error message (with IllegalArgumentException)
+- bug ili2 exp: failed to generate MTEXT
+- bug ili2 exp: failed to generate ENUMVAL, ENUMTREEVAL
+- bug: missing len(), lenM(), trim(), trimM(), isEnumSubVal(), inEnumRange(), areAreas() in model INTERLIS
 - enable meta attributes on MetaObjects
 - added new experminteal transferformat (ETF1)
 

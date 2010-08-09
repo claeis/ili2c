@@ -150,8 +150,15 @@ public class PredefinedModel extends DataModel
   public final Function isOfClass = new Function();
   public final Function elementCount = new Function();
   public final Function objectCount = new Function();
+  public final Function len = new Function();
+  public final Function lenM = new Function();
+  public final Function trim = new Function();
+  public final Function trimM = new Function();
+  public final Function isEnumSubVal = new Function();
+  public final Function inEnumRange = new Function();
   public final Function convertUnit = new Function();
-
+  public final Function areAreas = new Function();
+  
   public final Table ANYCLASS = new Table ();
   public final Table ANYSTRUCTURE = new Table ();
 
@@ -373,6 +380,71 @@ Liefert die Anzahl Objekte, welche die gegebene Objektmentmenge enthält
       objectCount.setDomain(new NumericType());
       add(objectCount);
       
+      /* FUNCTION len (TextVal: TEXT): NUMERIC;
+         FUNCTION lenM (TextVal: MTEXT): NUMERIC;
+         Liefert die Länge des Textes als Anzahl Zeichen.
+      */
+      len.setName("len");
+      len.setArguments(new FormalArgument[]{
+        new FormalArgument("TextVal",new TextType(true))
+        });
+      len.setDomain(new NumericType());
+      add(len);
+      
+      lenM.setName("lenM");
+      lenM.setArguments(new FormalArgument[]{
+        new FormalArgument("TextVal",new TextType(false))
+        });
+      lenM.setDomain(new NumericType());
+      add(lenM);
+      
+      /* FUNCTION trim (TextVal: TEXT): TEXT;
+         FUNCTION trimM (TextVal: MTEXT): MTEXT;
+         Liefert den um Leerzeichen am Anfang und Ende befreiten Text.
+      */
+      trim.setName("trim");
+      trim.setArguments(new FormalArgument[]{
+        new FormalArgument("TextVal",new TextType(true))
+        });
+      trim.setDomain(new TextType(true));
+      add(trim);
+      
+      trimM.setName("trimM");
+      trimM.setArguments(new FormalArgument[]{
+        new FormalArgument("TextVal",new TextType(false))
+        });
+      trimM.setDomain(new TextType(false));
+      add(trimM);
+      
+      /* FUNCTION isEnumSubVal (SubVal: ENUMTREEVAL; NodeVal: ENUMTREEVAL): BOOLEAN;
+         Liefert true, wenn SubVal ein Unterelement, also ein Unterknoten oder ein Blatt, des Knotens NodeVal ist.
+      */
+      isEnumSubVal.setName("isEnumSubVal");
+      isEnumSubVal.setArguments(new FormalArgument[]{
+        new FormalArgument("SubVal",new EnumValType(false)),
+        new FormalArgument("NodeVal",new EnumValType(false))
+        });
+      tt = new TypeAlias ();
+      ((TypeAlias) tt).setAliasing (BOOLEAN);
+      isEnumSubVal.setDomain(tt);
+      add(isEnumSubVal);
+
+      
+      /* FUNCTION inEnumRange (Enum: ENUMVAL; MinVal: ENUMTREEVAL; MaxVal: ENUMTREEVAL): BOOLEAN;
+         Liefert true, wenn die Aufzählung zu der Enum gehört, geordnet ist und im Bereich von MinVal und Max-
+         Val liegt. Unterelemente von MinVal oder MaxVal gelten als dazu gehörig.
+      */
+      inEnumRange.setName("inEnumRange");
+      inEnumRange.setArguments(new FormalArgument[]{
+        new FormalArgument("Enum",new EnumValType(true)),
+        new FormalArgument("MinVal",new EnumValType(false)),
+        new FormalArgument("MaxVal",new EnumValType(false))
+        });
+      tt = new TypeAlias ();
+      ((TypeAlias) tt).setAliasing (BOOLEAN);
+      inEnumRange.setDomain(tt);
+      add(inEnumRange);
+      
 /* FUNCTION convertUnit (from: NUMERIC): NUMERIC;
 Rechnet den numerischen Wert des Parameters "from" in den numerischen
 Rückgabewert um und be-rücksichtigt dabei die Einheiten, die mit dem
@@ -388,7 +460,37 @@ einer gemeinsamen Einheit abgeleitet werden.
         });
       convertUnit.setDomain(new NumericType());
       add(convertUnit);
-
+      /* FUNCTION areAreas (Objects: OBJECTS OF ANYCLASS; SurfaceBag: ATTRIBUTE OF @ Objects RESTRICTION (BAG OF ANYSTRUCTURE); SurfaceAttr: ATTRIBUTE OF @ SurfaceBag RESTRICTION (SURFACE)): BOOLEAN;
+         Prüft, ob die Flächen gemäss Objektmenge (erster Parameter) und Attribut (dritter Parameter) eine Gebietseinteilung
+         bilden. Sind die Flächen direkt Teil der Objektklasse, soll für SurfaceBag UNDEFINED,
+         sonst der Pfad zum Strukturattribut mit der Struktur, welche das Flächenattribut enthält, angegeben werden.
+      */
+      areAreas.setName("areAreas");
+      FormalArgument arg1=new FormalArgument("Objects",new ObjectType (ANYCLASS,true));
+  	  AttributePathType arg2type=new AttributePathType();
+      {
+	      ct = new CompositionType ();
+	      ct.setComponentType (ANYSTRUCTURE);
+	      ct.setOrdered (false);
+		Type[] typev={ct};
+    	arg2type.setArgRestriction(arg1);
+    	arg2type.setTypeRestriction(typev);
+      }
+	  AttributePathType arg3type=new AttributePathType();
+      {
+		Type[] typev={new SurfaceType()};
+    	arg3type.setArgRestriction(arg1);
+    	arg3type.setTypeRestriction(typev);
+      }
+      areAreas.setArguments(new FormalArgument[]{
+        arg1,
+        new FormalArgument("SurfaceBag",arg2type),
+        new FormalArgument("SurfaceAttr",arg3type)
+        });
+      tt = new TypeAlias ();
+      ((TypeAlias) tt).setAliasing (BOOLEAN);
+      areAreas.setDomain(tt);
+      add(areAreas);
 
       ANYCLASS.setName ("ANYCLASS");
       add (ANYCLASS);
