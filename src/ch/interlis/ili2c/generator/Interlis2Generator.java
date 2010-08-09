@@ -1499,7 +1499,11 @@ private void setup(
     else if (dd instanceof TextType)
     {
       int len = ((TextType) dd).getMaxLength();
-      ipw.print("TEXT");
+      if(((TextType) dd).isNormalized()){
+          ipw.print("TEXT");
+      }else{
+          ipw.print("MTEXT");
+      }
 
 
       if (len != -1) {

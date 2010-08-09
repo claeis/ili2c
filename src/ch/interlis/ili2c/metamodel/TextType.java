@@ -29,6 +29,11 @@ public class TextType extends BaseType
   {
     maxLength = -1;
   }
+  public TextType (boolean normalized)
+  {
+    maxLength = -1;
+    this.normalized=normalized;
+  }
 
 
   public TextType (int maxLength)
