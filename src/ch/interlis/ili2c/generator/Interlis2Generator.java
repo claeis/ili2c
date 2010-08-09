@@ -1520,6 +1520,14 @@ private void setup(
       else if (et.isOrdered())
         ipw.print(" ORDERED");
     }
+    else if (dd instanceof EnumValType)
+    {
+        if(((EnumValType) dd).isOnlyLeafs()){
+            ipw.print("ENUMVAL");
+        }else{
+            ipw.print("ENUMTREEVAL");
+        }
+    }  
     else if (dd instanceof TypeAlias){
       Domain def=((TypeAlias) dd).getAliasing();
       if(def==modelInterlis.BOOLEAN){
