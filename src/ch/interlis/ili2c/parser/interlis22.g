@@ -1966,7 +1966,17 @@ protected enumeration [Type extending]
     (
       (curElement = enumElement[extending] { elements.add(curElement); }
         (COMMA curElement = enumElement[extending] 
-    	  { elements.add(curElement); }
+    	  { 
+		  Iterator elei=elements.iterator();
+		  while(elei.hasNext()){
+			  ch.interlis.ili2c.metamodel.Enumeration.Element ele=(ch.interlis.ili2c.metamodel.Enumeration.Element)elei.next();
+			  if(ele.getName().equals(curElement.getName())){
+				  reportError(formatMessage("err_enumerationType_DupEle",curElement.getName()),curElement.getSourceLine());
+				  break;
+			  }
+		  }
+		  elements.add(curElement); 
+	  }
         )*
         ( COLON "FINAL"  {isFinal=true;} )?
       )

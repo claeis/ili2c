@@ -11,8 +11,9 @@ ili2c 4.3.x (2010-03-xx)
 - bug: accept duplicate extension of same base role
 - bug ili2 exp: fixed unbalance indentation
 - bug ili2: superfluous errmsg if duplicate rolename in association
+- bug ili2.2: doesn't check name uniqueness of EnumElements
 - enable meta attributes on MetaObjects
-- added new experminteal transferformat (ETF1)
+- added new expermintal transferformat (ETF1)
 
 ili2c 4.3.0 (2009-11-19)
 ----------------------------
