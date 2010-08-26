@@ -114,12 +114,13 @@ public class AssociationDef extends AbstractClassDef
 
           Element conflicting = getElement (RoleDef.class,role.getName());
           if ((conflicting != null) && (conflicting != o)
-            && !role.isExtended())
+            && !role.isExtended()){
+        	  setDirty(true);
             throw new Ili2cSemanticException (role.getSourceLine(),formatMessage (
               "err_association_nonuniqueRoleDef",
               role.getName(),
               AssociationDef.this.toString()));
-
+          }
           /* A non-abstract AssociationDef can not contain an abstract
              RoleDef. */
           if (role.isAbstract() && !isAbstract())
