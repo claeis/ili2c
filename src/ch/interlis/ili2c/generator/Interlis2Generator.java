@@ -1353,7 +1353,6 @@ private void setup(
 	}
 	// TODO Translation
     ipw.println(" =");
-    ipw.indent();
     ipw.println ();
 
 
