@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.3.x (2010-08-26)
+---------------------------
+- bug ili2imd: failed to get parent of FormalArgument 
+
 ili2c 4.3.1 (2010-08-26)
 ---------------------------
 - bug fmt: NegativeArraySizeException if ili2:TEXT without maxLength

@@ -194,6 +194,16 @@ public class Function extends AbstractLeafElement
     
     fireVetoableChange ("arguments", oldValue, newValue);
     this.arguments = newValue;
+    if(newValue!=null){
+        for(int i=0;i<newValue.length;i++){
+        	newValue[i].setFunction(this);
+        }
+    }
+    if(oldValue!=null){
+        for(int i=0;i<oldValue.length;i++){
+        	oldValue[i].setFunction(this);
+        }
+    }
     firePropertyChange ("arguments", oldValue, newValue);
   }
   
