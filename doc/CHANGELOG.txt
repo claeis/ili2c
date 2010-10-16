@@ -4,6 +4,7 @@ Known Issues:
 ili2c 4.3.x (2010-08-26)
 ---------------------------
 - bug ili2imd: failed to get parent of FormalArgument 
+- added branch support to the build script
 
 ili2c 4.3.1 (2010-08-26)
 ---------------------------

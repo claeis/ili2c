@@ -10,10 +10,20 @@
     <!-- Create the time stamp -->
     <tstamp/>
     <property name="projectjar" value="${build}/jar/${ant.project.name}.jar"/>
+    <property name="versionfile" value="${src}/ch/interlis/ili2c/Version.properties"/>
     <!-- Create the build directory structure used by compile -->
     <mkdir dir="${build}"/>
     <mkdir dir="${build}/jar"/>
     <mkdir dir="${dist}"/>
+  </target>
+  
+  <target depends="init" name="buildnr">
+    <property file="${versionfile}" prefix="buildnr."/>
+    <condition property="branch" value=".${buildnr.versionBranch}" else="">
+       <length string="${buildnr.versionBranch}" trim="true" when="greater" length="0"/>
+    </condition>
+    <property name="buildnr" value="${buildnr.versionMajor}.${buildnr.versionMinor}.${buildnr.versionMicro}${branch}"/>
+    <!-- <property name="buildnr" value="${DSTAMP}"/> -->
   </target>
 
   <target depends="init" name="genparser">
@@ -103,7 +113,7 @@
 
   <target depends="init,compile" name="jar">
 
-    <propertyfile file="${src}/ch/interlis/ili2c/Version.properties">
+    <propertyfile file="${versionfile}">
 	<!-- <entry  key="versionMicro" type="int" value="1" operation="+"/> -->
 	<entry  key="versionDate" type="date" value="now" pattern="yyyyMMdd"/>
     </propertyfile>
@@ -120,7 +130,7 @@
   </target>
   <target depends="init,compile" name="jar-lib">
 
-    <propertyfile file="${src}/ch/interlis/ili2c/Version.properties">
+    <propertyfile file="${versionfile}">
 	<!-- <entry  key="versionMicro" type="int" value="1" operation="+"/> -->
 	<entry  key="versionDate" type="date" value="now" pattern="yyyyMMdd"/>
     </propertyfile>
@@ -131,9 +141,7 @@
     	<fileset dir="${src}" includes="**/iom/AliasTable.txt"/>
     </jar>
   </target>
-  <target depends="init" name="bindist">
-    <property file="${src}/ch/interlis/ili2c/Version.properties" prefix="buildnr."/>
-    <property name="buildnr" value="${buildnr.versionMajor}.${buildnr.versionMinor}.${buildnr.versionMicro}"/>
+  <target depends="init,buildnr" name="bindist">
 	<delete file="${dist}/${ant.project.name}-${buildnr}.zip" quiet="true"/>
     <zip zipfile="${dist}/${ant.project.name}-${buildnr}.zip">
     	<zipfileset dir="." includes="build/jar/ili2c.jar" fullpath="${ant.project.name}-${buildnr}/${ant.project.name}.jar"/>
@@ -167,9 +175,7 @@
     </zip>
   </target>
   
-  <target depends="init" name="srcdist">
-    <property file="${src}/ch/interlis/ili2c/Version.properties" prefix="buildnr."/>
-    <property name="buildnr" value="${buildnr.versionMajor}.${buildnr.versionMinor}.${buildnr.versionMicro}"/>
+  <target depends="init,buildnr" name="srcdist">
     <delete file="${dist}/${ant.project.name}-${buildnr}.src.zip" quiet="true"/>
     <zip zipfile="${dist}/${ant.project.name}-${buildnr}.src.zip">
     	<zipfileset dir="." prefix="${ant.project.name}-${buildnr}">

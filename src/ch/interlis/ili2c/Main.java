@@ -660,6 +660,11 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
           ret.append('.');
 	  ret.append(resVersion.getString("versionMicro"));
           ret.append('-');
+          String branch=ch.ehi.basics.tools.StringUtility.purge(resVersion.getString("versionBranch"));
+          if(branch!=null){
+             ret.append(branch);
+             ret.append('-');
+          }
 	  ret.append(resVersion.getString("versionDate"));
           version=ret.toString();
         }
