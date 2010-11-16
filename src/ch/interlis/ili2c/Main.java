@@ -118,7 +118,6 @@ public class Main
       System.err.println("-o2                   Generate INTERLIS-2 output.");
       System.err.println("-oXSD                 Generate an XML-Schema.");
       System.err.println("-oFMT                 Generate an INTERLIS-1 Format.");
-      System.err.println("-oJAVA                Generate JAVA classes.");
 	  System.err.println("-oIOM                 Generate Model as INTERLIS-Transfer (XTF).");
 	  System.err.println("--out file/dir        file or folder for output.");
       System.err.println("--with-predefined     Include the predefined MODEL INTERLIS in");
