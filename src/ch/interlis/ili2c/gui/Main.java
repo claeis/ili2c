@@ -542,7 +542,7 @@ public class Main {
             if(config.getOutputKind()==GenerateOutputKind.XMLSCHEMA){
               fc.addChoosableFileFilter(GenericFileFilter.createXmlSchemaFilter());
             }else if(config.getOutputKind()==GenerateOutputKind.ILI1FMTDESC){
-              fc.addChoosableFileFilter(new GenericFileFilter("ILI1 Format (*.fmt)","fmt"));
+              fc.addChoosableFileFilter(new GenericFileFilter("INTERLIS 1 format (*.fmt)","fmt"));
 			}else if(config.getOutputKind()==GenerateOutputKind.IOM){
 			  fc.addChoosableFileFilter(GenericFileFilter.createXmlFilter());
 			}else if(config.getOutputKind()==GenerateOutputKind.GML32){
