@@ -309,25 +309,30 @@ public final class Interlis1Generator
       ipw.indent ();
     }
 
-	Iterator iter = model.iterator();
-	boolean isFirst=true;
-	while (iter.hasNext ())
-	{
-	  Object obj = iter.next ();
-	  if (obj instanceof Domain)
-	  {
-		Domain domain = (Domain) obj;
-		if(isFirst){
-			ipw.println("DOMAIN");
-			isFirst=false;
-			ipw.indent();
+	Iterator iter=null;
+	if(genFmt){
+		
+	}else{
+		iter = model.iterator();
+		boolean isFirst=true;
+		while (iter.hasNext ())
+		{
+		  Object obj = iter.next ();
+		  if (obj instanceof Domain)
+		  {
+			Domain domain = (Domain) obj;
+			if(isFirst){
+				ipw.println("DOMAIN");
+				isFirst=false;
+				ipw.indent();
+			}
+			printDomain(domain);
+		  }
 		}
-		printDomain(domain);
-	  }
-	}
-	if(!isFirst){
-		ipw.unindent();
-		ipw.println("");
+		if(!isFirst){
+			ipw.unindent();
+			ipw.println("");
+		}
 	}
 
     iter = model.iterator ();
@@ -377,25 +382,30 @@ public final class Interlis1Generator
     }
 
 
-	Iterator defi = topic.iterator();
-	boolean isFirst=true;
-	while (defi.hasNext ())
-	{
-	  Object obj = defi.next ();
-	  if (obj instanceof Domain)
-	  {
-		Domain domain = (Domain) obj;
-		if(isFirst){
-			ipw.println("DOMAIN");
-			isFirst=false;
-			ipw.indent();
+	Iterator defi = null;
+	if(genFmt){
+		
+	}else{
+		defi=topic.iterator();
+		boolean isFirst=true;
+		while (defi.hasNext ())
+		{
+		  Object obj = defi.next ();
+		  if (obj instanceof Domain)
+		  {
+			Domain domain = (Domain) obj;
+			if(isFirst){
+				ipw.println("DOMAIN");
+				isFirst=false;
+				ipw.indent();
+			}
+		  	printDomain(domain);
+		  }
 		}
-	  	printDomain(domain);
-	  }
-	}
-	if(!isFirst){
-		ipw.unindent();
-		ipw.println("");
+		if(!isFirst){
+			ipw.unindent();
+			ipw.println("");
+		}
 	}
     Class lastPrinted = null;
 
