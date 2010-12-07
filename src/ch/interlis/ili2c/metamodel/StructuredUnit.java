@@ -131,8 +131,8 @@ public class StructuredUnit extends Unit
       
       if (i < parts.length - 1)
       {
-        if (((parts[i].getMinimum() != null) && (parts[i].getMinimum().scale() != 0))
-            || ((parts[i].getMaximum() != null) && (parts[i].getMaximum().scale() != 0)))
+        if (((parts[i].getMinimum() != null) && (parts[i].getMinimum().getExponent() != 0))
+            || ((parts[i].getMaximum() != null) && (parts[i].getMaximum().getExponent() != 0)))
         {
           throw new IllegalArgumentException (formatMessage (
             "err_structuredUnit_fractionalPart",

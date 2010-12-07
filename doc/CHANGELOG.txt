@@ -1,6 +1,11 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.3.3 (2010-12-xx)
+---------------------------
+- bug ili2 exp: failed to generate 0.000000000000000 
+- API: changed PrecisionDecimal (removed extension of BigDecimal)
+
 ili2c 4.3.2 (2010-11-16)
 ---------------------------
 - bug ili2imd: failed to get parent of FormalArgument 

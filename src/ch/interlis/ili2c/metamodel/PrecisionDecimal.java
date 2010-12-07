@@ -12,20 +12,19 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.math.BigDecimal;
+
 
 
 /** A BigDecimal that is associated with a scaling as well.
     This is used to store INTERLIS decimal numbers when
     both scaling and precision need to be preserved.
-
-
-    @version   April 7, 1999
-    @author    Sascha Brawer
 */
-public class PrecisionDecimal extends java.math.BigDecimal
+public class PrecisionDecimal
 {
-  protected int exponent = 0;
-
+  private int exponent = 0;
+  private int accuracy=0;
+  private java.math.BigInteger intVal;
 
   static private int exponentPos(String s){
     int ret;
@@ -50,19 +49,19 @@ public class PrecisionDecimal extends java.math.BigDecimal
   {
 
 
-    super(exponentPos(s) == -1 ? s : s.substring(0, exponentPos(s)));
 
     int sp=exponentPos(s);
 
     if (sp >= 0)
     {
       exponent = Integer.parseInt (s.substring (sp + 1));
+  		s= s.substring(0, exponentPos(s));
     }
+    intVal=(new java.math.BigDecimal(s)).unscaledValue();
 
     //
     // set accuracy
     //
-	int accuracy=0;
     int pp=s.indexOf('.');
     // decimal point found?
     if(pp>=0){
@@ -75,14 +74,15 @@ public class PrecisionDecimal extends java.math.BigDecimal
 		}else{
 			accuracy=s.length()-pp-1;
 		}
+    }else{
+    	accuracy=0;
     }
-    setScale(accuracy);
   }
 
 
   public int getAccuracy()
   {
-  	return scale();
+  	return accuracy;
   }
 
   /** Returns the number after the 'S'.
@@ -92,27 +92,69 @@ public class PrecisionDecimal extends java.math.BigDecimal
     return exponent;
   }
 
-
+  public java.math.BigInteger getUnscaledValue()
+  {
+	  return intVal;
+  }
 
   /** Returns the string representation of this number
       as it would appear in an INTERLIS 2.1 description file.
   */
   public String toString ()
   {
-    if (exponent == 0)
-      return super.toString();
-    else
-      return super.toString() + "e" + Integer.toString (exponent);
+      return layoutChars(false) ;
   }
+  private String layoutChars(boolean isIli1)
+  {
+	  int scale=getAccuracy();
+      char ac[];
+      ac = intVal.abs().toString().toCharArray();
+      StringBuilder stringbuilder = new StringBuilder(ac.length + 14);
+      if(intVal.signum() < 0)
+          stringbuilder.append('-');
+      if(scale > 0)
+      {
+          int i = scale - ac.length;
+          if(i >= 0)
+          {
+        	  // 0.00..0+unscaledValue
+              stringbuilder.append('0');
+              stringbuilder.append('.');
+              for(; i > 0; i--)
+                  stringbuilder.append('0');
+
+              stringbuilder.append(ac);
+          } else
+          {
+        	  // unsc '.' aledValue
+              stringbuilder.append(ac, 0, -i);
+              stringbuilder.append('.');
+              stringbuilder.append(ac, -i, scale);
+          }
+      } else if(scale<0) {
+          stringbuilder.append(ac[0]);
+          if(ac.length > 1)
+          {
+              stringbuilder.append('.');
+              stringbuilder.append(ac, 1, ac.length - 1);
+          }
+      }else{ // scale==0
+          stringbuilder.append(ac);
+      }
+      if(exponent!=0){
+          stringbuilder.append(isIli1 ? 'S' : 'e');
+          stringbuilder.append(Integer.toString (exponent));
+    	  
+      }
+      return stringbuilder.toString();
+  }
+  
   /** Returns the string representation of this number
       as it would appear in an INTERLIS 1 description file.
   */
   public String toIli1String ()
   {
-    if (exponent == 0)
-      return super.toString();
-    else
-      return super.toString() + "S" + Integer.toString (exponent);
+    return layoutChars(true);
   }
 
 
@@ -123,6 +165,33 @@ public class PrecisionDecimal extends java.math.BigDecimal
   */
   public double doubleValue()
   {
-    return (this.movePointRight (exponent)).doubleValue();
+    return Double.parseDouble(layoutChars(false));
   }
+  public int compareTo(PrecisionDecimal other)
+  {
+	  if(exponent==other.exponent && accuracy==other.accuracy){
+		  return intVal.compareTo(other.intVal);
+	  }
+      int i = intVal.signum() - other.intVal.signum();
+      if(i != 0)
+          return i <= 0 ? -1 : 1;
+	  return Double.compare(doubleValue(), other.doubleValue());
+  }  
+  static public void main(String args[]){
+	 test("1");
+	 test("1.0");
+	 test("1e1");
+	 test("10.0e1");
+	 test("10.00e1");
+	 test("10.0e-2");
+	 test("0.000000000000000");
+	 test("9999999999999999.000000000000000");
+	 test("99999999999999990000000000000000");
+	 
+  }
+private static void test(String valStr) {
+	PrecisionDecimal test1=new PrecisionDecimal(valStr);
+	System.out.println(valStr+": Accuracy "+test1.getAccuracy()+", Exponent "+test1.getExponent()+", unscaledValue "+test1.intVal);
+	 System.out.println(valStr+": "+test1.toString()+", double "+test1.doubleValue());
+}
 }

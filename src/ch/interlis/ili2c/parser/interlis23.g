@@ -766,7 +766,7 @@ protected interlis2Def
 	}
 	:	ili:"INTERLIS" version=decimal
 	    {
-	      if (version.floatValue() != 2.3f) {
+	      if (version.doubleValue()!=2.3) {
 	        reportError(rsrc.getString("err_wrongInterlisVersion"),
 	                    ili.getLine());
 	        panic();

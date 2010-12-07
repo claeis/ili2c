@@ -980,8 +980,8 @@ public final class ETF1Generator
 				}else{
 					ipw.println ("<xsd:restriction base=\"xsd:decimal\">");
 			          ipw.indent ();
-			          ipw.println ("<xsd:minInclusive value=\""+((java.math.BigDecimal)((NumericType)type).getMinimum())+"\"/>");
-			          ipw.println ("<xsd:maxInclusive value=\""+((java.math.BigDecimal)((NumericType)type).getMaximum())+"\"/>");
+			          ipw.println ("<xsd:minInclusive value=\""+((NumericType)type).getMinimum().toString()+"\"/>");
+			          ipw.println ("<xsd:maxInclusive value=\""+((NumericType)type).getMaximum().toString()+"\"/>");
 			          ipw.unindent ();
 		            ipw.println ("</xsd:restriction>");
 				}

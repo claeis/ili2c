@@ -1581,7 +1581,7 @@ public final class Interlis1Generator
   public static String genFmtField(int idx,PrecisionDecimal value){
     StringBuffer ret=new StringBuffer(10);
     char c=getIdxCode(idx);
-    int size=value.toBigInteger().toString().length();
+    int size=value.getUnscaledValue().toString().length();
     for(int i=0;i<size;i++){
       ret.append(c);
     }

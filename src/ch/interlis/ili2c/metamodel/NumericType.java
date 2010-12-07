@@ -69,7 +69,7 @@ public class NumericType extends NumericalType
     }
     
     /* Check whether precision is the same. */
-    if (minimum.scale() != maximum.scale())
+    if (minimum.getAccuracy() != maximum.getAccuracy())
       throw new Ili2cSemanticException (rsrc.getString (
         "err_numericType_precisionMismatch"));
     
@@ -184,15 +184,15 @@ public class NumericType extends NumericalType
     {
       BigDecimal min_rounded, max_rounded;
       
-      min_rounded = minimum.setScale (general.minimum.scale(),
+      min_rounded = new BigDecimal(minimum.toString()).setScale (general.minimum.getExponent(),
                                       BigDecimal.ROUND_HALF_UP);
-      max_rounded = maximum.setScale (general.maximum.scale(),
+      max_rounded = new BigDecimal(maximum.toString()).setScale (general.maximum.getExponent(),
                                       BigDecimal.ROUND_HALF_UP);
       
       if (min_rounded.compareTo (general.minimum) == -1)
         throw new Ili2cSemanticException (formatMessage (
           "err_numericType_minLessInheritedMin",
-          Integer.toString (general.minimum.scale()),
+          Integer.toString (general.minimum.getExponent()),
           minimum.toString(),
           min_rounded.toString(),
           general.minimum.toString()));
@@ -200,7 +200,7 @@ public class NumericType extends NumericalType
       if (max_rounded.compareTo (general.maximum) == +1)
         throw new Ili2cSemanticException (formatMessage (
           "err_numericType_maxGreaterInheritedMax",
-          Integer.toString (general.maximum.scale()),
+          Integer.toString (general.maximum.getExponent()),
           maximum.toString(),
           max_rounded.toString(),
           general.maximum.toString()));
