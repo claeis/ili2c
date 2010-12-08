@@ -28,7 +28,7 @@ public class NumericallyDerivedUnit extends DerivedUnit
   public static class Factor
   {
     protected char conversionOperator;
-    protected double conversionFactor;
+    protected PrecisionDecimal conversionFactor;
     
     /** Constructs a new factor given a conversion operator
         and a conversion factor.
@@ -39,20 +39,20 @@ public class NumericallyDerivedUnit extends DerivedUnit
         @param conversionFactor the conversion factor; must not
                be zero.
     */
-    public Factor (char conversionOperator, double conversionFactor)
+    public Factor (char conversionOperator, PrecisionDecimal conversionFactor)
     {
       this.conversionOperator = conversionOperator;
       this.conversionFactor = conversionFactor;
       
       if (conversionOperator == '*')
       {
-        if (conversionFactor == 0.0)
+        if (conversionFactor.doubleValue() == 0.0)
           throw new IllegalArgumentException (
             ch.interlis.ili2c.metamodel.Element.rsrc.getString ("err_zeroUnitConversionFactor"));
       }
       else if (conversionOperator == '/')
       {
-        if (conversionFactor == 0.0)
+        if (conversionFactor.doubleValue() == 0.0)
           throw new IllegalArgumentException (
             ch.interlis.ili2c.metamodel.Element.rsrc.getString ("err_zeroUnitDivisor"));
       }
@@ -62,7 +62,7 @@ public class NumericallyDerivedUnit extends DerivedUnit
     }
     
     
-    public double getConversionFactor()
+    public PrecisionDecimal getConversionFactor()
     {
       return conversionFactor;
     }

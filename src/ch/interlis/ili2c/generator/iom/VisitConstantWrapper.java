@@ -68,7 +68,7 @@ public class VisitConstantWrapper implements Visitor, ObjWriter {
 			out.write("<from>"+encodeEnum(((Constant.EnumerationRange)obj.cnst).getCommonPrefix())+"."+((Constant.EnumerationRange)obj.cnst).getFrom()+"</from>");
 			out.write("<to>"+encodeEnum(((Constant.EnumerationRange)obj.cnst).getCommonPrefix())+"."+((Constant.EnumerationRange)obj.cnst).getTo()+"</to>");
 		}else if(obj.cnst instanceof Constant.Numeric){
-			out.write("<value>"+cb.encodeDouble(((Constant.Numeric)obj.cnst).getValue())+"</value>");
+			out.write("<value>"+cb.encodePrecisionDecimal(((Constant.Numeric)obj.cnst).getValue())+"</value>");
 			Object refobj=((Constant.Numeric)obj.cnst).getUnit();
 			if(refobj!=null){
 				out.write("<Unit REF=\""+cb.encodeOid(cb.getobjid(refobj))+"\"/>");

@@ -173,13 +173,13 @@ public class PredefinedModel extends DataModel
   public final TopicTIMESYSTEMS TIMESYSTEMS = new TopicTIMESYSTEMS();
   public final Unit Minute = createModelInterlisNumUnit (
 	"min", "Minute",
-	SECOND, 60.0);
+	SECOND, new PrecisionDecimal("60"));
 	public final Unit Hour = createModelInterlisNumUnit (
 	  "h", "Hour",
-	  Minute, 60.0);
+	  Minute, new PrecisionDecimal("60"));
 	public final Unit Day = createModelInterlisNumUnit (
 	  "d", "Day",
-	  Hour, 24.0);
+	  Hour, new PrecisionDecimal("24"));
 	public final Unit Month = createModelInterlisBaseUnit (
 	  "M", "Month",
 	  TIME, /* abstract */ false);
@@ -1007,7 +1007,7 @@ einer gemeinsamen Einheit abgeleitet werden.
       return null;
     }
   }
-  private NumericallyDerivedUnit createModelInterlisNumUnit (String name, String docName, Unit extending, double fact)
+  private NumericallyDerivedUnit createModelInterlisNumUnit (String name, String docName, Unit extending, PrecisionDecimal fact)
   {
 	try {
 		NumericallyDerivedUnit result = new NumericallyDerivedUnit ();

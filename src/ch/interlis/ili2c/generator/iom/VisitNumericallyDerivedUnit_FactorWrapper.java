@@ -22,7 +22,7 @@ public class VisitNumericallyDerivedUnit_FactorWrapper implements Visitor, ObjWr
 		String tag=IomGenerator.MODEL+"."+IomGenerator.TOPIC+".NumericallyDerivedUnit_Factor";
 		out.write("<"+tag+" TID=\""+cb.encodeOid(oid)+"\">");
 		out.write("<operator>"+encodeOperator(obj.factor.getConversionOperator())+"</operator>");
-		out.write("<value>"+cb.encodeDouble(obj.factor.getConversionFactor())+"</value>");
+		out.write("<value>"+cb.encodePrecisionDecimal(obj.factor.getConversionFactor())+"</value>");
 		out.write("<numericallyDerivedUnit REF=\""+cb.encodeOid(cb.getobjid(obj.numericallyDerivedUnit))+"\"/>");
 		out.write("</"+tag+">");
 	}

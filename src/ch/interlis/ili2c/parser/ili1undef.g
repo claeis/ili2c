@@ -106,7 +106,7 @@ protected enumNameListHelper[List namList]
 protected numericConst
 	returns[Constant c]
 	{ 
-	double val;
+	PrecisionDecimal val;
 	c=null;
 	}
 	: val=decConst 
@@ -116,14 +116,13 @@ protected numericConst
 	;
 
 protected decConst
-	returns [double val]
+	returns [PrecisionDecimal dec]
 	{
-	val = 0;
-	PrecisionDecimal dec;
+	 dec=null;
 	}
-	: "PI" { val = Math.PI; }
-	| "LNBASE" {val = Math.E;}
-	| dec = decimal { val = dec.doubleValue(); }
+	: "PI" { dec = PrecisionDecimal.PI; }
+	| "LNBASE" {dec = PrecisionDecimal.LNBASE;}
+	| dec = decimal
 	;
 protected decimal
 	returns [PrecisionDecimal dec]

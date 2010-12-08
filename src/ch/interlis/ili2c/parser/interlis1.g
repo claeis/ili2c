@@ -1238,8 +1238,8 @@ protected ili1_angleType [Model containingModel]
             NumericallyDerivedUnit.Factor times180;
             NumericallyDerivedUnit.Factor byPi;
 
-            byPi = new NumericallyDerivedUnit.Factor ('/', Math.PI);
-            times180 = new NumericallyDerivedUnit.Factor ('*', 180.0);
+            byPi = new NumericallyDerivedUnit.Factor ('/', PrecisionDecimal.PI);
+            times180 = new NumericallyDerivedUnit.Factor ('*', new PrecisionDecimal("180.0"));
 
             NumericallyDerivedUnit degr = new NumericallyDerivedUnit ();
             degr.setName (rsrc.getString ("err_unit_ili1_DEGREES_name"));
@@ -1268,8 +1268,8 @@ protected ili1_angleType [Model containingModel]
             NumericallyDerivedUnit.Factor times200;
             NumericallyDerivedUnit.Factor byPi;
 
-            byPi = new NumericallyDerivedUnit.Factor ('/', Math.PI);
-            times200 = new NumericallyDerivedUnit.Factor ('*', 200.0);
+            byPi = new NumericallyDerivedUnit.Factor ('/', PrecisionDecimal.PI);
+            times200 = new NumericallyDerivedUnit.Factor ('*', new PrecisionDecimal("200.0"));
 
             NumericallyDerivedUnit gon = new NumericallyDerivedUnit ();
             gon.setName (rsrc.getString ("err_unit_ili1_GRADS_docName"));

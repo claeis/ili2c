@@ -4,7 +4,10 @@ Known Issues:
 ili2c 4.3.3 (2010-12-xx)
 ---------------------------
 - bug ili2 exp: failed to generate 0.000000000000000 
+- bug ili1 exp: failed to generate decConst without decimal digits in UnitDef (e.g. Minute [min] = 60 [s];)
+- ili1 exp: generate explicit factor "1" in unitDef (e.g. Meter [m] = 1 [INTERLIS.m];)
 - API: changed PrecisionDecimal (removed extension of BigDecimal)
+- API: changed Constant.Numeric, NumericallyDerivedUnit.Factor
 
 ili2c 4.3.2 (2010-11-16)
 ---------------------------

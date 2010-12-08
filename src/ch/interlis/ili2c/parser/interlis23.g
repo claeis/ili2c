@@ -2471,20 +2471,19 @@ protected refSys[Container scope,boolean isCoord]
 	;
 
 protected decConst
-	returns [double val]
+	returns [PrecisionDecimal dec]
 	{
-	val = 0;
-	PrecisionDecimal dec;
+	dec=null;
 	}
-	: "PI" { val = Math.PI; }
-	| "LNBASE" {val = Math.E;}
-	| dec = decimal { val = dec.doubleValue(); }
+	: "PI" { dec = PrecisionDecimal.PI; }
+	| "LNBASE" {dec = PrecisionDecimal.LNBASE;}
+	| dec = decimal
 	;
 
 protected numericConst[Container scope]
 	returns[Constant c]
 	{ Unit un=null;
-	double val;
+	PrecisionDecimal val;
 	c=null;
 	}
 	: val=decConst ( LBRACE un=unitRef[scope] RBRACE )?
@@ -3158,7 +3157,7 @@ protected derivedUnit [Container scope, String idName, String docName, boolean _
   List factors = null;
   int line = 0;
   char compOp = '*';
-  double fac = 1.0;
+  PrecisionDecimal fac = new PrecisionDecimal("1");
 }
   : f:"FUNCTION" exp:EXPLANATION LBRACE baseUnit=unitRef[scope] RBRACE
     {
@@ -3283,7 +3282,7 @@ protected derivedUnit [Container scope, String idName, String docName, boolean _
       try {
         ndu.setConversionFactors (
           new NumericallyDerivedUnit.Factor[] {
-            new NumericallyDerivedUnit.Factor ('*', 1.0)
+            new NumericallyDerivedUnit.Factor ('*', new PrecisionDecimal("1"))
           });
       } catch (Exception ex) {
         reportError (ex, line);

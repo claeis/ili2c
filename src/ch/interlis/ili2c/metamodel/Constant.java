@@ -203,14 +203,14 @@ public abstract class Constant extends Evaluable
   */
   public static class Numeric extends Constant
   {
-    double value;
+    PrecisionDecimal value;
     Unit   unit;
 
 
 
     /** Constructs a new unit-less numeric constant given its value.
     */
-    public Numeric (double value)
+    public Numeric (PrecisionDecimal value)
     {
       this.value = value;
       this.unit = null;
@@ -220,7 +220,7 @@ public abstract class Constant extends Evaluable
 
     /** Constructs a new numeric constant given its value and unit.
     */
-    public Numeric (double value, Unit unit)
+    public Numeric (PrecisionDecimal value, Unit unit)
     {
       this.value = value;
       this.unit = unit;
@@ -230,7 +230,7 @@ public abstract class Constant extends Evaluable
 
     /** Returns the value of a numeric constant.
     */
-    public double getValue()
+    public PrecisionDecimal getValue()
     {
       return value;
     }
@@ -273,7 +273,7 @@ public abstract class Constant extends Evaluable
         throw new IllegalArgumentException (Element.formatMessage (
           "err_numericConst_assignOther",
           target.toString(),
-          Double.toString(value)));
+          value.toString()));
       }
     }
   } /* Constant.Numeric */

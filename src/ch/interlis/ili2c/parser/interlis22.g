@@ -2256,20 +2256,19 @@ protected refSys[Container scope]
 	;
 
 protected decConst
-	returns [double val]
+	returns [PrecisionDecimal dec]
 	{
-	val = 0;
-	PrecisionDecimal dec;
+	dec=null;
 	}
-	: "PI" { val = Math.PI; }
-	| "LNBASE" {val = Math.E;}
-	| dec = decimal { val = dec.doubleValue(); }
+	: "PI" { dec = PrecisionDecimal.PI; }
+	| "LNBASE" {dec = PrecisionDecimal.LNBASE;}
+	| dec = decimal
 	;
 
 protected numericConst[Container scope]
 	returns[Constant c]
 	{ Unit un=null;
-	double val;
+	PrecisionDecimal val;
 	c=null;
 	}
 	: val=decConst ( LBRACE un=unitRef[scope] RBRACE )?
@@ -2776,7 +2775,7 @@ protected derivedUnit [Container scope, String idName, String docName, boolean _
   List factors = null;
   int line = 0;
   char compOp = '*';
-  double fac = 1.0;
+  PrecisionDecimal fac = new PrecisionDecimal("1");
 }
   : f:"FUNCTION" exp:EXPLANATION LBRACE baseUnit=unitRef[scope] RBRACE
     {
@@ -2901,7 +2900,7 @@ protected derivedUnit [Container scope, String idName, String docName, boolean _
       try {
         ndu.setConversionFactors (
           new NumericallyDerivedUnit.Factor[] {
-            new NumericallyDerivedUnit.Factor ('*', 1.0)
+            new NumericallyDerivedUnit.Factor ('*', new PrecisionDecimal("1"))
           });
       } catch (Exception ex) {
         reportError (ex, line);
@@ -6344,8 +6343,8 @@ protected ili1_angleType [Model containingModel]
             NumericallyDerivedUnit.Factor times180;
             NumericallyDerivedUnit.Factor byPi;
 
-            byPi = new NumericallyDerivedUnit.Factor ('/', Math.PI);
-            times180 = new NumericallyDerivedUnit.Factor ('*', 180.0);
+            byPi = new NumericallyDerivedUnit.Factor ('/', PrecisionDecimal.PI);
+            times180 = new NumericallyDerivedUnit.Factor ('*', new PrecisionDecimal("180.0"));
 
             NumericallyDerivedUnit degr = new NumericallyDerivedUnit ();
             degr.setName (rsrc.getString ("err_unit_ili1_DEGREES_name"));
@@ -6374,8 +6373,8 @@ protected ili1_angleType [Model containingModel]
             NumericallyDerivedUnit.Factor times200;
             NumericallyDerivedUnit.Factor byPi;
 
-            byPi = new NumericallyDerivedUnit.Factor ('/', Math.PI);
-            times200 = new NumericallyDerivedUnit.Factor ('*', 200.0);
+            byPi = new NumericallyDerivedUnit.Factor ('/', PrecisionDecimal.PI);
+            times200 = new NumericallyDerivedUnit.Factor ('*', new PrecisionDecimal("200.0"));
 
             NumericallyDerivedUnit gon = new NumericallyDerivedUnit ();
             gon.setName (rsrc.getString ("err_unit_ili1_GRADS_docName"));

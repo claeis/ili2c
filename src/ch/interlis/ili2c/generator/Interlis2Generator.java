@@ -945,7 +945,7 @@ private void setup(
       ipw.print(" =");
 
 
-      if (factors.length > 1)
+      if (factors.length >= 1)
       {
         for (int i = 0; i < factors.length; i++)
         {
@@ -956,14 +956,6 @@ private void setup(
           }
           ipw.print (' ');
           printNumericConst (factors[i].getConversionFactor());
-        }
-      }
-      else if (factors.length == 1)
-      {
-        if (factors[0].getConversionFactor() != 1.0)
-        {
-          ipw.print (' ');
-          printNumericConst (factors[0].getConversionFactor());
         }
       }
 
@@ -1084,29 +1076,19 @@ private void setup(
 
 
 
-  private void printNumericConst (double num)
+  private void printNumericConst (PrecisionDecimal num)
   {
-    if (num == Math.PI)
+    if (num == PrecisionDecimal.PI)
     {
       ipw.print("PI");
       return;
     }
-
-
-    StringBuffer s = new StringBuffer(30);
-    s.append (num);
-
-
-    int l = s.length();
-    for (int i = 0; i < l; i++)
+    if (num == PrecisionDecimal.LNBASE)
     {
-      if (s.charAt(i) == 'E')
-      {
-        s.setCharAt(i, 'S');
-        break;
-      }
+      ipw.print("LNBASE");
+      return;
     }
-    ipw.print(s.toString());
+    ipw.print(num.toString());
   }
 
 

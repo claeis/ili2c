@@ -22,6 +22,8 @@ import java.math.BigDecimal;
 */
 public class PrecisionDecimal
 {
+	public final static PrecisionDecimal PI = new PrecisionDecimal(Math.PI); 
+	public final static PrecisionDecimal LNBASE = new PrecisionDecimal(Math.E);
   private int exponent = 0;
   private int accuracy=0;
   private java.math.BigInteger intVal;
@@ -36,6 +38,10 @@ public class PrecisionDecimal
       ret=s.indexOf('E');
     }
     return ret;
+  }
+  public PrecisionDecimal (double v)
+  {
+	  this(Double.toString(v));
   }
   /** Constructs a precision decimal number from its
       string representation as it would appear in an

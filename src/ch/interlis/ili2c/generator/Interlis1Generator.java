@@ -1119,7 +1119,7 @@ public final class Interlis1Generator
         || (factors[0] == null) || (factors[1] == null))
       return false;
 
-    if (factors[0].getConversionFactor () != Math.PI)
+    if (factors[0].getConversionFactor () != PrecisionDecimal.PI)
       return false;
 
 
@@ -1127,7 +1127,7 @@ public final class Interlis1Generator
       return false;
 
 
-    if (factors[1].getConversionFactor () != 180.0)
+    if (factors[1].getConversionFactor ().doubleValue() != 180.0)
       return false;
 
 
@@ -1164,7 +1164,7 @@ public final class Interlis1Generator
       return false;
 
 
-    if (factors[0].getConversionFactor () != Math.PI)
+    if (factors[0].getConversionFactor () != PrecisionDecimal.PI)
       return false;
 
 
@@ -1172,7 +1172,7 @@ public final class Interlis1Generator
       return false;
 
 
-    if (factors[1].getConversionFactor () != 200.0)
+    if (factors[1].getConversionFactor().doubleValue() != 200.0)
       return false;
 
 
