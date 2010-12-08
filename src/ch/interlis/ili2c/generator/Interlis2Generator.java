@@ -5,7 +5,7 @@ import ch.interlis.ili2c.metamodel.*;
 import java.io.Writer;
 import java.util.Iterator;
 import ch.ehi.basics.io.IndentPrintWriter;
-
+import ch.ehi.basics.logging.EhiLogger;
 
 /** A class used to generate an INTERLIS model description as INTERLIS-2.
 */
@@ -994,7 +994,6 @@ private void setup(
     {
       StructuredUnit.Part[] parts;
 
-
       parts = ((StructuredUnit) u).getParts();
       ipw.print (" = {");
       printRef (scope, ((StructuredUnit) u).getFirstUnit());
@@ -1015,8 +1014,13 @@ private void setup(
         ipw.print (" CONTINUOUS");
     }
 
+    if (u instanceof StructuredUnit){
+        EhiLogger.logError("UNIT "+u.getName()+": StructuredUnit not supported by INTERLIS 2.3");
+        ipw.println("; !! Hint: comment out/remove");
+    }else{
+        ipw.println(';');
+    }
 
-    ipw.println(';');
   }
 
 
@@ -1172,7 +1176,12 @@ private void setup(
         }
       }
     }
-    ipw.println(';');
+    if(attrib instanceof LocalAttribute && attrib.getDomain() instanceof StructuredUnitType){
+        EhiLogger.logError("ATTRIBUTE "+attrib.getScopedName(null)+": StructuredUnitType not supported by INTERLIS 2.3; replace by TextType or FormattedType/XMLDate");
+        ipw.println("; !! Hint: replace by TextType or FormattedType/XMLDate");
+    }else{
+        ipw.println(';');
+    }
   }
 
 
@@ -1406,7 +1415,12 @@ private void setup(
 
     ipw.print(" = ");
     printType (scope, dd.getType());
-    ipw.println(';');
+    if(dd.getType() instanceof StructuredUnitType){
+        EhiLogger.logError("DOMAIN "+dd.getName()+": StructuredUnitType not supported by INTERLIS 2.3; replace by TextType or FormattedType/XMLDate");
+        ipw.println("; !! Hint: replace by TextType or FormattedType/XMLDate");
+    }else{
+        ipw.println(';');
+    }
   }
 
 
