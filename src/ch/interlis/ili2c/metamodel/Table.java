@@ -83,7 +83,8 @@ public class Table extends AbstractClassDef
 
       public boolean add (Object o)
       {
-        if ((o instanceof UniquenessConstraint) && !Table.this.isIdentifiable())
+        if ((o instanceof UniquenessConstraint) && !Table.this.isIdentifiable() 
+        		&& !((UniquenessConstraint)o).getLocal())
           throw new Ili2cSemanticException (formatMessage (
             "err_structure_unique",
             Table.this.toString ()));
