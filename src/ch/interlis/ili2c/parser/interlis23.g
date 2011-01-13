@@ -6516,7 +6516,7 @@ Float = [ '+' | '-' ] '0.' (('1'|'2'|...|'9') [PosNumber] | (* '0' *))
 
 protected DEC
   : 
-  (( '+' | '-')? '0' DOT ('1'..'9' POSINT | ('0')+) ('e' | 'E')) => NUMBER DOT POSINT SCALING
+  (( '+' | '-')? '0' DOT (('1'..'9' (POSINT)?) | ('0')+) ('e' | 'E')) => NUMBER DOT POSINT SCALING
   | NUMBER
     ( DOT POSINT )?
      ;      
