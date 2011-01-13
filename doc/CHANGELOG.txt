@@ -5,6 +5,7 @@ ili2c 4.3.4 (2011-01-10)
 ---------------------------
 - bug ili2: unexpected error if UNIQUE (LOCAL) in STRUCTURE
 - bug: failed to parse DEC "0.1e2"
+- bug: unexpected exception "PrecisionDecimal cannot be cast to java.math.BigDecimal"
 
 ili2c 4.3.3 (2010-12-28)
 ---------------------------

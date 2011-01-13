@@ -182,14 +182,16 @@ public class NumericType extends NumericalType
     if ((minimum != null) && (maximum != null)
         && (general.minimum != null) && (general.maximum != null))
     {
-      BigDecimal min_rounded, max_rounded;
-      
-      min_rounded = new BigDecimal(minimum.toString()).setScale (general.minimum.getExponent(),
+      BigDecimal min_rounded = new BigDecimal(minimum.toString()).setScale (minimum.getExponent(),
                                       BigDecimal.ROUND_HALF_UP);
-      max_rounded = new BigDecimal(maximum.toString()).setScale (general.maximum.getExponent(),
+      BigDecimal max_rounded = new BigDecimal(maximum.toString()).setScale (maximum.getExponent(),
                                       BigDecimal.ROUND_HALF_UP);
+      BigDecimal min_general = new BigDecimal(general.minimum.toString()).setScale (general.minimum.getExponent(),
+              BigDecimal.ROUND_HALF_UP);
+      BigDecimal max_general = new BigDecimal(general.maximum.toString()).setScale (general.maximum.getExponent(),
+              BigDecimal.ROUND_HALF_UP);
       
-      if (min_rounded.compareTo (general.minimum) == -1)
+      if (min_rounded.compareTo (min_general) == -1)
         throw new Ili2cSemanticException (formatMessage (
           "err_numericType_minLessInheritedMin",
           Integer.toString (general.minimum.getExponent()),
@@ -197,7 +199,7 @@ public class NumericType extends NumericalType
           min_rounded.toString(),
           general.minimum.toString()));
 
-      if (max_rounded.compareTo (general.maximum) == +1)
+      if (max_rounded.compareTo (max_general) == +1)
         throw new Ili2cSemanticException (formatMessage (
           "err_numericType_maxGreaterInheritedMax",
           Integer.toString (general.maximum.getExponent()),
