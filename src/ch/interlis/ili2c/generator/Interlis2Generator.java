@@ -38,6 +38,7 @@ public class Interlis2Generator
 	java.io.StringWriter syntaxBuffer=new java.io.StringWriter();
 	Interlis2Generator makeSyntax=Interlis2Generator.generateElements(syntaxBuffer,td);
 	makeSyntax.printElement(ele.getContainer(),null,ele);
+	makeSyntax.ipw.flush();
     return syntaxBuffer.toString();
   }
 
@@ -1506,6 +1507,58 @@ private void setup(
         ipw.print(len);
       }
     }
+    else if (dd instanceof FormattedType) // TODO
+    {
+        FormattedType ft = (FormattedType) dd;
+        if(ft.getDefinedBaseStruct()!=null){
+        	ipw.print("FORMAT BASED ON ");
+            printRef (scope, ft.getDefinedBaseStruct());
+            Iterator baseAttri=ft.iteratorDefinedBaseAttrRef();
+            if(baseAttri.hasNext()){
+            	ipw.print(" (");
+            	String sep="";
+            	if(ft.getExtending()!=null){
+            		ipw.print("INHERITANCE");
+            		sep=" ";
+            	}
+            	if(ft.getDefinedPrefix()!=null){
+            		ipw.print("\""+ft.getDefinedPrefix()+"\"");
+            		sep=" ";
+            	}
+            	while(baseAttri.hasNext()){
+                	ipw.print(sep);
+                	FormattedTypeBaseAttrRef baseAttr=(FormattedTypeBaseAttrRef)baseAttri.next();
+                	if(baseAttr.getFormatted()!=null){
+                    	ipw.print(baseAttr.getAttr().getName());
+                    	ipw.print("/");
+                    	printRef(scope,baseAttr.getFormatted());
+                	}else{
+                    	ipw.print(baseAttr.getAttr().getName());
+                    	if(baseAttr.getIntPos()!=0){
+                        	ipw.print("/");
+                    		ipw.print(baseAttr.getIntPos());
+                    	}
+                	}
+                	if(baseAttr.getPostfix()!=null){
+                		ipw.print(" \""+baseAttr.getPostfix()+"\"");
+                	}
+            		sep=" ";
+            	}
+            	ipw.print(")");
+            }
+        	if(ft.getDefinedMinimum()!=null){
+            	ipw.print(" ");
+                printFormatedTypeMinMax(ft);
+        	}
+        }else if(ft.getDefinedBaseDomain()!=null){
+        	ipw.print("FORMAT ");
+            printRef (scope, ft.getDefinedBaseDomain());
+        	ipw.print(" ");
+            printFormatedTypeMinMax(ft);
+        }else{
+            printFormatedTypeMinMax(ft);
+        }
+    }
     else if (dd instanceof EnumerationType)
     {
       EnumerationType et = (EnumerationType) dd;
@@ -1764,6 +1817,13 @@ private void setup(
       }
     }
   }
+private void printFormatedTypeMinMax(FormattedType ft) {
+	ipw.print("\"");
+	ipw.print(ft.getDefinedMinimum());
+	ipw.print("\" .. \"");
+	ipw.print(ft.getDefinedMaximum());
+	ipw.print("\"");
+}
 
 
 

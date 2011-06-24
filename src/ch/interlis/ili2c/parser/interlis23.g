@@ -2521,7 +2521,13 @@ protected formattedType[Container scope, Type extending]
 			ft.setBaseStruct(struct);
 		}
 		LPAREN ("INHERITANCE")?
-                  ( prefix:STRING )? ( baseAttr=baseAttrRef[ft,struct] {postfix=null;} (postfix:STRING)?
+                  ( prefix:STRING {
+				if(prefix!=null){
+					ft.setPrefix(prefix.getText());
+				}
+                  	}
+                  )? 
+                  ( baseAttr=baseAttrRef[ft,struct] {postfix=null;} (postfix:STRING)?
 		  		{ 	if(postfix!=null){
 						baseAttr.setPostfix(postfix.getText());
 					}
@@ -2531,9 +2537,6 @@ protected formattedType[Container scope, Type extending]
                              RPAREN
 		( min:STRING DOTDOT max:STRING )?
 		{ 
-			if(prefix!=null){
-				ft.setPrefix(prefix.getText());
-			}
 			if(min!=null){
 				try{
 					if(!ft.isValueInRange(min.getText())){
