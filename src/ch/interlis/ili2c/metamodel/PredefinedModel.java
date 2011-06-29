@@ -219,6 +219,7 @@ public class PredefinedModel extends DataModel
     elements = new ElementDelegate() {
     };
     name = "INTERLIS";
+    setLanguage("en");
 	setContracted(true);
 	setIssuer("http://www.interlis.ch");
 	setModelVersion("20060126");
