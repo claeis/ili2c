@@ -228,6 +228,7 @@ private void setup(
   protected void printAbstractClassDef (AbstractClassDef def)
   {
 	printDocumentation(def.getDocumentation());
+	printMetaValues(def.getMetaValues());
 
 	String keyword;
 	if(def instanceof Table){
@@ -363,6 +364,7 @@ private void setup(
   public void printView (View view)
   {
 	printDocumentation(view.getDocumentation());
+	printMetaValues(view.getMetaValues());
     printStart ("VIEW", view, /* basedOn */ null);
     if (view instanceof Projection)
     {
@@ -425,6 +427,7 @@ private void setup(
 
 
 	printDocumentation(graph.getDocumentation());
+	printMetaValues(graph.getMetaValues());
    printStart ("GRAPHIC", graph, /* basedOn */ graph.getBasedOn());
     printElements (graph);
     printEnd (graph);
@@ -833,6 +836,7 @@ private void setup(
   public void printConstraint(Constraint elt)
   {
 	printDocumentation(elt.getDocumentation());
+	printMetaValues(elt.getMetaValues());
       Container container=elt.getContainer();
       if (elt instanceof MandatoryConstraint)
       {
@@ -870,6 +874,7 @@ private void setup(
   public void printGraphicParameterDef(GraphicParameterDef gfxp)
   {
 	printDocumentation(gfxp.getDocumentation());
+	printMetaValues(gfxp.getMetaValues());
     ipw.print(gfxp.getName());
     ipw.print(" : ");
     printType(gfxp.getContainer(),gfxp.getDomain());
@@ -878,6 +883,7 @@ private void setup(
   public void printMetaDataUseDef(MetaDataUseDef mu)
   {
 	printDocumentation(mu.getDocumentation());
+	printMetaValues(mu.getMetaValues());
     if(mu.isSignData()){
       ipw.print("SIGN BASKET ");
     }else{
@@ -946,6 +952,7 @@ private void setup(
 
 
 	printDocumentation(u.getDocumentation());
+	printMetaValues(u.getMetaValues());
     ipw.print(u.getDocName());
     if (!u.getDocName().equals(u.getName())) {
       ipw.print(" [");
@@ -1076,6 +1083,7 @@ private void setup(
 
 
 	printDocumentation(par.getDocumentation());
+	printMetaValues(par.getMetaValues());
     ipw.print(par.getName());
 
 
@@ -1129,6 +1137,7 @@ private void setup(
   {
 
 	printDocumentation(role.getDocumentation());
+	printMetaValues(role.getMetaValues());
 	ipw.print(role.getName());
 	printModifiers(role.isAbstract(), role.isFinal(),
 	  role.isExtended(),role.isOrdered(),role.isExternal(),/*TRANSIENT*/false);
@@ -1173,6 +1182,7 @@ private void setup(
       return;
     }
 	printDocumentation(attrib.getDocumentation());
+	printMetaValues(attrib.getMetaValues());
 
 	if(attrib instanceof LocalAttribute){
 		LocalAttribute la=(LocalAttribute)attrib;
@@ -1447,6 +1457,7 @@ private void setup(
 
 
 	printDocumentation(dd.getDocumentation());
+	printMetaValues(dd.getMetaValues());
     ipw.print (dd.getName());
     printModifiers (dd.isAbstract(), dd.isFinal(),
       /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
@@ -1967,6 +1978,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
   protected void printEnumerationElement (ch.interlis.ili2c.metamodel.Enumeration.Element ee)
   {
 	printDocumentation(ee.getDocumentation());
+	printMetaValues(ee.getMetaValues());
     ipw.print(ee.getName());
 
 
@@ -1990,6 +2002,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
 
 
 	printDocumentation(lf.getDocumentation());
+	printMetaValues(lf.getMetaValues());
     ipw.print (lf.getName ());
 
 
@@ -2015,6 +2028,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
 
 
 	printDocumentation(f.getDocumentation());
+	printMetaValues(f.getMetaValues());
     ipw.print("FUNCTION ");
     ipw.print(f.getName());
     ipw.print("(");

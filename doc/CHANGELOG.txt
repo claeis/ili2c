@@ -4,6 +4,7 @@ Known Issues:
 ili2c 4.3.7 (2011-06-xx)
 ---------------------------
 - bug iliexp: no output of MetaDataUseDef and MetaObjects
+- bug iliexp: no output of MetaAttributes
 
 ili2c 4.3.6 (2011-06-29)
 ---------------------------
