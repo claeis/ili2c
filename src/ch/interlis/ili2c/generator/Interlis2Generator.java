@@ -901,7 +901,34 @@ private void setup(
     ipw.print(topic.getContainer().getName());
     ipw.print(".");
     ipw.print(topic.getName());
+    ipw.indent();
+    ipw.indent();
+    Table lastTable=null;
+    String sep="";
+    for(Iterator moi=mu.iterator();moi.hasNext();){
+    	Object moo=moi.next();
+    	if(moo instanceof MetaObject){
+    		MetaObject mo=(MetaObject)moo;
+    	    Table table=mo.getTable();
+    	    if(table!=lastTable){
+       	    	ipw.println();
+    	        ipw.unindent();
+    	    	ipw.print("OBJECTS OF ");
+    	    	ipw.print(table.getName());
+    	    	ipw.println(":");
+    	        ipw.indent();
+    	    	lastTable=table;
+    	    }else{
+    	    	ipw.println(",");
+    	    }
+	    	printDocumentation(mo.getDocumentation());
+	    	printMetaValues(mo.getMetaValues());
+	    	ipw.print(mo.getName());
+    	}
+    }
     ipw.println(";");
+    ipw.unindent();
+    ipw.unindent();
 
   }
 
@@ -1283,6 +1310,23 @@ private void setup(
   }
 
 
+  public void printMetaValues(ch.ehi.basics.settings.Settings values)
+  {
+	  for(Iterator valuei=values.getValues().iterator();valuei.hasNext();){
+		  String name=(String)valuei.next();
+		  String value=values.getValue(name);
+		  ipw.print("!!@ ");
+		  ipw.print(name);
+		  ipw.print("=");
+		  if(value.indexOf(' ')!=-1 || value.indexOf('=')!=-1 || value.indexOf(';')!=-1 || value.indexOf(',')!=-1 || value.indexOf('"')!=-1 || value.indexOf('\\')!=-1){
+			  ipw.println("\""+value+"\"");
+		  }else{
+			  ipw.println(value);
+		  }
+				  
+
+	  }
+  }
   public void printDocumentation(String doc)
 	{
 	if(doc==null)return;
@@ -1308,6 +1352,7 @@ private void setup(
     Iterator it;
 
 	printDocumentation(mdef.getDocumentation());
+	printMetaValues(mdef.getMetaValues());
 	
 	if(mdef.isContracted()){
 		ipw.print("CONTRACTED ");
@@ -2147,6 +2192,12 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
         ipw.println ();
         printTopic((Topic) elt);
         lastClass = Topic.class;
+      }
+      else if (elt instanceof MetaDataUseDef)
+      {
+        ipw.println ();
+        printMetaDataUseDef((MetaDataUseDef) elt);
+        lastClass = MetaDataUseDef.class;
       }
       else if (elt instanceof Table)
       {

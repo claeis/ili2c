@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.3.7 (2011-06-xx)
+---------------------------
+- bug iliexp: no output of MetaDataUseDef and MetaObjects
+
 ili2c 4.3.6 (2011-06-29)
 ---------------------------
 - bug: model INTERLIS defined without language "(en)" 
