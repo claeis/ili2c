@@ -93,6 +93,9 @@ public class Enumeration
 		this.sourceLine = sourceLine;
 	}
 	public ch.ehi.basics.settings.Settings getMetaValues() {
+		if(metaValues==null){
+			metaValues=new ch.ehi.basics.settings.Settings();
+		}
 		return metaValues;
 	}
 	public void setMetaValues(ch.ehi.basics.settings.Settings metaValues) {
