@@ -1410,33 +1410,35 @@ private void setup(
 
 
     Importable[] imported = mdef.getImporting ();
-    if (imported.length > 0)
+
+    String sep="";
+    boolean modelsImported=false;
+    for (int i = 0; i < imported.length; i++)
     {
-      ipw.println("IMPORTS");
-      ipw.indent();
-      for (int i = 0; i < imported.length; i++)
-      {
-        if (i > 0)
-          ipw.print(", ");
 
+      Importable curImport = (Importable) imported[i];
 
-        Importable curImport = (Importable) imported[i];
-
-
-        if (curImport instanceof Model)
-          ipw.print(((Model) curImport).getName());
-        else
-          printError ();
+      if (curImport instanceof Model){
+      	if(curImport!=modelInterlis){
+      		if(!modelsImported){
+      		    ipw.println("IMPORTS");
+      		    ipw.indent();
+      		    modelsImported=true;
+      		}
+          	ipw.print(sep+((Model) curImport).getName());
+          	sep=", ";
+      	}
+      }else{
+        printError ();
       }
-      ipw.println(';');
-      ipw.unindent();
-      ipw.println();
     }
-
-
+	if(modelsImported){
+	    ipw.println(';');
+	    ipw.unindent();
+	    ipw.println();
+	}
 
     printElements (mdef);
-
 
     ipw.unindent();
     ipw.println ();
