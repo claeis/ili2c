@@ -1569,7 +1569,7 @@ private void setup(
         ipw.print(len);
       }
     }
-    else if (dd instanceof FormattedType) // TODO
+    else if (dd instanceof FormattedType)
     {
         FormattedType ft = (FormattedType) dd;
         if(ft.getDefinedBaseStruct()!=null){
@@ -1673,9 +1673,25 @@ private void setup(
     }
     else if (dd instanceof ReferenceType)
     {
-      ReferenceType comp = (ReferenceType) dd;
-      ipw.print("REFERENCE TO ");
-      printRef (scope, comp.getReferred());
+			ReferenceType ref = (ReferenceType) dd;
+			ipw.print("REFERENCE TO ");
+			if (ref.isExternal()) {
+				ipw.print("(EXTERNAL) ");
+			}
+			printRef(scope, ref.getReferred());
+			Iterator resti = ref.iteratorRestrictedTo();
+			String sep = " RESTRICTION (";
+			boolean hasRestriction = false;
+			while (resti.hasNext()) {
+				AbstractClassDef rest = (AbstractClassDef) resti.next();
+				ipw.print(sep);
+				sep = ";";
+				printRef(scope, rest);
+				hasRestriction = true;
+			}
+			if (hasRestriction) {
+				ipw.print(")");
+			}
     }
     else if (dd instanceof CoordType)
     {
