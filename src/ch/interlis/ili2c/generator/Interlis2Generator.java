@@ -530,6 +530,12 @@ private void setup(
       return;
     }
 
+    if (expr instanceof Constant.AttributePath)
+    {
+      ipw.print (">>");
+      ipw.print (((Constant.AttributePath) expr).getValue().getName());
+      return;
+    }
 
     if (expr instanceof Constant.Enumeration)
     {
@@ -1201,7 +1207,7 @@ private void setup(
 
     if (attrib instanceof LocalAttribute){
       printType (scope, attrib.getDomain());
-      ObjectPath[] paths = null; // TODO = ((LocalAttribute) attrib).getBasePaths ();
+      Evaluable[] paths = ((LocalAttribute) attrib).getBasePaths ();
       if ((paths == null) || (paths.length == 0)){
         ; // nothing
       }else{
@@ -1210,7 +1216,7 @@ private void setup(
         {
           if (i > 0)
             ipw.print (", ");
-          printAttributePath (scope, paths[i]);
+          printExpression(scope, paths[i]);
         }
       }
     }
@@ -1322,19 +1328,19 @@ private void setup(
 
   public void printMetaValues(ch.ehi.basics.settings.Settings values)
   {
-	  for(Iterator valuei=values.getValues().iterator();valuei.hasNext();){
-		  String name=(String)valuei.next();
-		  String value=values.getValue(name);
-		  ipw.print("!!@ ");
-		  ipw.print(name);
-		  ipw.print("=");
-		  if(value.indexOf(' ')!=-1 || value.indexOf('=')!=-1 || value.indexOf(';')!=-1 || value.indexOf(',')!=-1 || value.indexOf('"')!=-1 || value.indexOf('\\')!=-1){
-			  ipw.println("\""+value+"\"");
-		  }else{
-			  ipw.println(value);
+	  if(values!=null){
+		  for(Iterator valuei=values.getValues().iterator();valuei.hasNext();){
+			  String name=(String)valuei.next();
+			  String value=values.getValue(name);
+			  ipw.print("!!@ ");
+			  ipw.print(name);
+			  ipw.print("=");
+			  if(value.indexOf(' ')!=-1 || value.indexOf('=')!=-1 || value.indexOf(';')!=-1 || value.indexOf(',')!=-1 || value.indexOf('"')!=-1 || value.indexOf('\\')!=-1){
+				  ipw.println("\""+value+"\"");
+			  }else{
+				  ipw.println(value);
+			  }
 		  }
-				  
-
 	  }
   }
   public void printDocumentation(String doc)
