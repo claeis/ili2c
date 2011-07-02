@@ -1207,7 +1207,17 @@ private void setup(
 
     if (attrib instanceof LocalAttribute){
       printType (scope, attrib.getDomain());
-      Evaluable[] paths = ((LocalAttribute) attrib).getBasePaths ();
+      printAttributeBasePath(scope, attrib);
+    }
+    if(attrib instanceof LocalAttribute && attrib.getDomain() instanceof StructuredUnitType){
+        EhiLogger.logError("ATTRIBUTE "+attrib.getScopedName(null)+": StructuredUnitType not supported by INTERLIS 2.3; replace by TextType or FormattedType/XMLDate");
+        ipw.println("; !! Hint: replace by TextType or FormattedType/XMLDate");
+    }else{
+        ipw.println(';');
+    }
+  }
+public void printAttributeBasePath(Container scope, AttributeDef attrib) {
+	Evaluable[] paths = ((LocalAttribute) attrib).getBasePaths ();
       if ((paths == null) || (paths.length == 0)){
         ; // nothing
       }else{
@@ -1219,14 +1229,7 @@ private void setup(
           printExpression(scope, paths[i]);
         }
       }
-    }
-    if(attrib instanceof LocalAttribute && attrib.getDomain() instanceof StructuredUnitType){
-        EhiLogger.logError("ATTRIBUTE "+attrib.getScopedName(null)+": StructuredUnitType not supported by INTERLIS 2.3; replace by TextType or FormattedType/XMLDate");
-        ipw.println("; !! Hint: replace by TextType or FormattedType/XMLDate");
-    }else{
-        ipw.println(';');
-    }
-  }
+}
 
 
 
