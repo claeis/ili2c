@@ -239,7 +239,11 @@ public class Main {
 			dlg.setHttpProxyHost(settings.getHttpProxyHost());
 			dlg.setHttpProxyPort(settings.getHttpProxyPort());
 			if(dlg.showDialog()==RepositoriesDialog.OK_OPTION){
-				settings.setIlidirs(dlg.getIlidirs());
+				String ilidirs=dlg.getIlidirs();
+				if(ilidirs==null){
+					ilidirs=ch.interlis.ili2c.Main.DEFAULT_ILIDIRS;
+				}
+				settings.setIlidirs(ilidirs);
 				settings.setHttpProxyHost(dlg.getHttpProxyHost());
 				settings.setHttpProxyPort(dlg.getHttpProxyPort());
 			}
