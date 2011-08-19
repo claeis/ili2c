@@ -2,43 +2,44 @@ package ch.interlis.ili2c.gui;
 
 import java.io.*;
 
-public class UserSettings extends java.util.Properties {
-	// values for Key-Values
-	private final static String TRUE = "TRUE";
-	private final static String FALSE = "FALSE";
-	private final static String HOME_DIRECTORY = "user.home";
+public class UserSettings extends ch.ehi.basics.settings.Settings {
 	// default Settings filename
-	private final static String SETTINGS_FILE = System.getProperty(HOME_DIRECTORY) + "/.ili2c";
+	public final static String SETTINGS_FILE = System.getProperty("user.home") + "/.ili2c";
 
-	// Property Keys (non-NLS)
-	// @see getKeySet()
-	private final static String WORKING_DIRECTORY = "WORKING_DIRECTORY";
-/**
- * UserSettings constructor comment.
- */
-private UserSettings() {
-	super();
-}
-/**
- * Instantiates and loads the UserSettings.
- * @see getKeySet()
- */
-protected static UserSettings createDefault() {
+	public final static String WORKING_DIRECTORY = "WORKING_DIRECTORY";
+	public final static String ILIDIRS = "ch.interlis.ili2c.ilidirs";
+	public final static String HTTP_PROXY_HOST = "ch.interlis.ili2c.http_proxy_host";
+	public final static String HTTP_PROXY_PORT = "ch.interlis.ili2c.http_proxy_port";
+
+
+	public static UserSettings load() 
+	{
+
 	UserSettings userSettings = new UserSettings();
-	userSettings.setWorkingDirectory(System.getProperty(HOME_DIRECTORY));
-
-    return userSettings;
+	try{
+		userSettings.load(new java.io.File(SETTINGS_FILE));
+		String ilidirs=userSettings.getIlidirs();
+		if(ilidirs==null){
+			userSettings.setIlidirs(ch.interlis.ili2c.Main.DEFAULT_ILIDIRS);
+		}
+		String wd=userSettings.getWorkingDirectory();
+		if(wd==null){
+			userSettings.setWorkingDirectory(System.getProperty("user.home"));
+		}
+	}catch(IOException e){
+		ch.ehi.basics.logging.EhiLogger.logError("failed to load settings",e);
+	}
+	return userSettings;
 }
 /**
- * @return all keys managed by Settings.
- * @see class definition
- * @see createDefault()
+ * Saves the UserSettings.
  */
-private static java.util.Set getKeySet() {
-	java.util.Set set = new java.util.HashSet();
-	set.add(WORKING_DIRECTORY);
-
-	return set;
+public void save() {
+	try {
+	    store(new java.io.File(SETTINGS_FILE),ch.interlis.ili2c.Main.APP_NAME);
+	} catch(IOException e) {
+		ch.ehi.basics.logging.EhiLogger.logError("failed to save settings",e);
+	}
 }
 /**
  * Gets the workingDirectory property (java.lang.String) value.
@@ -46,47 +47,28 @@ private static java.util.Set getKeySet() {
  * @see #setWorkingDirectory
  */
 public java.lang.String getWorkingDirectory() {
-	return getProperty(WORKING_DIRECTORY);
-}
-/**
- * Instantiates and loads the UserSettings.
- */
-public static UserSettings load() /*throws FileNotFoundException, IOException, ClassNotFoundException*/ {
-
-	UserSettings userSettings = createDefault();
-	try {
-	    FileInputStream inputStream = new FileInputStream(SETTINGS_FILE);
-		UserSettings tmp = new UserSettings();
-		tmp.load(inputStream);
-
-		// try to reuse given keys
-		// copy mechanism makes sure newer Versions of this Class
-		// with additional keys cause no problems
-		java.util.Iterator keys = getKeySet().iterator();
-		while (keys.hasNext()) {
-			String key = (String)keys.next();
-			if (tmp.containsKey(key)) {
-				userSettings.setProperty(key, tmp.getProperty(key));
-			}
-		}
-
-	} catch(Throwable e) {
-	}
-
-    return userSettings;
-}
-/**
- * Saves the UserSettings.
- */
-public void save() {
-	try {
-	    FileOutputStream outputStream = new FileOutputStream(SETTINGS_FILE);
-	    super.store(outputStream, "ili2c");
-	} catch(IOException e) {
-		System.err.println(e.getLocalizedMessage());
-	}
+	return getValue(WORKING_DIRECTORY);
 }
 public void setWorkingDirectory(java.lang.String workingDirectory) {
-	setProperty(WORKING_DIRECTORY, workingDirectory);
+	setValue(WORKING_DIRECTORY, workingDirectory);
 }
+public java.lang.String getIlidirs() {
+	return getValue(ILIDIRS);
+}
+public void setIlidirs(java.lang.String workingDirectory) {
+	setValue(ILIDIRS, workingDirectory);
+}
+public java.lang.String getHttpProxyHost() {
+	return getValue(HTTP_PROXY_HOST);
+}
+public void setHttpProxyHost(java.lang.String workingDirectory) {
+	setValue(HTTP_PROXY_HOST, workingDirectory);
+}
+public java.lang.String getHttpProxyPort() {
+	return getValue(HTTP_PROXY_PORT);
+}
+public void setHttpProxyPort(java.lang.String workingDirectory) {
+	setValue(HTTP_PROXY_PORT, workingDirectory);
+}
+
 }

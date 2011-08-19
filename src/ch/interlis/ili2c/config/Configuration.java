@@ -9,6 +9,7 @@ package ch.interlis.ili2c.config;
 // -end- 3C625EF103C7 package "Configuration"
 
 // -beg- preserve=no 3C625EF103C7 autoimport "Configuration"
+import ch.interlis.ili2c.Main;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.BoidEntry;
 // -end- 3C625EF103C7 autoimport "Configuration"

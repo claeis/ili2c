@@ -28,6 +28,7 @@ import ch.interlis.ili2c.metamodel.ErrorListener;
 import ch.interlis.ili2c.parser.Ili2Parser;
 import ch.interlis.ili2c.config.*;
 import ch.interlis.ili2c.CompilerLogEvent;
+import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.logging.TextAreaListener;
 import ch.ehi.basics.view.*;
 
@@ -101,7 +102,7 @@ public class Main {
   }
 
   private void runCompiler(){
-	  TransferDescription td=ch.interlis.ili2c.Main.runCompiler(config);
+	  TransferDescription td=ch.interlis.ili2c.Main.runCompiler(config,settings);
       Date today;
       String dateOut;
       DateFormat dateFormatter;
@@ -116,9 +117,9 @@ public class Main {
   }
   private void updateTitle(){
     if(ilcFile!=null){
-      frame.setTitle("ili2c - "+ilcFile.getAbsolutePath());
+      frame.setTitle(ch.interlis.ili2c.Main.APP_NAME+" - "+ilcFile.getAbsolutePath());
     }else{
-      frame.setTitle("ili2c");
+      frame.setTitle(ch.interlis.ili2c.Main.APP_NAME);
     }
   }
   private void buildMenu(){
@@ -176,12 +177,12 @@ public class Main {
                 }catch(FileNotFoundException ex){
                   JOptionPane.showMessageDialog(frame,
                     ex.getLocalizedMessage(),
-                    "ili2c error",
+                    ch.interlis.ili2c.Main.APP_NAME+" error",
                     JOptionPane.ERROR_MESSAGE);
                 }catch(IOException ex){
                   JOptionPane.showMessageDialog(frame,
                     ex.getLocalizedMessage(),
-                    "ili2c error",
+                    ch.interlis.ili2c.Main.APP_NAME+" error",
                     JOptionPane.ERROR_MESSAGE);
                 }
             } else {
@@ -202,7 +203,7 @@ public class Main {
                 }catch(IOException ex){
                   JOptionPane.showMessageDialog(frame,
                     ex.getLocalizedMessage(),
-                    "ili2c error",
+                    ch.interlis.ili2c.Main.APP_NAME+" error",
                     JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -227,27 +228,33 @@ public class Main {
 
     menu.add(menuItem);
 
+    menu = new JMenu("Tools");
+    menu.setMnemonic(KeyEvent.VK_T);
+    menuBar.add(menu);
+    menuItem = new JMenuItem("Model Repositories...");
+	menuItem.addActionListener(new ActionListener(){
+		public void actionPerformed(java.awt.event.ActionEvent e){
+			RepositoriesDialog dlg=new RepositoriesDialog(frame);
+			dlg.setIlidirs(settings.getIlidirs());
+			dlg.setHttpProxyHost(settings.getHttpProxyHost());
+			dlg.setHttpProxyPort(settings.getHttpProxyPort());
+			if(dlg.showDialog()==RepositoriesDialog.OK_OPTION){
+				settings.setIlidirs(dlg.getIlidirs());
+				settings.setHttpProxyHost(dlg.getHttpProxyHost());
+				settings.setHttpProxyPort(dlg.getHttpProxyPort());
+			}
+		}
+	});
+    menu.add(menuItem);
+    
     menu = new JMenu("Help");
     menu.setMnemonic(KeyEvent.VK_H);
     menuBar.add(menu);
-    menuItem = new JMenuItem("ili2c Help...");
+    menuItem = new JMenuItem(ch.interlis.ili2c.Main.APP_NAME+" Help...");
         menuItem.addActionListener(new ActionListener(){
           public void actionPerformed(java.awt.event.ActionEvent e){
 		    // show help
-                        String ili2cHome;
-                        String classpath = System
-				.getProperty("java.class.path");
-			int index = classpath.toLowerCase()
-				.indexOf("ili2c.jar");
-			int start = classpath.lastIndexOf(File
-				.pathSeparator,index) + 1;
-			if(index > start)
-			{
-				ili2cHome = classpath.substring(start,
-					index - 1);
-			}else{
-                           ili2cHome =System.getProperty("user.dir");
-                        }
+                        String ili2cHome=ch.interlis.ili2c.Main.getIli2cHome();
                         BrowserControl.displayURL("file://"+ili2cHome+"/doc/index.html");
         }
         });
@@ -307,7 +314,7 @@ public class Main {
                 }catch(IOException ex){
                   JOptionPane.showMessageDialog(frame,
                     ex.getLocalizedMessage(),
-                    "ili2c error",
+                    ch.interlis.ili2c.Main.APP_NAME+" error",
                     JOptionPane.ERROR_MESSAGE);
                 }
             } else {
@@ -390,13 +397,13 @@ public class Main {
 						n = JOptionPane.showConfirmDialog(
 							frame,
 							"Overwrite files in "+outfile.getAbsolutePath()+"?",
-							"ili2c",
+							ch.interlis.ili2c.Main.APP_NAME,
 							JOptionPane.YES_NO_OPTION);
 					}else{
 						n = JOptionPane.showConfirmDialog(
 							frame,
 							"Overwrite file "+outfile.getAbsolutePath()+"?",
-							"ili2c",
+							ch.interlis.ili2c.Main.APP_NAME,
 							JOptionPane.YES_NO_OPTION);
 					}
 					if(n==JOptionPane.NO_OPTION){
@@ -498,6 +505,9 @@ public class Main {
       , "Generate an XML-Schema"
       , "Generate an ILI1 FMT-Description"
 	  , "Generate a GML-Schema"
+	  , "deprecated (IOM)"
+	  , "deprecated (ETF)"
+	  , "Generate Model as IlisMeta-Transfer"
       };
     JPanel cbp = new JPanel();
     outputKind = new JComboBox(comboBoxItems);
@@ -545,6 +555,8 @@ public class Main {
               fc.addChoosableFileFilter(new GenericFileFilter("INTERLIS 1 format (*.fmt)","fmt"));
 			}else if(config.getOutputKind()==GenerateOutputKind.IOM){
 			  fc.addChoosableFileFilter(GenericFileFilter.createXmlFilter());
+			}else if(config.getOutputKind()==GenerateOutputKind.IMD){
+				  fc.addChoosableFileFilter(GenericFileFilter.createXmlFilter());
 			}else if(config.getOutputKind()==GenerateOutputKind.GML32){
 			  useDir=true;
 			}else if(config.getOutputKind()==GenerateOutputKind.ETF1){

@@ -70,6 +70,10 @@ static public Configuration readConfig(String filename)
 					String optvalue=arg.substring(9);
 					config.setOutputFile(optvalue);
 				  config.setOutputKind(GenerateOutputKind.ETF1);
+			 }else if(arg.startsWith("-oIMD ")){
+					String optvalue=arg.substring(8);
+					config.setOutputFile(optvalue);
+				  config.setOutputKind(GenerateOutputKind.IMD);
 			 }else if(arg.startsWith("-oIOM ")){
 	             	// ignore it
 				//String optvalue=arg.substring(8);
@@ -180,6 +184,10 @@ static public Configuration readConfig(String filename)
 			  break;
 		  case GenerateOutputKind.ETF1:
 				out.write("-oETF1 ");
+				out.write(config.getOutputFile());
+				  break;
+		  case GenerateOutputKind.IMD:
+				out.write("-oIMD ");
 				out.write(config.getOutputFile());
 				  break;
           default:

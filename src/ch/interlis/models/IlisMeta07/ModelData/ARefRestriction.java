@@ -1,0 +1,33 @@
+package ch.interlis.models.IlisMeta07.ModelData;
+public class ARefRestriction extends ch.interlis.iom_j.Iom_jObject
+{
+  private final static String tag= "IlisMeta07.ModelData.ARefRestriction";
+  public ARefRestriction(String oid) {
+    super(tag,oid);
+  }
+  public String getobjecttag() {
+    return tag;
+  }
+  public String getARef() {
+    ch.interlis.iom.IomObject value=getattrobj("ARef",0);
+    if(value==null)throw new IllegalStateException();
+    String oid=value.getobjectrefoid();
+    if(oid==null)throw new IllegalStateException();
+    return oid;
+  }
+  public void setARef(String oid) {
+    ch.interlis.iom.IomObject structvalue=addattrobj("ARef","REF");
+    structvalue.setobjectrefoid(oid);
+  }
+  public String getType() {
+    ch.interlis.iom.IomObject value=getattrobj("Type",0);
+    if(value==null)throw new IllegalStateException();
+    String oid=value.getobjectrefoid();
+    if(oid==null)throw new IllegalStateException();
+    return oid;
+  }
+  public void setType(String oid) {
+    ch.interlis.iom.IomObject structvalue=addattrobj("Type","REF");
+    structvalue.setobjectrefoid(oid);
+  }
+}

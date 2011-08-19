@@ -6,17 +6,27 @@ import ch.interlis.ili2c.metamodel.ErrorListener;
 import ch.interlis.ili2c.parser.Ili2Parser;
 import ch.interlis.ili2c.parser.Ili1Parser;
 import ch.interlis.ili2c.parser.Ili22Parser;
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.ArrayList;
 
 import ch.interlis.ili2c.config.*;
+import ch.interlis.ili2c.gui.UserSettings;
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.logging.TextAreaListener;
 
 public class Main
 {
+	/** name of application as shown to user.
+	 */
+	public static final String APP_NAME="ili2c";
+	public static final String ILI_DIR="%ILI_DIR";
+	public static final String JAR_DIR="%JAR_DIR";
+	public static final String JAR_MODELS="standard";
+	public static final String DEFAULT_ILIDIRS=ILI_DIR+";http://models.interlis.ch/;"+JAR_DIR;
   private static String version=null;
   protected static boolean hasArg(String v1, String v2, String[] args) {
     for (int i = 0; i < args.length; i++) {
@@ -87,8 +97,10 @@ public class Main
     boolean checkMetaObjs=false;
     boolean withWarnings=true;
     int     numErrorsWhileGenerating = 0;
-    String  progName = "ili2c";
     String  notifyOnError = "compiler@interlis.ch";
+	String ilidirs=DEFAULT_ILIDIRS;
+	String httpProxyHost=null;
+	String httpProxyPort=null;
 	
 	if(args.length==0){
 	        ch.interlis.ili2c.gui.Main.main(args);
@@ -97,7 +109,7 @@ public class Main
 
     if (hasArg ("-u", "--usage", args))
     {
-      printUsage (progName);
+      printUsage (APP_NAME);
       return;
     }
 
@@ -108,7 +120,7 @@ public class Main
       System.err.println();
       printDescription ();
       System.err.println();
-      printUsage (progName);
+      printUsage (APP_NAME);
       System.err.println();
       System.err.println("OPTIONS");
       System.err.println();
@@ -118,9 +130,13 @@ public class Main
       System.err.println("-o2                   Generate INTERLIS-2 output.");
       System.err.println("-oXSD                 Generate an XML-Schema.");
       System.err.println("-oFMT                 Generate an INTERLIS-1 Format.");
-	  System.err.println("-oIOM                 Generate Model as INTERLIS-Transfer (XTF).");
+	  System.err.println("-oIMD                 Generate Model as IlisMeta INTERLIS-Transfer (XTF).");
+	  System.err.println("-oIOM                 (deprecated) Generate Model as INTERLIS-Transfer (XTF).");
 	  System.err.println("--out file/dir        file or folder for output.");
-      System.err.println("--with-predefined     Include the predefined MODEL INTERLIS in");
+	  System.err.println("--ilidirs "+ilidirs+" list of directories with ili-files.");
+	  System.err.println("--proxy host          proxy server to access model repositories.");
+	  System.err.println("--proxyPort port      proxy port to access model repositories.");
+	  System.err.println("--with-predefined     Include the predefined MODEL INTERLIS in");
       System.err.println("                      the output. Usually, this is omitted.");
       System.err.println("--without-warnings    Report only errors, no warnings. Usually,");
       System.err.println("                      warnings are generated as well.");
@@ -128,9 +144,9 @@ public class Main
 	  System.err.println("--quiet               Suppress info messages.");
       System.err.println("-h|--help             Display this help text.");
       System.err.println("-u|--usage            Display short information about usage.");
-      System.err.println("-v|--version          Display the version of " + progName + ".");
+      System.err.println("-v|--version          Display the version of " + APP_NAME + ".");
       System.err.println();
-      printExamples (progName);
+      printExamples (APP_NAME);
       return;
     }
 
@@ -147,8 +163,6 @@ public class Main
 		ArrayList ilifilev=new ArrayList();
       for (int i = 0; i < args.length; i++)
       {
-        java.io.InputStream stream;
-        String              streamName;
 
         if (args[i].equals("--with-predefined"))
         {
@@ -174,6 +188,24 @@ public class Main
 		{
 			i++;
 			outfile=args[i];
+			continue;
+		}
+		if (args[i].equals("--proxy"))
+		{
+			i++;
+			httpProxyHost=args[i];
+			continue;
+		}
+		if (args[i].equals("--proxyPort"))
+		{
+			i++;
+			httpProxyPort=args[i];
+			continue;
+		}
+		if (args[i].equals("--ilidirs"))
+		{
+			i++;
+			ilidirs=args[i];
 			continue;
 		}
         else if (args[i].equals("-o0"))
@@ -211,16 +243,16 @@ public class Main
         	outputKind=GenerateOutputKind.ETF1;
           continue;
         }
+		else if (args[i].equals("-oIMD"))
+		{
+        	outputKind=GenerateOutputKind.IMD;
+		  continue;
+		}
 		else if (args[i].equals("-oIOM"))
 		{
         	outputKind=GenerateOutputKind.IOM;
 		  continue;
 		}
-        else if (args[i].equals("-"))
-        {
-          stream = new DataInputStream (System.in);
-          streamName = null;
-        }
         else if (args[i].equals ("--without-warnings"))
         {
 			withWarnings=false;
@@ -233,7 +265,7 @@ public class Main
         }
         else if (args[i].charAt(0) == '-')
         {
-          System.err.println (progName + ":Unknown option: " + args[i]);
+          System.err.println (APP_NAME + ":Unknown option: " + args[i]);
           continue;
         }
         else
@@ -248,155 +280,43 @@ public class Main
 
       }
 
-	  Configuration config=null;
-      if(doAuto){
-		// get dirs
-		ArrayList ilipathv = getIliLookupPaths(ilifilev);
-		// scan models
-		config=ModelScan.getConfigWithFiles(ilipathv,ilifilev);
-		if(config==null){
-			EhiLogger.logError("ili-file scan failed");
-			System.exit(1);
-		}
-		if(outputKind!=GenerateOutputKind.NOOUTPUT){
-			// skip listing of used ili-files
-		}else{
-			Iterator filei=config.iteratorFileEntry();
-			while(filei.hasNext()){
-				FileEntry file=(FileEntry)filei.next();
-				String filename=file.getFilename();
-				EhiLogger.logState(filename+" "+ModelScan.getIliFileVersion(new File(filename)));
+			UserSettings settings = new UserSettings();
+			settings.setHttpProxyHost(httpProxyHost);
+			settings.setHttpProxyPort(httpProxyPort);
+			settings.setIlidirs(ilidirs);
+			Configuration config = new Configuration();
+			Iterator ilifilei = ilifilev.iterator();
+			while (ilifilei.hasNext()) {
+				String ilifile = (String) ilifilei.next();
+				FileEntry file = new FileEntry(ilifile,
+						FileEntryKind.ILIMODELFILE);
+				config.addFileEntry(file);
 			}
-		}
-
-      }else{
-      	config=new Configuration();
-      	Iterator ilifilei=ilifilev.iterator();
-      	while(ilifilei.hasNext()){
-      		String ilifile=(String)ilifilei.next();
-			FileEntry file=new FileEntry(ilifile,FileEntryKind.ILIMODELFILE);
-			config.addFileEntry(file);
-      	}
-      }
+			if (doAuto) {
+				config.setAutoCompleteModelList(true);
+			} else {
+				config.setAutoCompleteModelList(false);
+			}
       config.setGenerateWarnings(withWarnings);
+      config.setOutputKind(outputKind);
+      if(outputKind!=GenerateOutputKind.NOOUTPUT){
+    	  if(outfile!=null){
+    		  config.setOutputFile(outfile);
+    	  }else{
+    		  config.setOutputFile("-");
+    	  }
+      }
       
 		// compile models
-		TransferDescription td=runCompiler(config);
+		TransferDescription td=runCompiler(config,settings);
 		if(td==null){
 			EhiLogger.logError("compiler failed");
 			System.exit(1);
 		}
-
-		if(outputKind==GenerateOutputKind.GML32){
-			if(outfile==null){
-				EhiLogger.logError("missing output folder specification (--out folder)");
-				System.exit(1);
-			}
-			java.io.File outdir=new java.io.File(outfile);
-			if(outdir.exists()){
-				if(!outdir.isDirectory()){
-					EhiLogger.logError(outdir+" is not a folder");
-					System.exit(1);
-				}
-			}else{
-				if(!outdir.mkdirs()){
-					EhiLogger.logError("failed to create output folder "+outdir);
-					System.exit(1);
-				}
-			}
-			ch.interlis.ili2c.generator.Gml32Generator.generate(td, outfile);
-		}else if(outputKind==GenerateOutputKind.ETF1){
-				if(outfile==null){
-					EhiLogger.logError("missing output folder specification (--out folder)");
-					System.exit(1);
-				}
-				java.io.File outdir=new java.io.File(outfile);
-				if(outdir.exists()){
-					if(!outdir.isDirectory()){
-						EhiLogger.logError(outdir+" is not a folder");
-						System.exit(1);
-					}
-				}else{
-					if(!outdir.mkdirs()){
-						EhiLogger.logError("failed to create output folder "+outdir);
-						System.exit(1);
-					}
-				}
-				ch.interlis.ili2c.generator.ETF1Generator.generate(td, outfile);
-		}else if(outputKind==GenerateOutputKind.NOOUTPUT){
-			// do nothing
-		}else{
-			// ASSERT: output to a file
-	        BufferedWriter out=null;
-	        if(outfile==null){
-	              out=new BufferedWriter(new OutputStreamWriter(System.out));
-	        }else{
-              try{
-                out = new BufferedWriter(new FileWriter(outfile));
-              }catch(IOException ex){
-                EhiLogger.logError(ex);
-    			System.exit(1);
-              }
-	        }
-	        try{
-			      switch (outputKind)
-			      {
-			      case GenerateOutputKind.ILI1:
-						numErrorsWhileGenerating = ch.interlis.ili2c.generator.Interlis1Generator.generate(
-								  out, td);
-			        break;
-
-			      case GenerateOutputKind.ILI2:
-						ch.interlis.ili2c.generator.Interlis2Generator gen=new ch.interlis.ili2c.generator.Interlis2Generator();
-						numErrorsWhileGenerating = gen.generate(
-						  out, td, emitPredefined);
-			        break;
-
-			      case GenerateOutputKind.XMLSCHEMA:
-			      {
-			  			if(td.getLastModel().getIliVersion().equals("2.2")){
-			  				numErrorsWhileGenerating =
-			  					ch.interlis.ili2c.generator.XSD22Generator.generate(
-			  						out,
-			  						td);
-			  			}else{
-			  				numErrorsWhileGenerating =
-			  					ch.interlis.ili2c.generator.XSDGenerator.generate(
-			  						out,
-			  						td);
-			  			}
-			      }
-			      break;
-			      case GenerateOutputKind.ILI1FMTDESC:
-			      {
-		    			numErrorsWhileGenerating =
-		    				ch.interlis.ili2c.generator.Interlis1Generator.generateFmt(
-		    					out,
-		    					td);
-			      }
-			      break;
-			      case GenerateOutputKind.IOM:
-			      {
-						numErrorsWhileGenerating =
-							ch.interlis.ili2c.generator.iom.IomGenerator.generate(
-								out,
-								td);
-			      }
-			      break;
-			      default:
-			    	  // do nothing
-			    	  break;
-			      }
-	        	
-	        }finally{
-	        	if(out!=null)out.close();
-	        }
-			
-		}
     }
     catch(Exception ex)
     {
-      EhiLogger.logError(progName + ": An internal error has occured. Please notify " + notifyOnError,ex);
+      EhiLogger.logError(APP_NAME + ": An internal error has occured. Please notify " + notifyOnError,ex);
       System.exit(1);
     }
   }
@@ -415,7 +335,7 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
 	}
 	String ili2cHome=getIli2cHome();
 	if(ili2cHome!=null){
-		ilipathv.add(ili2cHome+java.io.File.separator+"standard");
+		ilipathv.add(ili2cHome+java.io.File.separator+JAR_MODELS);
 	}
 	return ilipathv;
 }
@@ -430,38 +350,129 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
 	}
 	return null;
   }
-  static public TransferDescription runCompiler(Configuration config){
-	  
+  static public TransferDescription runCompiler(Configuration config)
+  {
+	  return runCompiler(config,null);
+  }
+  static public TransferDescription runCompiler(Configuration config,ch.ehi.basics.settings.Settings settings)
+  {
 	  ArrayList filev=new ArrayList();
-	  if(config.isAutoCompleteModelList()){
-		  ArrayList ilifilev=new ArrayList();
-	        Iterator filei=config.iteratorFileEntry();
-	        while(filei.hasNext()){
-	          FileEntry e=(FileEntry)filei.next();
-	          if(e.getKind()==FileEntryKind.ILIMODELFILE){
-	            String fileName = e.getFilename();
-	            ilifilev.add(fileName);
-	          }
-	        }
-			ArrayList modeldirv = getIliLookupPaths(ilifilev);
-		  ch.interlis.ili2c.config.Configuration files;
-		try {
-			files = ModelScan.getConfigWithFiles(modeldirv,ilifilev);
-		} catch (Ili2cException ex) {
- 			EhiLogger.logError("ili-file scan failed",ex);
-			return null;
-		}
-		  if(files==null){
- 			EhiLogger.logError("ili-file scan failed");
-			  return null;
+	  boolean doAutoCompleteModelList=config.isAutoCompleteModelList();
+	  if(doAutoCompleteModelList){
+		  if(settings!=null){
+			  String ilidirs=settings.getValue(UserSettings.ILIDIRS);
+			  if(ilidirs==null){
+				  doAutoCompleteModelList=false;
+			  }
 		  }
-		  logIliFiles(files);
-		  // copy result of scan to original config
-	        filei=files.iteratorFileEntry();
-	        while(filei.hasNext()){
-	          FileEntry e=(FileEntry)filei.next();
-			  filev.add(e);
-	        }
+	  }
+	  if(doAutoCompleteModelList){
+		  if(settings==null){
+			  ArrayList ilifilev=new ArrayList();
+		        Iterator filei=config.iteratorFileEntry();
+		        while(filei.hasNext()){
+		          FileEntry e=(FileEntry)filei.next();
+		          if(e.getKind()==FileEntryKind.ILIMODELFILE){
+		            String fileName = e.getFilename();
+		            ilifilev.add(fileName);
+		          }
+		        }
+				ArrayList modeldirv = getIliLookupPaths(ilifilev);
+			  ch.interlis.ili2c.config.Configuration files;
+			try {
+				files = ModelScan.getConfigWithFiles(modeldirv,ilifilev);
+			} catch (Ili2cException ex) {
+	 			EhiLogger.logError("ili-file scan failed",ex);
+				return null;
+			}
+			  if(files==null){
+	 			EhiLogger.logError("ili-file scan failed");
+				  return null;
+			  }
+			  logIliFiles(files);
+			  // copy result of scan to original config
+		        filei=files.iteratorFileEntry();
+		        while(filei.hasNext()){
+		          FileEntry e=(FileEntry)filei.next();
+				  filev.add(e);
+		        }
+		  }else{
+			  	ArrayList ilifilev=new ArrayList();
+		        
+		        for(Iterator filei=config.iteratorFileEntry();filei.hasNext();){
+		          FileEntry e=(FileEntry)filei.next();
+		          if(e.getKind()==FileEntryKind.ILIMODELFILE){
+			          ilifilev.add(e.getFilename());
+		          }
+		        }
+		        
+		        String httpProxyHost=settings.getValue(UserSettings.HTTP_PROXY_HOST);
+		        String httpProxyPort=settings.getValue(UserSettings.HTTP_PROXY_PORT);
+				if (httpProxyHost != null) {
+					EhiLogger.logState("httpProxyHost <" + httpProxyHost + ">");
+					System.setProperty("http.proxyHost", httpProxyHost);
+					if (httpProxyPort != null) {
+						EhiLogger.logState("httpProxyPort <" + httpProxyPort
+								+ ">");
+						System.setProperty("http.proxyPort", httpProxyPort);
+					}
+				} else {
+					System.setProperty("java.net.useSystemProxies", "true");
+				}
+				ArrayList modeldirv = new ArrayList();
+				String ilidirs=settings.getValue(UserSettings.ILIDIRS);
+				String modeldirs[] = ilidirs.split(";");
+				HashSet ilifiledirs = new HashSet();
+				for (int modeli = 0; modeli < modeldirs.length; modeli++) {
+					String m = modeldirs[modeli];
+					if (m.equals(ILI_DIR)) {
+						for (int filei = 0; filei < ilifilev.size(); filei++) {
+							String ilifile = (String) ilifilev.get(filei);
+							m = new java.io.File(ilifile).getAbsoluteFile()
+									.getParentFile().getAbsolutePath();
+							if (m != null && m.length() > 0) {
+								if (!ilifiledirs.contains(m)) {
+									ilifiledirs.add(m);
+									modeldirv.add(m);
+								}
+							}
+						}
+					} else if (m.equals(JAR_DIR)) {
+						m = getIli2cHome();
+						if (m != null) {
+							m = new java.io.File(m, JAR_MODELS)
+									.getAbsolutePath();
+						}
+						if (m != null && m.length() > 0) {
+							modeldirv.add(m);
+						}
+					} else {
+						if (m != null && m.length() > 0) {
+							modeldirv.add(m);
+						}
+					}
+				}
+
+				// create repository manager
+				ch.interlis.ilirepository.IliManager manager = new ch.interlis.ilirepository.IliManager();
+				// set list of repositories to search
+				manager.setRepositories((String[]) modeldirv
+						.toArray(new String[1]));
+
+				// get complete list of required ili-files
+				try {
+					Configuration fileconfig = manager.getConfigWithFiles(ilifilev);
+					ch.interlis.ili2c.Ili2c.logIliFiles(fileconfig);
+			        Iterator filei=fileconfig.iteratorFileEntry();
+			        while(filei.hasNext()){
+			          FileEntry e=(FileEntry)filei.next();
+			          filev.add(e);
+			        }
+				} catch (Ili2cException ex) {
+					EhiLogger.logError(ex);
+					System.exit(1);
+				}
+		  }
 	  }else{
 	        Iterator filei=config.iteratorFileEntry();
 	        while(filei.hasNext()){
@@ -615,6 +626,9 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
 			  break;
 		  case GenerateOutputKind.ETF1:
 			  ch.interlis.ili2c.generator.ETF1Generator.generate(desc, config.getOutputFile());
+			  break;
+		  case GenerateOutputKind.IMD:
+			  ch.interlis.ili2c.generator.ImdGenerator.generate(new java.io.File(config.getOutputFile()),desc,APP_NAME+"-"+getVersion());
 			  break;
 		  case GenerateOutputKind.IOM:
 				  if("-".equals(config.getOutputFile())){

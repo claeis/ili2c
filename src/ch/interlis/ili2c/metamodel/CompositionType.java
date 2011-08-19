@@ -5,8 +5,6 @@ package ch.interlis.ili2c.metamodel;
 
 import java.util.*;
 
-import sun.security.action.GetLongAction;
-
 
 /** The domain of a structure attribute.
 */

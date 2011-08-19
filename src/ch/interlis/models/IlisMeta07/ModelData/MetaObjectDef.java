@@ -1,0 +1,41 @@
+package ch.interlis.models.IlisMeta07.ModelData;
+public class MetaObjectDef extends ch.interlis.models.IlisMeta07.ModelData.MetaElement
+{
+  private final static String tag= "IlisMeta07.ModelData.MetaObjectDef";
+  public MetaObjectDef(String oid) {
+    super(oid);
+  }
+  public String getobjecttag() {
+    return tag;
+  }
+  public boolean getIsRefSystem() {
+    String value=getattrvalue("IsRefSystem");
+    if(value==null)throw new IllegalStateException();
+    return value.equals("true");
+  }
+  public void setIsRefSystem(boolean value) {
+    setattrvalue("IsRefSystem", value?"true":"false");
+  }
+  public String get_class() {
+    ch.interlis.iom.IomObject value=getattrobj("Class",0);
+    if(value==null)throw new IllegalStateException();
+    String oid=value.getobjectrefoid();
+    if(oid==null)throw new IllegalStateException();
+    return oid;
+  }
+  public void set_class(String oid) {
+    ch.interlis.iom.IomObject structvalue=addattrobj("Class","REF");
+    structvalue.setobjectrefoid(oid);
+  }
+  public String getMetaBasketDef() {
+    ch.interlis.iom.IomObject value=getattrobj("MetaBasketDef",0);
+    if(value==null)throw new IllegalStateException();
+    String oid=value.getobjectrefoid();
+    if(oid==null)throw new IllegalStateException();
+    return oid;
+  }
+  public void setMetaBasketDef(String oid) {
+    ch.interlis.iom.IomObject structvalue=addattrobj("MetaBasketDef","REF");
+    structvalue.setobjectrefoid(oid);
+  }
+}

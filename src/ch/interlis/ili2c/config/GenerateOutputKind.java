@@ -49,6 +49,7 @@ public class GenerateOutputKind
   public static final int GML32 = 6;
   public static final int IOM = 7;
   public static final int ETF1 = 8;
+  public static final int IMD = 9;
 
   // -end- 3C6262B9035B detail_end "GenerateOutputKind"
 

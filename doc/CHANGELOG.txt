@@ -1,6 +1,13 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.4.0 (2011-08-19)
+---------------------------
+- upgraded to jre 1.6.0
+- switched from wstx to jre StaX
+- added model repositories support (menu item "Tools/Model Repositories...")
+- added IlisMeta07 output
+
 ili2c 4.3.7 (2011-07-04)
 ---------------------------
 - bug iliexp: no output of MetaDataUseDef and MetaObjects
