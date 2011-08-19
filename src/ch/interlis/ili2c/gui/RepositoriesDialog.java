@@ -40,10 +40,10 @@ class RepositoriesDialog extends JDialog {
 			cnstrts.insets = new java.awt.Insets(5, 5, 5, 5);
             dataPane.add(lbl,cnstrts);
             
-            ilidirsUi=new JTextField();
-            ilidirsUi.setColumns(100);
+            ilidirsUi=new JTextField(50);
 			cnstrts=new java.awt.GridBagConstraints();
 			cnstrts.gridx = 1; cnstrts.gridy = 0;
+			cnstrts.fill= java.awt.GridBagConstraints.HORIZONTAL;
 			cnstrts.anchor = java.awt.GridBagConstraints.SOUTHWEST;
 			cnstrts.weightx = 1.0;
 			cnstrts.weighty = 1.0;
@@ -60,9 +60,9 @@ class RepositoriesDialog extends JDialog {
             dataPane.add(lbl,cnstrts);
 
             hostUi=new JTextField();
-            hostUi.setColumns(100);
 			cnstrts=new java.awt.GridBagConstraints();
 			cnstrts.gridx = 1; cnstrts.gridy = 1;
+			cnstrts.fill= java.awt.GridBagConstraints.HORIZONTAL;
 			cnstrts.anchor = java.awt.GridBagConstraints.SOUTHWEST;
 			cnstrts.weightx = 1.0;
 			cnstrts.weighty = 1.0;
@@ -79,9 +79,9 @@ class RepositoriesDialog extends JDialog {
             dataPane.add(lbl,cnstrts);
 
             portUi=new JTextField();
-            portUi.setColumns(10);
 			cnstrts=new java.awt.GridBagConstraints();
 			cnstrts.gridx = 1; cnstrts.gridy = 2;
+			cnstrts.fill= java.awt.GridBagConstraints.HORIZONTAL;
 			cnstrts.anchor = java.awt.GridBagConstraints.SOUTHWEST;
 			cnstrts.weightx = 1.0;
 			cnstrts.weighty = 1.0;
