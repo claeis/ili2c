@@ -1,83 +1,94 @@
-<html>
-<head>
-<title>ili2c - The INTERLIS-Compiler</title>
-</head>
-<body>
-<h1>The INTERLIS-Compiler</h1>
-<h2>System Requirements</h2>
-
-<p>
-For the current version of ili2c, you will need a JRE (Java Runtime Environment) installed on your system, version 1.6.0 or later.
-</p>
-
-<h2>Installing ili2c</h2>
-
-<p>
-To install ili2c, choose a directory and extract the distribution file there.
-</p>
-
-<h2>Running ili2c</h2>
-
-<p>
-There is currently no launcher. ili2c can be started with
-</p>
-<code>
-java -jar ili2c.jar [options]
-</code>
-<p>
-If you run the compiler without any options, a GUI (Graphical User Interface)
-will appear.
-</p>
-<h2>Graphical User Interface</h2>
-<h3>Input tab</h3>
-Use this tab, to define options, that the compiler will read while running.
-<h4>auto complete fileset</h4>
-<p>If this is checked, the compiler will try to find missing models from the files with extension .ili 
-that are in the folders of the files in the <code>Files</code> list.</p>
-<p>If this is unchecked, all directly or indirectly imported models, need to be 
-in the <code>Files</code> list in the correct ordering.</p>
-<h4>Files</h4>
-<p>This contains the list of INTERLIS schema files, that the compiler will read and
-check. 
-If the model imports other models, or is a a translation of another model, 
-all these directly or indirectly referrenced models need to be in the list, 
-if the <code>auto complete fileset</code> is not checked.
-The ordering of the entries is significant, if the <code>auto complete fileset</code> is not checked. 
-Use the <code>Move up</code>
-and/or <code>Move down</code> buttons to reorder the list.</p>
-<h4>Add Model (.ili)...</h4>
-Use this button to add a new INTERLIS schema file to the list of files, that the
-compiler should check.
-<h4>Remove</h4>
-Use this button to remove the selected entry from the list of files.
-<h4>Move up</h4>
-Use this button to move the selected entry one line up. The ordering of the entries is significant.
-<h4>Move down</h4>
-Use this button to move the selected entry one line down. The ordering of the entries is significant.
-
-		<h3>Output tab</h3>
-		
-Use this tab to provide options, that control the files that the compiler will generate.
-<h4>Kind of output</h4>
-Defines the kind of output, that the compiler will generate. If you just like to check
-your INTERLIS schemas, select <code>Generate no output</code>.
-<h4>Filename</h4>
-Enter the name of the file, that the compiler will write, if you didn't choose to generate no output.
-<h4>Report Errors and warnings</h4>
-Select this button, if you like to see errors and warnings.
-<h4>Report only errors</h4>
-Select this button, if you like to see only errors.
-<h4>Include the predefined MODEL INTERLIS</h4>
-The INTERLIS language includes a predefined base model (see Annex A in the language
-definition). Select this button, if you like to include it in the generated
-output. This option is normally not useful.
-<h3>lower area</h3>
-<h4>Compiler messages</h4>
-If your INTERLIS schema does not follow the INTERLIS language description, you will see
-here messages that point you to the problems.
-<h4>Run compiler</h4>
-Use this button to start a new compiler run. The compiler will then check any
-INTERLIS schema files, that you have added to the files list and generate the
-output file, that you defined on the output tab.
-</body>
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+        <title>ili2c - The INTERLIS-Compiler</title>
+    </head>
+    <body>
+        <h1>The INTERLIS-Compiler</h1>
+        <h2>System Requirements</h2>
+        <p> For the current version of ili2c, you will need a JRE (Java Runtime Environment)
+            installed on your system, version 1.6.0 or later. </p>
+        <h2>Installing ili2c</h2>
+        <p> To install ili2c, choose a directory and extract the distribution file there. </p>
+        <h2>Running ili2c</h2>
+        <p> There is currently no launcher. ili2c can be started with </p>
+        <code> java -jar ili2c.jar [options] </code>
+        <p> If you run the compiler without any options, a GUI (Graphical User Interface) will
+            appear. </p>
+        <h2>Graphical User Interface</h2>
+        <h3>Menus</h3><h4>File</h4><dl>
+            <dt>New</dt>
+            <dd>create a new, empty compiler configuration</dd>
+            <dt>Open..</dt>
+            <dd>opens an existing, previously saved compiler configuration</dd>
+            <dt>Save</dt>
+            <dd>saves the current compiler configuration</dd>
+            <dt>Save as...</dt>
+            <dd>saves the current compiler configuration to a different file</dd>
+            <dt>Exit</dt>
+            <dd>exits the compiler</dd>
+        </dl><h4>Tools</h4><dl>
+            <dt>Model Repositories...</dt>
+            <dd>opens a dialog to edit the settings that are used to access model repositories.
+                Multiple entries can be seperated by semicolon (';').</dd>
+            <dd>%JAR_DIR is a placeholder to refere to the folder named "standard" in the folder
+                where ili2c.jar is located.</dd>
+            <dd>%ILI_DIR is a placeholder to refere to the folder with the given ili-file. </dd>
+        </dl><h4>Help</h4>
+        <dl>
+            <dt>ili2c Help...</dt>
+            <dd>shows this help</dd>
+            <dt>About...</dt>
+            <dd>shows the current version of the compiler</dd>
+        </dl><h3>Input tab</h3> Use this tab, to define options, that the compiler will read while
+        running. <h4>auto complete fileset</h4>
+        <p>If this is checked, the compiler will try to find missing models from the files with
+            extension .ili that are in the folders of the files in the <code>Files</code> list.</p>
+        <p>If this is unchecked, all directly or indirectly imported models, need to be in the
+                <code>Files</code> list in the correct ordering.</p>
+        <h4>Files</h4>
+        <p>This contains the list of INTERLIS schema files, that the compiler will read and check.
+            If the model imports other models, or is a a translation of another model, all these
+            directly or indirectly referrenced models need to be in the list, if the <code>auto
+                complete fileset</code> is not checked. The ordering of the entries is significant,
+            if the <code>auto complete fileset</code> is not checked. Use the <code>Move up</code>
+            and/or <code>Move down</code> buttons to reorder the list.</p>
+        <h4>Add Model (.ili)...</h4> Use this button to add a new INTERLIS schema file to the list
+        of files, that the compiler should check. <h4>Remove</h4> Use this button to remove the
+        selected entry from the list of files. <h4>Move up</h4> Use this button to move the selected
+        entry one line up. The ordering of the entries is significant. <h4>Move down</h4> Use this
+        button to move the selected entry one line down. The ordering of the entries is significant.
+            <h3>Output tab</h3> Use this tab to provide options, that control the files that the
+        compiler will generate. <h4>Kind of output</h4> Defines the kind of output, that the
+        compiler will generate. If you just like to check your INTERLIS schemas, select
+            <code>Generate no output</code>. 
+        <dl>
+        <dt>Generate no output</dt><dd>writes no output</dd>
+        <dt>Generate an INTERLIS 1 model</dt><dd>writes an INTERLIS 1 model (ili-file)</dd>
+        <dt>Generate an INTERLIS 2 model</dt><dd>writes an INTERLIS 2 model (ili-file)</dd>
+        <dt>Generate an XML-Schema</dt><dd>writes an XML schema according to INTERLIS 2 encoding rules (xsd-file)</dd>
+        <dt>Generate an ILI1 FMT-Description</dt>
+            <dd>writes an XML schema according to ILIGML (eCH-0118) encoding rules. The resulting
+                schema is a valid GML application schema.</dd>
+            <dt>Generate Model as IlisMeta-Transfer</dt>
+            <dd>writes an XML data file according to the meta-model IlisMeta07.</dd>
+            <dt>deprecated (IOM)</dt>
+            <dd>writes an XML data file according to a deprected meta-model.</dd>
+        <dt>deprecated (ETF)</dt><dd>writes an experimental XML schema. Note that the encoding rules will change without notice</dd>
+        </dl>
+        
+        <h4>Filename</h4> Enter the name of the file, that the
+        compiler will write, if you didn't choose to generate no output. <h4>Report Errors and
+            warnings</h4> Select this button, if you like to see errors and warnings. <h4>Report
+            only errors</h4> Select this button, if you like to see only errors. <h4>Include the
+            predefined MODEL INTERLIS</h4> The INTERLIS language includes a predefined base model
+        (see Annex A in the language definition). Select this button, if you like to include it in
+        the generated output. This option is normally not useful. <h3>lower area</h3>
+        <h4>Compiler messages</h4> If your INTERLIS schema does not follow the INTERLIS language
+        description, you will see here messages that point you to the problems. <h4>Run
+            compiler</h4> Use this button to start a new compiler run. The compiler will then check
+        any INTERLIS schema files, that you have added to the files list and generate the output
+        file, that you defined on the output tab. </body>
 </html>
