@@ -5,6 +5,7 @@ ili2c 4.4.1 (2011-09-xx)
 ---------------------------
 - iox-1.6.1 (new MakeIliModelsXml)
 - new ch.interlis.ilirepository.MakeIliModelsXml that can update existing file and reads meta attributes (precursorVersion, tags, furtherInformation, furtherMetadata, Original, IDGeoIV, technicalContact)
+- kind of output selector: list of items reordered
 - doc (index.html) updated
 
 ili2c 4.4.0 (2011-08-19)

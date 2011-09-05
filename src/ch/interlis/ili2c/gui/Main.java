@@ -20,6 +20,7 @@ package ch.interlis.ili2c.gui;
 import java.util.*;
 import java.text.DateFormat;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -282,7 +283,7 @@ public class Main {
   }
   void updateUi(){
     int kind=config.getOutputKind();
-    outputKind.setSelectedIndex(kind-1);
+    outputKind.setSelectedItem(new Integer(kind));
     if(kind==GenerateOutputKind.NOOUTPUT){
       outputFileUi.setEditable(false);
     }else{
@@ -502,23 +503,24 @@ public class Main {
     label = new JLabel("Kind of output");
     outputPane.add(label,cnstr);
 
-    String comboBoxItems[] = {
-      "Generate no output"
-      , "Generate an INTERLIS 1 model"
-      , "Generate an INTERLIS 2 model"
-      , "Generate an XML-Schema"
-      , "Generate an ILI1 FMT-Description"
-	  , "Generate a GML-Schema"
-	  , "deprecated (IOM)"
-	  , "deprecated (ETF)"
-	  , "Generate Model as IlisMeta-Transfer"
+    Integer comboBoxItems[] = new Integer[]{
+    		 new Integer(GenerateOutputKind.NOOUTPUT)
+      , new Integer(GenerateOutputKind.ILI1)
+      , new Integer(GenerateOutputKind.ILI2) 
+      , new Integer(GenerateOutputKind.XMLSCHEMA)
+	  , new Integer(GenerateOutputKind.GML32)
+      , new Integer(GenerateOutputKind.ILI1FMTDESC)
+	  , new Integer(GenerateOutputKind.IMD)
+	  , new Integer(GenerateOutputKind.IOM)
+	  , new Integer(GenerateOutputKind.ETF1)
       };
     JPanel cbp = new JPanel();
     outputKind = new JComboBox(comboBoxItems);
+    outputKind.setRenderer(new KindListCellRenderer());
     outputKind.setEditable(false);
         outputKind.addActionListener(new ActionListener(){
           public void actionPerformed(java.awt.event.ActionEvent e){
-            int kind=outputKind.getSelectedIndex()+1;
+            int kind=((Integer)outputKind.getSelectedItem()).intValue();
 
 			outputFileUi.setEditable(true);
 			fileLabel.setText("Filename");
@@ -732,6 +734,31 @@ public class Main {
      fc=new FileChooser();
      config.setAutoCompleteModelList(true);
   }
+  
+  private class KindListCellRenderer extends JLabel implements ListCellRenderer{
+
+		public Component getListCellRendererComponent(JList arg0, Object obj,
+				int arg2, boolean arg3, boolean arg4) {
+			int kind=((Integer)obj).intValue();
+		    String kindTexts[] = {
+		            "Generate no output"
+		          , "Generate an INTERLIS 1 model"
+		          , "Generate an INTERLIS 2 model"
+		          , "Generate an XML-Schema"
+		          , "Generate an ILI1 FMT-Description"
+		    	  , "Generate a GML-Schema"
+		    	  , "deprecated (IOM)"
+		    	  , "deprecated (ETF)"
+		    	  , "Generate Model as IlisMeta-Transfer"
+		          };
+			setText(kindTexts[kind-1]);
+			return this;
+		}
+  	
+  	
+  };
+  
+  
   public static void main(String[] args) {
     Main instance=new Main();
     instance.settings = UserSettings.load();
