@@ -1,7 +1,7 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
-ili2c 4.4.1 (2011-09-xx)
+ili2c 4.4.1 (2011-09-05)
 ---------------------------
 - iox-1.6.1 (new MakeIliModelsXml)
 - new ch.interlis.ilirepository.MakeIliModelsXml that can update existing file and reads meta attributes (precursorVersion, tags, furtherInformation, furtherMetadata, Original, IDGeoIV, technicalContact)

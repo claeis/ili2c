@@ -10,6 +10,8 @@ public class UserSettings extends ch.ehi.basics.settings.Settings {
 	public final static String ILIDIRS = "ch.interlis.ili2c.ilidirs";
 	public final static String HTTP_PROXY_HOST = "ch.interlis.ili2c.http_proxy_host";
 	public final static String HTTP_PROXY_PORT = "ch.interlis.ili2c.http_proxy_port";
+	public final static String TEMP_REPOS_URI = "ch.interlis.ili2c.tempReposUri";
+	public final static String TEMP_REPOS_ILIFILES = "ch.interlis.ili2c.tempReposIliFiles";
 
 
 	public static UserSettings load() 

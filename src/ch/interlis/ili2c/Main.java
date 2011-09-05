@@ -20,6 +20,7 @@ import ch.ehi.basics.logging.TextAreaListener;
 
 public class Main
 {
+	public static final String APP_JAR = "ili2c.jar";
 	/** name of application as shown to user.
 	 */
 	public static final String APP_NAME="ili2c";
@@ -342,7 +343,7 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
   static public String getIli2cHome()
   {
 	String classpath = System.getProperty("java.class.path");
-	int index = classpath.toLowerCase().indexOf("ili2c.jar");
+	int index = classpath.toLowerCase().indexOf(APP_JAR);
 	int start = classpath.lastIndexOf(java.io.File.pathSeparator,index) + 1;
 	if(index > start)
 	{
@@ -458,7 +459,8 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
 				// set list of repositories to search
 				manager.setRepositories((String[]) modeldirv
 						.toArray(new String[1]));
-
+				manager.setIliFiles(settings.getTransientValue(UserSettings.TEMP_REPOS_URI),(ch.interlis.ilirepository.IliFiles)settings.getTransientObject(UserSettings.TEMP_REPOS_ILIFILES));
+				
 				// get complete list of required ili-files
 				try {
 					Configuration fileconfig = manager.getConfigWithFiles(ilifilev);
@@ -470,7 +472,7 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
 			        }
 				} catch (Ili2cException ex) {
 					EhiLogger.logError(ex);
-					System.exit(1);
+					return null;
 				}
 		  }
 	  }else{
