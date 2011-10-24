@@ -19,7 +19,10 @@ public class UserSettings extends ch.ehi.basics.settings.Settings {
 
 	UserSettings userSettings = new UserSettings();
 	try{
-		userSettings.load(new java.io.File(SETTINGS_FILE));
+		java.io.File f=new java.io.File(SETTINGS_FILE);
+		if(f.exists()){
+			userSettings.load(f);
+		}
 		String ilidirs=userSettings.getIlidirs();
 		if(ilidirs==null){
 			userSettings.setIlidirs(ch.interlis.ili2c.Main.DEFAULT_ILIDIRS);
