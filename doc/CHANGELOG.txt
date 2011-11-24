@@ -4,7 +4,7 @@ Known Issues:
 ili2c 4.4.2 (2011-10-xx)
 ---------------------------
 - bug gui: java.lang.NullPointerException if $HOME/.ili2c doesn't exist
-
+- bug xsd: INTERLIS.UUIDOID missing from generated xsd
 
 ili2c 4.4.1 (2011-09-05)
 ---------------------------

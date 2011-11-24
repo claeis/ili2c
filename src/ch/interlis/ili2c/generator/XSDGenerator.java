@@ -433,6 +433,12 @@ public final class XSDGenerator
 	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.STANDARDOID)){
 	            declareDomainDef(td.INTERLIS.STANDARDOID);
 	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.I32OID)){
+	            declareDomainDef(td.INTERLIS.I32OID);
+	    	}
+	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.UUIDOID)){
+	            declareDomainDef(td.INTERLIS.UUIDOID);
+	    	}
 	    	if(addAllInterlisTypes || referencedTypes.contains(td.INTERLIS.GregorianYear)){
 				declareDomainDef(td.INTERLIS.GregorianYear);
 	    	}
