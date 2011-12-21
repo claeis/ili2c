@@ -1063,7 +1063,7 @@ protected classDef[Container container]
 	  boolean identifiable = true;
 	  Constraint constr = null;
 	  int mods;
-	  Domain topicOid=null;
+	  Domain classOid=null;
 	  String ilidoc=null;
 	  Settings metaValues=null;
 	}
@@ -1151,7 +1151,7 @@ protected classDef[Container container]
 		        panic ();
 		      }
 		    }
-		( (oid:"OID" "AS" topicOid=domainRef[container] | "NO" "OID") SEMI { /* TODO */ }
+		( (oid:"OID" "AS" classOid=domainRef[container]  | "NO" "OID" {classOid=new NoOid();}) {table.setOid(classOid);} SEMI 
 		)?
 		(	"ATTRIBUTE"
 		|
@@ -1694,7 +1694,7 @@ protected associationDef[Container scope]
 		        }
 		)?
 		EQUALS
-		( (oid:"OID" "AS" assocOid=domainRef[scope] | "NO" "OID") SEMI { /* TODO */ }
+		( (oid:"OID" "AS" assocOid=domainRef[scope] | "NO" "OID" {assocOid=new NoOid();}) SEMI { def.setOid(assocOid); }
 		)?
 		{
 			scope.add(def);

@@ -192,6 +192,9 @@ public class ImdGenerator {
 		dataUnit.setViewUnit( topic.isViewTopic() );
 		dataUnit.setDataUnitName( topic.getScopedName(null) ); // Basket-Name
 		dataUnit.setName( UNIT_META_NAME );
+		if(topic.getBasketOid()!=null){
+			dataUnit.setOid(topic.getBasketOid().getScopedName(null));
+		}
 
 		// ExtendableME 
 		dataUnit.setAbstract( topic.isAbstract() );
@@ -258,6 +261,16 @@ public class ImdGenerator {
 			ch.interlis.ili2c.metamodel.Table table=(ch.interlis.ili2c.metamodel.Table)classDef;
 			if ( table.isIdentifiable() ) {
 				iomClass.setKind( Class_Kind._class );
+				ch.interlis.ili2c.metamodel.Domain oidDomain=table.getOid();
+				if(oidDomain==null){
+					ch.interlis.ili2c.metamodel.Topic topic=(ch.interlis.ili2c.metamodel.Topic)table.getContainer(ch.interlis.ili2c.metamodel.Topic.class);
+					if(topic!=null){
+						oidDomain=topic.getOid();
+					}
+				}
+				if(oidDomain!=null && !(oidDomain instanceof ch.interlis.ili2c.metamodel.NoOid)){
+					iomClass.setOid(oidDomain.getScopedName(null));
+				}
 			} else {
 				iomClass.setKind( Class_Kind.Structure );
 			}
@@ -354,6 +367,16 @@ public class ImdGenerator {
 			ch.interlis.ili2c.metamodel.AssociationDef assoc=(ch.interlis.ili2c.metamodel.AssociationDef)classDef;
 			iomClass.setKind(Class_Kind.Association);
 			iomClass.setEmbeddedRoleTransfer(assoc.isLightweight());
+			ch.interlis.ili2c.metamodel.Domain oidDomain=assoc.getOid();
+			if(oidDomain==null){
+				ch.interlis.ili2c.metamodel.Topic topic=(ch.interlis.ili2c.metamodel.Topic)assoc.getContainer(ch.interlis.ili2c.metamodel.Topic.class);
+				if(topic!=null){
+					oidDomain=topic.getOid();
+				}
+			}
+			if(oidDomain!=null && !(oidDomain instanceof ch.interlis.ili2c.metamodel.NoOid)){
+				iomClass.setOid(oidDomain.getScopedName(null));
+			}
 
 			if(assoc.containsCardinality()){
 				iomClass.setMultiplicity(visitCardinality(assoc.getDefinedCardinality()));
@@ -760,8 +783,18 @@ public class ImdGenerator {
 	{
 		Constraint iomCnstrt=null;
 		if(cnstrt instanceof ch.interlis.ili2c.metamodel.ExistenceConstraint){
-			// TODO ExistenceConstraint
+			ch.interlis.ili2c.metamodel.ExistenceConstraint existenceConstraint = (ch.interlis.ili2c.metamodel.ExistenceConstraint)cnstrt;
 			ExistenceConstraint iomConstraint = new ExistenceConstraint();
+			PathOrInspFactor iomRestrictedAttr=visitObjectPath(existenceConstraint.getRestrictedAttribute());
+			// TODO ExistenceConstraint.setRestrictedAttr(iomRestrictedAttr);
+			Iterator requiredInIt=existenceConstraint.iteratorRequiredIn();
+			while(requiredInIt.hasNext()){
+				ch.interlis.ili2c.metamodel.ObjectPath objPath=(ch.interlis.ili2c.metamodel.ObjectPath)requiredInIt.next();
+				ExistenceDef iomExistsIn = new ExistenceDef();
+				visitObjectPathEls(iomExistsIn,objPath);
+				iomExistsIn.setViewable(objPath.getRoot().getScopedName(null));
+				iomConstraint.addExistsIn(iomExistsIn);
+			}
 			iomCnstrt=iomConstraint;
 		}else if(cnstrt instanceof ch.interlis.ili2c.metamodel.MandatoryConstraint){
 			ch.interlis.ili2c.metamodel.MandatoryConstraint mandatoryConstraint = (ch.interlis.ili2c.metamodel.MandatoryConstraint)cnstrt;

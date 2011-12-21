@@ -4,6 +4,7 @@ import java.util.*;
 
 public abstract class AbstractClassDef extends Viewable
 {
+	private Domain oid=null;
   /** backlink to RoleDef, if this ClassDef or AssociationDef is used as target
    *  of a RoleDef.
    */
@@ -176,4 +177,10 @@ public abstract class AbstractClassDef extends Viewable
 
     return assocv;
   }
+public Domain getOid() {
+	return oid;
+}
+public void setOid(Domain oid) {
+	this.oid = oid;
+}
 }
