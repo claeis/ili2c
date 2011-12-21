@@ -1,6 +1,7 @@
 package ch.interlis.ili2c;
 
 import java.io.*;
+
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.metamodel.ErrorListener;
 import ch.interlis.ili2c.parser.Ili2Parser;
@@ -614,7 +615,7 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
               out=new BufferedWriter(new OutputStreamWriter(System.out));;
             }else{
               try{
-                out = new BufferedWriter(new FileWriter(config.getOutputFile()));
+                out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(config.getOutputFile()),"UTF-8"));
               }catch(IOException ex){
                   EhiLogger.logError(ex);
                   return desc;
@@ -655,7 +656,7 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
 					out=new BufferedWriter(new OutputStreamWriter(System.out));;
 				  }else{
 					try{
-					  out = new BufferedWriter(new FileWriter(config.getOutputFile()));
+  	                out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(config.getOutputFile()),"UTF-8"));
 					}catch(IOException ex){
 					  EhiLogger.logError(ex);
 					  return desc;

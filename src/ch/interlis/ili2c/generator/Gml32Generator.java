@@ -3,6 +3,9 @@ package ch.interlis.ili2c.generator;
 
 import ch.interlis.ili2c.metamodel.*;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.*;
 
@@ -190,7 +193,7 @@ public final class Gml32Generator
 	// setup output
 	String filename=outdir+"/"+model.getName()+".xsd";
 	try{
-		ipw=new IndentPrintWriter(new java.io.BufferedWriter(new java.io.FileWriter(filename)));
+		ipw=new IndentPrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename),"UTF-8")));
 	}catch(java.io.IOException ex){
 		EhiLogger.logError(ex);
 		return;
@@ -202,6 +205,7 @@ public final class Gml32Generator
 	surfaceOrAreaAttrs=new ArrayList();
 	
 	// start output
+	ipw.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
 	ipw.println("<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"");
 	ipw.indent();
 	ipw.println("xmlns=\""+ILIGML_XMLNSBASE+"/"+model.getName()+"\""

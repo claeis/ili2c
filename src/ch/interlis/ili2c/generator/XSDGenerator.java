@@ -119,6 +119,7 @@ public final class XSDGenerator
 		  addAllInterlisTypes=getMetaValueBoolean(lastModel,ILI2C_ILI23XSD_ADDALLINTERLISTYPESDEFAULT,false);
 		  addAliasTable=getMetaValueBoolean(lastModel,ILI2C_ILI23XSD_ADDALIASTABLEDEFAULT,false);
 	  }
+		ipw.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
     ipw.println("<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
       +" xmlns=\"http://www.interlis.ch/INTERLIS2.3\" xmlns:ili2c=\"http://www.interlis.ch/ili2c\""
       +" targetNamespace=\"http://www.interlis.ch/INTERLIS2.3\""
