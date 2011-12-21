@@ -17,6 +17,7 @@ import ch.interlis.ili2c.config.*;
 import ch.interlis.ili2c.gui.UserSettings;
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.logging.TextAreaListener;
+import ch.ehi.basics.view.GenericFileFilter;
 
 public class Main
 {
@@ -282,6 +283,7 @@ public class Main
       }
 
 			UserSettings settings = new UserSettings();
+			setDefaultIli2cPathMap(settings);
 			settings.setHttpProxyHost(httpProxyHost);
 			settings.setHttpProxyPort(httpProxyPort);
 			settings.setIlidirs(ilidirs);
@@ -355,6 +357,13 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
   {
 	  return runCompiler(config,null);
   }
+  static public void setDefaultIli2cPathMap(ch.ehi.basics.settings.Settings settings)
+  {
+		java.util.HashMap pathmap= new java.util.HashMap();
+		pathmap.put(JAR_DIR, getIli2cHome());
+		pathmap.put(ILI_DIR, null);
+		settings.setTransientObject(UserSettings.ILIDIRS_PATHMAP,pathmap);
+  }
   static public TransferDescription runCompiler(Configuration config,ch.ehi.basics.settings.Settings settings)
   {
 	  ArrayList filev=new ArrayList();
@@ -421,31 +430,36 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
 					System.setProperty("java.net.useSystemProxies", "true");
 				}
 				ArrayList modeldirv = new ArrayList();
+				java.util.HashMap pathmap=(java.util.HashMap)settings.getTransientObject(UserSettings.ILIDIRS_PATHMAP);
+				if(pathmap==null){
+					pathmap=new java.util.HashMap(); 
+				}
 				String ilidirs=settings.getValue(UserSettings.ILIDIRS);
 				String modeldirs[] = ilidirs.split(";");
 				HashSet ilifiledirs = new HashSet();
 				for (int modeli = 0; modeli < modeldirs.length; modeli++) {
 					String m = modeldirs[modeli];
-					if (m.equals(ILI_DIR)) {
+					if (m.equals(ILI_DIR) && pathmap.containsKey(ILI_DIR)) {
 						for (int filei = 0; filei < ilifilev.size(); filei++) {
 							String ilifile = (String) ilifilev.get(filei);
-							m = new java.io.File(ilifile).getAbsoluteFile()
-									.getParentFile().getAbsolutePath();
-							if (m != null && m.length() > 0) {
-								if (!ilifiledirs.contains(m)) {
-									ilifiledirs.add(m);
-									modeldirv.add(m);
+							if(GenericFileFilter.getFileExtension(ilifile)!=null){
+								m = new java.io.File(ilifile).getAbsoluteFile()
+										.getParentFile().getAbsolutePath();
+								if (m != null && m.length() > 0) {
+									if (!ilifiledirs.contains(m)) {
+										ilifiledirs.add(m);
+										modeldirv.add(m);
+									}
 								}
 							}
 						}
-					} else if (m.equals(JAR_DIR)) {
-						m = getIli2cHome();
-						if (m != null) {
-							m = new java.io.File(m, JAR_MODELS)
-									.getAbsolutePath();
-						}
-						if (m != null && m.length() > 0) {
-							modeldirv.add(m);
+					} else if (m.startsWith("%")){
+						String key=m;
+						if(pathmap.containsKey(key)){
+							m=(String)pathmap.get(key);
+							if (m != null && m.length() > 0) {
+								modeldirv.add(m);
+							}
 						}
 					} else {
 						if (m != null && m.length() > 0) {
@@ -456,6 +470,10 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
 
 				// create repository manager
 				ch.interlis.ilirepository.IliManager manager = new ch.interlis.ilirepository.IliManager();
+				ch.interlis.ilirepository.IliResolver resolver=(ch.interlis.ilirepository.IliResolver)settings.getTransientObject(UserSettings.CUSTOM_ILI_RESOLVER);
+				if(resolver!=null){
+					manager.setResolver(resolver);
+				}
 				// set list of repositories to search
 				manager.setRepositories((String[]) modeldirv
 						.toArray(new String[1]));

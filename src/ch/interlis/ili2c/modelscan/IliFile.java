@@ -30,6 +30,7 @@ public class IliFile {
 	private String pathname=null;
 	private String repositoryUri=null; // optional
 	private String md5=null; // optional
+	private double iliVersion=0.0;
 	public void addModel(IliModel model){
 		modelv.add(model);
 	}
@@ -59,6 +60,16 @@ public class IliFile {
 	}
 	public void setMd5(String md5) {
 		this.md5 = md5;
+	}
+	public double getIliVersion() {
+		if(iliVersion==0.0 && modelv.size()>0){
+			IliModel model=(IliModel)modelv.get(0);
+			return model.getIliVersion();
+		}
+		return iliVersion;
+	}
+	public void setIliVersion(double iliVersion) {
+		this.iliVersion = iliVersion;
 	}
 
 }

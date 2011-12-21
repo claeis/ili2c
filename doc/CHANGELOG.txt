@@ -10,6 +10,9 @@ ili2c 4.4.2 (2011-12-xx)
 - bug imd: missing TopicDef/OID AS
 - bug imd: missing TopicDef/BASKET OID AS
 - bug ili2exp: missing ClassDef/OID AS
+- bug api: missing "NO OID"
+- added support to find models given by name
+- added support do have placeholders in ilipath
 
 ili2c 4.4.1 (2011-09-05)
 ---------------------------

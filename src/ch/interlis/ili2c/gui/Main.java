@@ -762,7 +762,8 @@ public class Main {
   public static void main(String[] args) {
     Main instance=new Main();
     instance.settings = UserSettings.load();
-
+    ch.interlis.ili2c.Main.setDefaultIli2cPathMap(instance.settings);
+    
     instance.run();
 
   }
