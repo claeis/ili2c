@@ -245,6 +245,16 @@ private void setup(
 
 
     printStart (keyword, def, /* based on */ null);
+    Domain oid=def.getOid();
+    if(oid!=null){
+    	if(oid instanceof NoOid){
+    	    ipw.println ("NO OID;");
+    	}else{
+    	    ipw.print ("OID AS ");
+    	    ipw.print (oid.getScopedName (def.getContainer()));
+    	    ipw.println (";");
+    	}
+    }
     printElements(def);
     printEnd (def);
   }

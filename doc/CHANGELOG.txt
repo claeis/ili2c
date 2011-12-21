@@ -1,10 +1,15 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
-ili2c 4.4.2 (2011-10-xx)
+ili2c 4.4.2 (2011-12-xx)
 ---------------------------
 - bug gui: java.lang.NullPointerException if $HOME/.ili2c doesn't exist
 - bug xsd: INTERLIS.UUIDOID missing from generated xsd
+- bug imd: missing ExistenceConstraint
+- bug imd: missing ClassDef/OID AS
+- bug imd: missing TopicDef/OID AS
+- bug imd: missing TopicDef/BASKET OID AS
+- bug ili2exp: missing ClassDef/OID AS
 
 ili2c 4.4.1 (2011-09-05)
 ---------------------------
