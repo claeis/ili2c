@@ -4,7 +4,7 @@ public class ILISMETA07{
   public final static String MODEL= "IlisMeta07";
   public final static String ModelData= "IlisMeta07.ModelData";
   public final static String ModelTranslation= "IlisMeta07.ModelTranslation";
-  public static ch.interlis.iom_j.xtf.XtfModel getXtfModel(){ return new ch.interlis.iom_j.xtf.XtfModel("IlisMeta07","http://interlis.ch","2008-02-05"); }
+  public static ch.interlis.iom_j.xtf.XtfModel getXtfModel(){ return new ch.interlis.iom_j.xtf.XtfModel("IlisMeta07","http://interlis.ch","2011-12-22"); }
   static public ch.interlis.iom_j.ViewableProperties getIoxMapping()
   {
     ch.interlis.iom_j.ViewableProperties mapping=new ch.interlis.iom_j.ViewableProperties();
@@ -540,7 +540,8 @@ public class ILISMETA07{
       ,"ili1Transfername"
       ,"ili1Format"
       });
-    mapping.defineClass("IlisMeta07.ModelData.ExistenceConstraint", new String[]{   "ExistsIn"
+    mapping.defineClass("IlisMeta07.ModelData.ExistenceConstraint", new String[]{   "Attr"
+      ,"ExistsIn"
       });
     mapping.defineClass("IlisMeta07.ModelData.DomainType", new String[]{   "Name"
       ,"Documentation"

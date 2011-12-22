@@ -786,7 +786,7 @@ public class ImdGenerator {
 			ch.interlis.ili2c.metamodel.ExistenceConstraint existenceConstraint = (ch.interlis.ili2c.metamodel.ExistenceConstraint)cnstrt;
 			ExistenceConstraint iomConstraint = new ExistenceConstraint();
 			PathOrInspFactor iomRestrictedAttr=visitObjectPath(existenceConstraint.getRestrictedAttribute());
-			// TODO ExistenceConstraint.setRestrictedAttr(iomRestrictedAttr);
+			iomConstraint.setAttr(iomRestrictedAttr);
 			Iterator requiredInIt=existenceConstraint.iteratorRequiredIn();
 			while(requiredInIt.hasNext()){
 				ch.interlis.ili2c.metamodel.ObjectPath objPath=(ch.interlis.ili2c.metamodel.ObjectPath)requiredInIt.next();

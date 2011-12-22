@@ -1,6 +1,7 @@
 INTERLIS 2.3;
 
-MODEL IlisMeta07 (en) AT "http://interlis.ch" VERSION "2008-08-29" =
+/* 2011-12-22 ceis added ExistenceConstraint/Attr */
+MODEL IlisMeta07 (en) AT "http://interlis.ch" VERSION "2011-12-22" =
 
   DOMAIN
     BasketOID = OID TEXT; /* Filename */
@@ -645,6 +646,7 @@ MODEL IlisMeta07 (en) AT "http://interlis.ch" VERSION "2008-08-29" =
     END ExistenceDef;
 
     STRUCTURE ExistenceConstraint EXTENDS Constraint =
+      Attr : MANDATORY PathOrInspFactor;
       ExistsIn: BAG {1..*} OF ExistenceDef;
     END ExistenceConstraint;
 
