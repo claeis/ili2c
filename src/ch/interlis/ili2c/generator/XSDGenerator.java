@@ -952,8 +952,29 @@ public final class XSDGenerator
 	*/
 	if(!(v instanceof AssociationDef && ((AssociationDef)v).isLightweight())
 		&&	!((v instanceof Table) && !((Table)v).isIdentifiable())){
-		// Objects have an ID and an operation flag to allow incremental update
-		ipw.println ("<xsd:attribute name=\"TID\" type=\"IliID\" use=\"required\"/>");
+		if(v instanceof AssociationDef){
+			AssociationDef assoc=(AssociationDef)v;
+			if(assoc.isIdentifiable()){
+				// only some LinkObjects have an ID
+				ipw.println ("<xsd:attribute name=\"TID\" type=\"IliID\" use=\"required\"/>");
+			}else{
+				Domain oid=assoc.getOid();
+				/* ignore topic level definition of oid
+				 * model should define "ASSOCATION  (OID) = ..." to get an ID
+				if(oid==null){
+					Topic topic=(Topic)assoc.getContainer(Topic.class);
+					if(topic!=null){
+						oid=topic.getOid();
+					}
+				} */
+				if(oid!=null && !(oid instanceof NoOid)){
+					ipw.println ("<xsd:attribute name=\"TID\" type=\"IliID\" use=\"required\"/>");
+				}
+			}
+		}else{
+			// Objects have an ID
+			ipw.println ("<xsd:attribute name=\"TID\" type=\"IliID\" use=\"required\"/>");
+		}
 	}
 	ipw.unindent();
 	ipw.println("</xsd:complexType>");
