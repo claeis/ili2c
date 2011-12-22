@@ -1,0 +1,725 @@
+INTERLIS 2.3;
+
+MODEL IlisMeta07 (en) AT "http://interlis.ch" VERSION "2008-08-29" =
+
+  DOMAIN
+    BasketOID = OID TEXT; /* Filename */
+    MetaElemOID = OID TEXT; /* Namepath: Model... */
+    LanguageCode = MANDATORY TEXT*5;
+
+
+  TOPIC ModelData =
+    BASKET OID AS IlisMeta07.BasketOID;
+    OID AS IlisMeta07.MetaElemOID;
+
+    DOMAIN
+      Code = 0..255; !! 1 byte code
+      MultRange = 0..2147483647; /* Max Int32 */
+      LengthRange EXTENDS MultRange = 1..2147483647;
+
+    /* MetaElems in general */
+
+    STRUCTURE DocText =
+      Name: TEXT;
+      Text: MANDATORY MTEXT;
+    END DocText;
+
+    CLASS MetaElement (ABSTRACT) =
+      /* OID: <Parent-OID>.Name */
+      Name: MANDATORY TEXT;
+      Documentation: LIST OF DocText;
+    END MetaElement;
+
+    CLASS MetaAttribute =
+      /* OID: <Parent-OID>.METAOBJECT.Name */
+      Name: MANDATORY TEXT;
+      Value: MANDATORY TEXT;
+    END MetaAttribute;
+
+    ASSOCIATION MetaAttributes =
+      MetaElement (EXTERNAL) -<#> MetaElement;
+      MetaAttribute -- MetaAttribute;
+    END MetaAttributes;
+
+    CLASS ExtendableME (ABSTRACT) EXTENDS MetaElement =
+      Abstract: MANDATORY BOOLEAN;
+      Final: MANDATORY BOOLEAN;
+    END ExtendableME;
+
+    ASSOCIATION Inheritance =
+      Sub -- ExtendableME;
+      Super (EXTERNAL) -- {0..1} ExtendableME;
+    END Inheritance;
+
+    /* Models */
+
+    CLASS Package (ABSTRACT) EXTENDS MetaElement =
+    END Package;
+
+    STRUCTURE Ili1Format =
+      isFree: MANDATORY BOOLEAN;
+      LineSize: LengthRange; !! defined when isFree == False
+      tidSize: LengthRange;  !! defined when isFree == False
+      blankCode: MANDATORY Code;
+      undefinedCode: MANDATORY Code;
+      continueCode: MANDATORY Code;
+      Font: MANDATORY TEXT;
+      tidKind: MANDATORY (TID_I16, TID_I32, TID_ANY, TID_EXPLANATION);
+      tidExplanation: TEXT; !! defined when tidKind == TID_EXPLANATION
+    END Ili1Format;
+
+    CLASS Model EXTENDS Package =
+      /* MetaElement.Name := ModelName as defined in the INTERLIS-Model */
+      iliVersion: MANDATORY TEXT;
+      Contracted: MANDATORY BOOLEAN;
+      Kind: MANDATORY (NormalM, TypeM, RefSystemM, SymbologyM);
+      Language: LanguageCode;
+      At: TEXT;
+      Version: TEXT;
+      ili1Transfername: TEXT;
+      ili1Format: Ili1Format;
+    END Model;
+
+    CLASS SubModel EXTENDS Package =
+      /* MetaElement.Name := TopicName as defined in the INTERLIS-Model */
+    END SubModel;
+
+    ASSOCIATION PackageElements =
+      ElementInPackage -<#> {0..1} Package;
+      Element -- MetaElement;
+    MANDATORY CONSTRAINT
+      NOT (INTERLIS.isOfClass(Element, >IlisMeta07.ModelData.Model));
+    END PackageElements;
+
+    ASSOCIATION Import =
+      ImportingP -- Package;
+      ImportedP (EXTERNAL) -- Package;
+    END Import;
+
+    CLASS Type (ABSTRACT) EXTENDS ExtendableME =
+    END Type;
+
+    STRUCTURE Expression (ABSTRACT) =
+    END Expression;
+
+    STRUCTURE Multiplicity =
+      Min: MANDATORY MultRange;
+      Max: MultRange;
+    END Multiplicity;
+
+    STRUCTURE Constraint (ABSTRACT) =
+    END Constraint;
+
+    CLASS DomainType (ABSTRACT) EXTENDS Type =
+      /* MetaElement.Name :=
+         DomainName if defined explicitly as a domain,
+         "Type" if defined within an attribute definition */
+      Mandatory: MANDATORY BOOLEAN;
+    END DomainType;
+
+    /* Classes */
+
+    CLASS Class EXTENDS Type =
+      /* MetaElement.Name := StructureName, ClassName,
+                             AssociationName, ViewName
+                             as defined in the INTERLIS-Model */
+      Kind: MANDATORY (Structure, Class, View, Association);
+      Multiplicity: Multiplicity; /* for associations only */
+      Constraints: BAG OF Constraint;
+      EmbeddedRoleTransfer: MANDATORY BOOLEAN;
+      ili1OptionalTable: BOOLEAN; !! INTERLIS1 only
+    END Class;
+
+    CLASS AttrOrParam EXTENDS ExtendableME =
+      /* MetaElement.Name := AttributeName, ParameterName
+                             as defined in the INTERLIS-Model */
+      SubdivisionKind: (NoSubDiv, SubDiv, ContSubDiv);
+      Transient: BOOLEAN;
+      Derivates: LIST OF Expression;
+    END AttrOrParam;
+
+    ASSOCIATION LocalType =
+      LTParent -<#> AttrOrParam;
+      LocalType -- {0..*} Type;
+    END LocalType;
+
+    ASSOCIATION AttrOrParamType =
+      AttrOrParam -- AttrOrParam;
+      Type (EXTERNAL) -- {1} Type;
+    END AttrOrParamType;
+
+    ASSOCIATION ClassAttr =
+      AttrParent -<#> Class;
+      ClassAttribute (ORDERED) -- AttrOrParam;
+    MANDATORY CONSTRAINT DEFINED(ClassAttribute->SubdivisionKind) AND
+                         DEFINED(ClassAttribute->Transient);
+    END ClassAttr;
+
+    ASSOCIATION ClassParam =
+      ParamParent -<#> Class;
+      ClassParameter (ORDERED) -- AttrOrParam;
+    MANDATORY CONSTRAINT NOT (DEFINED(ClassParameter->SubdivisionKind) OR
+                              DEFINED(ClassParameter->Transient));
+    END ClassParam;
+
+    /* types related to other types */
+
+    CLASS TypeRelatedType (ABSTRACT) EXTENDS DomainType =
+    END TypeRelatedType;
+
+    ASSOCIATION BaseType =
+      TRT -- TypeRelatedType;
+      BaseType (EXTERNAL) -- {1} Type;
+    END BaseType;
+
+    ASSOCIATION TypeRestriction =
+      TRTR -- TypeRelatedType;
+      TypeRestriction (EXTERNAL) -- Type;
+    END TypeRestriction;
+
+    /* bag type */
+
+    CLASS MultiValue EXTENDS TypeRelatedType =
+      /* MetaElement.Name := "Type" because always defined
+                              within an attribute definition */
+      Ordered: MANDATORY BOOLEAN;
+      Multiplicity: Multiplicity;
+    END MultiValue;
+
+    /* references and associations */
+
+    CLASS ClassRelatedType (ABSTRACT) EXTENDS DomainType =
+    END ClassRelatedType;
+
+    ASSOCIATION BaseClass =
+      CRT -- ClassRelatedType;
+      BaseClass (EXTERNAL) -- Class;
+    END BaseClass;
+
+    ASSOCIATION ClassRestriction =
+      CRTR -- ClassRelatedType;
+      ClassRestriction (EXTERNAL) -- Class;
+    END ClassRestriction;
+
+    CLASS ReferenceType EXTENDS ClassRelatedType =
+      External: MANDATORY BOOLEAN;
+    END ReferenceType;
+
+    CLASS Role EXTENDS ReferenceType =
+      /* MetaElement.Name := RoleName as defined in the INTERLIS-Model */
+      Strongness: MANDATORY (Assoc, Aggr, Comp);
+      Ordered: MANDATORY BOOLEAN;
+      Multiplicity: Multiplicity;
+      Derivates: LIST OF Expression;
+      EmbeddedTransfer: MANDATORY BOOLEAN;
+    END Role;
+
+    ASSOCIATION AssocRole =
+      Association -<#> Class;
+      Role (ORDERED) -- Role;
+    MANDATORY CONSTRAINT Association->Kind == #Association;
+    END AssocRole;
+
+    CLASS ExplicitAssocAccess EXTENDS ExtendableME =
+    END ExplicitAssocAccess;
+
+    ASSOCIATION ExplicitAssocAcc =
+      AssocAccOf -<#> Class;
+      ExplicitAssocAcc (ORDERED) -- ExplicitAssocAccess;
+    END ExplicitAssocAcc;
+
+    ASSOCIATION AssocAccOrigin =
+      UseAsOrigin -- ExplicitAssocAccess;
+      OriginRole -- {1} Role;
+    END AssocAccOrigin;
+
+    ASSOCIATION AssocAccTarget =
+      UseAsTarget -- ExplicitAssocAccess;
+      TargetRole -- {0..1} Role;
+    END AssocAccTarget;
+
+    ASSOCIATION AssocAcc =
+      Class -- Class;
+      AssocAcc -- Role OR ExplicitAssocAccess;
+    END AssocAcc;
+
+    /* Information for easy transfer */
+
+    ASSOCIATION TransferElement =
+      TransferClass -- Class;
+      TransferElement (EXTERNAL, ORDERED) -- AttrOrParam OR
+                                             ExplicitAssocAccess OR
+                                             Role;
+    END TransferElement;
+
+    ASSOCIATION Ili1TransferElement =
+      Ili1TransferClass -- Class;
+      Ili1RefAttr (ORDERED) -- AttrOrParam OR Role;
+    END Ili1TransferElement;
+
+    /* DataUnits */
+
+    CLASS DataUnit EXTENDS ExtendableME =
+      Name (EXTENDED): TEXT := "BASKET";
+      ViewUnit: MANDATORY BOOLEAN;
+      DataUnitName: MANDATORY TEXT;
+    END DataUnit;
+
+    ASSOCIATION Dependency =
+      Using -- DataUnit;
+      Dependent (EXTERNAL) -- DataUnit;
+    END Dependency;
+
+    ASSOCIATION AllowedInBasket =
+      OfDataUnit -- DataUnit;
+      ClassInBasket (EXTERNAL) -- Class;
+    END AllowedInBasket;
+
+    /* Units */
+
+    CLASS Unit EXTENDS ExtendableME =
+      /* MetaElement.Name := ShortName as defined in the INTERLIS-Model */
+      Kind: MANDATORY (BaseU, DerivedU , ComposedU);
+      Definition: Expression;
+    MANDATORY CONSTRAINT ((Kind != #BaseU) == DEFINED(Definition));
+    END Unit;
+
+    /* MetaObjects */
+
+    CLASS MetaBasketDef EXTENDS ExtendableME =
+      /* MetaElement.Name := BasketName as defined in the INTERLIS-Model */
+      Kind: MANDATORY (SignB, RefSystemB);
+    END MetaBasketDef;
+
+    ASSOCIATION MetaDataUnit =
+      MetaBasketDef -- MetaBasketDef;
+      MetaDataTopic (EXTERNAL) -- {1} DataUnit;
+    END MetaDataUnit;
+
+    CLASS MetaObjectDef EXTENDS MetaElement =
+      /* MetaElement.Name := MetaObjectName as defined
+         in the INTERLIS-Model */
+      IsRefSystem: MANDATORY BOOLEAN;
+    END MetaObjectDef;
+
+    ASSOCIATION MetaBasketMembers =
+      MetaBasketDef -<#>  MetaBasketDef;
+      Member -- MetaObjectDef;
+    END MetaBasketMembers;
+
+    ASSOCIATION MetaObjectClass =
+      MetaObjectDef --  MetaObjectDef;
+      Class -- {1} Class;
+    END MetaObjectClass;
+
+    /* base types */
+
+    CLASS BooleanType EXTENDS DomainType =
+    END BooleanType;
+
+    CLASS TextType EXTENDS DomainType =
+      Kind: MANDATORY (MText, Text, Name, Uri);
+      MaxLength: LengthRange;
+    END TextType;
+
+    CLASS BlackboxType EXTENDS DomainType =
+      Kind: MANDATORY (Binary, Xml);
+    END BlackboxType;
+
+    CLASS NumType EXTENDS DomainType =
+      /* MetaElement.Name :=
+         DomainName if defined explicitly as a domain,
+         "Type" if defined within an attribute definition,
+         "C1", "C2", "C3" if defined within a coordinate type */
+      Min: TEXT;
+      Max: TEXT;
+      Circular: BOOLEAN;
+      Clockwise: BOOLEAN;
+      /* Constraint, dass Clockwise oder Refsys */
+    END NumType;
+
+    ASSOCIATION NumUnit =
+      Num -- NumType;
+      Unit (EXTERNAL) -- {0..1} Unit;
+    END NumUnit;
+
+    DOMAIN AxisInd = 1..3;
+    CLASS CoordType EXTENDS DomainType =
+      NullAxis: AxisInd;
+      PiHalfAxis: AxisInd;
+    END CoordType;
+
+    ASSOCIATION AxisSpec =
+      CoordType -- CoordType;
+      Axis (ORDERED, EXTERNAL) -- {1..3} NumType;
+    END AxisSpec;
+
+    ASSOCIATION NumsRefSys =
+      NumType -- NumType;
+      RefSys (EXTERNAL) -- {0..1} MetaObjectDef OR CoordType;
+      Axis: AxisInd;
+    END NumsRefSys;
+
+    CLASS FormattedType EXTENDS NumType =
+      Format: MANDATORY TEXT;
+    END FormattedType;
+
+    ASSOCIATION StructOfFormat =
+      FormattedType -- FormattedType;
+      Struct (EXTERNAL) -- {1} Class;
+    END StructOfFormat;
+
+    /* OID Definition */
+
+    CLASS AnyOIDType EXTENDS DomainType =
+    END AnyOIDType;
+
+    ASSOCIATION ObjectOID =
+      Class -- Class;
+      Oid (EXTERNAL) -- {0..1} DomainType /* No OID, if no assoc */
+                               RESTRICTION (TextType; NumType; AnyOIDType);
+    END ObjectOID;
+
+    ASSOCIATION BasketOID =
+      ForDataUnit -- DataUnit;
+      Oid (EXTERNAL) -- {0..1} DomainType
+                               RESTRICTION (TextType; NumType; AnyOIDType);
+    END BasketOID;
+
+    /* Functions */
+
+    CLASS FunctionDef EXTENDS MetaElement =
+      /* MetaElement.Name := FunctionName as defined in the INTERLIS-Model
+      */
+      Explanation: TEXT;
+    END FunctionDef;
+
+    ASSOCIATION LocalFType =
+      LFTParent -<#> FunctionDef;
+      LocalType -- {0..1} Type;
+    END LocalFType;
+
+    ASSOCIATION ResultType =
+      Function -- FunctionDef;
+      ResultType (EXTERNAL) -- {1} Type;
+    END ResultType;
+
+    CLASS Argument EXTENDS MetaElement =
+      /* MetaElement.Name := ArgumentName as defined in the INTERLIS-Model
+      */
+      Kind: MANDATORY (Type, EnumVal, EnumTreeVal);
+    END Argument;
+
+    ASSOCIATION FormalArgument =
+      Function -<#> FunctionDef;
+      Argument (ORDERED) -- Argument;
+    END FormalArgument;
+
+    ASSOCIATION ArgumentType =
+      Argument -- Argument;
+      Type (EXTERNAL) -- {0..1} Type;
+    MANDATORY CONSTRAINT (Argument->Kind == #Type);
+    END ArgumentType;
+
+    /* Class and attribute reference types */
+
+    CLASS ClassRefType EXTENDS ClassRelatedType =
+    END ClassRefType;
+
+    CLASS ObjectType EXTENDS ClassRelatedType =
+      Multiple: MANDATORY BOOLEAN;
+    END ObjectType;
+
+    CLASS AttributeRefType EXTENDS DomainType =
+    END AttributeRefType;
+
+    ASSOCIATION ARefOf =
+      ForARef -- AttributeRefType;
+      Of (EXTERNAL) -- {0..1} Class OR AttrOrParam OR Argument;
+    END ARefOf;
+
+    ASSOCIATION ARefRestriction =
+      ARef -- AttributeRefType;
+      Type (EXTERNAL) -- Type;
+    END ARefRestriction;
+
+    /* Enumerations */
+
+    CLASS EnumType EXTENDS DomainType =
+      Order: MANDATORY (Unordered, Ordered, Circular);
+    END EnumType;
+
+    CLASS EnumNode EXTENDS ExtendableME =
+      /* MetaElement.Name := "TOP" for topnode,
+                             enumeration value (without constant prefix #)
+                             for all real nodes
+      */
+    END EnumNode;
+
+    ASSOCIATION TopNode =
+      EnumType -<#> EnumType;
+      TopNode (ORDERED) -- {1} EnumNode;
+    END TopNode;
+
+    ASSOCIATION SubNode =
+      ParentNode -<#> EnumNode;
+      Node (ORDERED) -- EnumNode;
+    END SubNode;
+
+    /* Extended enumerations have complete definitions.
+       Inherited nodes refer to base node */
+
+    CLASS EnumTreeValueType EXTENDS DomainType =
+    END EnumTreeValueType;
+
+    ASSOCIATION TreeValueTypeOf =
+      ETVT -- EnumTreeValueType;
+      ET (EXTERNAL) -- {1} EnumType;
+    END TreeValueTypeOf;
+
+    /* Line types */
+
+    CLASS LineForm EXTENDS MetaElement =
+      /* MetaElement.Name := LineFormName as defined in the INTERLIS-Model
+      */
+    END LineForm;
+
+    ASSOCIATION LineFormStructure =
+      LineForm -- LineForm;
+      Structure (EXTERNAL) -- {1} Class;
+    MANDATORY CONSTRAINT (Structure->Kind == #Structure);
+    END LineFormStructure;
+
+    CLASS LineType EXTENDS DomainType =
+      Kind: MANDATORY (Polyline, DirectedPolyline, Surface, Area);
+      MaxOverlap: TEXT;
+    END LineType;
+
+    ASSOCIATION LinesForm =
+      LineType -- LineType;
+      LineForm (EXTERNAL) -- {1..*} LineForm;
+    END LinesForm;
+
+    ASSOCIATION LineCoord =
+      LineType -- LineType;
+      CoordType (EXTERNAL) -- {0..1} CoordType;
+    END LineCoord;
+
+    ASSOCIATION LineAttr =
+      LineType -- LineType;
+      LAStructure (EXTERNAL) -- {0..1} Class;
+    END LineAttr;
+
+    /* Views */
+
+    CLASS View EXTENDS Class =
+      FormationKind: MANDATORY (Projection, Join, Union,
+                                Aggregation (All, Equal),
+                                Inspection (Normal, Area));
+
+      FormationParameter: LIST OF Expression; /* PathOrInspFactor only */
+                          /* Aggr.Equal: UniqueEl
+                             Inspection: Attributepath */
+      Where: Expression;
+      Transient: MANDATORY BOOLEAN;
+    END View;
+
+    CLASS RenamedBaseView EXTENDS ExtendableME =
+      /* MetaElement.Name := Name as defined in the INTERLIS-Model */
+      OrNull: BOOLEAN;
+    END RenamedBaseView;
+
+    ASSOCIATION BaseViewDef =
+      View -<#> View;
+      RenamedBaseView (ORDERED) -- RenamedBaseView;
+    END BaseViewDef;
+
+    ASSOCIATION BaseViewRef =
+      RenamedBaseView -- RenamedBaseView;
+      BaseView (EXTERNAL) -- {1} Class;
+    END BaseViewRef;
+
+    ASSOCIATION DerivedAssoc =
+      DeriAssoc -- Class;
+      View (EXTERNAL) -- {0..1} View;
+    MANDATORY CONSTRAINT
+      (DeriAssoc->Kind == #Association) AND (View->Kind == #View);
+    END DerivedAssoc;
+
+    /* Expressions, factors */
+
+    STRUCTURE UnaryExpr EXTENDS Expression =
+      Operation: (Not, Defined);
+      SubExpression: Expression;
+    END UnaryExpr;
+
+    STRUCTURE CompoundExpr EXTENDS Expression =
+      Operation: (And, Or, Mult, Div,
+                  Relation (Equal, NotEqual,
+                  LessOrEqual, GreaterOrEqual,
+                  Less, Greater));
+      SubExpressions: LIST OF Expression;
+    END CompoundExpr;
+
+    STRUCTURE Factor (ABSTRACT) EXTENDS Expression =
+    END Factor;
+
+    STRUCTURE PathEl =
+      Kind: (This, ThisArea, ThatArea, Parent,
+             ReferenceAttr, AssocPath, Role, ViewBase,
+             Attribute, MetaObject);
+      Ref: REFERENCE TO (EXTERNAL) MetaElement;
+      NumIndex: MultRange;
+      SpecIndex: (First, Last);
+    MANDATORY CONSTRAINT (Kind >= #ReferenceAttr) == DEFINED(Ref);
+    END PathEl;
+
+    STRUCTURE PathOrInspFactor EXTENDS Factor =
+      PathEls: LIST OF PathEl;
+      Inspection: REFERENCE TO (EXTERNAL) View;
+    END PathOrInspFactor;
+
+    STRUCTURE EnumAssignment =
+      ValueToAssign: Expression;
+      MinEnumValue: MANDATORY REFERENCE TO (EXTERNAL) EnumNode;
+      MaxEnumValue: REFERENCE TO (EXTERNAL) EnumNode;
+    END EnumAssignment;
+
+    STRUCTURE EnumMapping EXTENDS Factor =
+      EnumValue: PathOrInspFactor;
+      Cases: LIST OF EnumAssignment;
+    END EnumMapping;
+
+    STRUCTURE ClassRef =
+      Ref: MANDATORY REFERENCE TO (EXTERNAL) Class;
+    END ClassRef;
+
+    STRUCTURE ActualArgument =
+      FormalArgument: MANDATORY REFERENCE TO (EXTERNAL) Argument;
+      Kind: MANDATORY (Expression, AllOf);
+      Expression: BAG {0..1} OF Expression;
+      ObjectClasses: BAG {0..*} OF ClassRef;
+    END ActualArgument;
+
+    STRUCTURE FunctionCall EXTENDS Factor =
+      Function: MANDATORY REFERENCE TO (EXTERNAL) FunctionDef;
+      Arguments: LIST OF ActualArgument;
+    END FunctionCall;
+
+    STRUCTURE RuntimeParamRef EXTENDS Factor =
+      RuntimeParam: MANDATORY REFERENCE TO
+                              IlisMeta07.ModelData.AttrOrParam;
+    END RuntimeParamRef;
+
+    STRUCTURE Constant EXTENDS Factor =
+      Value: MANDATORY TEXT;
+      Type: MANDATORY (Undefined, Numeric, Text, Enumeration);
+    END Constant;
+
+    STRUCTURE ClassConst EXTENDS Factor =
+      Class: REFERENCE TO (EXTERNAL) Class;
+    END ClassConst;
+
+    STRUCTURE AttributeConst EXTENDS Factor =
+      Attribute: REFERENCE TO (EXTERNAL) AttrOrParam;
+    END AttributeConst;
+
+    STRUCTURE UnitRef EXTENDS Factor =
+      Unit: REFERENCE TO (EXTERNAL) IlisMeta07.ModelData.Unit;
+    END UnitRef;
+
+    STRUCTURE UnitFunction EXTENDS Factor =
+      Explanation: MANDATORY TEXT;
+    END UnitFunction;
+
+    /* Constraints */
+
+    STRUCTURE SimpleConstraint EXTENDS Constraint =
+      Kind: (MandC, LowPercC, HighPercC);
+      Percentage: 0.00 .. 100.00;
+      LogicalExpression: Expression;
+    END SimpleConstraint;
+
+    STRUCTURE ExistenceDef EXTENDS PathOrInspFactor =
+      Viewable: MANDATORY REFERENCE TO Class;
+    END ExistenceDef;
+
+    STRUCTURE ExistenceConstraint EXTENDS Constraint =
+      ExistsIn: BAG {1..*} OF ExistenceDef;
+    END ExistenceConstraint;
+
+    STRUCTURE UniqueConstraint EXTENDS Constraint =
+      Where: BAG {0..1} OF Expression;
+      Kind: MANDATORY (GlobalU, LocalU);
+      UniqueDef: LIST {1..*} OF PathOrInspFactor;
+    END UniqueConstraint;
+
+    STRUCTURE SetConstraint EXTENDS Constraint =
+      Where: BAG {0..1} OF Expression;
+      Constraint: Expression;
+    END SetConstraint;
+
+    /* Graphic */
+
+    CLASS Graphic EXTENDS ExtendableME =
+      /* MetaElement.Name := Name as defined in the INTERLIS-Model */
+      Where: Expression;
+    END Graphic;
+
+    ASSOCIATION GraphicBase =
+      Graphic -- Graphic;
+      Base (EXTERNAL) -- {0..1} Class;
+    END GraphicBase;
+
+    STRUCTURE SignParamAssignment =
+      Param: MANDATORY REFERENCE TO (EXTERNAL) AttrOrParam;
+      Assignment: Expression;
+    END SignParamAssignment;
+
+    STRUCTURE CondSignParamAssignment =
+      Where: Expression;
+      Assignments: LIST OF SignParamAssignment;
+    END CondSignParamAssignment;
+
+    CLASS DrawingRule EXTENDS ExtendableME =
+      /* MetaElement.Name := Name as defined in the INTERLIS-Model */
+      Rule: LIST OF CondSignParamAssignment;
+    END DrawingRule;
+
+    ASSOCIATION GraphicRule =
+      Graphic -<#> Graphic;
+      DrawingRule -- DrawingRule;
+    END GraphicRule;
+
+    ASSOCIATION SignClass =
+      DrawingRule -- DrawingRule;
+      Class -- {0..1} Class;
+    END SignClass;
+
+  END ModelData;
+
+
+  TOPIC ModelTranslation =
+    DEPENDS ON IlisMeta07.ModelData;
+
+    STRUCTURE DocTextTranslation =
+      Text: MANDATORY MTEXT;
+    END DocTextTranslation;
+
+    STRUCTURE METranslation =
+      Of: MANDATORY REFERENCE TO (EXTERNAL)
+                    IlisMeta07.ModelData.MetaElement;
+      TranslatedName: TEXT;
+      TranslatedDoc: LIST OF DocTextTranslation;
+    END METranslation;
+
+    CLASS Translation =
+      NO OID;
+      Language: LanguageCode;
+      Translations: BAG OF METranslation;
+    END Translation;
+
+  END ModelTranslation;
+
+END IlisMeta07.
+
