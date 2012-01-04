@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.4.3 (2012-01-04)
+---------------------------
+- bug imd: java.lang.IllegalStateException if extended DomainDef with FormattedType
+
 ili2c 4.4.2 (2011-12-22)
 ---------------------------
 - bug gui: java.lang.NullPointerException if $HOME/.ili2c doesn't exist

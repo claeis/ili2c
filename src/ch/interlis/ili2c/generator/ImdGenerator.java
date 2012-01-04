@@ -2,20 +2,8 @@
 package ch.interlis.ili2c.generator;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import ch.ehi.basics.logging.EhiLogger;
-import ch.interlis.iom.IomObject;
-import ch.interlis.iom_j.Iom_jObject;
 import ch.interlis.iom_j.ViewableProperties;
 import ch.interlis.iom_j.xtf.XtfWriterBase;
 import ch.interlis.iom_j.xtf.XtfModel;
@@ -1786,7 +1774,10 @@ public class ImdGenerator {
 		iomType.setName(LOCAL_TYPE_NAME);
 		ch.interlis.ili2c.metamodel.AttributeDef baseAttr=(ch.interlis.ili2c.metamodel.AttributeDef)attr.getExtending();
 		if(baseAttr!=null){
-			iomType.setSuper(getTypeTid(baseAttr.getDomain(), baseAttr, null));
+			// not yet set
+			if(iomType.getattrobj("Super",0)==null){ 
+				iomType.setSuper(getTypeTid(baseAttr.getDomain(), baseAttr, null));
+			}
 		}
 		iomType.setAbstract( type.isAbstract() );
 		iomType.setFinal( false );
@@ -1811,7 +1802,9 @@ public class ImdGenerator {
 		
 		ch.interlis.ili2c.metamodel.Domain extending=(ch.interlis.ili2c.metamodel.Domain)domain.getExtending();
 		if(extending!=null){
-			iomDomain.setSuper( extending.getScopedName(null) );
+			if(iomDomain.getattrobj("Super",0)==null){ 
+				iomDomain.setSuper( extending.getScopedName(null) );
+			}
 		}
 		iomDomain.setAbstract( domain.isAbstract() );
 		iomDomain.setFinal( domain.isFinal() );
@@ -1819,6 +1812,7 @@ public class ImdGenerator {
 		iomDomain.setMandatory(type.isMandatory());
 		out.write(new ObjectEvent(iomType));
 	}
+	
 	private void visitFunctionReturnLocalType(String typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.Function func)
 	throws IoxException
 	{
