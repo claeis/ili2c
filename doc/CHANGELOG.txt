@@ -4,6 +4,7 @@ Known Issues:
 ili2c 4.4.3 (2012-01-04)
 ---------------------------
 - bug imd: java.lang.IllegalStateException if extended DomainDef with FormattedType
+- bug imd: suppress Class/Oid on instances of ASSOCATION (without OID) inside of TopicDef...OID AS
 
 ili2c 4.4.2 (2011-12-22)
 ---------------------------

@@ -356,7 +356,7 @@ public class ImdGenerator {
 			iomClass.setKind(Class_Kind.Association);
 			iomClass.setEmbeddedRoleTransfer(assoc.isLightweight());
 			ch.interlis.ili2c.metamodel.Domain oidDomain=assoc.getOid();
-			if(oidDomain==null){
+			if(oidDomain==null && assoc.isIdentifiable()){
 				ch.interlis.ili2c.metamodel.Topic topic=(ch.interlis.ili2c.metamodel.Topic)assoc.getContainer(ch.interlis.ili2c.metamodel.Topic.class);
 				if(topic!=null){
 					oidDomain=topic.getOid();
