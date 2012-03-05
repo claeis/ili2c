@@ -246,6 +246,7 @@ options
     try {
       result.setName ("LineAttrib" + numIli1LineAttrStructures);
       result.setIdentifiable (false); /* make it a structure */
+      result.setIli1LineAttrStruct(true);
       if(container instanceof Topic && table!=null){
 	      ((Topic)container).addBefore (result,table);
       }else if(container instanceof Model && table!=null){
