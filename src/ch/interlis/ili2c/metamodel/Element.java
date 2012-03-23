@@ -55,6 +55,15 @@ public abstract class Element implements BeanContextChild,ElementAlias {
 	/** source line in ili-file.
 	 */
 	private int sourceLine=0;
+	/** definition index
+	 */
+	private final int defidx;
+	private static int _defidx=0;
+	
+	public Element()
+	{
+		defidx=_defidx++;
+	}
   static final String formatMessage(String msg, Object[] args) {
     try {
       java.text.MessageFormat mess = new java.text.MessageFormat(
@@ -829,6 +838,9 @@ public void setDocumentation(String string) {
 	public void setTransientMetaValue(String name,Object value)
 	{
 		getMetaValues().setTransientObject(name,value);
+	}
+	public int getDefidx() {
+		return defidx;
 	}
 
 }
