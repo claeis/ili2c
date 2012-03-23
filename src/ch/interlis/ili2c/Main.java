@@ -29,7 +29,8 @@ public class Main
 	public static final String ILI_DIR="%ILI_DIR";
 	public static final String JAR_DIR="%JAR_DIR";
 	public static final String JAR_MODELS="standard";
-	public static final String DEFAULT_ILIDIRS=ILI_DIR+";http://models.interlis.ch/;"+JAR_DIR;
+	public static final String ILI_REPOSITORY="http://models.interlis.ch/";
+	public static final String DEFAULT_ILIDIRS=ILI_DIR+";"+ILI_REPOSITORY+";"+JAR_DIR;
   private static String version=null;
   protected static boolean hasArg(String v1, String v2, String[] args) {
     for (int i = 0; i < args.length; i++) {
@@ -379,34 +380,34 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
 	  }
 	  if(doAutoCompleteModelList){
 		  if(settings==null){
-			  ArrayList ilifilev=new ArrayList();
-		        Iterator filei=config.iteratorFileEntry();
-		        while(filei.hasNext()){
-		          FileEntry e=(FileEntry)filei.next();
-		          if(e.getKind()==FileEntryKind.ILIMODELFILE){
-		            String fileName = e.getFilename();
-		            ilifilev.add(fileName);
-		          }
-		        }
+				ArrayList ilifilev = new ArrayList();
+				Iterator filei = config.iteratorFileEntry();
+				while (filei.hasNext()) {
+					FileEntry e = (FileEntry) filei.next();
+					if (e.getKind() == FileEntryKind.ILIMODELFILE) {
+						String fileName = e.getFilename();
+						ilifilev.add(fileName);
+					}
+				}
 				ArrayList modeldirv = getIliLookupPaths(ilifilev);
-			  ch.interlis.ili2c.config.Configuration files;
-			try {
-				files = ModelScan.getConfigWithFiles(modeldirv,ilifilev);
-			} catch (Ili2cException ex) {
-	 			EhiLogger.logError("ili-file scan failed",ex);
-				return null;
-			}
-			  if(files==null){
-	 			EhiLogger.logError("ili-file scan failed");
-				  return null;
-			  }
-			  logIliFiles(files);
-			  // copy result of scan to original config
-		        filei=files.iteratorFileEntry();
-		        while(filei.hasNext()){
-		          FileEntry e=(FileEntry)filei.next();
-				  filev.add(e);
-		        }
+				ch.interlis.ili2c.config.Configuration files;
+				try {
+					files = ModelScan.getConfigWithFiles(modeldirv, ilifilev);
+				} catch (Ili2cException ex) {
+					EhiLogger.logError("ili-file scan failed", ex);
+					return null;
+				}
+				if (files == null) {
+					EhiLogger.logError("ili-file scan failed");
+					return null;
+				}
+				logIliFiles(files);
+				// copy result of scan to original config
+				filei = files.iteratorFileEntry();
+				while (filei.hasNext()) {
+					FileEntry e = (FileEntry) filei.next();
+					filev.add(e);
+				}
 		  }else{
 			  	ArrayList ilifilev=new ArrayList();
 		        

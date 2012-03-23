@@ -103,7 +103,31 @@ public class ImdGenerator {
 			iomModel.setVersion( model.getModelVersion() );
 		}else if(model.getIliVersion().equals(ch.interlis.ili2c.metamodel.Model.ILI1)){
 			iomModel.setili1Transfername(td.getName());
-			// TODO set ili1 format
+			// set ili1 format
+			ch.interlis.ili2c.metamodel.Ili1Format ili1fmt=td.getIli1Format();
+			Ili1Format iomIli1Format=new Ili1Format();
+			iomIli1Format.setisFree(ili1fmt.isFree);
+			if(!ili1fmt.isFree){
+				iomIli1Format.setLineSize(ili1fmt.lineSize);
+				iomIli1Format.settidSize(ili1fmt.tidSize);
+			}
+			iomIli1Format.setblankCode(ili1fmt.blankCode);
+			iomIli1Format.setundefinedCode(ili1fmt.undefinedCode);
+			iomIli1Format.setcontinueCode(ili1fmt.continueCode);
+			iomIli1Format.setFont(ili1fmt.font);
+			if(ili1fmt.tidKind==ch.interlis.ili2c.metamodel.Ili1Format.TID_I16){
+				iomIli1Format.settidKind(Ili1Format_tidKind.TID_I16);
+			}else if(ili1fmt.tidKind==ch.interlis.ili2c.metamodel.Ili1Format.TID_I32){
+				iomIli1Format.settidKind(Ili1Format_tidKind.TID_I32);
+			}else if(ili1fmt.tidKind==ch.interlis.ili2c.metamodel.Ili1Format.TID_ANY){
+				iomIli1Format.settidKind(Ili1Format_tidKind.TID_ANY);
+			}else if(ili1fmt.tidKind==ch.interlis.ili2c.metamodel.Ili1Format.TID_EXPLANATION){
+				iomIli1Format.settidKind(Ili1Format_tidKind.TID_EXPLANATION);
+				iomIli1Format.settidExplanation(ili1fmt.tidExplanation);
+			}else{
+				throw new IllegalArgumentException("unexpexcted tidKind "+ili1fmt.tidKind);
+			}
+			iomModel.setili1Format(iomIli1Format);
 		}
 
 		if ( model instanceof ch.interlis.ili2c.metamodel.DataModel ) {
