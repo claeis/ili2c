@@ -262,7 +262,7 @@ public final class Interlis1Generator
     if(table.isAbstract()){
       return false;
     }
-    if(table instanceof Table && ((Table)table).isIdentifiable()){
+    if(table instanceof Table ){ //&& ((Table)table).isIdentifiable()){
       return true;
     }
     if((table instanceof AssociationDef) && !((AssociationDef)table).isLightweight()){
@@ -353,6 +353,12 @@ public final class Interlis1Generator
           printTopic (topic);
           lastPrinted = Topic.class;
         }
+      }
+	    if(obj instanceof Table && ((Table)obj).isIdentifiable()){
+    	  if(!genFmt){
+    		  printTable((AbstractClassDef)obj);
+              lastPrinted = Table.class;
+    	  }
       }
     }
 
@@ -850,6 +856,18 @@ public final class Interlis1Generator
       return printLineType ((LineType) t);
     }else if (t instanceof ReferenceType){
       return printReferenceType (scope, (ReferenceType) t);
+    }else if(t instanceof CompositionType){
+    	CompositionType ct=(CompositionType)t;
+        String referredName = ct.getComponentType().getName ();
+        ipw.print ("-> ");
+        if(ct.getCardinality().getMaximum()>1){
+            ipw.print (ct.getCardinality().toString()+" ");
+            comment=rsrc.getString ("err_notExpressible");
+        }else{
+        	comment=null;
+        }
+        ipw.print (referredName);
+        return comment;
     }else if (t instanceof ClassType){
         int classTypeLen=767; // NAME.NAME.NAME
         if(genFmt){
