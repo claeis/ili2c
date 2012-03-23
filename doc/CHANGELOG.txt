@@ -1,7 +1,7 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
-ili2c 4.4.4 (2012-02-xx)
+ili2c 4.4.4 (2012-03-23)
 ---------------------------
 - updated ehibasics resources
 - iox-ili 1.6.3
@@ -10,6 +10,8 @@ ili2c 4.4.4 (2012-02-xx)
 - IliSite09.ili: added
 - IliRepository09.ili added
 - bug imd: Ili1Format missing
+- ili1 gen: improved ili2->ili1 translation
+- bug imd: fixed "attr : MANDATORY Domain" to reference DomainDef as "Super" on attr.TYPE 
 
 ili2c 4.4.3 (2012-01-04)
 ---------------------------

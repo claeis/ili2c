@@ -620,18 +620,18 @@ public class ImdGenerator {
 				ch.interlis.ili2c.metamodel.TypeAlias alias=(ch.interlis.ili2c.metamodel.TypeAlias)type;
 				ch.interlis.ili2c.metamodel.Domain domain=alias.getAliasing();
 				if(domain==td.INTERLIS.URI || domain==td.INTERLIS.NAME  || domain==td.INTERLIS.BOOLEAN){
-					visitAttrLocalType(getTypeTid(type,attr,null),type,attr); 
+					visitAttrLocalType(getTypeTid(type,attr,null),type,attr,null); 
 					iomAttr.setType(getTypeTid(type,attr,null));
 				}else{
 					if(alias.isMandatory()){
-						visitAttrLocalType(getTypeTid(type,attr,null),domain.getType(),attr); 
+						visitAttrLocalType(getTypeTid(type,attr,null),domain.getType(),attr,domain.getScopedName(null)); 
 						iomAttr.setType(getTypeTid(type,attr,null));
 					}else{
 						iomAttr.setType(domain.getScopedName(null));
 					}
 				}
 			}else{
-				visitAttrLocalType(getTypeTid(type,attr,null),type,attr);
+				visitAttrLocalType(getTypeTid(type,attr,null),type,attr,null);
 				iomAttr.setType(getTypeTid(type,attr,null));
 			}
 			out.write(new ObjectEvent(iomAttr));
@@ -1790,17 +1790,21 @@ public class ImdGenerator {
 		}
 		return iomType;
 	}
-	private void visitAttrLocalType(String typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.AttributeDef attr)
+	private void visitAttrLocalType(String typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.AttributeDef attr,String domainTid)
 	throws IoxException
 	{
 		Type iomType=visitType(typeTid,type);
 		iomType.setLTParent(getAttrTid(attr));
 		iomType.setName(LOCAL_TYPE_NAME);
-		ch.interlis.ili2c.metamodel.AttributeDef baseAttr=(ch.interlis.ili2c.metamodel.AttributeDef)attr.getExtending();
-		if(baseAttr!=null){
-			// not yet set
-			if(iomType.getattrobj("Super",0)==null){ 
-				iomType.setSuper(getTypeTid(baseAttr.getDomain(), baseAttr, null));
+		if(domainTid!=null){
+			iomType.setSuper(domainTid);
+		}else{
+			ch.interlis.ili2c.metamodel.AttributeDef baseAttr=(ch.interlis.ili2c.metamodel.AttributeDef)attr.getExtending();
+			if(baseAttr!=null){
+				// not yet set
+				if(iomType.getattrobj("Super",0)==null){ 
+					iomType.setSuper(getTypeTid(baseAttr.getDomain(), baseAttr, null));
+				}
 			}
 		}
 		iomType.setAbstract( type.isAbstract() );
