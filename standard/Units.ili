@@ -1,9 +1,11 @@
-!! File Units.ili Release 2005-06-16
-
+!! File Units.ili Release 2012-02-20
 INTERLIS 2.3;
 
+!! 2012-02-20 ceis definition of "bar" corrected
+
+!!@precursorVersion=2005-06-06
 CONTRACTED TYPE MODEL Units (en) AT "http://www.interlis.ch/models"
-  VERSION "2005-06-06" =
+  VERSION "2012-02-20" =
 
   UNIT
     !! abstract Units
@@ -67,7 +69,7 @@ CONTRACTED TYPE MODEL Units (en) AT "http://www.interlis.ch/models"
 
     Techn_Atmosphere [at] = 98066.5 [Pa];
     Atmosphere [atm] = 101325 [Pa];
-    Bar [bar] = 10000 [Pa];
+    Bar [bar] = 100000 [Pa];
     Millimeter_Mercury [mmHg] = 133.3224 [Pa];
     Torr = 133.3224 [Pa]; !! Torr = [mmHg]
 

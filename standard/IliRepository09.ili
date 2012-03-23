@@ -1,0 +1,105 @@
+INTERLIS 2.3;
+
+!! 2012-02-20 ceis ModelMetadata/md5 is to short; changed to TEXT*32
+
+!!@precursorVersion=2009-12-01
+MODEL IliRepository09 (de)
+AT "mailto:ce@eisenhutinformatik.ch"
+VERSION "2012-02-20" =
+
+  DOMAIN
+
+    AbsoluteLocation = URI;
+
+    ModelName = TEXT;
+
+    ModelVersion = TEXT;
+
+    RelativeFilePath = TEXT;
+
+    WebService = URI;
+
+    WebSite = URI;
+  STRUCTURE ModelName_ = value : MANDATORY ModelName; END ModelName_;
+  STRUCTURE WebService_ = value : MANDATORY WebService; END WebService_;
+  STRUCTURE WebSite_ = value : MANDATORY WebSite; END WebSite_;
+
+  TOPIC RepositoryIndex =
+
+    CLASS ModelMetadata =
+      /** Name of model as it is in the ili-file e.g. "DM01AVCH24D"
+       */
+      Name : MANDATORY IliRepository09.ModelName;
+      SchemaLanguage : MANDATORY (
+        ili1,
+        ili2_2,
+        ili2_3
+      );
+      /** path of ili-file, as it is in the repository e.g. "av/ch/dm01/24/DM.01-AV-CH_LV03_24d_ili1.ili"
+       */
+      File : MANDATORY IliRepository09.RelativeFilePath;
+      /** Version of the model e.g. "DM01.24"
+       */
+      Version : MANDATORY IliRepository09.ModelVersion;
+      /** Comment about this version (surch as "Draft")
+       */
+      VersionComment : TEXT*20;
+      /** date of last publication of this version e.g. "2004-06-04". This should change even with the most minor editorial changes.
+       */
+      publishingDate : FORMAT INTERLIS.XMLDate "1990-1-1" .. "2100-12-31";
+      /** Where the owner of a model publishes it.
+       * Absolute URL of repository (e.g. "http://www.interlis.ch/models") or ili-file ("http://www.interlis.ch/models/Units.ili")
+       */
+      Original : IliRepository09.AbsoluteLocation;
+      /** union of IMPORT and TRANSLATION OF from models as it is in the ili-file, so that a tool can fetch all required files, before it requires to read/compile them.
+       */
+      dependsOnModel : BAG {0..*} OF IliRepository09.ModelName_;
+      /** Precursor version of this model e.g. "DM01.23"
+       */
+      precursorVersion : IliRepository09.ModelVersion;
+      /** Follow-up Name of this model e.g. "DM12AVCH"
+       */
+      followupModel : BAG {0..*} OF IliRepository09.ModelName_;
+      /** any known derived models. A derived model is one, that does not DEPENDS ON/IMPORT a base model, but otherwise/more weakly depends on a base model, e.g a publication model that depends on a model used for data production.
+       */
+      derivedModel : BAG {0..*} OF IliRepository09.ModelName_;
+      /** Title of model e.g. "Datenmodell Amtliche Vermessung"
+       */
+      Title : TEXT*150;
+      /** A short description of this model.
+       */
+      shortDescription : MTEXT;
+      /** Comma seperated list of terms associated with this model e.g. "DM01"
+       */
+      Tags : TEXT;
+      /** Who published this model e.g. "http://www.swisstopo.ch"
+       */
+      Issuer : URI;
+      /** Who should be adressed with technical questions e.g. "mailto:infovd@swisstopo.ch"
+       */
+      technicalContact : URI;
+      /** Reference to document or website with further information, for example UML diagrams, sample data, software etc.
+       */
+      furtherInformation : URI;
+      /** Reference to machine readable data with further information about the model
+       */
+      furtherMetadata : URI;
+      /** any known WMS that serve data according to this model
+       */
+      knownWMS : BAG {0..*} OF IliRepository09.WebService_;
+      /** any knwon WFS that serve data according to this model
+       */
+      knownWFS : BAG {0..*} OF IliRepository09.WebService_;
+      /** any known portal where a user could view or download data according to this model
+       */
+      knownPortal : BAG {0..*} OF IliRepository09.WebSite_;
+      /** true, if this model should be ignored during model-file look-up
+       */
+      browseOnly : BOOLEAN;
+      md5 : TEXT*32;
+      UNIQUE Name, Version;
+    END ModelMetadata;
+
+  END RepositoryIndex;
+
+END IliRepository09.

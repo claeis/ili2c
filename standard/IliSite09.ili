@@ -1,0 +1,58 @@
+INTERLIS 2.3;
+
+MODEL IliSite09 (de)
+AT "mailto:ce@eisenhutinformatik.ch"
+VERSION "2009-11-19"  // Draft // =
+
+  DOMAIN
+
+    RepositoryLocation = URI;
+  STRUCTURE RepositoryLocation_ = value : MANDATORY RepositoryLocation; END RepositoryLocation_;
+
+  TOPIC SiteMetadata =
+
+    CLASS Site =
+      /** Name of site, e.g. "swisstopo"
+       */
+      Name : MANDATORY TEXT*50;
+      /** Title of site, e.g. "Geoinformationszentrum des Bundes"
+       */
+      Title : TEXT*150;
+      /** Short description of site.
+       */
+      shortDescription : MTEXT;
+      /** Comma seperated list of terms associated with this site
+       */
+      Tags : TEXT*20;
+      /** Who owns this site?
+       */
+      Owner : URI;
+      /** Who should be adressed with technical questions e.g. "mailto:infovd@swisstopo.ch"
+       */
+      technicalContact : URI;
+      /** Reference to document or website with further information.
+       */
+      furtherInformation : URI;
+      /** Reference to machine readable data with further information about the repository.
+       */
+      furtherMetadata : URI;
+      /** More general sites. Should be included during default model searches.
+       */
+      parentSite : BAG {0..*} OF IliSite09.RepositoryLocation_;
+      /** More specific sites.  Should be included during default model searches.
+       */
+      subsidiarySite : BAG {0..*} OF IliSite09.RepositoryLocation_;
+      /** Other similar sites (at the same organisational level).  Should be included during default model searches.
+       */
+      peerSite : BAG {0..*} OF IliSite09.RepositoryLocation_;
+      /** Any other known sites. Should be ignored during default model searches.
+       */
+      knownOtherSite : BAG {0..*} OF IliSite09.RepositoryLocation_;
+      /** Any known mirror sites. Might be used if this site is offline.
+       */
+      mirrorSite : BAG {0..*} OF IliSite09.RepositoryLocation_;
+    END Site;
+
+  END SiteMetadata;
+
+END IliSite09.

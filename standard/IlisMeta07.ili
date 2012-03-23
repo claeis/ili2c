@@ -1,6 +1,7 @@
 INTERLIS 2.3;
 
 /* 2011-12-22 ceis added ExistenceConstraint/Attr */
+!!@precursorVersion=2008-08-29
 MODEL IlisMeta07 (en) AT "http://interlis.ch" VERSION "2011-12-22" =
 
   DOMAIN
