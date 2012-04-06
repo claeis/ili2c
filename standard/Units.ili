@@ -1,9 +1,10 @@
 !! File Units.ili Release 2012-02-20
+
 INTERLIS 2.3;
 
-!! 2012-02-20 ceis definition of "bar" corrected
+!! 2012-02-20 definition of "Bar [bar]" corrected
+!!@precursorVersion = 2005-06-06
 
-!!@precursorVersion=2005-06-06
 CONTRACTED TYPE MODEL Units (en) AT "http://www.interlis.ch/models"
   VERSION "2012-02-20" =
 
