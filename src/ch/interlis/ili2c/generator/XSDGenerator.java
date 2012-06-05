@@ -778,6 +778,15 @@ public final class XSDGenerator
     if(supportInconsistentTransfer){
     	refConsistencyType=true;
     }
+    
+    Domain basketOid=topic.getBasketOid();
+    if(basketOid!=null){
+    	refOidSpaces=true;
+    }
+    Domain objectOid=topic.getOid();
+    if(objectOid!=null){
+    	refOidSpaces=true;
+    }
    Iterator iter = topic.iterator();
    while (iter.hasNext())
    {
@@ -969,11 +978,17 @@ public final class XSDGenerator
 				} */
 				if(oid!=null && !(oid instanceof NoOid)){
 					ipw.println ("<xsd:attribute name=\"TID\" type=\"IliID\" use=\"required\"/>");
+			    	refOidSpaces=true;
 				}
 			}
 		}else{
 			// Objects have an ID
 			ipw.println ("<xsd:attribute name=\"TID\" type=\"IliID\" use=\"required\"/>");
+		    Domain oid=((AbstractClassDef)v).getOid();
+			if(oid!=null && !(oid instanceof NoOid)){
+		    	refOidSpaces=true;
+		    }
+
 		}
 	}
 	ipw.unindent();

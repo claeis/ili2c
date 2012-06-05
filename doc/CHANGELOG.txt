@@ -1,6 +1,11 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.4.5 (2012-06-06)
+---------------------------
+- iox-ili 1.6.5
+- bug xsd: missing OIDSPACE if CLASS with OID but no OID-DomainDef
+
 ili2c 4.4.4 (2012-03-23)
 ---------------------------
 - updated ehibasics resources
