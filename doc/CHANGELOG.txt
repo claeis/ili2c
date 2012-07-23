@@ -1,6 +1,11 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.4.7 (2012-07-23)
+---------------------------
+- iox-ili 1.6.7
+- bug: XtfWriter failed to write OIDType with XML-attri
+
 ili2c 4.4.6 (2012-06-28)
 ---------------------------
 - iox-ili 1.6.6
