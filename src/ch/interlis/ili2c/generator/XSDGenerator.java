@@ -1325,7 +1325,7 @@ public final class XSDGenerator
     ipw.println ("</xsd:complexType>");
   }
 
-  private void buildEnumList(java.util.List accu,String prefix1,ch.interlis.ili2c.metamodel.Enumeration enumer){
+  public static void buildEnumList(java.util.List accu,String prefix1,ch.interlis.ili2c.metamodel.Enumeration enumer){
       Iterator iter = enumer.getElements();
       String prefix="";
       if(prefix1.length()>0){

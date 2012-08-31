@@ -252,6 +252,11 @@ public class Main
         	outputKind=GenerateOutputKind.IMD;
 		  continue;
 		}
+		else if (args[i].equals("-oUML"))
+		{
+        	outputKind=GenerateOutputKind.UML21;
+		  continue;
+		}
 		else if (args[i].equals("-oIOM"))
 		{
         	outputKind=GenerateOutputKind.IOM;
@@ -651,6 +656,9 @@ public static ArrayList getIliLookupPaths(ArrayList ilifilev) {
 			  break;
 		  case GenerateOutputKind.IMD:
 			  ch.interlis.ili2c.generator.ImdGenerator.generate(new java.io.File(config.getOutputFile()),desc,APP_NAME+"-"+getVersion());
+			  break;
+		  case GenerateOutputKind.UML21:
+			  ch.interlis.ili2c.generator.Uml21Generator.generate(new java.io.File(config.getOutputFile()),desc);
 			  break;
 		  case GenerateOutputKind.IOM:
 				  if("-".equals(config.getOutputFile())){

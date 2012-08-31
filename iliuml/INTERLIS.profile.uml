@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Profile xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="ch.interlis.ili23.uml2" name="INTERLIS-Profile" metamodelReference="_jW7z8O6sEeGjKIQ1Ptax1w">
+  <eAnnotations xmi:id="_2g5_EfAYEeG0z6wTP4gJKg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+    <contents xmi:type="ecore:EPackage" xmi:id="ch.interlis.ili23.ecore.uml2" name="INTERLISProfile" nsURI="http://www.interlis.ch/INTERLIS2.3/UML2" nsPrefix="ili">
+      <eClassifiers xmi:type="ecore:EClass" xmi:id="_2g5_E_AYEeG0z6wTP4gJKg" name="UnitDef">
+        <eAnnotations xmi:id="_2g5_FPAYEeG0z6wTP4gJKg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_3QI3MO6lEeGjKIQ1Ptax1w"/>
+        <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_2g5_FfAYEeG0z6wTP4gJKg" name="base_Class" ordered="false" lowerBound="1">
+          <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
+        </eStructuralFeatures>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EClass" xmi:id="_2g5_F_AYEeG0z6wTP4gJKg" name="ModelDef">
+        <eAnnotations xmi:id="_2g5_GPAYEeG0z6wTP4gJKg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_lqjrIO6mEeGjKIQ1Ptax1w"/>
+        <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_2g5_GfAYEeG0z6wTP4gJKg" name="base_Package" ordered="false" lowerBound="1">
+          <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Package"/>
+        </eStructuralFeatures>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EClass" xmi:id="_2g5_G_AYEeG0z6wTP4gJKg" name="TopicDef">
+        <eAnnotations xmi:id="_2g5_HPAYEeG0z6wTP4gJKg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_aXZ6kPAUEeG0z6wTP4gJKg"/>
+        <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_2g5_HfAYEeG0z6wTP4gJKg" name="base_Package" ordered="false" lowerBound="1">
+          <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Package"/>
+        </eStructuralFeatures>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EClass" xmi:id="_2g5_H_AYEeG0z6wTP4gJKg" name="MetaDataBasketDef">
+        <eAnnotations xmi:id="_2g5_IPAYEeG0z6wTP4gJKg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_gLfZEPAUEeG0z6wTP4gJKg"/>
+        <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_2g5_IfAYEeG0z6wTP4gJKg" name="base_Package" ordered="false" lowerBound="1">
+          <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Package"/>
+        </eStructuralFeatures>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EClass" xmi:id="_2g5_I_AYEeG0z6wTP4gJKg" name="FunctionDef">
+        <eAnnotations xmi:id="_2g5_JPAYEeG0z6wTP4gJKg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_ji6n4PAUEeG0z6wTP4gJKg"/>
+        <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_2g5_JfAYEeG0z6wTP4gJKg" name="base_Class" ordered="false" lowerBound="1">
+          <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
+        </eStructuralFeatures>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EClass" xmi:id="_2g5_J_AYEeG0z6wTP4gJKg" name="ViewDef">
+        <eAnnotations xmi:id="_2g5_KPAYEeG0z6wTP4gJKg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_naBcUPAUEeG0z6wTP4gJKg"/>
+        <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_2g5_KfAYEeG0z6wTP4gJKg" name="base_Class" ordered="false" lowerBound="1">
+          <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
+        </eStructuralFeatures>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EClass" xmi:id="_2g5_K_AYEeG0z6wTP4gJKg" name="GraphicDef">
+        <eAnnotations xmi:id="_2g5_LPAYEeG0z6wTP4gJKg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_s2wKwPAUEeG0z6wTP4gJKg"/>
+        <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_2g5_LfAYEeG0z6wTP4gJKg" name="base_Class" ordered="false" lowerBound="1">
+          <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
+        </eStructuralFeatures>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EClass" xmi:id="_2g5_L_AYEeG0z6wTP4gJKg" name="DrawingRule">
+        <eAnnotations xmi:id="_2g5_MPAYEeG0z6wTP4gJKg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_wzEPUPAUEeG0z6wTP4gJKg"/>
+        <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_2g5_MfAYEeG0z6wTP4gJKg" name="base_Property" ordered="false" lowerBound="1">
+          <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Property"/>
+        </eStructuralFeatures>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EClass" xmi:id="_2g5_M_AYEeG0z6wTP4gJKg" name="LineFormTypeDef">
+        <eAnnotations xmi:id="_2g5_NPAYEeG0z6wTP4gJKg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_zf8FQPAUEeG0z6wTP4gJKg"/>
+        <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_2g5_NfAYEeG0z6wTP4gJKg" name="base_Class" ordered="false" lowerBound="1">
+          <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
+        </eStructuralFeatures>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EClass" xmi:id="_2g5_N_AYEeG0z6wTP4gJKg" name="RunTimeParameterDef">
+        <eAnnotations xmi:id="_2g5_OPAYEeG0z6wTP4gJKg" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_2maG8PAUEeG0z6wTP4gJKg"/>
+        <eStructuralFeatures xmi:type="ecore:EReference" xmi:id="_2g5_OfAYEeG0z6wTP4gJKg" name="base_Class" ordered="false" lowerBound="1">
+          <eType xmi:type="ecore:EClass" href="http://www.eclipse.org/uml2/3.0.0/UML#//Class"/>
+        </eStructuralFeatures>
+      </eClassifiers>
+    </contents>
+  </eAnnotations>
+  <elementImport xmi:id="_j3QhgO6mEeGjKIQ1Ptax1w">
+    <importedElement xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Class"/>
+  </elementImport>
+  <elementImport xmi:id="_j3Qhge6mEeGjKIQ1Ptax1w">
+    <importedElement xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Package"/>
+  </elementImport>
+  <packageImport xmi:id="_jW7z8O6sEeGjKIQ1Ptax1w">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_METAMODELS/UML.metamodel.uml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:Stereotype" xmi:id="_3QI3MO6lEeGjKIQ1Ptax1w" name="UnitDef">
+    <ownedAttribute xmi:id="_pmbq0u6mEeGjKIQ1Ptax1w" name="base_Class" association="_pmbq0O6mEeGjKIQ1Ptax1w">
+      <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Class"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Stereotype" xmi:id="_lqjrIO6mEeGjKIQ1Ptax1w" name="ModelDef">
+    <ownedAttribute xmi:id="_rf-mYu6mEeGjKIQ1Ptax1w" name="base_Package" association="_rf-mYO6mEeGjKIQ1Ptax1w">
+      <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Package"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Extension" xmi:id="_pmbq0O6mEeGjKIQ1Ptax1w" name="Class_UnitDef" memberEnd="_pmbq0e6mEeGjKIQ1Ptax1w _pmbq0u6mEeGjKIQ1Ptax1w">
+    <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_pmbq0e6mEeGjKIQ1Ptax1w" name="extension_UnitDef" type="_3QI3MO6lEeGjKIQ1Ptax1w" aggregation="composite" association="_pmbq0O6mEeGjKIQ1Ptax1w"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Extension" xmi:id="_rf-mYO6mEeGjKIQ1Ptax1w" name="Package_ModelDef" memberEnd="_rf-mYe6mEeGjKIQ1Ptax1w _rf-mYu6mEeGjKIQ1Ptax1w">
+    <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_rf-mYe6mEeGjKIQ1Ptax1w" name="extension_ModelDef" type="_lqjrIO6mEeGjKIQ1Ptax1w" aggregation="composite" association="_rf-mYO6mEeGjKIQ1Ptax1w"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Stereotype" xmi:id="_aXZ6kPAUEeG0z6wTP4gJKg" name="TopicDef">
+    <ownedAttribute xmi:id="_kAs6ofAVEeG0z6wTP4gJKg" name="base_Package" association="_kAjwsPAVEeG0z6wTP4gJKg">
+      <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Package"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Stereotype" xmi:id="_gLfZEPAUEeG0z6wTP4gJKg" name="MetaDataBasketDef">
+    <ownedAttribute xmi:id="_24mNsvAVEeG0z6wTP4gJKg" name="base_Package" association="_24mNsPAVEeG0z6wTP4gJKg">
+      <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Package"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Stereotype" xmi:id="_ji6n4PAUEeG0z6wTP4gJKg" name="FunctionDef">
+    <ownedAttribute xmi:id="_5Q8lIvAVEeG0z6wTP4gJKg" name="base_Class" association="_5Q8lIPAVEeG0z6wTP4gJKg">
+      <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Class"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Stereotype" xmi:id="_naBcUPAUEeG0z6wTP4gJKg" name="ViewDef">
+    <ownedAttribute xmi:id="_7HOKQvAVEeG0z6wTP4gJKg" name="base_Class" association="_7HOKQPAVEeG0z6wTP4gJKg">
+      <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Class"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Stereotype" xmi:id="_s2wKwPAUEeG0z6wTP4gJKg" name="GraphicDef">
+    <ownedAttribute xmi:id="_9aM5gvAVEeG0z6wTP4gJKg" name="base_Class" association="_9aM5gPAVEeG0z6wTP4gJKg">
+      <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Class"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Stereotype" xmi:id="_wzEPUPAUEeG0z6wTP4gJKg" name="DrawingRule">
+    <ownedAttribute xmi:id="_AP24AvAWEeG0z6wTP4gJKg" name="base_Property" association="_AP24APAWEeG0z6wTP4gJKg">
+      <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Property"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Stereotype" xmi:id="_zf8FQPAUEeG0z6wTP4gJKg" name="LineFormTypeDef">
+    <ownedAttribute xmi:id="_CmtaovAWEeG0z6wTP4gJKg" name="base_Class" association="_CmtaoPAWEeG0z6wTP4gJKg">
+      <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Class"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Stereotype" xmi:id="_2maG8PAUEeG0z6wTP4gJKg" name="RunTimeParameterDef">
+    <ownedAttribute xmi:id="_FyrnYvAWEeG0z6wTP4gJKg" name="base_Class" association="_FyrnYPAWEeG0z6wTP4gJKg">
+      <type xmi:type="uml:Class" href="pathmap://UML_METAMODELS/UML.metamodel.uml#Class"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Extension" xmi:id="_kAjwsPAVEeG0z6wTP4gJKg" name="Package_TopicDef" memberEnd="_kAs6oPAVEeG0z6wTP4gJKg _kAs6ofAVEeG0z6wTP4gJKg">
+    <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_kAs6oPAVEeG0z6wTP4gJKg" name="extension_TopicDef" type="_aXZ6kPAUEeG0z6wTP4gJKg" aggregation="composite" association="_kAjwsPAVEeG0z6wTP4gJKg"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Extension" xmi:id="_24mNsPAVEeG0z6wTP4gJKg" name="Package_MetaDataBasketDef" memberEnd="_24mNsfAVEeG0z6wTP4gJKg _24mNsvAVEeG0z6wTP4gJKg">
+    <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_24mNsfAVEeG0z6wTP4gJKg" name="extension_MetaDataBasketDef" type="_gLfZEPAUEeG0z6wTP4gJKg" aggregation="composite" association="_24mNsPAVEeG0z6wTP4gJKg"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Extension" xmi:id="_5Q8lIPAVEeG0z6wTP4gJKg" name="Class_FunctionDef" memberEnd="_5Q8lIfAVEeG0z6wTP4gJKg _5Q8lIvAVEeG0z6wTP4gJKg">
+    <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_5Q8lIfAVEeG0z6wTP4gJKg" name="extension_FunctionDef" type="_ji6n4PAUEeG0z6wTP4gJKg" aggregation="composite" association="_5Q8lIPAVEeG0z6wTP4gJKg"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Extension" xmi:id="_7HOKQPAVEeG0z6wTP4gJKg" name="Class_ViewDef" memberEnd="_7HOKQfAVEeG0z6wTP4gJKg _7HOKQvAVEeG0z6wTP4gJKg">
+    <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_7HOKQfAVEeG0z6wTP4gJKg" name="extension_ViewDef" type="_naBcUPAUEeG0z6wTP4gJKg" aggregation="composite" association="_7HOKQPAVEeG0z6wTP4gJKg"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Extension" xmi:id="_9aM5gPAVEeG0z6wTP4gJKg" name="Class_GraphicDef" memberEnd="_9aM5gfAVEeG0z6wTP4gJKg _9aM5gvAVEeG0z6wTP4gJKg">
+    <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_9aM5gfAVEeG0z6wTP4gJKg" name="extension_GraphicDef" type="_s2wKwPAUEeG0z6wTP4gJKg" aggregation="composite" association="_9aM5gPAVEeG0z6wTP4gJKg"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Extension" xmi:id="_AP24APAWEeG0z6wTP4gJKg" name="Property_DrawingRule" memberEnd="_AP24AfAWEeG0z6wTP4gJKg _AP24AvAWEeG0z6wTP4gJKg">
+    <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_AP24AfAWEeG0z6wTP4gJKg" name="extension_DrawingRule" type="_wzEPUPAUEeG0z6wTP4gJKg" aggregation="composite" association="_AP24APAWEeG0z6wTP4gJKg"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Extension" xmi:id="_CmtaoPAWEeG0z6wTP4gJKg" name="Class_LineFormTypeDef" memberEnd="_CmtaofAWEeG0z6wTP4gJKg _CmtaovAWEeG0z6wTP4gJKg">
+    <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_CmtaofAWEeG0z6wTP4gJKg" name="extension_LineFormTypeDef" type="_zf8FQPAUEeG0z6wTP4gJKg" aggregation="composite" association="_CmtaoPAWEeG0z6wTP4gJKg"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Extension" xmi:id="_FyrnYPAWEeG0z6wTP4gJKg" name="Class_RunTimeParameterDef" memberEnd="_FyrnYfAWEeG0z6wTP4gJKg _FyrnYvAWEeG0z6wTP4gJKg">
+    <ownedEnd xmi:type="uml:ExtensionEnd" xmi:id="_FyrnYfAWEeG0z6wTP4gJKg" name="extension_RunTimeParameterDef" type="_2maG8PAUEeG0z6wTP4gJKg" aggregation="composite" association="_FyrnYPAWEeG0z6wTP4gJKg"/>
+  </packagedElement>
+</uml:Profile>
