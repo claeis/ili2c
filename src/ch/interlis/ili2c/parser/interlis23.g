@@ -672,7 +672,7 @@ options
 			cmtToken=cmtToken.getHiddenBefore();
 		}
 		Iterator doci=docs.iterator();
-		StringBuffer buf=new StringBuffer();
+		StringBuilder buf=new StringBuilder();
 		String sep="";
 		while(doci.hasNext()){
 			cmtToken=(antlr.CommonHiddenStreamToken)doci.next();
@@ -717,7 +717,7 @@ options
 			cmtToken=cmtToken.getHiddenBefore();
 		}
 		Iterator doci=docs.iterator();
-		StringBuffer metaValuesText=new StringBuffer();
+		StringBuilder metaValuesText=new StringBuilder();
 		String sep="";
 		while(doci.hasNext()){
 			cmtToken=(antlr.CommonHiddenStreamToken)doci.next();
@@ -1349,7 +1349,7 @@ protected attributeDef[Viewable container]
 				}
 			)*
 			{
-			attrib.setBasePaths((Evaluable[])fv.toArray(new Evaluable[0]));
+			attrib.setBasePaths((Evaluable[])fv.toArray(new Evaluable[fv.size()]));
 			}
 		)?
 		{
@@ -1452,7 +1452,7 @@ protected attrType[Container  scope,
 	| (lin = names2[nams]
 		{
 			Table s;
-			Element e=resolveStructureOrDomainRef(scope,(String[]) nams.toArray(new String[0]),lin);
+			Element e=resolveStructureOrDomainRef(scope,(String[]) nams.toArray(new String[nams.size()]),lin);
 			if(e instanceof Table){
 				s=(Table)e;
 				ct=new CompositionType();
@@ -2017,7 +2017,7 @@ protected domainRef [Container scope]
 
     lin = names2[nams]
     {
-      d=resolveDomainRef(scope,(String[]) nams.toArray(new String[0]),lin);
+      d=resolveDomainRef(scope,(String[]) nams.toArray(new String[nams.size()]),lin);
     }
   ;
 
@@ -2865,7 +2865,7 @@ protected attributePathType  [Container scope, Type extending,ArrayList formalAr
 			sutype.setArgRestriction(argRestr);
 		}
 		if(typev.size()>0){
-			sutype.setTypeRestriction((Type[])typev.toArray(new Type[0]));
+			sutype.setTypeRestriction((Type[])typev.toArray(new Type[typev.size()]));
 		}
 
 	}
@@ -3249,7 +3249,7 @@ protected derivedUnit [Container scope, String idName, String docName, boolean _
       try {
         ndu.setConversionFactors (
           (NumericallyDerivedUnit.Factor[]) factors.toArray (
-                            new NumericallyDerivedUnit.Factor[0]));
+                            new NumericallyDerivedUnit.Factor[factors.size()]));
       } catch (Exception ex) {
         reportError (ex, line);
       }
@@ -3347,7 +3347,7 @@ protected composedUnit [Container scope, String idName, String docName, boolean 
       try {
         u.setComposedUnits (
           (ComposedUnit.Composed[]) composed.toArray (
-                            new ComposedUnit.Composed[0]));
+                            new ComposedUnit.Composed[composed.size()]));
       } catch (Exception ex) {
         reportError (ex, lbrac.getLine());
       }
@@ -4038,7 +4038,7 @@ protected localUniqueness[Viewable start]
 		}
 	)*
 		{
-			prefix=new ObjectPath(start,(PathEl[])path.toArray(new PathEl[0]));
+			prefix=new ObjectPath(start,(PathEl[])path.toArray(new PathEl[path.size()]));
 			constr.setPrefix(prefix);
 		}
 
@@ -4142,7 +4142,7 @@ protected term[Container ns, Type expectedType, Container functionNs]
       {
         try {
           expr = new Expression.Disjunction (
-            (Evaluable[]) disjoined.toArray (new Evaluable[0]));
+            (Evaluable[]) disjoined.toArray (new Evaluable[disjoined.size()]));
         } catch (Exception ex) {
           reportError (ex, lineNumber);
         }
@@ -4180,7 +4180,7 @@ protected term1 [Container ns, Type expectedType,Container functionNs]
       {
         try {
           expr = new Expression.Conjunction(
-            (Evaluable[]) conjoined.toArray(new Evaluable[0]));
+            (Evaluable[]) conjoined.toArray(new Evaluable[conjoined.size()]));
         } catch (Exception ex) {
           reportError (ex, lineNumber);
         }
@@ -4306,7 +4306,7 @@ protected factor[Container ns,Container functionNs]
 	:	( xyRef LPAREN ) => ev=functionCall[ns,functionNs]
 	|	("PARAMETER" lin=names2[nams]) 
 		{
-			param=resolveRuntimeParameterRef(ns,(String[]) nams.toArray(new String[0]),lin);
+			param=resolveRuntimeParameterRef(ns,(String[]) nams.toArray(new String[nams.size()]),lin);
 			ev=new ParameterValue(param);
 		}
 	|       (( (("AREA")? "INSPECTION" "OF" )=>dummy=inspection[ns] 
@@ -4363,7 +4363,7 @@ protected objectOrAttributePath[Viewable start]
 		}
 	)*
 		{
-			object=new ObjectPath(start,(PathEl[])path.toArray(new PathEl[0]));
+			object=new ObjectPath(start,(PathEl[])path.toArray(new PathEl[path.size()]));
 		}
 	;
 
@@ -4636,7 +4636,7 @@ protected functionCall[Container ns,Container functionNs]
       try {
         call = new FunctionCall (
           called,
-          (Evaluable[]) args.toArray (new Evaluable[0]));
+          (Evaluable[]) args.toArray (new Evaluable[args.size()]));
       } catch (Exception ex) {
         reportError (ex, lpar.getLine());
       }
@@ -4650,14 +4650,14 @@ protected argument[Container ns,Type expectedType,Container functionNs]
 	Viewable restrictedTo=null;
 	boolean classRequired=(expectedType instanceof ClassType);
 	arg=null;
-	Objects objs=null;
+	ch.interlis.ili2c.metamodel.Objects objs=null;
 	}
 	: 
 	   arg=expression[ns,expectedType,functionNs]
 	| ("ALL" 
 			{
 			 Viewable context=(Viewable)ns.getContainerOrSame(Viewable.class);
-			 arg=objs=new Objects(context);
+			 arg=objs=new ch.interlis.ili2c.metamodel.Objects(context);
 			}
 		( LPAREN 
 		(
@@ -4731,7 +4731,7 @@ protected functionDef[Container container]
     t = argumentType[container, col.getLine(),null]
     {
       try {
-        f.setArguments ((FormalArgument[]) args.toArray (new FormalArgument[0]));
+        f.setArguments ((FormalArgument[]) args.toArray (new FormalArgument[args.size()]));
       } catch (Exception ex) {
         reportError (ex, col.getLine());
 	return;
@@ -4994,7 +4994,7 @@ protected join[Container container]
 		      {
 			view = new JoinView();
 			try {
-			  ((JoinView) view).setJoining((ViewableAlias[]) aliases.toArray (new ViewableAlias[0]));
+			  ((JoinView) view).setJoining((ViewableAlias[]) aliases.toArray (new ViewableAlias[aliases.size()]));
 			  for(int i=0;i<aliases.size();i++){
 			  	ViewableAlias base=(ViewableAlias)aliases.get(i);
 				    AttributeDef exstAttr =  (AttributeDef)view.getRealElement (AttributeDef.class, base.getName());
@@ -5027,7 +5027,7 @@ protected union[Container container]
 		      {
 			view = new UnionView();
 			try {
-			  ((UnionView) view).setUnited((ViewableAlias[]) aliases.toArray (new ViewableAlias[0]));
+			  ((UnionView) view).setUnited((ViewableAlias[]) aliases.toArray (new ViewableAlias[aliases.size()]));
 			  for(int i=0;i<aliases.size();i++){
 			  	ViewableAlias base=(ViewableAlias)aliases.get(i);
 				    AttributeDef exstAttr =  (AttributeDef)view.getRealElement (AttributeDef.class, base.getName());
@@ -5093,7 +5093,7 @@ protected inspection[Container container]
 	{
 		view= new DecompositionView();
 		try{
-			String[] aliasv=(String[])aliases.toArray (new String[0]);
+			String[] aliasv=(String[])aliases.toArray (new String[aliases.size()]);
 			AttributeRef attrRef[]=new AttributeRef[aliasv.length];
 			Viewable currentView=decomposedViewable.getAliasing();
 			AttributeDef attrdef=null;
@@ -5704,7 +5704,7 @@ protected drawingRule[Graphic graph]
     {
       try {
         attr.setInstructions (
-          (SignInstruction[]) instructs.toArray (new SignInstruction[0])
+          (SignInstruction[]) instructs.toArray (new SignInstruction[instructs.size()])
         );
       } catch (Exception ex) {
         reportError (ex, n.getLine());
@@ -5747,7 +5747,7 @@ protected condSigParamAssignment [Graphic graph,  Table signTab]
       instruct = new SignInstruction (
         restrictor,
         (ParameterAssignment[]) paramAssignments.toArray (
-          new ParameterAssignment[0])
+          new ParameterAssignment[paramAssignments.size()])
       );
     }
   ;
@@ -5831,7 +5831,7 @@ protected conditionalExpression [Graphic graph, Type expectedType,Table metaobje
       condex = new ConditionalExpression (
         null /* TODO should be attrPath */ ,
         (ConditionalExpression.Condition[]) items.toArray (
-           new ConditionalExpression.Condition[0]));
+           new ConditionalExpression.Condition[items.size()]));
     }
   ;
 

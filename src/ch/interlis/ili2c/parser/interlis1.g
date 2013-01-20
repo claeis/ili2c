@@ -335,7 +335,7 @@ options
 			}
 			java.io.LineNumberReader lines=new java.io.LineNumberReader(new java.io.StringReader(ilidoc.trim()));
 			String line;
-			StringBuffer buf=new StringBuffer();
+			StringBuilder buf=new StringBuilder();
 			String sep="";
 			try{
 				while((line=lines.readLine())!=null){
@@ -854,7 +854,7 @@ protected ili1_attribute [Table table]
 
 protected ili1_identifications [Table table]
 {
-  List ll = null; // list<String attrName>
+  List<String> ll = null;
   boolean ignore=false;
   boolean selfStanding=false;
 }
@@ -864,7 +864,7 @@ protected ili1_identifications [Table table]
       anam:NAME
       {
 	selfStanding=false;
-        ll = new LinkedList ();
+        ll = new LinkedList<String>();
         ll.add (anam.getText());
       }
       (
@@ -879,7 +879,7 @@ protected ili1_identifications [Table table]
         try {
 		UniqueEl uel=new UniqueEl();
 		for(int i=0;!ignore && i<ll.size();i++){
-		String attrnam=(String)ll.get(i);
+		String attrnam = ll.get(i);
 		AttributeDef curAttribute = (AttributeDef) table.getRealElement (
 		  AttributeDef.class,
 		  attrnam);
@@ -1470,7 +1470,7 @@ protected ili1_form [LineType lineType, Model forModel]
 
     RPAREN
     {
-      lineForms = (LineForm[]) lineFormList.toArray (new LineForm[0]);
+      lineForms = (LineForm[]) lineFormList.toArray (new LineForm[lineFormList.size()]);
       try {
         if (lineType != null)
           lineType.setLineForms (lineForms);

@@ -1437,7 +1437,7 @@ protected attrType[Container  scope,
 	| lin = names2[nams]
 		{
 			Table s;
-			Element e=resolveStructureOrDomainRef(scope,(String[]) nams.toArray(new String[0]),lin);
+			Element e=resolveStructureOrDomainRef(scope,(String[]) nams.toArray(new String[nams.size()]),lin);
 			if(e instanceof Table){
 				s=(Table)e;
 				ct=new CompositionType();
@@ -2001,7 +2001,7 @@ protected enumeration [Type extending]
     {
       enumer = new ch.interlis.ili2c.metamodel.Enumeration(
         (ch.interlis.ili2c.metamodel.Enumeration.Element[]) elements.toArray(
-           new ch.interlis.ili2c.metamodel.Enumeration.Element[0]));
+           new ch.interlis.ili2c.metamodel.Enumeration.Element[elements.size()]));
     }
   ;
 
@@ -2842,7 +2842,7 @@ protected derivedUnit [Container scope, String idName, String docName, boolean _
       try {
         ndu.setConversionFactors (
           (NumericallyDerivedUnit.Factor[]) factors.toArray (
-                            new NumericallyDerivedUnit.Factor[0]));
+                            new NumericallyDerivedUnit.Factor[factors.size()]));
       } catch (Exception ex) {
         reportError (ex, line);
       }
@@ -2946,7 +2946,7 @@ protected composedUnit [Container scope, String idName, String docName, boolean 
       try {
         u.setComposedUnits (
           (ComposedUnit.Composed[]) composed.toArray (
-                            new ComposedUnit.Composed[0]));
+                            new ComposedUnit.Composed[composed.size()]));
       } catch (Exception ex) {
         reportError (ex, lbrac.getLine());
       }
@@ -3022,7 +3022,7 @@ protected structuredUnit [Container scope, String idName, String docName, boolea
       try {
         u.setParts (
           (StructuredUnit.Part[]) parts.toArray (
-                            new StructuredUnit.Part[0]));
+                            new StructuredUnit.Part[parts.size()]));
       } catch (Exception ex) {
         reportError (ex, lpar.getLine());
       }
@@ -3514,12 +3514,12 @@ protected existenceConstraint[Viewable v]
 		}
 	"REQUIRED" "IN" ref=viewableRef[v] COLON attrRef=attributeRef[attrRef]
 		{
-			constr.addRequiredIn(ref,(AttributeRef[])attrRef.toArray(new AttributeRef[0]));
+			constr.addRequiredIn(ref,(AttributeRef[])attrRef.toArray(new AttributeRef[attrRef.size()]));
 			attrRef.clear();
 		}
 	( "OR" ref=viewableRef[v] COLON attrRef=attributeRef[attrRef]
 		{
-			constr.addRequiredIn(ref,(AttributeRef[])attrRef.toArray(new AttributeRef[0]));
+			constr.addRequiredIn(ref,(AttributeRef[])attrRef.toArray(new AttributeRef[attrRef.size()]));
 			attrRef.clear();
 		}
 	)*
@@ -3539,7 +3539,7 @@ protected uniquenessConstraint[Viewable v]
 	: "UNIQUE"
 		( {isStructAttrName(v,LT(1).getText(),LT(1).getLine())}? prefix=structAttr[v]
 			{
-				constr.setPrefix((AttributeRef[])prefix.toArray(new AttributeRef[0]));
+				constr.setPrefix((AttributeRef[])prefix.toArray(new AttributeRef[prefix.size()]));
 				Iterator it=prefix.iterator();
 				while(it.hasNext()){
 					AttributeRef ref=(AttributeRef)it.next();
@@ -3554,7 +3554,7 @@ protected uniquenessConstraint[Viewable v]
 	)
 	SEMI
 		{
-			constr.setElements((UniqueEl[])attrs.toArray(new UniqueEl[0]));
+			constr.setElements((UniqueEl[])attrs.toArray(new UniqueEl[attrs.size()]));
 		}
 	;
 
@@ -3686,7 +3686,7 @@ protected term[Container ns, Type expectedType]
       {
         try {
           expr = new Expression.Disjunction (
-            (Evaluable[]) disjoined.toArray (new Evaluable[0]));
+            (Evaluable[]) disjoined.toArray (new Evaluable[disjoined.size()]));
         } catch (Exception ex) {
           reportError (ex, lineNumber);
         }
@@ -3724,7 +3724,7 @@ protected term1 [Container ns, Type expectedType]
       {
         try {
           expr = new Expression.Conjunction(
-            (Evaluable[]) conjoined.toArray(new Evaluable[0]));
+            (Evaluable[]) conjoined.toArray(new Evaluable[conjoined.size()]));
         } catch (Exception ex) {
           reportError (ex, lineNumber);
         }
@@ -3914,7 +3914,7 @@ protected objectPath[Container ns]
 				reportInternalError (new IllegalStateException ("not in Viewable:" + ns),
 					0);
 			}
-			object=new ObjectPath(start,(PathEl[])path.toArray(new PathEl[0]));
+			object=new ObjectPath(start,(PathEl[])path.toArray(new PathEl[path.size()]));
 		}
 	;
 
@@ -3986,7 +3986,7 @@ protected attributePath[Container ns]
 		)
 		attrRef=attributeRef[attrRef]
 			{
-				path=new AttributePath(pathStart,(AttributeRef[])attrRef.toArray(new AttributeRef[0]));
+				path=new AttributePath(pathStart,(AttributeRef[])attrRef.toArray(new AttributeRef[attrRef.size()]));
 			}
 	;
 
@@ -4113,7 +4113,7 @@ protected functionCall[Container ns]
       try {
         call = new FunctionCall (
           called,
-          (Evaluable[]) args.toArray (new Evaluable[0]));
+          (Evaluable[]) args.toArray (new Evaluable[args.size()]));
       } catch (Exception ex) {
         reportError (ex, lpar.getLine());
       }
@@ -4182,7 +4182,7 @@ protected functionDef[Container container]
     t = argumentType [container, col.getLine()]
     {
       try {
-        f.setArguments ((FormalArgument[]) args.toArray (new FormalArgument[0]));
+        f.setArguments ((FormalArgument[]) args.toArray (new FormalArgument[args.size()]));
       } catch (Exception ex) {
         reportError (ex, col.getLine());
       }
@@ -4280,7 +4280,7 @@ protected viewDef[Container container]
 		      {
 			view = new JoinView();
 			try {
-			  ((JoinView) view).setJoining((ViewableAlias[]) aliases.toArray (new ViewableAlias[0]));
+			  ((JoinView) view).setJoining((ViewableAlias[]) aliases.toArray (new ViewableAlias[aliases.size()]));
 			} catch (Exception ex) {
 			  reportError(ex, join.getLine());
 			}
@@ -4291,7 +4291,7 @@ protected viewDef[Container container]
 		      {
 			view = new UnionView();
 			try {
-			  ((UnionView) view).setUnited((ViewableAlias[]) aliases.toArray (new ViewableAlias[0]));
+			  ((UnionView) view).setUnited((ViewableAlias[]) aliases.toArray (new ViewableAlias[aliases.size()]));
 			} catch (Exception ex) {
 			  reportError(ex, union.getLine());
 			}
@@ -4311,7 +4311,7 @@ protected viewDef[Container container]
 			viewable=renamedViewableRef[container] SEMI
 			{
                                 if(cols!=null){
-                                  view=new AggregationView(viewable,(UniqueEl[])cols.toArray(new UniqueEl[0]));
+                                  view=new AggregationView(viewable,(UniqueEl[])cols.toArray(new UniqueEl[cols.size()]));
                                 }else{
                                   view=new AggregationView(viewable,null);
                                 }
@@ -4324,7 +4324,7 @@ protected viewDef[Container container]
 				view= new DecompositionView();
 				try{
 					ObjectPath pathStart=new ObjectPath(decomposedViewable);
-					String[] aliasv=(String[])aliases.toArray (new String[0]);
+					String[] aliasv=(String[])aliases.toArray (new String[aliases.size()]);
 					AttributeRef attrRef[]=new AttributeRef[aliasv.length];
 					for(int i=0;i<aliasv.length;i++){
 						attrRef[i]=new AttributeRef();
@@ -4401,7 +4401,7 @@ protected selection [Viewable view]
 		)*
 		"RESTRICTED" "TO" ref=classOrAssociationRef[view]
 			{
-				sel=new BaseRestriction(view,(String[])base.toArray(new String[0]));
+				sel=new BaseRestriction(view,(String[])base.toArray(new String[base.size()]));
 				((BaseRestriction)sel).addRestrictedTo(ref);
 			}
 		( COMMA ref=classOrAssociationRef[view]
@@ -4713,7 +4713,7 @@ protected viewProjectionAttributeDef[Viewable container]
 			)*
 			{
 				try{
-					attrib.setBasePaths((AttributePath[])basev.toArray(new AttributePath[0]));
+					attrib.setBasePaths((AttributePath[])basev.toArray(new AttributePath[basev.size()]));
 				} catch (Exception ex) {
 					reportError(ex, n.getLine());
 				}
@@ -4749,7 +4749,7 @@ protected baseAttributeRef[Container ns]
 	returns[AttributePath path]
 	{
 	path=null;
-	LinkedList attrRef=new LinkedList(); // List<AttributeRef>
+	LinkedList<AttributeRef> attrRef = new LinkedList();
 	}
 	:	baseName:NAME COLON attr0:NAME
 		{
@@ -4770,7 +4770,7 @@ protected baseAttributeRef[Container ns]
 			Viewable start=(Viewable)ns;
 			ObjectPath pathStart=new ObjectPath(start,e);
 
-			path=new AttributePath(pathStart,(AttributeRef[])attrRef.toArray(new AttributeRef[0]));
+			path=new AttributePath(pathStart,(AttributeRef[])attrRef.toArray(new AttributeRef[attrRef.size()]));
 
 		}
 	;
@@ -5058,7 +5058,7 @@ protected signAttribute[Graphic graph]
     {
       try {
         attr.setInstructions (
-          (SignInstruction[]) instructs.toArray (new SignInstruction[0])
+          (SignInstruction[]) instructs.toArray (new SignInstruction[instructs.size()])
         );
       } catch (Exception ex) {
         reportError (ex, n.getLine());
@@ -5101,7 +5101,7 @@ protected condSigParamAss [Graphic graph,  Table signTab]
       instruct = new SignInstruction (
         restrictor,
         (ParameterAssignment[]) paramAssignments.toArray (
-          new ParameterAssignment[0])
+          new ParameterAssignment[paramAssignments.size()])
       );
     }
   ;
@@ -5187,7 +5187,7 @@ protected conditionalExpression [Graphic graph, Type expectedType,Table metaobje
       condex = new ConditionalExpression (
         attrPath,
         (ConditionalExpression.Condition[]) items.toArray (
-           new ConditionalExpression.Condition[0]));
+           new ConditionalExpression.Condition[items.size()]));
     }
   ;
 
@@ -5458,7 +5458,7 @@ protected names returns [String[] nams]
       { namList.add(nextName.getText()); }
     )*
 
-    { nams = (String[]) namList.toArray(new String[0]); }
+    { nams = (String[]) namList.toArray(new String[namList.size()]); }
   ;
 
 /* Similar to names, but adds encountered names to a List and
@@ -5756,7 +5756,7 @@ protected ili1_attribute [Table table]
 
 protected ili1_identifications [Table table]
 {
-  List ll = null;
+  List<AttributeDef> ll = null;
   AttributeDef curAttribute = null;
   boolean ignore=false;
 }
@@ -5765,7 +5765,7 @@ protected ili1_identifications [Table table]
     (
       anam:NAME
       {
-        ll = new LinkedList ();
+        ll = new LinkedList<AttributeDef>();
         curAttribute = (AttributeDef) table.getRealElement (
           AttributeDef.class,
           anam.getText ());
@@ -5813,7 +5813,7 @@ protected ili1_identifications [Table table]
 			ObjectPath pathStart = new ObjectPath(table);
 			AttributeRef[] attrRef=new AttributeRef[1];
 			attrRef[0]=new AttributeRef();
-			attrRef[0].setName(((AttributeDef)ll.get(i)).getName());
+			attrRef[0].setName(ll.get(i).getName());
 			AttributePath path;
 			path=new AttributePath(pathStart,attrRef);
 			uelv[i]=new UniqueEl();
@@ -6377,7 +6377,7 @@ protected ili1_form [LineType lineType, Model forModel]
 
     RPAREN
     {
-      lineForms = (LineForm[]) lineFormList.toArray (new LineForm[0]);
+      lineForms = (LineForm[]) lineFormList.toArray (new LineForm[lineFormList.size()]);
       try {
         if (lineType != null)
           lineType.setLineForms (lineForms);
