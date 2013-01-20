@@ -28,7 +28,7 @@ public class BoidEntryRenderer extends DefaultListCellRenderer
 
       /* We additionally set the JLabels icon property here.
          */
-         StringBuffer s = new StringBuffer(((BoidEntry)value).getMetaDataUseDef());
+         StringBuilder s = new StringBuilder(((BoidEntry)value).getMetaDataUseDef());
          s.append("=");
          s.append(((BoidEntry)value).getBoid());
          setText(s.toString());
