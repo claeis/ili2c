@@ -1,6 +1,13 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.4.11 (2013-01-xx)
+---------------------------
+- API: The metamodel object "Type" implements "java.util.Cloneable"
+- API: implement generics as far as possible in the Interlis metamodel classes
+- IMPL: Replaced instances of "StringBuffer" by the faster non-synchronized "StringBuilder" in contexts where concurrency is not an issue
+- IMPL: list.toArray(new Obj[0])); have been replaced by: list.toArray(new Obj[list.size()])); because it spares a second array object allocation
+
 ili2c 4.4.10 (2012-11-21)
 ---------------------------
 - iox-ili 1.7.1
