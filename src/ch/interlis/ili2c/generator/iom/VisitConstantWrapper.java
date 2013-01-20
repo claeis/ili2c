@@ -2,9 +2,6 @@ package ch.interlis.ili2c.generator.iom;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Iterator;
-import java.util.HashMap;
-
 import ch.interlis.ili2c.metamodel.*;
 
 /**
@@ -94,7 +91,7 @@ public class VisitConstantWrapper implements Visitor, ObjWriter {
 		out.write("</"+tag+">");
 	}
 	private String encodeEnum(String[] value){
-		StringBuffer buf = new StringBuffer (100);
+		StringBuilder buf = new StringBuilder(100);
 		for (int i = 0; i < value.length; i++)
 		{
 		  if (i > 0)

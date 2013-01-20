@@ -4,20 +4,19 @@ import ch.interlis.ili2c.metamodel.*;
 import java.io.Writer;
 import java.io.IOException;
 import java.util.*;
-import java.lang.reflect.*;
 import ch.ehi.basics.logging.EhiLogger;
 
 /**
  * @author ce
  */
-public class IomGenerator 
+public class IomGenerator
 	implements VisitorCallback, WriterCallback
 {
 	public static String MODEL="iom04";
 	public static String TOPIC="metamodel";
 	Writer   out;
 	int                 numErrors = 0;
-	
+
 	private IomGenerator (Writer out)
 	{
 	  this.out = out;
@@ -41,10 +40,10 @@ public class IomGenerator
 	  d.finish();
 	  return d.numErrors;
 	}
-	
+
 	private void initMapping()
 	{
-		// 
+		//
 		// ModelDef
 		//
 		addMapping(ch.interlis.ili2c.metamodel.TransferDescription.class,new VisitTransferDescription());
@@ -56,15 +55,15 @@ public class IomGenerator
 		addMapping(ch.interlis.ili2c.metamodel.RefSystemModel.class,new VisitModel());
 		addMapping(ch.interlis.ili2c.metamodel.SymbologyModel.class,new VisitModel());
 		addMapping(ch.interlis.ili2c.metamodel.TypeModel.class,new VisitModel());
-		
+
 		//
 		// TopicDef
 		//
 		addMapping(ch.interlis.ili2c.metamodel.Topic.class,new VisitTopic());
-		
-		// 
+
+		//
 		// ClassDef
-		// 
+		//
 		addMapping(ch.interlis.ili2c.metamodel.Table.class,new VisitTable());
 		addMapping(ch.interlis.ili2c.metamodel.AssociationDef.class,new VisitAssociationDef());
 		addMapping(ch.interlis.ili2c.metamodel.RoleDef.class,new VisitRoleDef());
@@ -72,7 +71,7 @@ public class IomGenerator
 		addMapping(ch.interlis.ili2c.metamodel.Cardinality.class,new VisitCardinality());
 		addMapping(ViewableAttributesAndRoles.class,new VisitViewableAttributesAndRoles());
 		addMapping(TargetLightweightAssociation.class,new VisitTargetLightweightAssociation());
-		
+
 		//
 		// DomainDef
 		//
@@ -107,7 +106,7 @@ public class IomGenerator
 		addMapping(ch.interlis.ili2c.metamodel.RefSystemRef.CoordDomain.class,new VisitRefSystemRef());
 		addMapping(ch.interlis.ili2c.metamodel.RefSystemRef.CoordSystem.class,new VisitRefSystemRef());
 		addMapping(ch.interlis.ili2c.metamodel.RefSystemRef.CoordSystemAxis.class,new VisitRefSystemRef());
-		
+
 		// MetaObject
 		addMapping(ch.interlis.ili2c.metamodel.MetaObject.class,new VisitMetaObject());
 
@@ -116,14 +115,14 @@ public class IomGenerator
 		addMapping(ch.interlis.ili2c.metamodel.ExistenceConstraint.class,new VisitExistenceConstraint());
 		addMapping(ch.interlis.ili2c.metamodel.MandatoryConstraint.class,new VisitMandatoryConstraint());
 		addMapping(ch.interlis.ili2c.metamodel.PlausibilityConstraint.class,new VisitMandatoryConstraint());
-		
+
 		// ObjectPath
 		addMapping(ObjectPathWrapper.class,new VisitObjectPathWrapper());
 		addMapping(PathElWrapper.class,new VisitPathElWrapper());
-		
+
 		// Constant
 		addMapping(ConstantWrapper.class,new VisitConstantWrapper());
-		
+
 		// RuntimeParameterDef
 		addMapping(ch.interlis.ili2c.metamodel.GraphicParameterDef.class,new VisitRuntimeParameterDef());
 
@@ -133,13 +132,13 @@ public class IomGenerator
 		// FunctionDef
 		addMapping(ch.interlis.ili2c.metamodel.Function.class,new VisitFunctionDef());
 		addMapping(FormalArgumentWrapper.class,new VisitFormalArgumentWrapper());
-		
+
 		// FunctionCall
 		addMapping(FunctionCallWrapper.class,new VisitFunctionCallWrapper());
-		
+
 		// Expression
 		addMapping(ExpressionWrapper.class,new VisitExpressionWrapper());
-		
+
 		// Unit
 		addMapping(ch.interlis.ili2c.metamodel.BaseUnit.class,new VisitBaseUnit());
 		addMapping(ch.interlis.ili2c.metamodel.ComposedUnit.class,new VisitComposedUnit());
@@ -156,9 +155,9 @@ public class IomGenerator
 		visitors.put(aclass,visit);
 		writers.put(aclass,visit);
 	}
-	
+
 	private ArrayList createfuncv=new ArrayList();
-	
+
 	public void encode(Object rootObj)
 	throws IOException
 	{
@@ -168,9 +167,9 @@ public class IomGenerator
 			out.write("<HEADERSECTION VERSION=\"2.2\" SENDER=\"ili2c-"+ch.interlis.ili2c.Main.getVersion()+"\">"+newline());
 
 			out.write("<ALIAS>"+newline());
-			writeAliasTable();			
+			writeAliasTable();
 			out.write("</ALIAS>"+newline());
-			
+
 			out.write("</HEADERSECTION>"+newline());
 			out.write("<DATASECTION>"+newline());
 			basketName=MODEL+"."+TOPIC;
@@ -208,7 +207,7 @@ public class IomGenerator
 	{
 		// call visitor(obj)
      		// callback addPendingObject(subobj);
-     		
+
 		if(visitors.containsKey(obj.getClass())){
 			Visitor visitor=(Visitor)visitors.get(obj.getClass());
 			visitor.visitObject(obj,this);
@@ -218,7 +217,7 @@ public class IomGenerator
 				//System.err.println("unknown class: "+obj.getClass().getName());
 			}
 		}
-		
+
 	}
 	  private void writeObject(Object obj)
 		throws IOException
@@ -260,7 +259,7 @@ public class IomGenerator
 		  int thisobjid=objid++;
 		  object2Id.put(obj,new Integer(thisobjid));
 		  pendingObjects.add(obj);
-		
+
 	  }
 
 
@@ -270,7 +269,7 @@ public class IomGenerator
 	}
 	public String encodeString(String s)
 	{
-		  StringBuffer str = new StringBuffer();
+		  StringBuilder str = new StringBuilder();
 
 		  int len = (s != null) ? s.length() : 0;
 		  for (int i = 0; i < len; i++) {
@@ -325,7 +324,7 @@ public class IomGenerator
 		return value.toString();
 	}
 
-	
+
 	/** current line seperator
 	 *
 	 */
