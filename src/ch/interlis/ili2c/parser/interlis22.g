@@ -1340,7 +1340,7 @@ protected attrType[Container  scope,
 	| lin = names2[nams]
 		{
 			Table s;
-			Element e=resolveStructureOrDomainRef(scope,(String[]) nams.toArray(new String[name.size()]),lin);
+			Element e=resolveStructureOrDomainRef(scope,(String[]) nams.toArray(new String[nams.size()]),lin);
 			if(e instanceof Table){
 				s=(Table)e;
 				ct=new CompositionType();
