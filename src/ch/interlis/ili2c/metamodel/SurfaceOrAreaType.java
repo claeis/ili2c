@@ -11,10 +11,7 @@
 
 package ch.interlis.ili2c.metamodel;
 
-
-import java.util.Iterator;
 import java.beans.PropertyVetoException;
-
 
 
 /** An abstract class that groups SurfaceType and AreaType, because these

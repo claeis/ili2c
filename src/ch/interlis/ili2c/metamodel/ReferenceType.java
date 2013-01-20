@@ -22,11 +22,12 @@ import java.util.*;
 
     @version   January 28, 1999
     @author    Sascha Brawer
+    @author    Gordan Vosicki - Added cloning support
 */
 public class ReferenceType extends Type
 {
   AbstractClassDef        referred;
-  private LinkedList	restrictedTo=new LinkedList(); // List<AbstractClassDef>
+  private LinkedList<AbstractClassDef> restrictedTo = new LinkedList<AbstractClassDef>();
 
 
 
@@ -104,7 +105,7 @@ public class ReferenceType extends Type
   {
 	  restrictedTo.add(classOrAssociation);
 	  // check if structure is a valid extension
-	  if(referred!=((TransferDescription)referred.getContainer(TransferDescription.class)).INTERLIS.ANYCLASS 
+	  if(referred!=((TransferDescription)referred.getContainer(TransferDescription.class)).INTERLIS.ANYCLASS
 	  	&& !classOrAssociation.isExtending(referred)){
 		throw new IllegalArgumentException (formatMessage (
 			"err_referenceType_restriction",
@@ -112,7 +113,7 @@ public class ReferenceType extends Type
 
 	  }
   }
-  public java.util.Iterator iteratorRestrictedTo()
+  public Iterator<AbstractClassDef> iteratorRestrictedTo()
   {
   	return restrictedTo.iterator();
   }
@@ -125,4 +126,13 @@ public class ReferenceType extends Type
   {
   	return external;
   }
+
+
+  public ReferenceType clone() {
+      ReferenceType cloned = (ReferenceType) super.clone();
+
+      cloned.restrictedTo = (LinkedList<AbstractClassDef>) restrictedTo.clone();
+      return cloned;
+  }
+
 }

@@ -15,11 +15,11 @@ import java.util.HashSet;
 /** An abstract class that groups together all containers that
     can be imported.
 */
-public abstract class Importable extends Container
+public abstract class Importable<E extends Element> extends Container<E>
 {
   protected String   name;
 
   /** The model definitions which depend on this <code>Model</code>.
    */
-  protected Set      importedBy = new HashSet(2);
+  protected Set<Model> importedBy = new HashSet<Model>(2);
 }

@@ -8,10 +8,8 @@
  * Revision 0.2  April 1999    Sascha Brawer <sb@adasys.ch>
  *
  *****************************************************************************/
- 
-package ch.interlis.ili2c.metamodel;
 
-import java.util.*;
+package ch.interlis.ili2c.metamodel;
 
 /** Base units form the base for derived and composed units;
     they do not depend themselves on others. Typical base units
@@ -19,7 +17,7 @@ import java.util.*;
     These are defined as part of the predefined model INTERLIS.
     In addition, the abstract "dimensions", such as length
     or mass, are base units, too.
-    
+
     @version   April 12, 1999
     @author    Sascha Brawer, sb@adasys.ch
 */
@@ -29,10 +27,10 @@ public class BaseUnit extends Unit
   public BaseUnit()
   {
   }
-  
-  
+
+
   /** Causes this base unit to extend another base unit.
-  
+
       <p>In JavaBeans terminology, the <code>extending</code>
       property is both <em>bound</em> and <em>constrained</em>.
       This means that any interested party can ask for being
@@ -59,7 +57,7 @@ public class BaseUnit extends Unit
       @exception java.lang.ClassCastException if <code>extending</code>
                  is neither <code>null</code> nor an instance of
                  the class <code>Unit</code>.
-                 
+
       @exception java.beans.PropertyVetoException if some
                  VetoableChangeListener has registered for changes
                  of the <code>extending</code> property
@@ -68,12 +66,13 @@ public class BaseUnit extends Unit
   public void setExtending (Unit extending)
     throws java.beans.PropertyVetoException
   {
-    if ((extending != null) && (!(extending instanceof BaseUnit)))
-      throw new IllegalArgumentException (formatMessage (
-        "err_baseUnitExtendingNonBase",
-        this.toString(),
-        extending.toString()));
-    
+    if ((extending != null) && (!(extending instanceof BaseUnit))) {
+        throw new IllegalArgumentException (formatMessage (
+            "err_baseUnitExtendingNonBase",
+            this.toString(),
+            extending.toString()));
+    }
+
     super.setExtending (extending);
   }
 }

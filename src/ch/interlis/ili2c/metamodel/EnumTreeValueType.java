@@ -1,5 +1,5 @@
 package ch.interlis.ili2c.metamodel;
-import java.util.Iterator;
+import java.util.Set;
 
 
 public class EnumTreeValueType extends BaseType {
@@ -7,12 +7,12 @@ public class EnumTreeValueType extends BaseType {
   public EnumTreeValueType()
   {
   }
-  public java.util.Set getDirectExtensions()
+  public Set<Type> getDirectExtensions()
   {
   	return extendedBy;
   }
   private Domain enumType=null;
-  
+
   public boolean checkStructuralEquivalence (Element with)
   {
     if (!super.checkStructuralEquivalence (with))
@@ -29,7 +29,7 @@ public class EnumTreeValueType extends BaseType {
         throw new Ili2cSemanticException (rsrc.getString (
         "err_type_ExtOther"));
     }
-  } 
+  }
 
 public Domain getEnumType() {
 	return enumType;
@@ -37,5 +37,10 @@ public Domain getEnumType() {
 public void setEnumType(Domain domain) {
 	enumType = domain;
 }
+
+
+    public EnumTreeValueType clone() {
+        return (EnumTreeValueType) super.clone();
+    }
 
 }

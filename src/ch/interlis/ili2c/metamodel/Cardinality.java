@@ -12,6 +12,9 @@
 package ch.interlis.ili2c.metamodel;
 
 /** Immutable class that specifies the cardinality of a relation.
+ * FIXME The class has a "setMinimum(long) method and is therefore not immutable:
+ *       Change documentation or remove setMinimum().
+ *       If the class becomes immutable, clone() is not needed anymore.
 
     Let <em>I</em> be an instance of an INTERLIS table with a relational
     attribute. For <em>I</em> to be valid, at least a specified minimum
@@ -26,7 +29,7 @@ package ch.interlis.ili2c.metamodel;
     @author Sascha Brawer, sb@adasys.ch
     @version 1.0 - July 1, 1999
 */
-public class Cardinality
+public class Cardinality implements Cloneable
 {
 
   long min;
@@ -151,4 +154,18 @@ public class Cardinality
     else
       return "{" + makeString(min) + ".." + makeString(max) + "}";
   }
+
+
+  public Cardinality clone() {
+      Cardinality cloned = null;
+
+      try {
+          cloned = (Cardinality) super.clone();
+
+      } catch (CloneNotSupportedException e) {
+          // Never happens because the object is cloneable
+      }
+      return cloned;
+  }
+
 }

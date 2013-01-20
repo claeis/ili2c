@@ -15,11 +15,11 @@ import java.util.HashMap;
 /** An abstract class that groups together all constructs
     that can form the base of a view.
 */
-public abstract class Viewable extends ExtendableContainer
+public abstract class Viewable<E extends Element> extends ExtendableContainer<E>
 {
   protected String   name = "";
-  protected List     attributes = new LinkedList();
-  protected List     constraints = new LinkedList();
+  protected List<LocalAttribute> attributes = new ArrayList<LocalAttribute>();
+  protected List<Constraint> constraints = new LinkedList<Constraint>();
 
 
   /** Returns the value of the <code>name</code> property
@@ -93,7 +93,7 @@ public abstract class Viewable extends ExtendableContainer
 	       with the name of another Viewable, except the
 	       one that this object is extending directly.
 	    */
-	    checkNameUniqueness(newValue, Viewable.class, (Viewable) getRealExtending(),
+	    checkNameUniqueness(newValue, Viewable.class, getRealExtending(),
 	      "err_duplicateViewName");
 
 
@@ -132,8 +132,9 @@ public abstract class Viewable extends ExtendableContainer
 	       lifetime includes a (typically short) period in which it
 	       has an empty bean context.
 	    */
-	    if (enclosingModel == null)
-	      return getName();
+	    if (enclosingModel == null) {
+            return getName();
+        }
 
 
 	    if (scope != null)
@@ -148,19 +149,21 @@ public abstract class Viewable extends ExtendableContainer
 	    }
 
 
-	    if ((enclosingModel == scopeModel) && (enclosingTopic == scopeTopic))
-	      return getName();
+	    if ((enclosingModel == scopeModel) && (enclosingTopic == scopeTopic)) {
+            return getName();
+        }
 
 
-	    if (enclosingTopic == null)
-	      return enclosingModel.getName() + "." + getName();
-	    else
-	      return enclosingModel.getName()
-	        + "." + enclosingTopic.getName()
-	        + "." + getName();
+	    if (enclosingTopic == null) {
+            return enclosingModel.getName() + "." + getName();
+        } else {
+            return enclosingModel.getName()
+                + "." + enclosingTopic.getName()
+                + "." + getName();
+        }
   }
 
-  public Iterator getDefinedAttributes()
+  public Iterator<LocalAttribute> getDefinedAttributes()
   {
 	  return attributes.iterator();
   }
@@ -193,17 +196,17 @@ END B;<br></pre></code>
 
       @return An iterator for all the attributes of this Viewable.
   */
-  public Iterator getAttributes()
+  public Iterator<Extendable> getAttributes()
   {
    	if(isAlias()){
   		return ((Viewable)getReal()).getAttributes();
   	}else{
-	    List result = new LinkedList ();
-	    Map  mostDerived = new HashMap ();
-	    for (Viewable v = this; v != null; v = (Viewable) v.getRealExtending())
+	    List<Extendable> result = new LinkedList<Extendable> ();
+	    Map<Extendable, Extendable>  mostDerived = new HashMap<Extendable, Extendable> ();
+	    for (Viewable<E> v = this; v != null; v = (Viewable<E>) v.getRealExtending())
 	    {
-	      List attrsOfV_reversed = new LinkedList (); /* a stack */
-	      Iterator iter = v.iterator ();
+	      List<Extendable> attrsOfV_reversed = new LinkedList<Extendable> (); /* a stack */
+	      Iterator<E> iter = v.iterator ();
 	      while (iter.hasNext ())
 	      {
 	        Object obj = iter.next();
@@ -214,12 +217,14 @@ END B;<br></pre></code>
 	             already a even more derived attribute. */
 	          Extendable leastDerived = attr;
 	          Extendable leastDerivedParent = null;
-	          while ((leastDerivedParent = (Extendable) leastDerived.getRealExtending()) != null)
-	            leastDerived = leastDerivedParent;
+	          while ((leastDerivedParent = (Extendable) leastDerived.getRealExtending()) != null) {
+                leastDerived = leastDerivedParent;
+            }
 
 
-	          if (!mostDerived.containsKey (leastDerived))
-	            mostDerived.put (leastDerived, attr);
+	          if (!mostDerived.containsKey (leastDerived)) {
+                mostDerived.put (leastDerived, attr);
+            }
 
 
 	          /* If this mentioning of attr is the least derived one, this
@@ -233,27 +238,28 @@ END B;<br></pre></code>
 	      }
 
 
-	      Iterator attrsOfV_iter = attrsOfV_reversed.iterator();
-	      while (attrsOfV_iter.hasNext())
-	        result.add (/* at frontmost position */ 0, attrsOfV_iter.next());
+	      Iterator<Extendable> attrsOfV_iter = attrsOfV_reversed.iterator();
+	      while (attrsOfV_iter.hasNext()) {
+            result.add (/* at frontmost position */ 0, attrsOfV_iter.next());
+        }
 	    }
 	    return result.iterator ();
   	}
   }
-  public Iterator getAttributesAndRoles()
+  public Iterator<Element> getAttributesAndRoles()
   {
    	if(isAlias()){
   		return ((Viewable)getReal()).getAttributesAndRoles();
   	}else{
-  		List result=new ArrayList(); // of AttributeDef/RoleDef
-		List baseviewv=new ArrayList(); // list of bases of v; first element is root, last is this
-		for (Viewable v = this; v != null; v = (Viewable) v.getRealExtending())
+  		List<Element> result = new ArrayList<Element>(); // of AttributeDef/RoleDef
+		List<Viewable> baseviewv = new ArrayList<Viewable>(); // list of bases of v; first element is root, last is this
+		for (Viewable<E> v = this; v != null; v = (Viewable<E>) v.getRealExtending())
 		{
 			baseviewv.add(0,v);
-		}  		
-  		Iterator baseviewi=baseviewv.iterator();
+		}
+  		Iterator<Viewable> baseviewi = baseviewv.iterator();
   		while(baseviewi.hasNext()){
-  			Viewable v=(Viewable)baseviewi.next();
+  			Viewable v=baseviewi.next();
 			// for all, at this level defined/extended, attributes and roles
   			Iterator attri=v.iterator();
   			while(attri.hasNext()){
@@ -262,7 +268,7 @@ END B;<br></pre></code>
   					AttributeDef attr=(AttributeDef)obj;
   					int idx=0;
   					boolean found=false;
-					for(Iterator resi=result.iterator();resi.hasNext();idx++){  					
+					for(Iterator<Element> resi=result.iterator();resi.hasNext();idx++){
 						Object res=resi.next();
 						// extended/specialized attribute?
 						if((res instanceof AttributeDef && ((AttributeDef)res).getName().equals(attr.getName()))){
@@ -273,13 +279,13 @@ END B;<br></pre></code>
 					}
 					// new attribute?
 					if(!found){
-						result.add(obj);
+						result.add(attr);
 					}
   				}else if(obj instanceof RoleDef){
 					RoleDef role=(RoleDef)obj;
 					int idx=0;
 					boolean found=false;
-					for(Iterator resi=result.iterator();resi.hasNext();idx++){  					
+					for(Iterator<Element> resi=result.iterator();resi.hasNext();idx++){
 						Object res=resi.next();
 						// extended/specialized role?
 						if((res instanceof RoleDef && ((RoleDef)res).getName().equals(role.getName()))){
@@ -290,31 +296,31 @@ END B;<br></pre></code>
 					}
 					// new role?
 					if(!found){
-						result.add(obj);
+						result.add(role);
 					}
   				}
   			}
 			// for all, at this level defined/extended, embedded associations
   		}
-  		
+
 	    return result.iterator ();
   	}
   }
 
-  public Iterator getAttributesAndRoles2()
+  public Iterator<ViewableTransferElement> getAttributesAndRoles2()
   {
 	if(isAlias()){
 		return ((Viewable)getReal()).getAttributesAndRoles2();
 	}else{
-		List result=new ArrayList(); // of Element
-		List baseviewv=new ArrayList(); // list of bases of v; first element is root, last is this
-		for (Viewable v = this; v != null; v = (Viewable) v.getRealExtending())
+		List<ViewableTransferElement> result=new ArrayList<ViewableTransferElement>(); // of Element
+		List<Viewable> baseviewv = new ArrayList<Viewable>(); // list of bases of v; first element is root, last is this
+		for (Viewable<E> v = this; v != null; v = (Viewable<E>) v.getRealExtending())
 		{
 			baseviewv.add(0,v);
-		}  		
-		Iterator baseviewi=baseviewv.iterator();
+		}
+		Iterator<Viewable> baseviewi = baseviewv.iterator();
 		while(baseviewi.hasNext()){
-			Viewable v=(Viewable)baseviewi.next();
+			Viewable v = baseviewi.next();
 			// for all, at this level defined/extended, attributes and roles
 			Iterator[] it = new Iterator[]
 			{
@@ -329,12 +335,12 @@ END B;<br></pre></code>
 					AttributeDef attr=(AttributeDef)obj;
 					int idx=0;
 					boolean found=false;
-					for(Iterator resi=result.iterator();resi.hasNext();idx++){  					
+					for(Iterator<ViewableTransferElement> resi=result.iterator();resi.hasNext();idx++){
 						Object res=resi.next();
 						// extended/specialized attribute?
 						if((((ViewableTransferElement)res).obj instanceof AttributeDef && ((AttributeDef)((ViewableTransferElement)res).obj).getName().equals(attr.getName()))){
 							found=true;
-							ViewableTransferElement ele=(ViewableTransferElement)result.get(idx);
+							ViewableTransferElement ele=result.get(idx);
 							ele.obj=attr;
 							break;
 						}
@@ -347,12 +353,12 @@ END B;<br></pre></code>
 					RoleDef role=(RoleDef)obj;
 					int idx=0;
 					boolean found=false;
-					for(Iterator resi=result.iterator();resi.hasNext();idx++){  					
+					for(Iterator<ViewableTransferElement> resi=result.iterator();resi.hasNext();idx++){
 						Object res=resi.next();
 						// extended/specialized role?
 						if((((ViewableTransferElement)res).obj instanceof RoleDef && ((RoleDef)((ViewableTransferElement)res).obj).getName().equals(role.getName()))){
 							found=true;
-							ViewableTransferElement ele=(ViewableTransferElement)result.get(idx);
+							ViewableTransferElement ele=result.get(idx);
 							ele.obj=role;
 							break;
 						}
@@ -380,12 +386,12 @@ END B;<br></pre></code>
 					RoleDef oppend = role.getOppEnd();
 					int idx=0;
 					boolean found=false;
-					for(Iterator resi=result.iterator();resi.hasNext();idx++){  					
+					for(Iterator<ViewableTransferElement> resi=result.iterator();resi.hasNext();idx++){
 						Object res=resi.next();
 						// extended/specialized role?
 						if((((ViewableTransferElement)res).obj instanceof RoleDef && ((RoleDef)((ViewableTransferElement)res).obj).getName().equals(oppend.getName()))){
 							found=true;
-							ViewableTransferElement ele=(ViewableTransferElement)result.get(idx);
+							ViewableTransferElement ele=result.get(idx);
 							ele.obj=oppend;
 							ele.embedded=true;
 							break;
@@ -401,13 +407,13 @@ END B;<br></pre></code>
 		return result.iterator ();
 	}
   }
-  public Iterator getDefinedAttributesAndRoles2()
+  public Iterator<ViewableTransferElement> getDefinedAttributesAndRoles2()
   {
 	if(isAlias()){
 		return ((Viewable)getReal()).getDefinedAttributesAndRoles2();
 	}else{
-		List result=new ArrayList(); // of Element
-			Viewable v=this;
+		List<ViewableTransferElement> result=new ArrayList<ViewableTransferElement>(); // of Element
+			Viewable<E> v=this;
 			// for all, at this level defined/extended, attributes and roles
 			Iterator[] it = new Iterator[]
 			{
@@ -428,7 +434,7 @@ END B;<br></pre></code>
 			}
 			if(v instanceof AbstractClassDef){
 				// for all, at this level defined/extended, embedded associations
-				List embv = ((AbstractClassDef) v).getDefinedLightweightAssociations();
+				List embv = ((AbstractClassDef<E>) v).getDefinedLightweightAssociations();
 				// sort them according to name of opposide role
 				java.util.Collections.sort(embv,new java.util.Comparator(){
 					public int compare(Object o1,Object o2){
@@ -447,7 +453,7 @@ END B;<br></pre></code>
 		return result.iterator ();
 	}
   }
-  /** gets RoleDef's defined by this. 
+  /** gets RoleDef's defined by this.
    * This is a hotspot for getAttributesAndRoles2().
    */
 	public Iterator getRolesIterator(){
@@ -536,12 +542,12 @@ END B;<br></pre></code>
   /** @return A collection of those tables that can be referenced
               by following relational attributes.
   */
-  public Collection getReferencableTables()
+  public Collection<Table> getReferencableTables()
   {
    	if(isAlias()){
-  		return ((Viewable)getReal()).getReferencableTables();
+  		return ((Viewable<?>)getReal()).getReferencableTables();
   	}else{
-	    Collection coll = new HashSet (5);
+	    Collection<Table> coll = new HashSet<Table>(5);
 	    determineReferencableTables (coll);
 	    return coll;
   	}
@@ -549,13 +555,13 @@ END B;<br></pre></code>
 
 
 
-  void determineReferencableTables (Collection coll)
+  void determineReferencableTables(Collection<Table> coll)
   {
    	if(isAlias()){
-  		((Viewable)getReal()).determineReferencableTables(coll);
+  		((Viewable<?>)getReal()).determineReferencableTables(coll);
   		return;
   	}else{
-	    Iterator iter = getAttributes ();
+	    Iterator<?> iter = getAttributes();
 	    while (iter.hasNext ())
 	    {
 	      Object obj = iter.next();
@@ -569,8 +575,9 @@ END B;<br></pre></code>
 	      // TODO get targetTable from attr.domain
 
 
-	      if ((targetTable != null) && coll.add(targetTable))
-	        targetTable.determineReferencableTables (coll);
+	      if ((targetTable != null) && coll.add(targetTable)) {
+            targetTable.determineReferencableTables (coll);
+        }
 	    }
   	}
   }
@@ -584,17 +591,18 @@ END B;<br></pre></code>
 
       @param startAttribute one of the composition attributes of this Viewable.
   */
-  public Set getPossibleComponents (AttributeDef startAttribute)
+  public Set<Viewable> getPossibleComponents(AttributeDef startAttribute)
   {
    	if(isAlias()){
   		return ((Viewable)getReal()).getPossibleComponents(startAttribute);
   	}else{
-	    Set theResult = new HashSet ();
+	    Set<Viewable> theResult = new HashSet<Viewable> ();
 
 
 	    CompositionType ct = (CompositionType) Type.findReal (startAttribute.getDomain());
-	    if ((ct != null) && (ct.getComponentType() != null))
-	      calcCompositionClosure (ct.getComponentType(), theResult);
+	    if ((ct != null) && (ct.getComponentType() != null)) {
+            calcCompositionClosure (ct.getComponentType(), theResult);
+        }
 	    return theResult;
   	}
   }
@@ -640,42 +648,47 @@ END B;<br></pre></code>
 
       @param s A Set that will be filled.
   */
-  void calcCompositionClosure (Viewable v, Set s)
+  void calcCompositionClosure (Viewable v, Set<Viewable> s)
   {
    	if(isAlias()){
-  		((Viewable)getReal()).calcCompositionClosure ( v, s);
+  		((Viewable<E>)getReal()).calcCompositionClosure ( v, s);
   		return;
   	}else{
-	    if (v == null)
-	      return;
+	    if (v == null) {
+            return;
+        }
 
 
 	    /* If v is already member of s, there is no need to walk through its
 	       attributs another time.
 	    */
-	    if (s.contains (v))
-	      return;
+	    if (s.contains (v)) {
+            return;
+        }
 
 
 	    /* If the Viewable comes from a different model, make sure it has been imported. */
 	    Model vModel = (Model) v.getContainerOrSame (Model.class);
 	    Model myModel = (Model) this.getContainerOrSame (Model.class);
-	    if ((vModel == null) || (myModel == null))
-	      return;
-	    if ((vModel != myModel) && !myModel.isImporting(vModel))
-	      return;
+	    if ((vModel == null) || (myModel == null)) {
+            return;
+        }
+	    if ((vModel != myModel) && !myModel.isImporting(vModel)) {
+            return;
+        }
 
 
 	    /* Look only at those that are declared before "declaredBefore". */
-	    if (!v.isDeclaredBefore (this))
-	      return;
+	    if (!v.isDeclaredBefore (this)) {
+            return;
+        }
 
 
 
 	    s.add (v);
 
 
-	    Iterator attrs = v.getAttributes (); /* Includes inherited attributes. */
+	    Iterator<Extendable> attrs = v.getAttributes (); /* Includes inherited attributes. */
 	    while (attrs.hasNext ())
 	    {
 	      AttributeDef theAttrib = (AttributeDef) attrs.next();
@@ -683,22 +696,24 @@ END B;<br></pre></code>
 	      Table        componentStruct;
 
 
-	      if (!(theType instanceof CompositionType))
-	        continue;
+	      if (!(theType instanceof CompositionType)) {
+            continue;
+        }
 
 
 	      componentStruct = ((CompositionType) theType).getComponentType();
-	      if (componentStruct == null)
-	        continue;
+	      if (componentStruct == null) {
+            continue;
+        }
 
 
 	      calcCompositionClosure (componentStruct, s);
 	    } /* while (attrs.hasNext()) */
 
 
-	    Set extensions = v.getExtensions();
+	    Set<ExtendableContainer<E>> extensions = v.getExtensions();
 	    extensions.add (v);
-	    Iterator extensionsIter = extensions.iterator();
+	    Iterator<ExtendableContainer<E>> extensionsIter = extensions.iterator();
 	    while (extensionsIter.hasNext())
 	    {
 	      Viewable component = (Viewable) extensionsIter.next();
@@ -719,10 +734,10 @@ END B;<br></pre></code>
       mentioned in a Graphic refer to the Viewable on which the Graphic
       is based, not the Graphic itself.
   */
-  public Viewable getRHSNameSpace ()
+  public Viewable<E> getRHSNameSpace ()
   {
    	if(isAlias()){
-  		return ((Viewable)getReal()).getRHSNameSpace ();
+  		return ((Viewable<E>)getReal()).getRHSNameSpace ();
   	}else{
 	    return this;
   	}

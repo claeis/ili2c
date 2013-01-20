@@ -11,11 +11,6 @@
  
 package ch.interlis.ili2c.metamodel;
 
-import java.beans.PropertyChangeListener;
-import java.beans.VetoableChangeListener;
-import java.beans.PropertyVetoException;
-import java.beans.beancontext.BeanContext;
-import java.beans.beancontext.BeanContextChild;
 import java.beans.beancontext.BeanContextChildSupport;
 
 /** An abstract class which serves as a common

@@ -43,7 +43,7 @@ public class ObjectPath extends Evaluable
 		if(path==null){
 			return "";
 		}
-		StringBuffer str=new StringBuffer();
+		StringBuilder str=new StringBuilder();
 		String sep="";
 		for(int i=0;i<path.length;i++){
 			str.append(sep);sep="->";

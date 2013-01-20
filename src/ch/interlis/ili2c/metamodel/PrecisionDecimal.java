@@ -12,8 +12,6 @@
 
 package ch.interlis.ili2c.metamodel;
 
-import java.math.BigDecimal;
-
 
 
 /** A BigDecimal that is associated with a scaling as well.
@@ -22,11 +20,11 @@ import java.math.BigDecimal;
 */
 public class PrecisionDecimal
 {
-	public final static PrecisionDecimal PI = new PrecisionDecimal(Math.PI); 
+	public final static PrecisionDecimal PI = new PrecisionDecimal(Math.PI);
 	public final static PrecisionDecimal LNBASE = new PrecisionDecimal(Math.E);
   private int exponent = 0;
   private int accuracy=0;
-  private java.math.BigInteger intVal;
+  private final java.math.BigInteger intVal;
 
   static private int exponentPos(String s){
     int ret;
@@ -150,11 +148,11 @@ public class PrecisionDecimal
       if(exponent!=0){
           stringbuilder.append(isIli1 ? 'S' : 'e');
           stringbuilder.append(Integer.toString (exponent));
-    	  
+
       }
       return stringbuilder.toString();
   }
-  
+
   /** Returns the string representation of this number
       as it would appear in an INTERLIS 1 description file.
   */
@@ -182,7 +180,7 @@ public class PrecisionDecimal
       if(i != 0)
           return i <= 0 ? -1 : 1;
 	  return Double.compare(doubleValue(), other.doubleValue());
-  }  
+  }
   static public void main(String args[]){
 	 test("1");
 	 test("1.0");
@@ -193,7 +191,7 @@ public class PrecisionDecimal
 	 test("0.000000000000000");
 	 test("9999999999999999.000000000000000");
 	 test("99999999999999990000000000000000");
-	 
+
   }
 private static void test(String valStr) {
 	PrecisionDecimal test1=new PrecisionDecimal(valStr);

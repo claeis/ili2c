@@ -2,10 +2,10 @@ package ch.interlis.ili2c.metamodel;
 import java.util.*;
 
 
-public class MetaDataUseDef extends ExtendableContainer
+public class MetaDataUseDef extends ExtendableContainer<MetaObject>
 {
-  protected Collection createElements(){
-    return new java.util.ArrayList(); // list<MetaObject>
+  protected Collection<MetaObject> createElements(){
+    return new ArrayList<MetaObject>();
   }
   public void checkIntegrity(){
   }
@@ -107,21 +107,15 @@ public class MetaDataUseDef extends ExtendableContainer
       and that have a specified name. If you do not care about
       the class of the MetaObjects, pass <code>null</code>.
   */
-  public List findMatchingMetaObjects (Table polymorphicTo, String name)
+  public List<MetaObject> findMatchingMetaObjects (Table polymorphicTo, String name)
   {
-    List result = new LinkedList ();
-
+    List<MetaObject> result = new LinkedList<MetaObject>();
 
     /* First try: Find the element in this container. */
-      Iterator iter = iterator();
+      Iterator<MetaObject> iter = iterator();
       while (iter.hasNext())
       {
-        Object obj = iter.next();
-        if (!(obj instanceof MetaObject))
-          continue;
-
-
-        MetaObject mo = (MetaObject) obj;
+        MetaObject mo = iter.next();
 	//System.out.println(mo.getName());
 	//System.out.println(mo.getTable());
 	//System.out.println(polymorphicTo);
@@ -132,7 +126,7 @@ public class MetaDataUseDef extends ExtendableContainer
 
     /* Second try: Find the element in inherited containers.
     */
-    if (extending != null && result.size()==0){
+    if (extending != null && result.isEmpty()){
       return ((MetaDataUseDef)extending).findMatchingMetaObjects(polymorphicTo, name);
     }
 

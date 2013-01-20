@@ -24,21 +24,21 @@ import java.util.*;
 
     @author Sascha Brawer, sb@adasys.ch
  */
-public abstract class View extends Viewable
+public abstract class View extends Viewable<AbstractLeafElement>
 {
-  protected List     selections = new LinkedList ();
+  protected List<Selection> selections = new LinkedList<Selection>();
   private boolean propTransient=false;
 
   /** Creates a new View without any attributes. */
   public View()
   {
   }
-  protected Collection createElements(){
-    return new AbstractCollection()
+  protected Collection<AbstractLeafElement> createElements(){
+    return new AbstractCollection<AbstractLeafElement>()
     {
-      public Iterator iterator ()
+      public Iterator<AbstractLeafElement> iterator ()
       {
-        return new CombiningIterator(new Iterator[] {
+        return new CombiningIterator<AbstractLeafElement>(new Iterator[] {
           selections.iterator(),
           attributes.iterator(),
           constraints.iterator()
@@ -52,25 +52,20 @@ public abstract class View extends Viewable
       }
 
 
-      public boolean add (Object o)
+      public boolean add(AbstractLeafElement o)
       {
         if (o == null)
           throw new IllegalArgumentException(
             rsrc.getString("err_nullNotAcceptable"));
 
-
         if (o instanceof Selection)
-          return selections.add (o);
-
+          return selections.add((Selection) o);
 
         if (o instanceof LocalAttribute)
-          return attributes.add (o);
-
-
+          return attributes.add((LocalAttribute) o);
 
         if (o instanceof Constraint)
-          return constraints.add (o);
-
+          return constraints.add((Constraint) o);
 
         throw new ClassCastException();
       }
@@ -138,10 +133,10 @@ public abstract class View extends Viewable
   */
   public boolean isDependentOn (Element other)
   {
-    Iterator iter = selections.iterator ();
+    Iterator<Selection> iter = selections.iterator();
     while (iter.hasNext ())
     {
-      Selection sel = (Selection) iter.next ();
+      Selection sel = iter.next();
       if (sel == other)
         return true;
 

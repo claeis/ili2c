@@ -14,16 +14,16 @@ import java.util.*;
 
 /** A Container that can be extended.
 */
-public abstract class ExtendableContainer extends Container implements Extendable
+public abstract class ExtendableContainer<E extends Element> extends Container<E> implements Extendable
 {
   protected boolean  _final = false;
   protected boolean  _abstract = false;
 
-  protected ExtendableContainer  extending = null;
+  protected ExtendableContainer<E>  extending = null;
 
   /** The containers which are extended by this container.
   */
-  protected Set      extendedBy = new HashSet(2);
+  protected Set<ExtendableContainer<E>> extendedBy = new HashSet<ExtendableContainer<E>>(2);
 
 
 
@@ -415,30 +415,30 @@ public abstract class ExtendableContainer extends Container implements Extendabl
               Changes in the result will not have any effect
               on the <em>extending</em> property.
   */
-  public Set getExtensions ()
+  public Set<ExtendableContainer<E>> getExtensions()
   {
   	if(isAlias()){
   		return ((ExtendableContainer)getReal()).getExtensions();
   	}else{
-	    Set result = new HashSet ();
+	    Set<ExtendableContainer<E>> result = new HashSet<ExtendableContainer<E>>();
 	    getExtensions_recursiveHelper (result);
 	    return result;
   	}
   }
-  public Set getDirectExtensions()
+  public Set<ExtendableContainer<E>> getDirectExtensions()
   {
 	  // return a copy
-	  return new HashSet(extendedBy);
+	  return new HashSet<ExtendableContainer<E>>(extendedBy);
   }
 
 
   /** @see getExtensions() */
-  private final void getExtensions_recursiveHelper (Set s)
+  private final void getExtensions_recursiveHelper(Set<ExtendableContainer<E>> s)
   {
     s.add (this);
-    Iterator iter = extendedBy.iterator();
+    Iterator<ExtendableContainer<E>> iter = extendedBy.iterator();
     while (iter.hasNext())
-      ((ExtendableContainer) iter.next()).getExtensions_recursiveHelper (s);
+      iter.next().getExtensions_recursiveHelper(s);
   }
 
   public boolean checkStructuralEquivalence (Element with)

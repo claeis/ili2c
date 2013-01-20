@@ -10,7 +10,7 @@
 package ch.interlis.ili2c.metamodel;
 
 
-/** A NameSpace is a utility class that desribes the name space currently
+/** A NameSpace is a utility class that describes the name space currently
     used for parsing and generation. Note that the class has been added
     very late in the process of developing the INTERLIS compiler and
     is thus not used at all places where it might be suitable. A clean
@@ -24,13 +24,13 @@ public class NameSpace
   Container   lvalues;
   Container   rvalues;
   Model       metaObjects;
-  
+
   /** Constructs a new NameSpace where all different spaces are specified
       separately. This is used, for instance, with Graphics where
       the three namespaces are different (the symbology for the
       lvalues, the viewable on which the graphics is based for the
       rvalues, the graphics itself for the metaobjects).
-      
+
       @param lvalue Name space of lvalues (the left-hand side of an assignment).
       @param rvalue Name space of rvalues (constants, evaluables, right-hand side
                     of an assignment).
@@ -49,8 +49,8 @@ public class NameSpace
     return "ch.interlis.NameSpace[lval=" + lvalues
       + ",rval=" + rvalues + ",meta=" + metaObjects + "]";
   }
-  
-  
+
+
   /** Constructs a new NameSpace where one Container servers as name space
       for everything.
   */
@@ -58,7 +58,7 @@ public class NameSpace
   {
     this (ns, ns, (Model) ns.getContainerOrSame (Model.class));
   }
-  
+
   /** Returns the Container that serves as name space for the left-hand
       side (target) of assignments.
   */

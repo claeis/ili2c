@@ -21,12 +21,12 @@ package ch.interlis.ili2c.metamodel;
 import java.util.*;
 
 
-public abstract class AbstractPatternDef extends ExtendableContainer {
+public abstract class AbstractPatternDef<E extends Element> extends ExtendableContainer<E> {
 
-  protected List     contents = new ArrayList ();
-  protected class ElementDelegate extends AbstractCollection
+  protected List<E> contents = new ArrayList<E>();
+  protected class ElementDelegate extends AbstractCollection<E>
   {
-    public Iterator iterator ()
+    public Iterator<E> iterator ()
     {
       return contents.iterator ();
     }
@@ -40,52 +40,54 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
 
 
 
-	public boolean add (Object o)
+	public boolean add (E o)
 	{
 		if(check(o)){
 			return contents.add(o);
 		}
 		return false;
 	}
-    private boolean check (Object o)
+    private boolean check (E e)
     {
         /* In all sorts of model: UNIT, DOMAIN, FUNCTION, LINE FORM, STRUCTURE,
            abstract TABLE */
-        Element e=(Element)o;
-        if (o instanceof MetaDataUseDef)
+        if (e instanceof MetaDataUseDef)
 	{
           Element conflicting = getElement ( e.getName());
-          if ((conflicting != null) && (conflicting != e))
+          if ((conflicting != null) && (conflicting != e)) {
             throw new Ili2cSemanticException (formatMessage (
               "err_nonuniqueMetaDataUseDefName",
               e.getName(),
               AbstractPatternDef.this.toString()));
+        }
           return true;
 	}
 
 
-	if (o instanceof Unit)
+	if (e instanceof Unit)
         {
           Element conflicting = getElement (e.getName());
-          if ((conflicting != null) && (conflicting != e))
+          if ((conflicting != null) && (conflicting != e)) {
             throw new Ili2cSemanticException (formatMessage (
               "err_duplicateUnitName",
               e.getName(),
               AbstractPatternDef.this.toString()));
+        }
 
 
           return true;
         }
 
 
-        if (o instanceof Domain)
+        if (e instanceof Domain)
         {
           Element conflicting = getElement (e.getName());
-          if ((conflicting != null) && (conflicting != e))
+          if ((conflicting != null) && (conflicting != e)) {
             throw new Ili2cSemanticException (formatMessage (
               "err_duplicateDomainName",
               e.getName(),
               AbstractPatternDef.this.toString()));
+        }
 
 
           return true;
@@ -93,37 +95,35 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
 
 
 
-        if (o instanceof AssociationDef){
-          AssociationDef toInsert = (AssociationDef) o;
+        if (e instanceof AssociationDef){
+          AssociationDef toInsert = (AssociationDef) e;
           Element conflicting = getElement (e.getName());
           if ((conflicting != null) && (conflicting != e)
-            && !toInsert.isExtended() && !toInsert.isExtending(conflicting))
+            && !toInsert.isExtended() && !toInsert.isExtending(conflicting)) {
             throw new Ili2cSemanticException (formatMessage (
               "err_association_nonunique",
               e.getName(),
               AbstractPatternDef.this.toString()));
+        }
           return true;
         }
 
 
 
-        if (o instanceof Table)
+        if (e instanceof Table)
         {
-
-          Table toInsert = (Table) o;
-          Viewable hiding;
-
+          Table toInsert = (Table) e;
 
           Element.checkNameSanity (toInsert.getName(), /* empty ok? */ false);
 
-
           Element conflicting = getElement ( e.getName());
           if ((conflicting != null) && (conflicting != e)
-            && !toInsert.isExtended() && !toInsert.isExtending(conflicting))
+            && !toInsert.isExtended() && !toInsert.isExtending(conflicting)) {
             throw new Ili2cSemanticException (formatMessage (
               "err_table_nonunique",
               e.getName(),
               AbstractPatternDef.this.toString()));
+        }
 
 
           if (!toInsert.isAbstract()
@@ -148,25 +148,27 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
         //if (o instanceof ConstraintsDef)
 
 
-        if (o instanceof View)
+        if (e instanceof View)
         {
           Element conflicting = getElement ( e.getName());
-          if ((conflicting != null) && (conflicting != e))
+          if ((conflicting != null) && (conflicting != e)) {
             throw new Ili2cSemanticException (formatMessage (
               "err_view_nonunique",
               e.getName(),
               AbstractPatternDef.this.toString()));
+        }
           return true;
         }
-		if (o instanceof Function)
+		if (e instanceof Function)
 		{
 			Model enclosingModel = (Model) getContainer(Model.class);
-			if (!enclosingModel.isContracted() && !(enclosingModel instanceof PredefinedModel))
-			  throw new Ili2cSemanticException (formatMessage (
-				"err_model_functionButNoContract",
-				e.toString(),
-				enclosingModel.toString()));
-			
+			if (!enclosingModel.isContracted() && !(enclosingModel instanceof PredefinedModel)) {
+                throw new Ili2cSemanticException (formatMessage (
+                	"err_model_functionButNoContract",
+                	e.toString(),
+                	enclosingModel.toString()));
+            }
+
 			Element conflicting = getElement (e.getName());
 			if ((conflicting != null) && (conflicting != e)){
 				throw new Ili2cSemanticException (formatMessage (
@@ -177,35 +179,37 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
 			}
 			return true;
 		}
-        if (o instanceof Projection)
+        if (e instanceof Projection)
         {
           Element conflicting = getElement ( e.getName());
-          if ((conflicting != null) && (conflicting != e))
+          if ((conflicting != null) && (conflicting != e)) {
             throw new Ili2cSemanticException (formatMessage (
               "err_projection_nonunique",
               e.getName(),
               AbstractPatternDef.this.toString()));
+        }
           return true;
         }
-	if (o instanceof Graphic)
+	if (e instanceof Graphic)
         {
           Element conflicting = getElement ( e.getName());
-          if ((conflicting != null) && (conflicting != e))
+          if ((conflicting != null) && (conflicting != e)) {
             throw new Ili2cSemanticException (formatMessage (
               "err_graphic_nonunique",
               e.getName(),
               AbstractPatternDef.this.toString()));
+        }
           return true;
         }
 
 
         throw new Ili2cSemanticException (formatMessage (
           "err_container_cannotContain",
-          AbstractPatternDef.this.toString(), o.toString()));
+          AbstractPatternDef.this.toString(), e.toString()));
     }
   };
 
-  public void addBefore(Object o,Object next)
+  public void addBefore(E o,Object next)
   {
 	  if(((ElementDelegate)elements).check(o)){
 		    try {
@@ -215,13 +219,13 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
 		    }
 		    int idx=contents.indexOf(next);
 		    if(idx>-1){
-				  contents.add(idx,o);		    	
+				  contents.add(idx,o);
 		    }else{
-				  contents.add(o);		    			    	
+				  contents.add(o);
 		    }
 	  }
   }
-  public void addAfter(Object o,Object previous)
+  public void addAfter(E o,Object previous)
   {
 	  if(((ElementDelegate)elements).check(o)){
 		    try {
@@ -231,16 +235,16 @@ public abstract class AbstractPatternDef extends ExtendableContainer {
 		    }
 		    int idx=contents.indexOf(previous);
 		    if(idx>-1 && idx+1<contents.size()){
-				  contents.add(idx+1,o);		    	
+				  contents.add(idx+1,o);
 		    }else{
-				  contents.add(o);		    			    	
+				  contents.add(o);
 		    }
 	  }
   }
 
   public AbstractPatternDef(){
   }
-  protected Collection createElements(){
+  protected Collection<E> createElements(){
       return new ElementDelegate();
   }
 
@@ -278,25 +282,21 @@ END B;<br></pre></code>
 
       @return An iterator for all the tables of this Topic.
   */
-  public List getViewables ()
+  public List<Viewable<?>> getViewables ()
   {
-    List result = new LinkedList ();
-    HashSet hiddenViewables  = new HashSet();
+    List<Viewable<?>> result = new ArrayList<Viewable<?>>();
+    HashSet<Viewable<?>> hiddenViewables  = new HashSet<Viewable<?>>();
 
 
     // walk topic hierarchy up from the leaf (this) to the base topic
     for (AbstractPatternDef t = this; t != null; t = (AbstractPatternDef) t.getRealExtending())
     {
-      Iterator iter=t.iterator();
-
-
-      LinkedList tresult=new LinkedList();
-
+      Iterator<Element> iter=t.iterator();
+      List<Viewable<?>> tresult=new ArrayList<Viewable<?>>();
 
       while (iter.hasNext ())
       {
-        Element obj = (Element)iter.next();
-
+        Element obj = iter.next();
 
         if (obj instanceof Viewable)
         {
@@ -306,13 +306,13 @@ END B;<br></pre></code>
 			// only ClassDef and AssociationDef may be overridden, so add the corresponding base ClassDef
 			// of ClassDefs that are EXTENDED to the list of hiddenViewables, and then check every viewable
 			// to be in this list
-			if(obj instanceof Table && ((Table)obj).isExtended()){
-				hiddenViewables.add(((Table)obj).getExtending());
-			}else if(obj instanceof AssociationDef && ((AssociationDef)obj).isExtended()){
-				hiddenViewables.add(((AssociationDef)obj).getExtending());
+			if (obj instanceof Table && ((Table) obj).isExtended()) {
+				hiddenViewables.add((Viewable<?>) ((Table) obj).getExtending());
+			} else if (obj instanceof AssociationDef && ((AssociationDef) obj).isExtended()) {
+				hiddenViewables.add((Viewable<?>) ((AssociationDef) obj).getExtending());
 			}
-			if(!hiddenViewables.contains(obj)){
-				tresult.add(obj);
+			if (!hiddenViewables.contains(obj)) {
+				tresult.add((Viewable<?>) obj);
 			}
         }
       }
@@ -326,28 +326,31 @@ END B;<br></pre></code>
 
     return result;
   }
-  public List getTransferViewables()
+  public List<Viewable<?>> getTransferViewables()
   {
-	    List result = new LinkedList ();
-	    Iterator iter = getViewables().iterator();
+	    List<Viewable<?>> viewables = getViewables();
+            List<Viewable<?>> result = new ArrayList<Viewable<?>>(viewables.size()); // Minimize (re)allocations. **GV1012
+	    Iterator<Viewable<?>> iter = viewables.iterator();
 	    while (iter.hasNext())
 	    {
-	      Viewable v = (Viewable)iter.next();
-	      if (!suppressViewableInTransfer (v))
+	      Viewable<?> v = iter.next();
+	      if (!suppressViewableInTransfer(v))
 	      {
 				result.add(v);
 	      }
 	    }
 	    return result;
   }
-  static public boolean suppressViewableInTransfer (Viewable v)
+  static public boolean suppressViewableInTransfer(Viewable<?> v)
   {
-    if (v == null)
-      return true;
+    if (v == null) {
+        return true;
+    }
 
 
-    if (v.isAbstract())
-      return true;
+    if (v.isAbstract()) {
+        return true;
+    }
 
     if(v instanceof AssociationDef){
 		AssociationDef assoc=(AssociationDef)v;
@@ -361,14 +364,16 @@ END B;<br></pre></code>
 
     Topic topic;
     if ((v instanceof View) && ((topic=(Topic)v.getContainer (Topic.class)) != null)
-	    && !topic.isViewTopic())
-      return true;
+	    && !topic.isViewTopic()) {
+        return true;
+    }
 
 
     /* STRUCTUREs do not need to be printed with their INTERLIS container,
        but where they are used. */
-    if ((v instanceof Table) && !((Table)v).isIdentifiable())
-      return true;
+    if ((v instanceof Table) && !((Table)v).isIdentifiable()) {
+        return true;
+    }
 
 
     return false;
@@ -378,20 +383,18 @@ END B;<br></pre></code>
   /** find an element with the given name in the given namespace
    */
   private Element getElement(String name){
-	    if (name == null)
-	      return null;
-            Iterator it;
-            it = contents.iterator();
-	    while (it.hasNext ())
-	    {
-	      Element e = (Element) it.next ();
-	      if (name.equals (e.getName()))
-	        return e;
-	    }
+	    if (name != null) {
+	        for (Element e : contents) {
+	              if (name.equals(e.getName())) {
+	                  return e;
+	              }
+	        }
 
             // get Element from inherited Container
-         	if (extending != null)
-	          return ((AbstractPatternDef)extending).getElement(name);
+         	if (extending != null) {
+                return ((AbstractPatternDef)extending).getElement(name);
+            }
+	    }
 
       return null;
   }

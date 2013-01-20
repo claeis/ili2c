@@ -38,7 +38,7 @@ public abstract class AttributeDef
   protected boolean       _final;
   protected boolean       _abstract;
   private boolean       _transient;
-  protected Set           extendedBy = new HashSet(2);
+  protected Set<AttributeDef> extendedBy = new HashSet<AttributeDef>(2);
   protected Type          domain;
 	private String ili1Explanation=null;
   protected AttributeDef ()
@@ -69,10 +69,11 @@ public abstract class AttributeDef
 
   public String toString ()
   {
-    Container cont = getContainer(Viewable.class);
+    Container<?> cont = getContainer(Viewable.class);
 
-    if (cont == null)
-      return getName();
+    if (cont == null) {
+        return getName();
+    }
 
     return cont.getScopedName(null) + ":" + getName();
   }
@@ -122,7 +123,7 @@ public abstract class AttributeDef
        with the name of another Viewable, except the
        one that this object is extending directly.
     */
-    checkNameUniqueness (newValue, AttributeDef.class, (AttributeDef) getRealExtending(),
+    checkNameUniqueness (newValue, AttributeDef.class, getRealExtending(),
                          "err_attributeDef_duplicateName");
 
 
@@ -156,8 +157,9 @@ public abstract class AttributeDef
     for (AttributeDef parent = this; parent != null;
          parent = parent.extending)
     {
-      if (parent == ext)
+      if (parent == ext) {
         return true;
+    }
     }
     return false;
   }
@@ -166,7 +168,7 @@ public abstract class AttributeDef
   public boolean isDependentOn (Element e)
   {
     if (e instanceof AttributeDef) {
-      boolean i = isExtendingIndirectly((AttributeDef) e);
+      boolean i = isExtendingIndirectly(e);
       return i;
     }
 
@@ -218,12 +220,14 @@ public abstract class AttributeDef
     AttributeDef newValue = (AttributeDef) ext;
 
 
-    if (oldValue == newValue)
-      return; /* nothing needs to be done */
+    if (oldValue == newValue) {
+        return; /* nothing needs to be done */
+    }
 
-    if ((newValue != null) && newValue.isFinal())
-      throw new IllegalArgumentException(
-        formatMessage ("err_cantExtendFinal", newValue.toString()));
+    if ((newValue != null) && newValue.isFinal()) {
+        throw new IllegalArgumentException(
+            formatMessage ("err_cantExtendFinal", newValue.toString()));
+    }
 
     /* Ensure that the extension graph will be acyclic. */
     if ((newValue != null) && newValue.isExtendingIndirectly(this))
@@ -236,10 +240,11 @@ public abstract class AttributeDef
 
     if (domain != null)
     {
-      if (newValue == null)
+      if (newValue == null) {
         domain.checkTypeExtension (null);
-      else
+    } else {
         domain.checkTypeExtension (newValue.getDomain ());
+    }
     }
 
 
@@ -248,17 +253,20 @@ public abstract class AttributeDef
 
 	if (domain != null)
 	{
-	  if (newValue == null)
-		domain.setExtending (null);
-	  else
-		domain.setExtending (newValue.getDomain());
+	  if (newValue == null) {
+        domain.setExtending (null);
+    } else {
+        domain.setExtending (newValue.getDomain());
+    }
 	}
 
-    if (oldValue != null)
-      oldValue.extendedBy.remove(this);
+    if (oldValue != null) {
+        oldValue.extendedBy.remove(this);
+    }
     extending = newValue;
-    if (newValue != null)
-      newValue.extendedBy.add(this);
+    if (newValue != null) {
+        newValue.extendedBy.add(this);
+    }
 
 
     firePropertyChange ("extending", oldValue, newValue);
@@ -315,18 +323,21 @@ public abstract class AttributeDef
     boolean newValue = abst;
 
     /* Check for cases in which there is nothing to do. */
-    if (oldValue == newValue)
-      return;
+    if (oldValue == newValue) {
+        return;
+    }
 
     /* Can not be ABSTRACT and FINAL at the same time. */
-    if ((newValue == true) && isFinal())
-      throw new IllegalArgumentException(
-          rsrc.getString("err_abstractFinal"));
+    if ((newValue == true) && isFinal()) {
+        throw new IllegalArgumentException(
+              rsrc.getString("err_abstractFinal"));
+    }
 
 
-    if ((newValue == false) && (domain != null) && domain.isAbstract())
-      throw new IllegalArgumentException (formatMessage (
-        "err_attributeDef_concreteWithAbstractDomain", this.toString()));
+    if ((newValue == false) && (domain != null) && domain.isAbstract()) {
+        throw new IllegalArgumentException (formatMessage (
+            "err_attributeDef_concreteWithAbstractDomain", this.toString()));
+    }
 
 
     fireVetoableChange("abstract", oldValue, newValue);
@@ -383,23 +394,26 @@ public abstract class AttributeDef
     boolean newValue = fin;
 
     /* Check for cases in which there is nothing to do. */
-    if (oldValue == newValue)
-      return;
+    if (oldValue == newValue) {
+        return;
+    }
 
     /* Can not be ABSTRACT and FINAL at the same time. */
-    if ((newValue == true) && isAbstract())
-      throw new IllegalArgumentException(
-          rsrc.getString("err_abstractFinal"));
+    if ((newValue == true) && isAbstract()) {
+        throw new IllegalArgumentException(
+              rsrc.getString("err_abstractFinal"));
+    }
 
 
 
     /* Can't make this final as long as there exists another
        object that extends this one. */
-    if ((newValue == true) && !extendedBy.isEmpty())
-      throw new IllegalArgumentException(formatMessage(
-        "err_cantMakeExtendedFinal",
-        this.toString(),
-        extendedBy.iterator().next().toString()));
+    if ((newValue == true) && !extendedBy.isEmpty()) {
+        throw new IllegalArgumentException(formatMessage(
+            "err_cantMakeExtendedFinal",
+            this.toString(),
+            extendedBy.iterator().next().toString()));
+    }
 
     /* Set value and inform interested listeners. */
     fireVetoableChange("final", oldValue, newValue);
@@ -420,8 +434,9 @@ public abstract class AttributeDef
     for (AttributeDef parent = this; parent != null;
          parent = parent.extending)
     {
-      if (parent == ext)
+      if (parent == ext) {
         return true;
+    }
     }
 
     return false;
@@ -442,22 +457,23 @@ public abstract class AttributeDef
               Changes in the result will not have any effect
               on the <em>extending</em> property.
   */
-  public Set getExtensions ()
+  public Set<AttributeDef> getExtensions()
   {
-    Set result = new HashSet ();
-    getExtensions_recursiveHelper (result);
+    Set<AttributeDef> result = new HashSet<AttributeDef>();
+    getExtensions_recursiveHelper(result);
     return result;
   }
 
 
 
   /** @see getExtensions() */
-  private final void getExtensions_recursiveHelper (Set s)
+  private final void getExtensions_recursiveHelper (Set<AttributeDef> s)
   {
     s.add (this);
-    Iterator iter = extendedBy.iterator();
-    while (iter.hasNext())
-      ((AttributeDef) iter.next()).getExtensions_recursiveHelper (s);
+    Iterator<AttributeDef> iter = extendedBy.iterator();
+    while (iter.hasNext()) {
+        iter.next().getExtensions_recursiveHelper (s);
+    }
   }
 
   public Type getDomain ()
@@ -518,29 +534,32 @@ public abstract class AttributeDef
   {
     Type oldValue = this.domain;
     Type newValue = domain;
-    Type realNewValue = null;
 
-    if (newValue == null)
-      throw new IllegalArgumentException (rsrc.getString ("err_nullNotAcceptable"));
+    if (newValue == null) {
+        throw new IllegalArgumentException (rsrc.getString ("err_nullNotAcceptable"));
+    }
 
-    if (oldValue == newValue)
-      return;
+    if (oldValue == newValue) {
+        return;
+    }
 
     if(!acceptAbstract){
         if ((newValue != null)
                 && newValue.isAbstract()
-                && !this.isAbstract())
-              throw new Ili2cSemanticException (getSourceLine(),formatMessage (
+                && !this.isAbstract()) {
+            throw new Ili2cSemanticException (getSourceLine(),formatMessage (
                 "err_attributeDef_domainIsAbstractButAttrIsNot", this.toString()));
+        }
     }
 
     fireVetoableChange ("domain", oldValue, newValue);
 
 
-    if (extending == null)
-      newValue.setExtending (null);
-    else
-      newValue.setExtending (extending.getDomain());
+    if (extending == null) {
+        newValue.setExtending (null);
+    } else {
+        newValue.setExtending (extending.getDomain());
+    }
 
 
     this.domain = newValue;
@@ -550,18 +569,21 @@ public abstract class AttributeDef
 
   public boolean checkStructuralEquivalence (Element with)
   {
-    if (!super.checkStructuralEquivalence (with))
-      return false;
+    if (!super.checkStructuralEquivalence (with)) {
+        return false;
+    }
 
     Type myDomain = this.getDomain ();
     Type otherDomain = ((AttributeDef) with).getDomain ();
 
     /* Probably only for myDomain == otherDomain == null */
-    if (myDomain == otherDomain)
-      return true;
+    if (myDomain == otherDomain) {
+        return true;
+    }
 
-    if (myDomain == null)
-      return false;
+    if (myDomain == null) {
+        return false;
+    }
 
     if (!myDomain.checkStructuralEquivalence (otherDomain))
     {

@@ -40,4 +40,15 @@ public class FormattedTypeBaseAttrRef {
 	{
 		return parent;
 	}
+
+    FormattedTypeBaseAttrRef newParent(FormattedType parent) {
+        FormattedTypeBaseAttrRef ref = this;
+
+        if (parent != this.parent) {
+            ref = new FormattedTypeBaseAttrRef(parent, attr, formatted);
+            ref.intPos = intPos;
+            ref.postfix = postfix;
+        }
+        return ref;
+    }
 }

@@ -9,11 +9,11 @@ public class StructuredUnitType extends NumericalType
 {
   protected Constant.Structured minimum;
   protected Constant.Structured maximum;
-  
+
   /** @exception java.lang.IllegalArgumentException if either
                  <code>minimum</code> or <code>maximum</code>
                  is <code>null</code>.
-                 
+
       @exception java.lang.IllegalArgumentException if
                  <code>minimum</code> is greater than <code>maximum</code>.
   */
@@ -21,45 +21,45 @@ public class StructuredUnitType extends NumericalType
   {
     this.minimum = minimum;
     this.maximum = maximum;
-    
+
     if ((minimum == null) || (maximum == null))
       throw new IllegalArgumentException (rsrc.getString (
         "err_nullNotAcceptable"));
   }
-  
-  
+
+
   public Constant.Structured getMinimum()
   {
     return minimum;
   }
-  
-  
+
+
   public Constant.Structured getMaximum()
   {
     return maximum;
   }
-  
-  
+
+
   public String toString()
   {
-    StringBuffer sb = new StringBuffer();
-    
+    StringBuilder sb = new StringBuilder();
+
     sb.append (minimum);
     sb.append ("..");
     sb.append (maximum);
     sb.append (" [");
     sb.append (unit == null ? "null" : unit.getScopedName (null));
     sb.append ("]");
-    
+
     return sb.toString ();
   }
-  
+
 
   /** An abstract type is one that does describe sufficiently
       the set of possible values. A structured unit type is abstract
       if its unit is abstract. However, abstract units are not
       accepted by setUnit(), so, the result is never true.
-      
+
       @return Whether or not this type is abstract.
   */
   public boolean isAbstract ()
@@ -67,20 +67,20 @@ public class StructuredUnitType extends NumericalType
     Unit unit = getUnit(); /* considering inherited units */
     if ((unit != null) && (unit.isAbstract()))
       return true;
-    
+
     return false;
   }
-  
-      
+
+
   public void setUnit (Unit unit)
     throws java.beans.PropertyVetoException
   {
     Unit oldValue = this.unit;
     Unit newValue = unit;
-    
+
     if (oldValue == newValue)
       return;
-    
+
     if ((newValue != null) && newValue.isAbstract())
       throw new IllegalArgumentException (formatMessage (
         "err_structuredUnitType_abstractUnit",
@@ -90,8 +90,8 @@ public class StructuredUnitType extends NumericalType
     this.unit = newValue;
     firePropertyChange("unit", oldValue, newValue);
   }
-  
-  
+
+
   public Unit getUnit()
   {
     return unit;
@@ -103,16 +103,16 @@ public class StructuredUnitType extends NumericalType
   {
     RefSystemRef oldValue = this.referenceSystem;
     RefSystemRef newValue = referenceSystem;
-    
+
     if (oldValue == newValue)
       return;
-    
+
     fireVetoableChange ("referenceSystem", oldValue, newValue);
     this.referenceSystem = newValue;
     firePropertyChange ("referenceSystem", oldValue, newValue);
   }
-  
-  
+
+
   public RefSystemRef getReferenceSystem ()
   {
     return referenceSystem;
@@ -122,7 +122,7 @@ public class StructuredUnitType extends NumericalType
   /** Checks whether it is possible for this to extend wantToExtend.
       If so, nothing happens; especially, the extension graph is
       <em>not</em> changed.
-      
+
       @exception java.lang.IllegalArgumentException If <code>this</code>
                  can not extend <code>wantToExtend</code>. The message
                  of the exception indicates the reason; it is a localized
@@ -131,11 +131,11 @@ public class StructuredUnitType extends NumericalType
   void checkTypeExtension (Type wantToExtend)
   {
     StructuredUnitType   general;
-    
+
     if ((wantToExtend == null)
         || ((wantToExtend = wantToExtend.resolveAliases()) == null))
       return;
-    
+
     if (!(wantToExtend instanceof StructuredUnitType))
       throw new IllegalArgumentException (rsrc.getString (
         "err_structuredUnitType_extOther"));
@@ -144,11 +144,11 @@ public class StructuredUnitType extends NumericalType
     if (this.isAbstract() && !general.isAbstract())
       throw new IllegalArgumentException (rsrc.getString (
         "err_structuredUnitType_abstractExtConcrete"));
-        
+
     if (this.unit != null)
     {
       Unit generalUnit = general.getUnit();
-      
+
       if ((generalUnit != null)
           && !this.unit.isExtendingIndirectly (generalUnit))
       {
@@ -159,4 +159,10 @@ public class StructuredUnitType extends NumericalType
       }
     }
   }
+
+
+    public StructuredUnitType clone() {
+        return (StructuredUnitType) super.clone();
+    }
+
 }

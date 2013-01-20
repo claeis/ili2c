@@ -24,13 +24,13 @@ import java.util.*;
 /** An abstract class that groups together all the different
     kinds of models.
 */
-public abstract class Model extends Importable
+public abstract class Model extends Importable<Element>
 {
-  protected List     contents = new LinkedList ();
-  protected List     runtimeParameters = new LinkedList ();
-  protected List     qualifiedImports = new LinkedList(); // List<Model>
-  protected List     unqualifiedImports = new LinkedList(); // List<Model>
-  private List contracts=new LinkedList(); // List<Contract>
+  protected List<Element> contents = new LinkedList<Element>();
+  protected List<GraphicParameterDef> runtimeParameters = new LinkedList<GraphicParameterDef>();
+  protected List<Model> qualifiedImports = new LinkedList<Model>();
+  protected List<Model> unqualifiedImports = new LinkedList<Model>();
+  private final List<Contract> contracts=new LinkedList<Contract>();
   private String language=null;
   private boolean contracted=false;
   private String issuer=null;
@@ -40,12 +40,13 @@ public abstract class Model extends Importable
 	static public final String ILI1="1";
 	static public final String ILI2_2="2.2";
 	static public final String ILI2_3="2.3";
-	
-  protected class ElementDelegate extends AbstractCollection
+
+  protected class ElementDelegate extends AbstractCollection<Element>
   {
-    public Iterator iterator ()
+    @Override
+    public Iterator<Element> iterator ()
     {
-      return new CombiningIterator ( new Iterator[]
+      return new CombiningIterator<Element> ( new Iterator[]
                                      {
                                        runtimeParameters.iterator (),
                                        contents.iterator (),
@@ -54,6 +55,7 @@ public abstract class Model extends Importable
 
 
 
+    @Override
     public int size()
     {
       return runtimeParameters.size () + contents.size () ;
@@ -61,69 +63,73 @@ public abstract class Model extends Importable
 
 
 
-    public boolean add (Object o)
+    @Override
+    public boolean add(Element o)
     {
 		if(!checkChildElement(o)){
 			return false;
 		}
         if (o instanceof GraphicParameterDef)
         {
-          return runtimeParameters.add (o);
+          return runtimeParameters.add((GraphicParameterDef) o);
         }
 		return contents.add(o);
 
 
     }
 
-	public boolean checkChildElement (Object o)
+	public boolean checkChildElement (Element e)
 	{
 		/* In all sorts of model: UNIT, DOMAIN, FUNCTION, LINE FORM, STRUCTURE,
 		   abstract TABLE */
-		Element e=(Element)o;
-		if (o instanceof MetaDataUseDef)
+		if (e instanceof MetaDataUseDef)
 	{
 		  Element conflicting = getElement ( e.getName());
-		  if ((conflicting != null) && (conflicting != e))
-			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
+		  if ((conflicting != null) && (conflicting != e)) {
+            throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_nonuniqueMetaDataUseDefName",
 			  e.getName(),
 			  Model.this.toString()));
+        }
 		  return true;
 	}
 
 
-	if (o instanceof Unit)
+	if (e instanceof Unit)
 		{
 		  Element conflicting = getElement (e.getName());
-		  if ((conflicting != null) && (conflicting != e))
-			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
+		  if ((conflicting != null) && (conflicting != e)) {
+            throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_duplicateUnitName",
 			  e.getName(),
 			  Model.this.toString()));
+        }
 
 
 		  return true;
 		}
 
 
-		if (o instanceof Function)
+		if (e instanceof Function)
 		{
 
 
-		  if (!isContracted() && !(Model.this instanceof PredefinedModel))
-			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
+		  if (!isContracted() && !(Model.this instanceof PredefinedModel)) {
+            throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_model_functionButNoContract",
 			  e.toString(),
 			  Model.this.toString()));
+        }
 
 
 		  Element conflicting = getElement (e.getName());
-		  if ((conflicting != null) && (conflicting != e))
-			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
+		  if ((conflicting != null) && (conflicting != e)) {
+            throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_function_duplicateName",
 			  e.getName(),
 			  Model.this.toString(),
 			  conflicting.toString()));
+        }
 
 
 		  return true;
@@ -131,37 +137,40 @@ public abstract class Model extends Importable
 
 
 
-		if (o instanceof LineForm)
+		if (e instanceof LineForm)
 		{
 
 
-		  if (!isContracted() && !(Model.this instanceof PredefinedModel))
-			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
+		  if (!isContracted() && !(Model.this instanceof PredefinedModel)) {
+            throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_lineForm_inUnconctractedModel",
 			  Model.this.toString()));
+        }
 
 
 		  Element conflicting = getElement (e.getName());
-		  if ((conflicting != null) && (conflicting != e))
-			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
+		  if ((conflicting != null) && (conflicting != e)) {
+            throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_lineForm_duplicateName",
 			  e.getName(),
 			  Model.this.toString(),
 			  conflicting.toString()));
+        }
 
 
 		  return true;
 		}
 
 
-		if (o instanceof Domain)
+		if (e instanceof Domain)
 		{
 		  Element conflicting = getElement (e.getName());
-		  if ((conflicting != null) && (conflicting != e))
-			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
+		  if ((conflicting != null) && (conflicting != e)) {
+            throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_duplicateDomainName",
 			  e.getName(),
 			  Model.this.toString()));
+        }
 
 
 		  return true;
@@ -169,96 +178,100 @@ public abstract class Model extends Importable
 
 
 
-		if (o instanceof GraphicParameterDef)
+		if (e instanceof GraphicParameterDef)
 		{
 		  Element conflicting = getRuntimeParameter ( e.getName());
-		  if ((conflicting != null) && (conflicting != e))
-			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
+		  if ((conflicting != null) && (conflicting != e)) {
+            throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_graphicparam_nonunique",
 			  e.getName(),
 			  Model.this.toString()));
+        }
 
 
 		  return true;
 		}
 
 
-		if (o instanceof Topic)
+		if (e instanceof Topic)
 		{
-		  if (Model.this instanceof TypeModel)
-			throw new Ili2cSemanticException (e.getSourceLine(), formatMessage (
+		  if (Model.this instanceof TypeModel) {
+            throw new Ili2cSemanticException (e.getSourceLine(), formatMessage (
 			  "err_typeModel_addTopic",
-			  o.toString (),
+			  e.toString (),
 			  Model.this.toString ()));
+        }
 		  Element conflicting = getElement ( e.getName());
-		  if ((conflicting != null) && (conflicting != e))
-			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
+		  if ((conflicting != null) && (conflicting != e)) {
+            throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_topic_nonunique",
 			  e.getName(),
 			  Model.this.toString()));
+        }
 
 
 		  return true;
 		}
 
 
-	if(o instanceof Table){
+	if(e instanceof Table){
 		  Element conflicting = getElement ( e.getName());
-		  if ((conflicting != null) && (conflicting != e))
-			throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
+		  if ((conflicting != null) && (conflicting != e)) {
+            throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_table_nonunique",
 			  e.getName(),
 			  Model.this.toString()));
+        }
 		return true;
 	}
 
 
 		throw new ClassCastException (formatMessage (
 		  "err_container_cannotContain",
-		  Model.this.toString(), o.toString()));
+		  Model.this.toString(), e.toString()));
 	}
 
   };
 
-  public void addPreLast(Object o)
+  public void addPreLast(Element o)
   {
 	  if(!((ElementDelegate)elements).checkChildElement(o)){
 		  return;
 	  }
 	    try {
-		      ((Element) o).setBeanContext(this);
+		      o.setBeanContext(this);
 	    } catch (java.beans.PropertyVetoException pve) {
 		      throw new IllegalArgumentException(pve.getLocalizedMessage());
 	    }
-	  
+
 	  if (o instanceof GraphicParameterDef)
 	  {
-		runtimeParameters.add (o);
+		runtimeParameters.add((GraphicParameterDef) o);
 	  }
 	  contents.add(contents.size()-1,o);
 
 
   }
-  public void addBefore(Object o,Object last)
+  public void addBefore(Element o, Element last)
   {
 	  if(!((ElementDelegate)elements).checkChildElement(o)){
 		  return;
 	  }
 	    try {
-		      ((Element) o).setBeanContext(this);
+		      o.setBeanContext(this);
 	    } catch (java.beans.PropertyVetoException pve) {
 		      throw new IllegalArgumentException(pve.getLocalizedMessage());
 	    }
-	  
+
 	  if (o instanceof GraphicParameterDef)
 	  {
-		runtimeParameters.add (o);
+		runtimeParameters.add((GraphicParameterDef) o);
 	  }
 	    int idx=contents.indexOf(last);
 	    if(idx>-1){
-			  contents.add(idx,o);		    	
+			  contents.add(idx,o);
 	    }else{
-			  contents.add(o);		    			    	
+			  contents.add(o);
 	    }
 
 
@@ -275,19 +288,20 @@ public abstract class Model extends Importable
   {
     this.name = "";
   }
-  protected Collection createElements(){
+  @Override
+protected Collection<Element> createElements(){
     return new ElementDelegate();
   }
 
-  public Element getImportedElement (Class aclass, String name)
+  public Element getImportedElement(Class<?> aclass, String name)
   {
 	  Element e=getElement(aclass,name);
 	  if(e!=null){
 		  return e;
 	  }
-	  Iterator it=unqualifiedImports.iterator();
+	  Iterator<Model> it = unqualifiedImports.iterator();
 	  while(it.hasNext()){
-		  Model i=(Model)it.next();
+		  Model i = it.next();
 		  e=i.getElement(aclass,name);
 		  if(e!=null){
 			  return e;
@@ -299,33 +313,25 @@ public abstract class Model extends Importable
   /** find an element with the given name in the type namespace
    */
   private Element getElement(String name){
-	    if (name == null)
-	      return null;
-
-
-	    Iterator it = contents.iterator();
-	    while (it.hasNext ())
-	    {
-	      Element e = (Element) it.next ();
-	      if (name.equals (e.getName()))
-	        return e;
-	    }
+      if (name != null) {
+          for (Element e : contents) {
+               if (name.equals(e.getName())) {
+                   return e;
+               }
+          }
+      }
       return null;
   }
   /** find an runtime parameter with the given name
    */
   private Element getRuntimeParameter(String name){
-	    if (name == null)
-	      return null;
-
-
-	    Iterator it = runtimeParameters.iterator();
-	    while (it.hasNext ())
-	    {
-	      Element e = (Element) it.next ();
-	      if (name.equals (e.getName()))
-	        return e;
-	    }
+      if (name != null) {
+	  for (GraphicParameterDef e : runtimeParameters) {
+	       if (name.equals(e.getName())) {
+	           return e;
+	       }
+	  }
+      }
       return null;
   }
 
@@ -334,10 +340,12 @@ public abstract class Model extends Importable
      is dependent on a model <i>I</i> if and only if <i>M</i>
      imports <i>I</i>.
   */
-  public boolean isDependentOn (Element e)
+  @Override
+public boolean isDependentOn (Element e)
   {
-    if (e instanceof Model)
-      return isImporting((Model)e);
+    if (e instanceof Model) {
+        return isImporting((Model) e);
+    }
 
 
     return false;
@@ -347,7 +355,8 @@ public abstract class Model extends Importable
 
   /** Returns the name of this model.
   */
-  public String getName ()
+  @Override
+public String getName ()
   {
     return name;
   }
@@ -420,24 +429,24 @@ public String getModelVersionExpl()
 
   public Contract[] getContracts()
   {
-	  return (Contract[])contracts.toArray(new Contract[0]);
+	  return contracts.toArray(new Contract[contracts.size()]);  // Avoid double object creation. **GV1012
   }
 
 
 
   /** Returns the Importables that this model imports.
   */
-  public Model[] getImporting ()
+  public Model[] getImporting()
   {
-	  LinkedList importing=new LinkedList();
+	  ArrayList<Model> importing=new ArrayList<Model>();
 	  importing.addAll(qualifiedImports);
 	  importing.addAll(unqualifiedImports);
-    return (Model[]) importing.toArray(new Model[0]);
+    return importing.toArray(new Model[importing.size()]);  // Avoid double object creation. **GV1012
   }
 
 
   /** Let this model import another importable. */
-  public void addImport (Model importing,boolean unqualified)
+  public void addImport (Model importing, boolean unqualified)
   {
 	if(unqualified){
 		unqualifiedImports.add (importing);
@@ -452,14 +461,14 @@ public String getModelVersionExpl()
   /** Returns whether or not this model imports a specified
       Importable.
   */
-  public boolean isImporting (Model importing)
+  public boolean isImporting(Model importing)
   {
       return qualifiedImports.contains(importing) || unqualifiedImports.contains(importing);
   }
   /** Returns whether or not this model imports a specified
       Importable.
   */
-  public boolean isImporting (Model importing, boolean qualifiedImport)
+  public boolean isImporting(Model importing, boolean qualifiedImport)
   {
     if(qualifiedImport){
       return qualifiedImports.contains(importing);

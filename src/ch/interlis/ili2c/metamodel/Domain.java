@@ -30,8 +30,8 @@ public class Domain extends AbstractLeafElement
   protected boolean    _final = false;
 
   protected Domain extending = null;
-  protected Set        extendedBy = new HashSet(2);
-  protected Set        aliasedBy = new HashSet(2);
+  protected Set<Domain> extendedBy = new HashSet<Domain>(2);
+  protected Set<Type> aliasedBy = new HashSet<Type>(2);
 
 
   public Domain ()
@@ -119,7 +119,7 @@ public class Domain extends AbstractLeafElement
 
 
 
-  public String getScopedName(Container scope)
+  public String getScopedName(Container<?> scope)
   {
     Model enclosingModel, scopeModel;
     Topic enclosingTopic, scopeTopic;

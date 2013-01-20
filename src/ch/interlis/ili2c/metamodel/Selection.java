@@ -11,8 +11,6 @@
 
 package ch.interlis.ili2c.metamodel;
 
-import java.util.*;
-
 /** A selection that is part of the definition of a Viewable.
 */
 public class Selection extends AbstractLeafElement

@@ -16,24 +16,23 @@ import java.util.*;
 
     @author Sascha Brawer, sb@adasys.ch
  */
-public class Graphic extends ExtendableContainer
+public class Graphic extends ExtendableContainer<Element>
 {
   protected String   name = "";
 
-  protected List     contents = new LinkedList();
-  protected List     selections = new LinkedList();
+  protected List<SignAttribute> contents = new LinkedList<SignAttribute>();
+  protected List<Selection>     selections = new LinkedList<Selection>();
 
   protected Viewable basedOn = null;
 
   public Graphic ()
   {
   }
-  protected Collection createElements(){
-    return new AbstractCollection()
+  protected Collection<Element> createElements(){
+    return new AbstractCollection<Element>()
     {
-      public Iterator iterator() {
-        return new CombiningIterator
-        (
+      public Iterator<Element> iterator() {
+        return new CombiningIterator<Element>(
           new Iterator[]
           {
             selections.iterator(),
@@ -49,17 +48,17 @@ public class Graphic extends ExtendableContainer
       }
 
 
-      public boolean add (Object o)
+      public boolean add(Element o)
       {
         if (o == null)
           throw new IllegalArgumentException(
             rsrc.getString("err_nullNotAcceptable"));
 
         if (o instanceof SignAttribute)
-          return contents.add (o);
+          return contents.add((SignAttribute) o);
 
         if (o instanceof Selection)
-          return selections.add (o);
+          return selections.add((Selection) o);
 
         throw new ClassCastException();
       }
@@ -185,7 +184,7 @@ public class Graphic extends ExtendableContainer
        with the name of another Graphic, except the
        one that this object is extending directly.
     */
-    checkNameUniqueness (newValue, Graphic.class, (Graphic) getRealExtending(),
+    checkNameUniqueness (newValue, Graphic.class, getRealExtending(),
       "err_graphic_duplicateName");
 
     /* JavaBeans requires that the value be changed between

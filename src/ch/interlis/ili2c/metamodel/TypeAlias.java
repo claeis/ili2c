@@ -8,13 +8,11 @@
  * Revision 0.2  February 1999    Sascha Brawer <sb@adasys.ch>
  *
  *****************************************************************************/
- 
+
 package ch.interlis.ili2c.metamodel;
 
-import java.beans.beancontext.BeanContextChildSupport;
-
 /** Type aliases refer to another type.
-    
+
     @version   January 28, 1999
     @author    Sascha Brawer
 */
@@ -31,16 +29,16 @@ public class TypeAlias extends Type
     else
       return aliasing.toString();
   }
-  
-  
+
+
   protected Domain aliasing;
 
-  
+
   /** An abstract type is one that does describe sufficiently
       the set of possible values. A type alias is abstract
       if the aliased domain is abstract. Otherwise, it
       is concrete.
-      
+
       @return The result of <code>aliasing.isAbstract()</code>.
   */
   public boolean isAbstract ()
@@ -50,11 +48,11 @@ public class TypeAlias extends Type
 
     if (aliasing.isAbstract())
       return true;
-    
+
     Type aliasingType = aliasing.getType();
     if ((aliasingType != null) && aliasingType.isAbstract())
       return true;
-    
+
     return false;
   }
 
@@ -79,29 +77,28 @@ public class TypeAlias extends Type
     return aliasing;
   }
 
-  
-  public Object clone() throws java.lang.CloneNotSupportedException
-  {
+
+  public TypeAlias clone() {
     TypeAlias cloned = (TypeAlias) super.clone();
-    
+
     if (cloned.aliasing != null)
       cloned.aliasing.aliasedBy.add(cloned);
-    
+
     return cloned;
   }
-    
-  
+
+
   public void setAliasing (Domain aliasing)
     throws java.beans.PropertyVetoException
   {
     Domain oldValue = this.aliasing;
     Domain newValue = aliasing;
-    
+
     /* Check for cases in which there is nothing to do. */
     if (oldValue == newValue)
       return;
-    
-    
+
+
 	fireVetoableChange ("aliasing", oldValue, newValue);
 	if (oldValue != null)
 	  oldValue.aliasedBy.remove (this);
@@ -116,7 +113,7 @@ public class TypeAlias extends Type
   {
     if (e == aliasing)
       return true;
-    
+
     if ((aliasing != null) && (aliasing.isDependentOn(e)))
       return true;
 
@@ -130,11 +127,11 @@ public class TypeAlias extends Type
   {
     if (aliasing == null)
       return null;
-    
+
     Type t = aliasing.getType();
     if (t == null)
       return null;
-      
+
     return t.resolveAliases();
   }
 
@@ -142,7 +139,7 @@ public class TypeAlias extends Type
   /** Checks whether it is possible for this to extend wantToExtend.
       If so, nothing happens; especially, the extension graph is
       <em>not</em> changed.
-      
+
       @exception java.lang.IllegalArgumentException If <code>this</code>
                  can not extend <code>wantToExtend</code>. The message
                  of the exception indicates the reason; it is a localized
@@ -153,4 +150,5 @@ public class TypeAlias extends Type
     if ((aliasing != null) && (aliasing.getType() != null))
       aliasing.getType().checkTypeExtension (wantToExtend);
   }
+
 }

@@ -8,15 +8,13 @@
  * Revision 0.2  April 1999    Sascha Brawer <sb@adasys.ch>
  *
  *****************************************************************************/
- 
-package ch.interlis.ili2c.metamodel;
 
-import java.util.*;
+package ch.interlis.ili2c.metamodel;
 
 /** A NumericallyDerivedUnit defines a unit by multiplication with
     or division by a constant numeric factor, for example
     <code>km = m * 1000</code>.
-    
+
     @version   April 12, 1999
     @author    Sascha Brawer, sb@adasys.ch
 */
@@ -29,13 +27,13 @@ public class NumericallyDerivedUnit extends DerivedUnit
   {
     protected char conversionOperator;
     protected PrecisionDecimal conversionFactor;
-    
+
     /** Constructs a new factor given a conversion operator
         and a conversion factor.
-        
+
         @param conversionOperator the conversion operator;
                must be one of '*' or '/'.
-        
+
         @param conversionFactor the conversion factor; must not
                be zero.
     */
@@ -43,7 +41,7 @@ public class NumericallyDerivedUnit extends DerivedUnit
     {
       this.conversionOperator = conversionOperator;
       this.conversionFactor = conversionFactor;
-      
+
       if (conversionOperator == '*')
       {
         if (conversionFactor.doubleValue() == 0.0)
@@ -60,21 +58,21 @@ public class NumericallyDerivedUnit extends DerivedUnit
         throw new IllegalArgumentException (
           ch.interlis.ili2c.metamodel.Element.rsrc.getString ("err_illegalConversionOperator"));
     }
-    
-    
+
+
     public PrecisionDecimal getConversionFactor()
     {
       return conversionFactor;
     }
-    
+
     /** @return either <code>'*'</code> or <code>'/'</code>. */
     public char getConversionOperator()
     {
       return conversionOperator;
     }
   };
-  
-  
+
+
   /** Constructs a new numerically derived unit. */
   public NumericallyDerivedUnit()
   {
@@ -87,7 +85,7 @@ public class NumericallyDerivedUnit extends DerivedUnit
   /** Specify how to convert a value of this unit into a value of the
       underlying base unit. For example, 1 km is 1000 m, so the unit
       <i>km</i> is numerically derived from the base unit <i>m</i>
-      by multiplication with 1000. 
+      by multiplication with 1000.
 
       <p>In JavaBeans terminology, the <code>conversionFactors</code>
       property is both <em>bound</em> and <em>constrained</em>.
@@ -96,7 +94,7 @@ public class NumericallyDerivedUnit extends DerivedUnit
       as a <code>PropertyChangeListener</code>. In addition,
       subscribers may oppose to changes by registering as a
       <code>VetoableChangeListener</code>.
-      
+
       @exception java.beans.PropertyVetoException if some
                  VetoableChangeListener has registered for changes
                  of the <code>extending</code> property
@@ -107,17 +105,17 @@ public class NumericallyDerivedUnit extends DerivedUnit
   {
     Factor[] oldValue = this.conversionFactors;
     Factor[] newValue = conversionFactors;
-    
+
     if (oldValue == newValue)
       return;
-    
+
     /* Set value and inform interested listeners. */
     fireVetoableChange("conversionFactors", oldValue, newValue);
     this.conversionFactors = conversionFactors;
     firePropertyChange("conversionFactors", oldValue, newValue);
   }
-  
-  
+
+
   /** Returns the individual factors in this numerically derived
       unit.
   */

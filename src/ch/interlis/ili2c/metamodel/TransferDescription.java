@@ -23,20 +23,20 @@ import java.util.*;
 
 /** The basic container that holds all the models encountered during a parse;
 */
-public class TransferDescription extends Container
+public class TransferDescription extends Container<Model>
 {
   protected String   name = "";
 
 
   /** The models in this transfer description. */
-  protected List      contents = new LinkedList();
+  protected List<Model> contents = new LinkedList<Model>();
 
 
-	private HashMap metaDataBaskets=new HashMap(); // Map<String boid,DataContainer basket>
-	private HashMap basketname2boid=new HashMap(); // Map<String qualifiedBasketName,String boid>
+	private HashMap<String, DataContainer> metaDataBaskets = new HashMap<String, DataContainer>(); // Map<String boid,DataContainer basket>
+	private HashMap<String, String> basketname2boid = new HashMap<String, String>(); // Map<String qualifiedBasketName,String boid>
 
 
-  public final PredefinedModel INTERLIS = new PredefinedModel ();
+  public static final PredefinedModel INTERLIS = new PredefinedModel();
 
 
   public TransferDescription ()
@@ -45,9 +45,9 @@ public class TransferDescription extends Container
     add (INTERLIS);
     INTERLIS.setupModel();
   }
-   protected Collection createElements(){
-    return new AbstractCollection() {
-      public Iterator iterator ()
+   protected Collection<Model> createElements(){
+    return new AbstractCollection<Model>() {
+      public Iterator<Model> iterator()
       {
         return contents.iterator();
       }
@@ -61,11 +61,10 @@ public class TransferDescription extends Container
 
 
 
-      public boolean add (Object o)
+      public boolean add(Model o)
       {
-        if (o instanceof Model)
-        {
-          Model model = (Model) o;
+        if (o instanceof Model) {  // Kept to preserve binary compatibility with pre-1.5.
+          Model model = o;
           Model conflicting = (Model) getElement (Model.class, model.getName());
           if (conflicting != null)
             throw new Ili2cSemanticException(model.getSourceLine(),formatMessage (
@@ -113,7 +112,7 @@ public class TransferDescription extends Container
   }
 
 
-  public Iterator iteratorMetaDataContainer()
+  public Iterator<DataContainer> iteratorMetaDataContainer()
   {
 	return metaDataBaskets.values().iterator();
   }
@@ -125,20 +124,20 @@ public class TransferDescription extends Container
   {
 	basketname2boid.put(qualifiedBasketName,boid);
   }
-  public HashMap getBasketname2boid()
+  public HashMap<String, String> getBasketname2boid()
   {
-  	return new HashMap(basketname2boid);
+  	return (HashMap<String, String>) basketname2boid.clone();
   }
   /** @returns null if no basket known
    *
    */
   public DataContainer getMetaDataContainer(String qualifiedBasketName)
   {
-	String boid=(String)basketname2boid.get(qualifiedBasketName);
+	String boid=basketname2boid.get(qualifiedBasketName);
 	if(boid==null){
 		return null;
 	}
-	return (DataContainer)metaDataBaskets.get(boid);
+	return metaDataBaskets.get(boid);
   }
   private Ili1Format ili1Format=null;
   public Ili1Format getIli1Format(){
@@ -149,13 +148,10 @@ public class TransferDescription extends Container
   }
   public Model getLastModel()
   {
-  	Model mainModel=null;
-	Iterator modeli=iterator();
-	while(modeli.hasNext()){
-		Object modelo=modeli.next();
-		if(modelo instanceof Model){
-			mainModel=(Model)modelo;
-		}
+  	Model mainModel = null;
+	Iterator<Model> modeli = iterator();
+	while (modeli.hasNext()) {
+	    mainModel = modeli.next();
 	}
 	return mainModel;
   }

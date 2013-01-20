@@ -12,9 +12,6 @@
 package ch.interlis.ili2c.metamodel;
 
 
-import java.util.*;
-
-
 /** An attribute whose type is neither relational nor composed, but
     stored locally.
 
@@ -79,7 +76,7 @@ public class LocalAttribute extends AttributeDef
   public void setDomain (Type domain)
     throws java.beans.PropertyVetoException
   {
-    Type    realDomain;
+    Type    realDomain; // FIXME: unused ?
 
     if (domain == null)
       throw new IllegalArgumentException(rsrc.getString("err_nullNotAcceptable"));

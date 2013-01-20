@@ -8,10 +8,8 @@
  * Revision 0.2  February 1999    Sascha Brawer <sb@adasys.ch>
  *
  *****************************************************************************/
- 
-package ch.interlis.ili2c.metamodel;
 
-import java.util.*;
+package ch.interlis.ili2c.metamodel;
 
 /** An abstract class that groups together all kinds of constraints
     that can be specified in INTERLIS.
@@ -38,12 +36,12 @@ public abstract class Constraint extends AbstractLeafElement
       as a <code>PropertyChangeListener</code>. In addition,
       subscribers may oppose to changes by registering as a
       <code>VetoableChangeListener</code>.
-      
+
       @param percentage The new percentage value.
 
       @exception java.lang.IllegalArgumentException if
                  <code>condition</code> is <code>null</code>.
-                 
+
       @exception java.beans.PropertyVetoException if some
                  VetoableChangeListener has registered for
                  changes of the <code>name</code> property
@@ -54,13 +52,13 @@ public abstract class Constraint extends AbstractLeafElement
   {
     Evaluable oldValue = this.condition;
     Evaluable newValue = condition;
-    
+
     if (newValue == null)
       throw new IllegalArgumentException(rsrc.getString("err_nullNotAcceptable"));
-    
+
     if (oldValue == newValue)
       return;
-    
+
     fireVetoableChange("condition", oldValue, newValue);
     this.condition = newValue;
     firePropertyChange("condition", oldValue, newValue);

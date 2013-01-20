@@ -25,5 +25,11 @@ public class MetaobjectType extends Type
         throw new Ili2cSemanticException (rsrc.getString (
         "err_type_ExtOther"));
     }
-  } 
+  }
+
+
+  public MetaobjectType clone() {
+      return (MetaobjectType) super.clone();
+  }
+
 }

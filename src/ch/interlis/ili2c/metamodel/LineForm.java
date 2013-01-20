@@ -21,7 +21,6 @@ public class LineForm extends AbstractLeafElement
 
   public LineForm (String name)
   {
-    this();
     checkNameSanity(name, /* empty names acceptable? */ false);
     this.name = name;
   }

@@ -15,13 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 package ch.interlis.ili2c.metamodel;
 
-import java.util.*;
-
 /** A Parameter.
-    
+
     @version   May 26, 1999
     @author    Sascha Brawer
 */
@@ -32,21 +30,21 @@ public class Parameter extends AbstractLeafElement
   protected Parameter     extending = null;
   private boolean       _final = false;
   private boolean       _abstract = false;
-  
+
   public Parameter()
   {
   }
-    
+
 
   /** Returns a String that designates this view. This is useful
       to generate error messages, window titles etc. However,
       you probably would not want to use this method for generating
       Interlis description files because the lack of support for
       name scoping rules; use <code>getScopedName</code> instead.
-      
+
       @return A String consisting of the letters <code>VIEW</code>
               followed by the fully scoped name of this view.
-      
+
       @see #getScopedName(ch.interlis.Container)
   */
   public String toString()
@@ -57,7 +55,7 @@ public class Parameter extends AbstractLeafElement
 
   /** Returns a dot-separated name sequence which correctly
       designates this parameter in a specified name space.
-      
+
       @param scope The naming context in question. If you
                    pass <code>null</code>, a fully scoped
                    name is returned.
@@ -66,11 +64,11 @@ public class Parameter extends AbstractLeafElement
   {
     Model enclosingModel, scopeModel;
     Viewable enclosingViewable, scopeViewable;
-    
+
     enclosingModel = (Model) getContainer(Model.class);
     if (enclosingModel == null)
       return getName();
-    
+
     enclosingViewable = (Viewable) getContainer (Viewable.class);
     if (scope != null)
     {
@@ -82,16 +80,16 @@ public class Parameter extends AbstractLeafElement
       scopeViewable = null;
       scopeModel = null;
     }
-    
+
     if ((scopeViewable != null) && scopeViewable.isExtending (enclosingViewable))
       return getName ();
-    
+
     if ((enclosingViewable != null) && (enclosingViewable != scopeViewable))
       return enclosingViewable.getScopedName (null) + "." + getName();
-    
+
     if ((enclosingModel != null) && (enclosingModel != scopeModel))
       return enclosingModel.getScopedName (null) + "." + getName();
-    
+
     return getName ();
   }
 
@@ -119,7 +117,7 @@ public class Parameter extends AbstractLeafElement
       as a <code>PropertyChangeListener</code>. In addition,
       subscribers may oppose to changes by registering as a
       <code>VetoableChangeListener</code>.
-      
+
       @param name The new name for this parameter.
 
       @exception java.lang.IllegalArgumentException if <code>name</code>
@@ -131,7 +129,7 @@ public class Parameter extends AbstractLeafElement
                  would conflict with another parameter. The
                  only acceptable conflict is with the parameter that
                  this view directly extends.
-                 
+
       @exception java.beans.PropertyVetoException if some
                  VetoableChangeListener has registered for
                  changes of the <code>name</code> property
@@ -142,9 +140,9 @@ public class Parameter extends AbstractLeafElement
   {
     String oldValue = this.name;
     String newValue = name;
-    
+
     checkNameSanity (name, /* empty ok? */ false);
-    
+
     /* Make sure that the new name does not conflict
        with the name of another Topic, except the
        one that this object is extending directly.
@@ -156,21 +154,21 @@ public class Parameter extends AbstractLeafElement
     this.name = newValue;
     firePropertyChange("name", oldValue, newValue);
   }
-  
-  
+
+
   public Type getType()
   {
     return type;
   }
-  
-  
+
+
   public void setType (Type type)
     throws java.beans.PropertyVetoException
   {
     Type oldValue = this.type;
     Type newValue = type;
     Type realType = Type.findReal (newValue);
-    
+
     if (realType != null)
     {
       if (realType instanceof CompositionType)
@@ -179,14 +177,14 @@ public class Parameter extends AbstractLeafElement
           "err_parameter_nonLocalType",
           this.toString ()));
       }
-    
+
       if (realType instanceof ReferenceType)
       {
         Table referred = (Table)((ReferenceType) realType).getReferred();
         TransferDescription td = (referred == null)
           ? null
           : (TransferDescription) referred.getContainer (TransferDescription.class);
-      
+
         if ((referred != null) && !referred.isExtending (td.INTERLIS.METAOBJECT))
           throw new IllegalArgumentException (formatMessage (
             "err_parameter_refToNonMeta",
@@ -195,7 +193,7 @@ public class Parameter extends AbstractLeafElement
           ));
       }
     }
-    
+
     fireVetoableChange ("type", oldValue, newValue);
     if (newValue != null)
       newValue.setExtending (extending == null ? null : extending.getType());
@@ -203,26 +201,26 @@ public class Parameter extends AbstractLeafElement
     this.type = newValue;
     firePropertyChange("type", oldValue, newValue);
   }
-  
-  
+
+
   public Parameter getExtending ()
   {
     return extending;
   }
-  
+
   public void setExtending (Parameter extending)
     throws java.beans.PropertyVetoException
   {
     Parameter oldValue = this.extending;
     Parameter newValue = extending;
-    
+
     if (oldValue == newValue)
       return;
-    
+
     if ((newValue != null) && (newValue._final))
       throw new IllegalArgumentException(
         formatMessage ("err_cantExtendFinal", newValue.toString()));
-    
+
     /* Ensure that the extension graph will be acyclic. */
 	if ((newValue != null) && newValue.isExtendingIndirectly(this))
 	{
@@ -258,14 +256,14 @@ public class Parameter extends AbstractLeafElement
     }
     return false;
   }
-  
-  
+
+
 
   public boolean isDependentOn (Element e)
   {
     if (e instanceof Parameter)
       return isExtendingIndirectly((Parameter) e);
-    
+
     if ((e instanceof Type) && (type != null))
       return type.isDependentOn (e);
 

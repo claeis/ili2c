@@ -1,5 +1,8 @@
 package ch.interlis.ili2c.metamodel;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 
 /** a type used to describe an 'OBJECT OF ..' function argument
  * and the implicit particles (base-viewables) of vies
@@ -7,10 +10,11 @@ package ch.interlis.ili2c.metamodel;
  */
 public class ObjectType extends Type
 {
-	private Viewable ref;
+	private final Viewable<?> ref;
 	private boolean objects=false;
-	private java.util.ArrayList restrictedTo=new java.util.ArrayList();
-	public ObjectType(Viewable ref)
+	private ArrayList<AbstractClassDef<?>> restrictedTo = new ArrayList<AbstractClassDef<?>>();
+
+	public ObjectType(Viewable<?> ref)
 	{
 		this.ref=ref;
 	}
@@ -26,11 +30,11 @@ public class ObjectType extends Type
 		public boolean isObjects() {
 			return objects;
 		}
-		  public void addRestrictedTo(AbstractClassDef classOrAssociation)
+		  public void addRestrictedTo(AbstractClassDef<?> classOrAssociation)
 		  {
 			  restrictedTo.add(classOrAssociation);
 		  }
-		  public java.util.Iterator iteratorRestrictedTo()
+		  public Iterator<AbstractClassDef<?>> iteratorRestrictedTo()
 		  {
 		  	return restrictedTo.iterator();
 		  }
@@ -43,7 +47,16 @@ public class ObjectType extends Type
 		        throw new Ili2cSemanticException (rsrc.getString (
 		        "err_type_ExtOther"));
 		    }
-		  } 
+		  }
+
+
+    public ObjectType clone() {
+        ObjectType cloned = (ObjectType) super.clone();
+
+        cloned.restrictedTo = (ArrayList<AbstractClassDef<?>>) restrictedTo.clone();
+        return cloned;
+    }
+
 }
 
 

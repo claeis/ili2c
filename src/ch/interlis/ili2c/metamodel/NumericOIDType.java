@@ -24,5 +24,11 @@ public class NumericOIDType extends OIDType
 	        throw new Ili2cSemanticException (rsrc.getString (
 	        "err_numericOidType_ExtOther"));
 	    }
-	  } 
+	  }
+
+
+    public NumericOIDType clone() {
+        return (NumericOIDType) super.clone();
+    }
+
 }

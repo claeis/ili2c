@@ -8,13 +8,11 @@
  * Revision 0.2  February 1999    Sascha Brawer <sb@adasys.ch>
  *
  *****************************************************************************/
- 
+
 package ch.interlis.ili2c.metamodel;
 
-import java.util.*;
-
 /** An assignment to a parameter.
-    
+
     @version   July 15, 1999
     @author    Sascha Brawer
 */
@@ -22,8 +20,8 @@ public class ParameterAssignment extends AbstractLeafElement
 {
   protected Parameter  assigned;
   protected Evaluable  value;
-  
-  
+
+
   /** Constructs a new ParameterAssignment that specifies
       which value is assigned to which parameter.
   */
@@ -31,23 +29,23 @@ public class ParameterAssignment extends AbstractLeafElement
   {
     this.assigned = assigned;
     this.value = value;
-    
+
     Type assignedType = null;
     if ((value != null) && (assigned != null))
       assignedType = assigned.getType ();
-    
+
     if (assignedType != null)
       value.checkAssignment (assigned, assignedType);
   }
-  
+
   /** Returns the parameter that is being assigned.
   */
   public Parameter getAssigned ()
   {
     return assigned;
   }
-  
-  
+
+
   /** Returns the value that gets assigned to the parameter.
   */
   public Evaluable getValue ()

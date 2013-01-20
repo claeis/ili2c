@@ -10,7 +10,6 @@
  *****************************************************************************/
 
 package ch.interlis.ili2c.metamodel;
-import java.util.*;
 
 
 /** A special type of View that is based on selecting another Viewable.
@@ -20,14 +19,14 @@ import java.util.*;
 public class SelectionView extends UnextendableView
 {
   protected ViewableAlias selected = null;
-  
+
   /** Construct a new SelectionView.
   */
   public SelectionView ()
   {
   }
-  
-  
+
+
   /** Return the selected Viewable.
   */
   public ViewableAlias getSelected()
@@ -35,9 +34,9 @@ public class SelectionView extends UnextendableView
     return selected;
   }
 
-  
+
   /** Set the selected Viewable.
-      
+
       @exception java.beans.PropertyVetoException if some
                  VetoableChangeListener has registered for changes
                  of the <code>selected</code> property
@@ -48,10 +47,10 @@ public class SelectionView extends UnextendableView
   {
     ViewableAlias oldValue = this.selected;
     ViewableAlias newValue = selected;
-    
+
     if (oldValue == newValue)
       return;
-    
+
     fireVetoableChange("selected", oldValue, newValue);
     this.selected = newValue;
     firePropertyChange("selected", oldValue, newValue);
@@ -66,7 +65,7 @@ public class SelectionView extends UnextendableView
   /** Causes this selection view to extend another selection
       view. The attributes of the extended view can be addressed
       as if they were specified by this view.
-       
+
       <p>In JavaBeans terminology, the <code>extending</code>
       property is both <em>bound</em> and <em>constrained</em>.
       This means that any interested party can ask for being
@@ -105,32 +104,32 @@ public class SelectionView extends UnextendableView
       throw new IllegalArgumentException(formatMessage(
         "err_selectionViewExtendingOther",
         this.toString(), extending.toString()));
-    
+
     super.setExtending(extending);
   }
 
 
   /** Resolves an alias name for a base (the name before the tilde
       in INTERLIS-2 views).
-  
+
       @param alias The alias name of the base table.
-      
+
       @return The ViewableAlias, or <code>null</code> if the name
               could not be resolved.
-      
+
       @see ch.interlis.ViewableAlias
   */
   public ViewableAlias resolveBaseAlias (String alias)
   {
     if ((selected != null) && alias.equals (selected.getName()))
       return selected;
-        
+
     return super.resolveBaseAlias (alias);
   }
 
   /** Returns the name space of evaluables (right-hand side of assignments)
       mentioned somewhere inside this Container.
-      
+
       <p>Certain elements of Containers, for instance constraints or selections,
       refer to attributes. The name space of these attributes is though not
       necessarily identical to the container.  For example, attribute names
@@ -141,7 +140,7 @@ public class SelectionView extends UnextendableView
   {
     if (selected == null)
       return null;
-      
+
     return selected.getAliasing ();
   }
 }

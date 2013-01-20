@@ -8,22 +8,23 @@
  * Revision 0.2  February 1999    Sascha Brawer <sb@adasys.ch>
  *
  *****************************************************************************/
- 
+
 package ch.interlis.ili2c.metamodel;
 
 /** A Function declaration, as expressed by the FUNCTION construct
     in INTERLIS-2.
-    
+
     @author <a href="sb@adasys.ch">Sascha Brawer</a>, Adasys AG, CH-8006 Zurich
     @version June 30, 1999
 */
 public class Function extends AbstractLeafElement
 {
+    private static final FormalArgument[] NO_ARGS = new FormalArgument[0];
   protected String name = null;
   protected Type domain = null;
-  protected FormalArgument[] arguments = new FormalArgument[0];
+  protected FormalArgument[] arguments = NO_ARGS;
   protected String explanation = null;
-  
+
   /** Constructs a new Function. Before you can add a new function
       to a Model, you have to set its name, arguments and domain.
       Otherwise, the model will reject the function being added.
@@ -31,11 +32,11 @@ public class Function extends AbstractLeafElement
   public Function()
   {
   }
-  
-  
+
+
   /** Determines the current value of the <code>name</code> property.
       Functions are identified and used by specifying their name.
-      
+
       @see #setName(java.lang.String)
   */
   public String getName()
@@ -54,7 +55,7 @@ public class Function extends AbstractLeafElement
       as a <code>PropertyChangeListener</code>. In addition,
       subscribers may oppose to changes by registering as a
       <code>VetoableChangeListener</code>.
-      
+
       @param name The new name for this Function.
 
       @exception java.lang.IllegalArgumentException if <code>name</code>
@@ -64,7 +65,7 @@ public class Function extends AbstractLeafElement
 
       @exception java.lang.IllegalArgumentException if the name
                  would conflict with another function.
-                 
+
       @exception java.beans.PropertyVetoException if some
                  VetoableChangeListener has registered for
                  changes of the <code>name</code> property
@@ -75,7 +76,7 @@ public class Function extends AbstractLeafElement
   {
     String oldValue = this.name;
     String newValue = name;
-    
+
     checkNameSanity(name, /* empty names acceptable? */ false);
     checkNameUniqueness(name, Function.class, null,
       "err_duplicateFunctionName");
@@ -85,10 +86,10 @@ public class Function extends AbstractLeafElement
     firePropertyChange("name", oldValue, newValue);
   }
 
-  
+
   /** Returns a dot-separated name sequence which correctly
       designates this function in a specified name space.
-      
+
       @param scope The naming context in question. If you
                    pass <code>null</code>, a fully scoped
                    name is returned.
@@ -96,21 +97,21 @@ public class Function extends AbstractLeafElement
   public String getScopedName (Container scope)
   {
     Model enclosingModel, scopeModel;
-    
+
     enclosingModel = (Model) getContainer(Model.class);
-    
+
     /* A function which is not embeded in a model is weird, but possible
        due to using the JavaBeans component model which requires us to
        allow for an empty constructor.
     */
     if (enclosingModel == null)
       return getName ();
-    
+
     if (scope != null)
       scopeModel = (Model) scope.getContainerOrSame (Model.class);
     else
       scopeModel = null;
-    
+
     if (enclosingModel == scopeModel)
       return getName();
     else
@@ -122,8 +123,8 @@ public class Function extends AbstractLeafElement
   {
     return "FUNCTION " + getScopedName (null);
   }
-  
-  
+
+
   /** Determines the value of the <code>explanation</code> property.
       Each Function can optionally be provided with an explanation
       describing what it does and how it works. These explanations are
@@ -145,11 +146,11 @@ public class Function extends AbstractLeafElement
       <p>Since the <code>explanation</code> property is both <em>bound</em>
       and <em>constrained</em>, an interested party can listen and oppose
       to any changes of its value.
-      
-      @param explanation    The new explanation. Pass <code>null</code> to 
+
+      @param explanation    The new explanation. Pass <code>null</code> to
                             delete the explanation of a Function; the
                             generators will then declare the function
-                            without any explanation at all. 
+                            without any explanation at all.
 
       @exception java.beans.PropertyVetoException if some VetoableChangeListener
                  has registered for changes of the <code>explanation</code> property
@@ -160,7 +161,7 @@ public class Function extends AbstractLeafElement
   {
     String oldValue = this.explanation;
     String newValue = explanation;
-        
+
     fireVetoableChange("explanation", oldValue, newValue);
     this.explanation = newValue;
     firePropertyChange("explanation", oldValue, newValue);
@@ -188,10 +189,10 @@ public class Function extends AbstractLeafElement
   {
     FormalArgument[] oldValue = this.arguments;
     FormalArgument[] newValue = arguments;
-    
+
     if (oldValue == newValue)
       return;
-    
+
     fireVetoableChange ("arguments", oldValue, newValue);
     this.arguments = newValue;
     if(newValue!=null){
@@ -206,7 +207,7 @@ public class Function extends AbstractLeafElement
     }
     firePropertyChange ("arguments", oldValue, newValue);
   }
-  
+
 
   /** Determines the current value of the <code>domain</code> property.
       The declaration of INTERLIS Functions includes their <em>domain</em>,
@@ -217,7 +218,7 @@ public class Function extends AbstractLeafElement
   {
     return domain;
   }
-  
+
 
   /** Sets the value of the <code>domain</code> property.
       The declaration of INTERLIS Functions includes their <em>domain</em>,
@@ -227,9 +228,9 @@ public class Function extends AbstractLeafElement
       <p>Since the <code>domain</code> property is both <em>bound</em>
       and <em>constrained</em>, an interested party can listen and oppose
       to any changes of its value.
-      
+
       @param domain   The new domain for this Function.
-                        
+
       @exception java.lang.IllegalArgumentException if <code>domain</code>
                  is <code>null</code>.
 
@@ -242,14 +243,14 @@ public class Function extends AbstractLeafElement
   {
     Type oldValue = this.domain;
     Type newValue = domain;
-    
+
     if (newValue == null)
       throw new IllegalArgumentException("null is not acceptable as "
-        + "domain of a FUNCTION");    
-    
+        + "domain of a FUNCTION");
+
     fireVetoableChange ("domain", oldValue, newValue);
     this.domain = newValue;
     firePropertyChange ("domain", oldValue, newValue);
   }
-  
+
 }

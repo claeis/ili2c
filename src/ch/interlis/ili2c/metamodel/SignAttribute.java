@@ -16,13 +16,13 @@ import java.util.*;
 /** A sign attribute describes the evaluation and assignment of parameters of
 *   a SIGN class. A sign attribute is part of a graphic definition.
 */
-public class SignAttribute extends ExtendableContainer
+public class SignAttribute extends ExtendableContainer<Element>
 {
   protected String            name = "";
   protected Table             generating = null;
   protected SignInstruction[] instructions = new SignInstruction[0];
 
-  protected Collection createElements(){
+  protected Collection<Element> createElements(){
     return null;
   }
   public void checkIntegrity(){
@@ -72,7 +72,7 @@ public class SignAttribute extends ExtendableContainer
        one that this object is extending directly.
     */
     checkNameUniqueness (newValue, SignAttribute.class,
-      (Element)getRealExtending(),
+      getRealExtending(),
       "err_signAttr_duplicateName");
 
     /* JavaBeans requires that the value be changed between

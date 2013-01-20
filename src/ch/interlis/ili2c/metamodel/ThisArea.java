@@ -5,7 +5,7 @@ public class ThisArea extends PathEl
 {
 	private boolean thatArea;
 	private DecompositionView base;
-        private SurfaceType type=null;
+
     public ThisArea(DecompositionView base,boolean thatArea)
     {
 	    this.thatArea=thatArea;

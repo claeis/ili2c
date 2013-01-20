@@ -11,6 +11,8 @@
 
 package ch.interlis.ili2c.metamodel;
 import java.util.Iterator;
+import java.util.Set;
+
 import ch.ehi.basics.logging.EhiLogger;
 
 
@@ -19,6 +21,7 @@ import ch.ehi.basics.logging.EhiLogger;
 
     @version   January 28, 1999
     @author    Sascha Brawer
+    @author    Gordan Vosicki - Added cloning support
 */
 public class EnumerationType extends BaseType {
   protected boolean ordered = false;
@@ -158,17 +161,17 @@ public class EnumerationType extends BaseType {
       ret.setFinal(true);
     }
     // add elements defined by this
-    Iterator elei=enumeration.getElements();
+    Iterator<Enumeration.Element> elei = enumeration.getElements();
     while(elei.hasNext()){
-      Enumeration.Element ele=(Enumeration.Element)elei.next();
+      Enumeration.Element ele = elei.next();
       mergeTree(ret,ele);
     }
     return ret;
   }
   static void mergeTree(Enumeration tree,Enumeration.Element newele){
-    Iterator desti=tree.getElements();
+    Iterator<Enumeration.Element> desti = tree.getElements();
     while(desti.hasNext()){
-      Enumeration.Element dest=(Enumeration.Element)desti.next();
+      Enumeration.Element dest = desti.next();
       if(dest.getName().equals(newele.getName())){
         // found
         // has newele a substree?
@@ -178,9 +181,9 @@ public class EnumerationType extends BaseType {
             if(newele.getSubEnumeration().isFinal()){
               dest.getSubEnumeration().setFinal(true);
             }
-            Iterator elei=newele.getSubEnumeration().getElements();
+            Iterator<Enumeration.Element> elei = newele.getSubEnumeration().getElements();
             while(elei.hasNext()){
-              Enumeration.Element ele=(Enumeration.Element)elei.next();
+              Enumeration.Element ele = elei.next();
               mergeTree(dest.getSubEnumeration(),ele);
             }
           }else{
@@ -246,23 +249,23 @@ public class EnumerationType extends BaseType {
     }
 
   }
-  public java.util.Set getDirectExtensions()
+  public Set getDirectExtensions()
   {
   	return extendedBy;
   }
   static void checkTree(Enumeration tree,Enumeration.Element newele){
-    Iterator desti=tree.getElements();
+    Iterator<Enumeration.Element> desti=tree.getElements();
     while(desti.hasNext()){
-      Enumeration.Element dest=(Enumeration.Element)desti.next();
+      Enumeration.Element dest = desti.next();
       if(dest.getName().equals(newele.getName())){
         // found
         // substree?
         if(newele.getSubEnumeration()!=null
             && dest.getSubEnumeration()!=null){
             // check subtree
-            Iterator elei=newele.getSubEnumeration().getElements();
+            Iterator<Enumeration.Element> elei=newele.getSubEnumeration().getElements();
             while(elei.hasNext()){
-              Enumeration.Element ele=(Enumeration.Element)elei.next();
+              Enumeration.Element ele = elei.next();
               checkTree(dest.getSubEnumeration(),ele);
             }
         }
@@ -319,13 +322,13 @@ public class EnumerationType extends BaseType {
     if ((a == null) || (b == null))
       return false;
 
-    Iterator iter_a = a.getElements();
-    Iterator iter_b = b.getElements();
+    Iterator<Enumeration.Element> iter_a = a.getElements();
+    Iterator<Enumeration.Element> iter_b = b.getElements();
 
     while (iter_a.hasNext() && iter_b.hasNext())
     {
-      Enumeration.Element elt_a = (Enumeration.Element) iter_a.next();
-      Enumeration.Element elt_b = (Enumeration.Element) iter_b.next();
+      Enumeration.Element elt_a = iter_a.next();
+      Enumeration.Element elt_b = iter_b.next();
 
       if ((elt_a == null) != (elt_b == null))
         return false;
@@ -343,4 +346,15 @@ public class EnumerationType extends BaseType {
 
     return true;
   }
+
+
+  public EnumerationType clone() {
+      EnumerationType cloned = (EnumerationType) super.clone();
+
+      if (enumeration != null) {
+          cloned.enumeration = enumeration.clone();
+      }
+      return cloned;
+  }
+
 }

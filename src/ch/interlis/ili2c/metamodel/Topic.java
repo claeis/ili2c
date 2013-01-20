@@ -21,7 +21,7 @@ import java.util.*;
 
     @author Sascha Brawer, sb@adasys.ch
  */
-public class Topic extends AbstractPatternDef
+public class Topic extends AbstractPatternDef<Element>
 {
 	/** is this a VIEW TOPIC
 	*/
@@ -31,7 +31,7 @@ public class Topic extends AbstractPatternDef
   private Domain basketOid=null;
 
 
-  protected List     dependsOn = new LinkedList();
+  protected List<Topic> dependsOn = new LinkedList<Topic>();
 
 
   public Topic()
@@ -48,32 +48,35 @@ public class Topic extends AbstractPatternDef
 
 
 
-  public String getScopedName(Container scope)
+  public String getScopedName(Container<?> scope)
   {
     Model enclosingModel, scopeModel;
 
 
     enclosingModel = (Model) getContainer(Model.class);
-    /* A topic which is not embeded in a model is weird, but possible
+    /* A topic which is not embedded in a model is weird, but possible
        due to using the JavaBeans component model which requires us to
        allow for an empty constructor. Therefore, a Topic object's
        lifetime includes a (typically short) period in which it
        has an empty bean context.
     */
-    if (enclosingModel == null)
-      return getName();
+    if (enclosingModel == null) {
+        return getName();
+    }
 
 
-    if (scope != null)
-      scopeModel = (Model) scope.getContainerOrSame(Model.class);
-    else
-      scopeModel = null;
+    if (scope != null) {
+        scopeModel = (Model) scope.getContainerOrSame(Model.class);
+    } else {
+        scopeModel = null;
+    }
 
 
-    if (enclosingModel == scopeModel)
-      return getName();
-    else
-      return enclosingModel.getName() + "." + getName();
+    if (enclosingModel == scopeModel) {
+        return getName();
+    } else {
+        return enclosingModel.getName() + "." + getName();
+    }
   }
 
 
@@ -121,12 +124,13 @@ public class Topic extends AbstractPatternDef
        with the name of another Topic, except the
        one that this object is extending directly.
     */
-    checkNameUniqueness(newValue, Topic.class, (Topic) getRealExtending(),
+    checkNameUniqueness(newValue, Topic.class, getRealExtending(),
       "err_topic_duplicateName");
 
 
-    if (newValue.equals(oldValue))
-      return;
+    if (newValue.equals(oldValue)) {
+        return;
+    }
 
 
     /* JavaBeans requires that the value be changed between
@@ -186,7 +190,7 @@ public class Topic extends AbstractPatternDef
        if extending is neither null nor an instance of Topic.
        This is exactly what the API documentation specifies.
     */
-    super.setExtending ((Topic) extending);
+    super.setExtending (extending);
   }
 
 
@@ -205,13 +209,15 @@ public class Topic extends AbstractPatternDef
   */
   public void makeDependentOn (Topic dependee)
   {
-    if (dependee == this)
-      throw new IllegalArgumentException (formatMessage ("err_topic_dependentOnSelf",
-                                                         this.toString ()));
+    if (dependee == this) {
+        throw new IllegalArgumentException (formatMessage ("err_topic_dependentOnSelf",
+                                                             this.toString ()));
+    }
 
 
-    if (dependee == null)
-      throw new IllegalArgumentException();
+    if (dependee == null) {
+        throw new IllegalArgumentException();
+    }
 
 
     dependsOn.add(dependee);
@@ -222,7 +228,7 @@ public class Topic extends AbstractPatternDef
   /** Allows to find out on which topics this topic does depend.
       @see #makeDependentOn(ch.interlis.Topic)
   */
-  public Iterator getDependentOn()
+  public Iterator<Topic> getDependentOn()
   {
     return dependsOn.iterator();
   }
@@ -231,8 +237,9 @@ public class Topic extends AbstractPatternDef
 
   public boolean isDependentOn (Element other)
   {
-    if ((other instanceof Topic) && dependsOn.contains (other))
-      return true;
+    if ((other instanceof Topic) && dependsOn.contains (other)) {
+        return true;
+    }
 
 
     return super.isDependentOn (other);
@@ -242,25 +249,28 @@ public class Topic extends AbstractPatternDef
 
   boolean containsConcreteExtensionOfTable (Table abstractTable)
   {
-    if (!abstractTable.isAbstract())
-      throw new IllegalArgumentException ();
+    if (!abstractTable.isAbstract()) {
+        throw new IllegalArgumentException ();
+    }
 
 
-    Iterator iter = iterator();
+    Iterator<Element> iter = iterator();
     while (iter.hasNext())
     {
-      Object obj = iter.next();
+        Element obj = iter.next();
       if (obj instanceof Table)
       {
         Table tab = (Table) obj;
-        if (!tab.isAbstract() && tab.isExtending (abstractTable))
-          return true;
+        if (!tab.isAbstract() && tab.isExtending (abstractTable)) {
+            return true;
+        }
       }
     }
 
 
-    if (extending != null)
-      return ((Topic) extending).containsConcreteExtensionOfTable (abstractTable);
+    if (extending != null) {
+        return ((Topic) extending).containsConcreteExtensionOfTable (abstractTable);
+    }
 
 
     return false;

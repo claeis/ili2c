@@ -1,5 +1,4 @@
 package ch.interlis.ili2c.metamodel;
-import java.util.*;
 
 
 
@@ -14,6 +13,6 @@ public abstract class UnextendableView extends View
                        extending.toString()));
 
 
-    super.setExtending ((UnextendableView) extending);
+    super.setExtending (extending);
   }
 }

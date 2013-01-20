@@ -22,8 +22,11 @@ package ch.interlis.ili2c.metamodel;
  * @version $Revision: 1.2 $ $Date: 2007-12-06 10:57:27 $
  */
 public class Ili2cSemanticException extends RuntimeException {
-	private int sourceLine=0;
-	public Ili2cSemanticException() {
+    private static final long serialVersionUID = 6210019945556647248L;
+
+    private int sourceLine=0;
+
+    public Ili2cSemanticException() {
 		super();
 	}
 	public Ili2cSemanticException(String message) {

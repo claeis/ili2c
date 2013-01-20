@@ -6,7 +6,8 @@ import java.util.*;
 public class ExistenceConstraint extends Constraint
 {
 	private ObjectPath restrictedAttribute;
-	private LinkedList requiredIn=new LinkedList(); // List<ObjectPath>
+	private LinkedList<ObjectPath> requiredIn = new LinkedList<ObjectPath>();
+
 	/** define the attribute that should be checked by this constraint.
 	*/
 	public void setRestrictedAttribute(ObjectPath path)
@@ -23,7 +24,7 @@ public class ExistenceConstraint extends Constraint
 	{
 		requiredIn.add(attribute);
 	}
-        public Iterator iteratorRequiredIn()
+        public Iterator<ObjectPath> iteratorRequiredIn()
         {
           return requiredIn.iterator();
         }

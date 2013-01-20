@@ -51,7 +51,13 @@ public class BasketType extends Type {
 	        throw new Ili2cSemanticException (rsrc.getString (
 	        "err_type_ExtOther"));
 	    }
-	  } 
-};
+	  }
+
+
+    public BasketType clone() {
+        return (BasketType) super.clone();
+    }
+
+}
 
 

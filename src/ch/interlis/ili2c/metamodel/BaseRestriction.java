@@ -4,13 +4,13 @@ import java.util.LinkedList;
 
 public class BaseRestriction extends Selection
 {
-  private String[] base;
-  private LinkedList restrictedTo;
+  private final String[] base;
+  private final LinkedList<Viewable<?>> restrictedTo;
   private ViewableAlias alias=null;
   /** Constructs a new Selection given the selected View
       and the selection condition.
   */
-  public BaseRestriction(Viewable selected, String[] base)
+  public BaseRestriction(Viewable<?> selected, String[] base)
   {
 	super(selected);
 	this.base=base;
@@ -20,7 +20,7 @@ public class BaseRestriction extends Selection
             "err_selbase_unknownbase",
             getSelected().toString(), base[0]));
         }
-	this.restrictedTo=new LinkedList();
+	this.restrictedTo = new LinkedList<Viewable<?>>();
   }
 
   public void addRestrictedTo(Viewable restrictedTo)

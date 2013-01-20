@@ -8,14 +8,14 @@
  * Revision 0.2  February 1999    Sascha Brawer <sb@adasys.ch>
  *
  *****************************************************************************/
- 
+
 package ch.interlis.ili2c.metamodel;
 
 import java.util.*;
 
 /** Unit is an abstract class which serves as a common
     superclass for all Interlis unit definitions.
-    
+
     @version   April 7, 1999
     @author    Sascha Brawer
 */
@@ -24,20 +24,20 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
   protected String        name = "";
   protected String        docName = "";
   protected Unit		  extending = null;
-  protected Set           extendedBy = new HashSet(2);
+  protected Set<Unit>     extendedBy = new HashSet<Unit>(2);
   protected boolean       _abstract = false;
   protected boolean       _final = false;
-  
+
   public Unit() {
   }
-    
+
 
   public String toString()
   {
     return "UNIT " + getScopedName(null);
   }
-  
-  
+
+
   public String getName() {
     return name;
   }
@@ -51,7 +51,7 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
   public String getScopedName(Container scope) {
     Model enclosingModel, scopeModel;
     Topic enclosingTopic, scopeTopic;
-    
+
     enclosingModel = (Model) getContainer (Model.class);
     enclosingTopic = (Topic) getContainer (Topic.class);
 
@@ -63,7 +63,7 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
     */
     if ((enclosingModel == null) && (enclosingTopic == null))
       return getName();
-    
+
     if (scope != null)
     {
       scopeModel = (Model) scope.getContainerOrSame(Model.class);
@@ -74,13 +74,13 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
       scopeModel = null;
       scopeTopic = null;
     }
-    
+
     if ((enclosingModel == scopeModel) && (enclosingTopic == null))
       return getName();
 
     if ((enclosingTopic == scopeTopic) && (enclosingTopic != null))
       return getName();
-    
+
     if (enclosingTopic == null)
       return enclosingModel.getName() + "." + getName();
     else
@@ -93,18 +93,18 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
   {
     String oldValue = this.name;
     String newValue = name;
-    
+
     boolean noDocName = "".equals(docName);
-    
+
     checkNameSanity(name, /* empty ok? */ false);
-    
+
     /* JavaBeans requires that the value be changed between
        firing VetoableChangeEvent and PropertyChangeEvent
        objects. */
     fireVetoableChange("name", oldValue, newValue);
     if (noDocName)
       fireVetoableChange("docName", "", newValue);
-      
+
     this.name = newValue;
     if (noDocName)
       this.docName = newValue;
@@ -113,46 +113,46 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
     if (noDocName)
       firePropertyChange("docName", "", newValue);
   }
-  
+
   public void setDocName(String docName)
     throws java.beans.PropertyVetoException
   {
     String oldValue = this.docName;
     String newValue = docName;
-    
+
     if (docName == null)
       throw new IllegalArgumentException();
-      
+
     fireVetoableChange("docName", oldValue, newValue);
     this.docName = newValue;
     firePropertyChange("docName", oldValue, newValue);
   }
-  
+
 
   public Element getExtending() {
     return extending;
   }
-  
+
 	public Element getRealExtending()
 	{
 		Element ext=getExtending();
 		return (ext!=null) ? ext.getReal() : null;
 	}
-  public Set getExtensions ()
+  public Set<Unit> getExtensions ()
   {
-    Set result = new HashSet ();
-    getExtensions_recursiveHelper (result);
+    Set<Unit> result = new HashSet<Unit>();
+    getExtensions_recursiveHelper(result);
     return result;
   }
 
 
   /** @see getExtensions() */
-  private final void getExtensions_recursiveHelper (Set s)
+  private final void getExtensions_recursiveHelper(Set<Unit> s)
   {
-    s.add (this);
-    Iterator iter = extendedBy.iterator();
+    s.add(this);
+    Iterator<Unit> iter = extendedBy.iterator();
     while (iter.hasNext())
-      ((Unit) iter.next()).getExtensions_recursiveHelper (s);
+      iter.next().getExtensions_recursiveHelper(s);
   }
   public boolean isExtending (Element extendee)
   {
@@ -162,13 +162,13 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
       if (parent == extendee)
         return true;
     }
-    
+
     return false;
   }
 
   /** @return whether or not <code>this</code> is extending
               <code>u</code>.
-  */  
+  */
   public boolean isExtendingIndirectly(Unit u) {
     for (Unit parent = this; parent != null;
          parent = parent.extending)
@@ -178,14 +178,14 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
     }
     return false;
   }
-  
-  
+
+
   public boolean isDependentOn(Element e) {
     if (e instanceof Unit) {
       boolean i = isExtendingIndirectly((Unit) e);
       return i;
     }
-    
+
     return false;
   }
 
@@ -196,17 +196,17 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
     {
       if (p.isExtendingIndirectly (this))
         return p;
-      
+
       if (this.isExtendingIndirectly (p))
         return this;
     }
-    
+
     return null;
   }
-  
-  
+
+
   /** Sets the Unit which <code>this</code> extends.
-  
+
       @param ext The new Unit being extended, or <code>null</code>.
       @exception java.lang.IllegalArgumentException if <code>ext</code>
                  is declared as <code>final</code>.
@@ -220,13 +220,13 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
 
     if (oldValue == newValue)
       return; /* nothing needs to be done */
-    
+
 	checkExtending(ext);
-	    	
+
     fireVetoableChange("extending", oldValue, newValue);
 
     if (extending != null)
-      extending.extendedBy.remove(this);    
+      extending.extendedBy.remove(this);
     extending = ext;
     if (ext != null)
       ext.extendedBy.add(this);
@@ -235,7 +235,7 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
   }
 
 	/** template method
-	 */  
+	 */
 	protected void checkExtending(Unit ext){
 		if ((ext != null) && (ext._final))
 		  throw new IllegalArgumentException (formatMessage (
@@ -245,7 +245,7 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
 		if ((ext != null) && (!ext.isAbstract()))
 		  throw new IllegalArgumentException (formatMessage (
 			"err_extendingConcreteUnit", ext.getScopedName(null)));
-    
+
 		/* Ensure that the extension graph will be acyclic. */
 		if ((ext != null) && ext.isExtendingIndirectly(this))
 		  throw new IllegalArgumentException("The unit \""
@@ -253,7 +253,7 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
 			+ ext.getName() + "\", because \""
 			+ getName() + "\" is already extending \""
 			+ ext.getName() + "\"; cyclic extension graphs are not allowed.");
-		    
+
 	}
   public boolean isAbstract()
   {
@@ -266,7 +266,7 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
   {
     if (abs == _abstract)
       return;
-    
+
     /* Set value and inform interested listeners. */
     fireVetoableChange("abstract", /* old */ !abs, /* new */ abs);
     _abstract = abs;
@@ -286,8 +286,8 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
   {
     return _final;
   }
-  
-  
+
+
   /** Sets the value of the <code>final</code> property;
       a final unit can not be extended by other units.
 
@@ -298,17 +298,17 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
       as a <code>PropertyChangeListener</code>. In addition,
       subscribers may oppose to changes by registering as a
       <code>VetoableChangeListener</code>.
-      
+
       @param fin Pass <code>true</code> to make the unit
                  final, pass <code>false</code> to allow for
                  extensions.
-      
+
       @exception java.lang.IllegalArgumentException if this
                  unit is abstract and <code>fin</code> is
                  <code>true</code>, because it would not make
                  sense to declare anything as both
                  <code>ABSTRACT</code> and <code>FINAL</code>.
-      
+
       @exception java.lang.IllegalArgumentException if
                  <code>fin</code> is <code>true</code> and
                  there exists another unit which extends this
@@ -324,11 +324,11 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
   {
     boolean oldValue = _final;
     boolean newValue = fin;
-    
+
     /* Check for cases in which there is nothing to do. */
     if (oldValue == newValue)
       return;
-    
+
     /* Can not be ABSTRACT and FINAL at the same time. */
     if ((newValue == true) && isAbstract())
       throw new IllegalArgumentException(
@@ -341,7 +341,7 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
         "err_cantMakeExtendedFinal",
         this.toString(),
         extendedBy.iterator().next().toString()));
-    
+
     fireVetoableChange("final", oldValue, newValue);
     _final = newValue;
     firePropertyChange("final", oldValue, newValue);

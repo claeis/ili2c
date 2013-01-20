@@ -8,12 +8,12 @@
  * Revision 0.2  February 1999    Sascha Brawer <sb@adasys.ch>
  *
  *****************************************************************************/
- 
+
 package ch.interlis.ili2c.metamodel;
 
 /** TextType holds the information associated with an Interlis
     TextType.
-    
+
     @version   January 28, 1999
     @author    Sascha Brawer
 */
@@ -24,7 +24,7 @@ public class TextType extends BaseType
   */
   protected int    maxLength;
   private boolean normalized=true;
-  
+
   public TextType ()
   {
     maxLength = -1;
@@ -40,14 +40,14 @@ public class TextType extends BaseType
   {
     if (maxLength < 0)
       throw new IllegalArgumentException (rsrc.getString ("err_textLenNegative"));
-    
+
     if (maxLength == 0)
       throw new IllegalArgumentException (rsrc.getString ("err_textType_lenZero"));
-    
+
     this.maxLength = maxLength;
   }
-  
-  
+
+
   public String toString ()
   {
   	String kw=normalized?"TEXT":"MTEXT";
@@ -56,13 +56,13 @@ public class TextType extends BaseType
     else
       return kw;
   }
-  
+
   public boolean isAbstract ()
   {
     return false;
   }
-  
-  
+
+
   /** The maximal number of characters that is allowed for a
    * field of this type, or -1 if unlimited.
    */
@@ -72,12 +72,12 @@ public class TextType extends BaseType
   }
 
 
- 
+
 
   /** Checks whether it is possible for this to extend wantToExtend.
       If so, nothing happens; especially, the extension graph is
       <em>not</em> changed.
-      
+
       @exception java.lang.IllegalArgumentException If <code>this</code>
                  can not extend <code>wantToExtend</code>. The message
                  of the exception indicates the reason; it is a localized
@@ -85,11 +85,11 @@ public class TextType extends BaseType
   */
   void checkTypeExtension (Type wantToExtend)
   {
-    
+
     if ((wantToExtend == null)
         || ((wantToExtend = wantToExtend.resolveAliases()) == null))
       return;
-    
+
     if (!(wantToExtend instanceof TextType))
       throw new Ili2cSemanticException (rsrc.getString (
         "err_textType_ExtOther"));
@@ -103,7 +103,7 @@ public class TextType extends BaseType
 		  "err_textType_longerExtShorter",
 		  this.toString(), general.toString()));
       }
-      
+
       if (this.maxLength > general.maxLength){
 		throw new Ili2cSemanticException (formatMessage (
 		  "err_textType_longerExtShorter",
@@ -122,5 +122,10 @@ public boolean isNormalized() {
 public void setNormalized(boolean b) {
 	normalized = b;
 }
+
+
+    public TextType clone() {
+        return (TextType) super.clone();
+    }
 
 }

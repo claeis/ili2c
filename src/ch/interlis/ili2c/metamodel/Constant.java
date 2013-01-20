@@ -173,7 +173,7 @@ public abstract class Constant extends Evaluable
   }
 
 
-  public static class Class extends Constant 
+  public static class Class extends Constant
   {
 	  private Viewable value=null;
 	  public Class(Viewable value)
@@ -184,9 +184,9 @@ public abstract class Constant extends Evaluable
 	  {
 		  return value;
 	  }
-	  
+
   }
-  public static class AttributePath extends Constant 
+  public static class AttributePath extends Constant
   {
 	  private AttributeDef value=null;
 	  public AttributePath(AttributeDef attr)
@@ -197,7 +197,7 @@ public abstract class Constant extends Evaluable
 	  {
 		  return value;
 	  }
-	  
+
   }
   /** A numeric constant.
   */
@@ -305,9 +305,9 @@ public abstract class Constant extends Evaluable
         elements that appear separated by dots in an
         INTERLIS description file.
     */
-    public Enumeration (List value)
+    public Enumeration (List<String> value)
     {
-      this.value = (String[]) value.toArray(new String[0]);
+      this.value = value.toArray(new String[value.size()]);
     }
 
 
@@ -328,7 +328,7 @@ public abstract class Constant extends Evaluable
     */
     public String toString ()
     {
-      StringBuffer buf = new StringBuffer (100);
+      StringBuilder buf = new StringBuilder(100);
       buf.append ('#');
       for (int i = 0; i < value.length; i++)
       {
@@ -540,7 +540,7 @@ public abstract class Constant extends Evaluable
         return;
 
 
-      Table targetClass = (Table)((MetaobjectType) targetType).getReferred();
+      Table targetClass = ((MetaobjectType) targetType).getReferred();
       Table sourceClass = referred.getTable();
       if ((targetClass == null) || (sourceClass == null))
         return;

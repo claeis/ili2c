@@ -20,13 +20,14 @@ import java.util.*;
 
     @version   January 28, 1999
     @author    Sascha Brawer
+    @author    Gordan Vosicki - Normalized clone().
 */
 public abstract class Type
   extends AbstractLeafElement
   implements Cloneable
 {
   protected Type       extending = null;
-  protected Set        extendedBy = new HashSet(2);
+  protected Set<Type>  extendedBy = new HashSet<Type>(2);
   protected boolean    mandatory = false;
 
 
@@ -35,20 +36,21 @@ public abstract class Type
   }
 
 
+    public Type clone() {
+        Type cloned = null;
 
-  public Object clone()
-    throws java.lang.CloneNotSupportedException
-  {
-    Type cloned = (Type) super.clone();
+        try {
+            cloned = (Type) super.clone();
+            cloned.extendedBy = new HashSet<Type>(2);
 
-    cloned.extendedBy = new HashSet (2);
-    if (cloned.extending != null)
-    {
-      cloned.extending.extendedBy.add (cloned);
+            if (cloned.extending != null) {
+                cloned.extending.extendedBy.add(cloned);
+            }
+        } catch (CloneNotSupportedException e) {
+            // Never happens because the object is cloneable
+        }
+        return cloned;
     }
-
-    return cloned;
-  }
 
 
   /** An abstract type is one that does describe sufficiently
@@ -162,7 +164,7 @@ public abstract class Type
                  of the exception indicates the reason; it is a localized
                  string that is intended for being displayed to the user.
   */
-  
+
   abstract void checkTypeExtension (Type wantToExtend);
   /*
   {
@@ -173,7 +175,7 @@ public abstract class Type
         throw new Ili2cSemanticException (rsrc.getString (
         "err_type_ExtOther"));
     }
-  } 
+  }
   */
 
 

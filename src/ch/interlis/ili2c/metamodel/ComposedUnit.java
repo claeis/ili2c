@@ -8,14 +8,12 @@
  * Revision 0.2  April 1999    Sascha Brawer <sb@adasys.ch>
  *
  *****************************************************************************/
- 
-package ch.interlis.ili2c.metamodel;
 
-import java.util.*;
+package ch.interlis.ili2c.metamodel;
 
 /** ComposedUnit is a class for composed Interlis units, for
     example <code>m/s</code>.
-    
+
     @version   April 12, 1999
     @author    Sascha Brawer, sb@adasys.ch
 */
@@ -29,13 +27,13 @@ public class ComposedUnit extends Unit
   {
     protected char compositionOperator;
     protected Unit unit;
-    
+
     /** Constructs a new Composed given a composition operator
         and a unit.
-        
+
         @param compositionOperator The composition operator.
                Only '*' and '/' are acceptable.
-        
+
         @exception java.lang.IllegalArgumentException if
                    compositionOperator is not one of
                    <code>'*'</code> or <code>'/'</code>.
@@ -44,12 +42,12 @@ public class ComposedUnit extends Unit
     {
       this.compositionOperator = compositionOperator;
       this.unit = unit;
-      
+
       if ((compositionOperator != '*') && (compositionOperator != '/'))
         throw new IllegalArgumentException (
           ch.interlis.ili2c.metamodel.Element.rsrc.getString ("err_illegalUnitCompositionOperator"));
     }
-    
+
 
     /** Returns the unit which is part of the composition element.
         For example, the result of <code>getUnit()</code> on the
@@ -60,7 +58,7 @@ public class ComposedUnit extends Unit
     {
       return unit;
     }
-    
+
     /** @return either <code>'*'</code> or <code>'/'</code>. */
     public char getCompositionOperator()
     {
@@ -68,10 +66,10 @@ public class ComposedUnit extends Unit
     }
   };
 
-  
+
   protected Composed[] composedUnits = new Composed[0];
-  
-  
+
+
   /** Constructs a new composed unit. */
   public ComposedUnit()
   {
@@ -82,8 +80,8 @@ public class ComposedUnit extends Unit
   {
     return composedUnits;
   }
-  
-  
+
+
   /** Sets how this composed unit is composed.
 
       @exception java.beans.PropertyVetoException if some
@@ -104,36 +102,36 @@ public class ComposedUnit extends Unit
        be dependent on "this". Low priority because this can not happen
        while parsing.
     */
-    
+
     /* FIXME: Check inherited. Not implemented in this version because
        the parser uses another order --> low priority.
     */
     if (extending != null)
       throw new IllegalArgumentException ("This order not implemented yet. Works only with units that do not extend another one.");
-      
+
     for (int i = 0; i < composedUnits.length; i++)
     {
       if (this.isAbstract() && !composedUnits[i].getUnit().isAbstract())
         throw new IllegalArgumentException (formatMessage (
           "err_abstractUnitComposedOfConcrete",
           this.toString(), composedUnits[i].getUnit().toString()));
-      
+
       if (!this.isAbstract() && composedUnits[i].getUnit().isAbstract())
         throw new IllegalArgumentException (formatMessage (
           "err_concreteUnitComposedOfAbstract",
           this.toString(), composedUnits[i].getUnit().toString()));
     }
-    
-    
+
+
     /* Set value and inform interested listeners. */
     fireVetoableChange("composedUnits", oldValue, newValue);
     this.composedUnits = composedUnits;
     firePropertyChange("composedUnits", oldValue, newValue);
   }
 
-  
 
-  
+
+
   /** Returns whether or not this Element depends on another
       Element. A composed unit depends on its base unit and
       on all units of which it is composed. Finally, it
@@ -153,11 +151,11 @@ public class ComposedUnit extends Unit
 
    return super.isDependentOn(e);
   }
-  
+
 
   protected void checkExtending (Unit ext)
   {
-    
+
 	/* Make sure there won't be cyclic dependency graphs. */
 	if ((ext != null) && (ext.isDependentOn(this))) {
 	  throw new IllegalArgumentException("The unit \""
@@ -172,14 +170,14 @@ public class ComposedUnit extends Unit
         throw new IllegalArgumentException (formatMessage (
           "err_composedUnitExtendingNonComposed",
           this.toString(), ext.toString()));
-      
+
       ComposedUnit e = (ComposedUnit) ext;
-      
+
       if (this.composedUnits.length != e.composedUnits.length)
         throw new IllegalArgumentException (formatMessage (
           "err_composedUnitExtendingUnequalCardinality",
           this.toString(), e.toString()));
-      
+
       for (int i = 0; i < composedUnits.length; i++)
       {
         if (!this.composedUnits[i].getUnit().isExtendingIndirectly (e.composedUnits[i].getUnit()))
@@ -189,7 +187,7 @@ public class ComposedUnit extends Unit
             e.toString(),
             this.composedUnits[i].getUnit().toString(),
             e.composedUnits[i].getUnit().toString()));
-        
+
         if (this.composedUnits[i].getCompositionOperator()
             != e.composedUnits[i].getCompositionOperator())
         {
@@ -207,13 +205,13 @@ public class ComposedUnit extends Unit
       }
     }
   }
-  
-  
+
+
   public void setAbstract (boolean abst)
     throws java.beans.PropertyVetoException
   {
     if (abst == false)
-    {      
+    {
       for (int i = 0; i < composedUnits.length; i++)
       {
         if ((composedUnits[i] != null)
@@ -240,7 +238,7 @@ public class ComposedUnit extends Unit
         }
       }
     }
-    
+
     super.setAbstract (abst);
   }
 }

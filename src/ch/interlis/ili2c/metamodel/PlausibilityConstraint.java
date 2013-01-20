@@ -8,21 +8,19 @@
  * Revision 0.2  February 1999    Sascha Brawer <sb@adasys.ch>
  *
  *****************************************************************************/
- 
-package ch.interlis.ili2c.metamodel;
 
-import java.util.*;
+package ch.interlis.ili2c.metamodel;
 
 /** A constraint that does not have to be satisfied for every instance
     of a table, but only for a certain percentage.
-    
+
     @author    Sascha Brawer
 */
 public class PlausibilityConstraint extends Constraint
 {
   protected double     percentage = 50;
   protected int        direction = DIRECTION_AT_LEAST;
-  
+
   public static final int DIRECTION_AT_LEAST = 0;
   public static final int DIRECTION_AT_MOST = 1;
 
@@ -31,7 +29,7 @@ public class PlausibilityConstraint extends Constraint
   public PlausibilityConstraint()
   {
   }
-  
+
   /** Returns whether the condition must be satisfied for
       at least or at most the specified percentage.
   */
@@ -39,8 +37,8 @@ public class PlausibilityConstraint extends Constraint
   {
     return direction;
   }
-  
-  
+
+
   /** Sets whether the constraint requires at least or at most
       a certain percentage of the instances to fulfill the
       condition.
@@ -52,7 +50,7 @@ public class PlausibilityConstraint extends Constraint
       as a <code>PropertyChangeListener</code>. In addition,
       subscribers may oppose to changes by registering as a
       <code>VetoableChangeListener</code>.
-      
+
       @param direction The new direction.
              <code>DIRECTION_AT_LEAST</code> indicates
              that at least a certain percentage of the
@@ -64,7 +62,7 @@ public class PlausibilityConstraint extends Constraint
                  <code>direction</code> is neither
                  <code>DIRECTION_AT_LEAST</code> nor
                  <code>DIRECTION_AT_MOST</code>.
-                 
+
       @exception java.beans.PropertyVetoException if some
                  VetoableChangeListener has registered for
                  changes of the <code>name</code> property
@@ -75,10 +73,10 @@ public class PlausibilityConstraint extends Constraint
   {
     int oldValue = this.direction;
     int newValue = direction;
-    
+
     if (oldValue == newValue)
       return;
-    
+
     if ((newValue != DIRECTION_AT_LEAST) && (newValue != DIRECTION_AT_MOST))
       throw new IllegalArgumentException("direction");
 
@@ -86,8 +84,8 @@ public class PlausibilityConstraint extends Constraint
     this.direction = direction;
     firePropertyChange("direction", new Integer(oldValue), new Integer(newValue));
   }
-  
-  
+
+
   /** Returns the current value of the <code>percentage</code>
       property.
   */
@@ -95,8 +93,8 @@ public class PlausibilityConstraint extends Constraint
   {
     return percentage;
   }
-  
-  
+
+
   /** Sets the value of the <code>percentage</code> property.
 
       <p>In JavaBeans terminology, the <code>percentage</code>
@@ -106,14 +104,14 @@ public class PlausibilityConstraint extends Constraint
       as a <code>PropertyChangeListener</code>. In addition,
       subscribers may oppose to changes by registering as a
       <code>VetoableChangeListener</code>.
-      
+
       @param percentage The new percentage value.
 
       @exception java.lang.IllegalArgumentException if
                  <code>percentage</code> is less than zero or
                  greater than 100, because these values do
                  not make sense.
-                 
+
       @exception java.beans.PropertyVetoException if some
                  VetoableChangeListener has registered for
                  changes of the <code>name</code> property
@@ -124,11 +122,11 @@ public class PlausibilityConstraint extends Constraint
   {
     Double oldValue = new Double(this.percentage);
     Double newValue = new Double(percentage);
-    
+
     if ((percentage < 0) || (percentage > 100))
       throw new IllegalArgumentException(rsrc.getString(
                        "err_percentageBetween0and100"));
-    
+
     fireVetoableChange("percentage", oldValue, newValue);
     this.percentage = percentage;
     firePropertyChange("percentage", oldValue, newValue);

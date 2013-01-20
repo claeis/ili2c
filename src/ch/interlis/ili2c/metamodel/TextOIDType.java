@@ -24,5 +24,11 @@ public class TextOIDType extends OIDType
 	        throw new Ili2cSemanticException (rsrc.getString (
 	        "err_textOidType_ExtOther"));
 	    }
-	  } 
+	  }
+
+
+    public TextOIDType clone() {
+        return (TextOIDType) super.clone();
+    }
+
 }

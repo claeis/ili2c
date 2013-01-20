@@ -13,6 +13,7 @@ package ch.interlis.ili2c.metamodel;
 
 
 import java.util.*;
+import ch.ehi.basics.settings.Settings;
 
 
 
@@ -21,10 +22,11 @@ import java.util.*;
 
     @version   January 28, 1999
     @author    Sascha Brawer
+    @author    Gordan Vosicki - Added cloning support
 */
-public class Enumeration
+public class Enumeration implements Cloneable
 {
-  public static class Element {
+  public static class Element implements Cloneable {
     protected String name = "";
     protected Enumeration subEnum = null;
 	private String documentation=null;
@@ -101,23 +103,43 @@ public class Enumeration
 	public void setMetaValues(ch.ehi.basics.settings.Settings metaValues) {
 		this.metaValues = metaValues;
 	}
+
+
+        public Element clone() {
+            Element cloned = null;
+
+            try {
+                cloned = (Element) super.clone();
+                if (subEnum != null) {
+                    cloned.subEnum = subEnum.clone();
+                }
+                if (metaValues != null) {
+                    cloned.metaValues = new Settings(metaValues);
+                }
+            } catch (CloneNotSupportedException e) {
+                // Never happens because the object is cloneable
+            }
+            return cloned;
+        }
   }
 
-  private List elements; // list<Enumeration.Element>
+  private List<Element> elements;
   private boolean is_Final=false;
 
-  public Enumeration(List elements)
+  public Enumeration(List<Element> elements)
   {
     this.elements = elements;
   }
   /** copy constructor
-   *
+   * @deprecated Should be replaced by {@link #clone()}.
    */
   public Enumeration(Enumeration src)
   {
-    elements=new ArrayList();
-    for(int i=0;i<src.elements.size();i++){
-      elements.add(new Element((Element)src.elements.get(i)));
+    int sz = src.elements.size();
+
+    elements = new ArrayList<Element>(sz);
+    for (int i = 0, s = sz; i < s; i++) {
+        elements.add(src.getElement(i).clone());
     }
     is_Final=src.is_Final;
   }
@@ -125,19 +147,46 @@ public class Enumeration
 
   public void addElement(Element newele)
   {
-	  Iterator elei=elements.iterator();
+	  Iterator<Element> elei = elements.iterator();
 	  while(elei.hasNext()){
-		  Element ele=(Element)elei.next();
+		  Element ele = elei.next();
 		  if(ele.getName().equals(newele.getName())){
 			  throw new Ili2cSemanticException(newele.getSourceLine(),ch.interlis.ili2c.metamodel.Element.formatMessage("err_enumerationType_DupEle",newele.getName()));
 		  }
 	  }
       elements.add(newele);
   }
-  public java.util.Iterator getElements()
-  {
-    return elements.iterator();
-  }
+
+
+    public Iterator<Element> getElements() {
+        return elements.iterator();
+    }
+
+
+    public Element getElement(int index) {
+        return elements.get(index);
+    }
+
+
+    public int size() {
+        return elements.size();
+    }
+
+
+    public int treeSize() {
+        int sz = size();
+        int ts = sz;
+
+        for (int i = 0; i < sz; ++i) {
+            Enumeration e = getElement(i).subEnum;
+
+            if (e != null) {
+                ts += e.treeSize() - 1;
+            }
+        }
+        return ts;
+    }
+
 
   public void setFinal(boolean newValue)
   {
@@ -149,7 +198,7 @@ public class Enumeration
   }
   public String toString ()
   {
-    StringBuffer buf = new StringBuffer(50);
+    StringBuilder buf = new StringBuilder(50);
 
     buf.append ('(');
     for (int i = 0; i < elements.size(); i++)
@@ -168,4 +217,24 @@ public class Enumeration
 
     return buf.toString ();
   }
+
+
+    public Enumeration clone() {
+        Enumeration cloned = null;
+
+        try {
+            int sz = elements.size();
+
+            cloned = (Enumeration) super.clone();
+            cloned.elements = new ArrayList<Element>(sz);
+
+            for(int i = 0 ; i < sz; i++){
+                cloned.elements.add(getElement(i).clone());
+            }
+        } catch (CloneNotSupportedException e) {
+            // Never happens because the object is cloneable
+        }
+        return cloned;
+    }
+
 }

@@ -28,7 +28,7 @@ public class DataModel extends Model
   /** Returns a String consisting of <code>DATA MODEL</code> followed
               by the model's name.
   */
-  public String toString()
+public String toString()
   {
     return "MODEL " + getScopedName(/*no scope */ null);
   }

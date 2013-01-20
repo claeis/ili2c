@@ -13,7 +13,7 @@ public class CompositionType extends Type
   Cardinality  cardinality = new Cardinality(0,Cardinality.UNBOUND);
   Table        componentType;
   boolean      ordered = false;
-  private LinkedList	restrictedTo=new LinkedList(); // List<Table>
+  private LinkedList<Table> restrictedTo = new LinkedList<Table>();
 
 
 
@@ -102,7 +102,7 @@ public class CompositionType extends Type
 
     if (newValue != null)
     {
-      Iterator iter = newValue.getAttributes ();
+      Iterator<?> iter = newValue.getAttributes ();
       while (iter.hasNext())
       {
         Object obj = iter.next();
@@ -141,7 +141,7 @@ public class CompositionType extends Type
     return ordered;
   }
 
-  
+
 
 
 /** Sets whether or not this composition type is ordered.
@@ -228,8 +228,20 @@ public class CompositionType extends Type
 
 	  }
   }
-  public java.util.Iterator iteratorRestrictedTo()
+  public java.util.Iterator<Table> iteratorRestrictedTo()
   {
   	return restrictedTo.iterator();
   }
+
+
+    public CompositionType clone() {
+        CompositionType cloned = (CompositionType) super.clone();
+
+        cloned.cardinality = cardinality.clone();
+        if (restrictedTo != null) {
+            cloned.restrictedTo = (LinkedList<Table>) restrictedTo.clone();
+        }
+        return cloned;
+    }
+
 }

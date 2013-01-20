@@ -6,23 +6,23 @@ import java.util.*;
 /** An association. Please refer to the INTERLIS reference manual to
     learn about the concept of associations.
  */
-public class AssociationDef extends AbstractClassDef
+public class AssociationDef extends AbstractClassDef<Element>
 {
-	protected List     roles = new LinkedList();
+	protected List<RoleDef> roles = new LinkedList<RoleDef>();
 	private Cardinality cardinality=null;
 	private boolean identifiable = false;
 
 
-	private Viewable derivedFrom;
+	private Viewable<?> derivedFrom;
 	/** Define the view from which this association is derived. This
 	*   association has no instances.
 	*/
-	public void setDerivedFrom(Viewable ref)
+	public void setDerivedFrom(Viewable<?> ref)
 	{
 		derivedFrom=ref;
 	}
 
-	public Viewable getDerivedFrom()
+	public Viewable<?> getDerivedFrom()
 	{
 		return derivedFrom;
 	}
@@ -30,12 +30,12 @@ public class AssociationDef extends AbstractClassDef
   public AssociationDef()
   {
   }
-  protected Collection createElements(){
-    return new AbstractCollection()
+  protected Collection<Element> createElements(){
+    return new AbstractCollection<Element>()
     {
-      public Iterator iterator ()
+      public Iterator<Element> iterator ()
       {
-        Iterator[] it = new Iterator[]
+        Iterator<Element>[] it = new Iterator[]
         {
           roles.iterator(),
 		  attributes.iterator(),
@@ -55,30 +55,31 @@ public class AssociationDef extends AbstractClassDef
 
 
 
-      public boolean add (Object o)
+      public boolean add(Element o)
       {
 
 
-        if (o instanceof Constraint)
-          return constraints.add(o);
+        if (o instanceof Constraint) {
+            return constraints.add((Constraint) o);
+        }
 
 
-        if ((o instanceof LocalAttribute)){
+        if (o instanceof LocalAttribute){
 	  LocalAttribute ad =(LocalAttribute)o;
           /* A non-abstract AssociationDef can not contain an abstract
              attribute. */
-          if (ad.isAbstract() && !isAbstract())
+          if (ad.isAbstract() && !isAbstract()) {
             throw new Ili2cSemanticException (ad.getSourceLine(),formatMessage (
               "err_abstractAttrInConcreteContainer",
               AssociationDef.this.toString()));
+        }
 	  // check that there is no role with the same name
-	  Iterator iter = getAttributesAndRoles();
-	  while (iter.hasNext())
+	  for (Iterator<Element> iter = getAttributesAndRoles(); iter.hasNext(); )
 	  {
-	      Element baseAttr = (Element)iter.next();
+	      Element baseAttr = iter.next();
 	      if(baseAttr instanceof RoleDef){
 	    	  if(baseAttr.getName().equals(ad.getName())){
-	      
+
                 throw new Ili2cSemanticException (ad.getSourceLine(),formatMessage (
                   "err_association_nonuniqueAttributeDef",
                   ad.getName(),
@@ -89,10 +90,9 @@ public class AssociationDef extends AbstractClassDef
 	      }
 	  }
           // check if there is not alreay a role pointing to this with the same name
-	  iter = getOpposideRoles();
-	  while (iter.hasNext())
+	  for (Iterator<RoleDef> iter = getOpposideRoles(); iter.hasNext(); )
 	  {
-	      RoleDef role = (RoleDef)iter.next();
+	      RoleDef role = iter.next();
 	      if(role.getName().equals(ad.getName())){
                 throw new Ili2cSemanticException (ad.getSourceLine(),formatMessage (
                   "err_abstractClassDef_AttributeNameConflictInTarget",
@@ -101,11 +101,11 @@ public class AssociationDef extends AbstractClassDef
 	      }
 	  }
 
-	  return attributes.add(o);
+	  return attributes.add(ad);
 	}
 
 
-        if ((o instanceof RoleDef)){
+        if (o instanceof RoleDef){
 	  RoleDef role =(RoleDef)o;
 	  if((getExtending()!=null || isExtended())&& !role.isExtended()){
 	          throw new Ili2cSemanticException (role.getSourceLine(),
@@ -123,19 +123,21 @@ public class AssociationDef extends AbstractClassDef
           }
           /* A non-abstract AssociationDef can not contain an abstract
              RoleDef. */
-          if (role.isAbstract() && !isAbstract())
+          if (role.isAbstract() && !isAbstract()) {
             throw new Ili2cSemanticException (role.getSourceLine(),formatMessage (
               "err_abstractRoleInConcreteContainer",
               AssociationDef.this.toString()));
+        }
 
-          return roles.add(o);
+          return roles.add(role);
 	}
 
 
 
-        if (o == null)
-          throw new IllegalArgumentException (
-            rsrc.getString ("err_nullNotAcceptable"));
+        if (o == null) {
+            throw new IllegalArgumentException (
+                rsrc.getString ("err_nullNotAcceptable"));
+        }
 
 
         throw new ClassCastException();
@@ -143,7 +145,7 @@ public class AssociationDef extends AbstractClassDef
     };
   }
 
-	public Iterator getRolesIterator(){
+	public Iterator<RoleDef> getRolesIterator(){
 		return roles.iterator();
 	}
 
@@ -167,10 +169,10 @@ public class AssociationDef extends AbstractClassDef
   	if(name!=""){
   		return name;
   	}
-    Iterator iter = roles.iterator();
-    StringBuffer assocName=new StringBuffer();
+    Iterator<RoleDef> iter = roles.iterator();
+    StringBuilder assocName=new StringBuilder();
     while (iter.hasNext()){
-	    RoleDef role= (RoleDef)iter.next();
+	    RoleDef role= iter.next();
 	    assocName.append(role.getName());
     }
   	return assocName.toString();
@@ -194,8 +196,9 @@ public class AssociationDef extends AbstractClassDef
 
 
     /* Check for cases in which there is nothing to do. */
-    if (oldValue == newValue)
-      return;
+    if (oldValue == newValue) {
+        return;
+    }
 
 
     /* Table in models must be ABSTRACT. */
@@ -264,8 +267,9 @@ public class AssociationDef extends AbstractClassDef
     AssociationDef newValue = (AssociationDef) extending;
 
 
-    if (oldValue == newValue)
-      return; /* nothing has to be done */
+    if (oldValue == newValue) {
+        return; /* nothing has to be done */
+    }
 
 
     super.setExtending (newValue);
@@ -316,28 +320,31 @@ public class AssociationDef extends AbstractClassDef
       Topic extTopic = (Topic) extending.getContainer (Topic.class);
 
 
-      if (myTopic == null)
+      if (myTopic == null) {
         throw new IllegalArgumentException (formatMessage (
           "err_association_extendedOutsideTopic",
           this.toString(),
           extending.toString(),
           this.toString()));
+    }
 
 
-      if (extTopic == null)
+      if (extTopic == null) {
         throw new IllegalArgumentException (formatMessage (
           "err_association_extendedOutsideTopic",
           this.toString(),
           extending.toString(),
           extending.toString()));
+    }
 
 
       if ((myTopic != null)
-          && !(myTopic.isExtending (extTopic)))
+          && !(myTopic.isExtending (extTopic))) {
         throw new IllegalArgumentException (formatMessage (
           "err_association_extendedButTopicsDont",
           this.toString(), extending.toString(),
           myTopic.toString(), extTopic.toString()));
+    }
 
 
       if (myTopic != null)
@@ -346,8 +353,9 @@ public class AssociationDef extends AbstractClassDef
         while (iter.hasNext())
         {
           Object obj = iter.next();
-          if (!(obj instanceof AssociationDef))
+          if (!(obj instanceof AssociationDef)) {
             continue;
+        }
 
 
           AssociationDef tab = (AssociationDef) obj;
@@ -370,8 +378,9 @@ public class AssociationDef extends AbstractClassDef
         while (iter.hasNext())
         {
           Object obj = iter.next();
-          if (!(obj instanceof AssociationDef))
+          if (!(obj instanceof AssociationDef)) {
             continue;
+        }
           AssociationDef tab = (AssociationDef) obj;
           if ((tab != this)
               && (tab != extending)
@@ -391,10 +400,11 @@ public class AssociationDef extends AbstractClassDef
     while (referencableIter.hasNext())
     {
       AssociationDef referencable = (AssociationDef) referencableIter.next();
-      if (this.isExtending (referencable))
+      if (this.isExtending (referencable)) {
         throw new IllegalStateException (formatMessage (
           "err_association_cyclicRelationalStructure",
           this.toString(), referencable.toString()));
+    }
     }
 
 
@@ -474,7 +484,7 @@ public class AssociationDef extends AbstractClassDef
   public boolean isExtended(){
   	return extended;
   }
-  /** returns the roledef where this link is embedded to 
+  /** returns the roledef where this link is embedded to
    * the roledefs target class
    * or null if this association has a standalone link object.
    */
@@ -503,10 +513,14 @@ public class AssociationDef extends AbstractClassDef
 
 	// get base roledefs
 	RoleDef role1Base=role1.getRootExtending();
-	if(role1Base==null)role1Base=role1;
+	if(role1Base==null) {
+        role1Base=role1;
+    }
 	RoleDef role2Base=role1.getRootExtending();
-	if(role2Base==null)role2Base=role2;
-	
+	if(role2Base==null) {
+        role2Base=role2;
+    }
+
 	// have both association ends a cardinality greater than 1?
 	if(role1Base.getCardinality().getMaximum()>1 && role2Base.getCardinality().getMaximum()>1){
 	  return null;
@@ -521,14 +535,16 @@ public class AssociationDef extends AbstractClassDef
 		ret=role1;
 		retBase=role1Base;
 	}
-    
+
 	// target of (base-)role not in the same topic as (base-)association?
 	AssociationDef base=(AssociationDef)getRootExtending();
-	if(base==null)base=this;
+	if(base==null) {
+        base=this;
+    }
 	if(retBase.getDestination().getContainer()!=base.getContainer()){
 		return null;
 	}
-	
+
 	// association is lightweight
 	return ret;
   }
@@ -538,7 +554,7 @@ public class AssociationDef extends AbstractClassDef
   public boolean isLightweight(){
   	return getRoleWhereEmbedded()!=null;
   }
-  
+
   public void setCardinality(Cardinality v)
   {
 	  cardinality=v;

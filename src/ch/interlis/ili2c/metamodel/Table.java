@@ -21,7 +21,7 @@ import java.util.*;
 
     @author Sascha Brawer, sb@adasys.ch
  */
-public class Table extends AbstractClassDef
+public class Table extends AbstractClassDef<AbstractLeafElement>
 {
 	private boolean ili1Optional=false;
 	private boolean ili1LineAttrStruct=false;
@@ -42,10 +42,9 @@ public class Table extends AbstractClassDef
   /** backlink to CompositionType, if this ClassDef is used as part of
    *  a structure attribute.
    */
-  Set componentFor = new HashSet (2); // set<CompositionType>
+  Set<CompositionType> componentFor = new HashSet<CompositionType>(2);
 
-
-  protected List     parameters = new LinkedList();
+  protected List<Parameter> parameters = new LinkedList<Parameter>();
 
 
   protected void throwUponUnwantedAttribute (AttributeDef attr)
@@ -57,18 +56,18 @@ public class Table extends AbstractClassDef
   public Table()
   {
   }
-  protected Collection createElements(){
-    return new AbstractCollection()
+  protected Collection<AbstractLeafElement> createElements(){
+    return new AbstractCollection<AbstractLeafElement>()
     {
-      public Iterator iterator ()
+      public Iterator<AbstractLeafElement> iterator ()
       {
-        Iterator[] it = new Iterator[]
+        Iterator<AbstractLeafElement>[] it = new Iterator[]
         {
           attributes.iterator(),
           constraints.iterator(),
           parameters.iterator()
         };
-        return new CombiningIterator(it);
+        return new CombiningIterator<AbstractLeafElement>(it);
       }
 
 
@@ -82,22 +81,19 @@ public class Table extends AbstractClassDef
 
 
 
-      public boolean add (Object o)
+      public boolean add(AbstractLeafElement o)
       {
-        if ((o instanceof UniquenessConstraint) && !Table.this.isIdentifiable() 
+        if ((o instanceof UniquenessConstraint) && !Table.this.isIdentifiable()
         		&& !((UniquenessConstraint)o).getLocal())
           throw new Ili2cSemanticException (formatMessage (
             "err_structure_unique",
             Table.this.toString ()));
 
-
         if (o instanceof Constraint)
-          return constraints.add(o);
-
+          return constraints.add((Constraint) o);
 
         if (o instanceof Parameter)
-          return parameters.add(o);
-
+          return parameters.add((Parameter) o);
 
         /* Note that this check applies for LocalAttribute,
            RelAttribute, CompositionAttribute,
@@ -105,8 +101,6 @@ public class Table extends AbstractClassDef
         if (o instanceof AttributeDef)
         {
           AttributeDef ad = (AttributeDef) o;
-          Type         dom = ad.getDomain ();
-
 
           /* A non-abstract TABLE/STRUCTURE can not contain an abstract
              attribute. */
@@ -115,11 +109,11 @@ public class Table extends AbstractClassDef
                 "err_abstractAttrInConcreteContainer",
                 Table.this.toString()));
           }
-          // check if there is not alreay a role pointing to this with the same name
-	  Iterator iter = getOpposideRoles();
+          // check if there is not already a role pointing to this with the same name
+	  Iterator<RoleDef> iter = getOpposideRoles();
 	  while (iter.hasNext())
 	  {
-	      RoleDef role = (RoleDef)iter.next();
+	      RoleDef role = iter.next();
 	      if(role.getName().equals(ad.getName())){
                 throw new Ili2cSemanticException (formatMessage (
                   "err_abstractClassDef_AttributeNameConflictInTarget",
@@ -133,10 +127,8 @@ public class Table extends AbstractClassDef
         }
 
 
-        if ((o instanceof LocalAttribute))
-          return attributes.add(o);
-
-
+        if (o instanceof LocalAttribute)
+          return attributes.add((LocalAttribute) o);
 
         if (o == null)
           throw new Ili2cSemanticException (
@@ -410,22 +402,21 @@ public class Table extends AbstractClassDef
 			Iterator iter = myTopic.iterator();
 			while (iter.hasNext()) {
 				Object obj = iter.next();
-				if (!(obj instanceof Table))
-					continue;
+				if (obj instanceof Table) {
+    				Table tab = (Table) obj;
+    				if ((tab != this)
+    					&& isExtendedFromBase((Table) tab.getExtending())) {
 
-				Table tab = (Table) obj;
-				if ((tab != this)
-					&& isExtendedFromBase((Table) tab.getExtending())) {
+    					throw new IllegalStateException(
+    						formatMessage(
+    							"err_table_extendedButOtherDoesToo",
+    							this.toString(),
+    							getExtending().toString(),
+    							myTopic.toString(),
+    							tab.toString()));
 
-					throw new IllegalStateException(
-						formatMessage(
-							"err_table_extendedButOtherDoesToo",
-							this.toString(),
-							getExtending().toString(),
-							myTopic.toString(),
-							tab.toString()));
-
-				}
+    				}
+    			}
 			}
 
 			// is there a class in a base topic, that
@@ -457,7 +448,7 @@ public class Table extends AbstractClassDef
 		} else {
 			// this extends class from base topic and has the same name;
 			// but is not EXTENDED
-			// check that base topics contain no class 
+			// check that base topics contain no class
 			// with same name as this
 			Topic baseTopic = null;
 			// this not at model level?
@@ -491,10 +482,10 @@ public class Table extends AbstractClassDef
 
 
 
-	    Iterator referencableIter = getReferencableTables().iterator();
+	    Iterator<Table> referencableIter = getReferencableTables().iterator();
 	    while (referencableIter.hasNext())
 	    {
-	      Table referencable = (Table) referencableIter.next();
+	      Table referencable = referencableIter.next();
 	      if (this.isExtending (referencable))
 	        throw new IllegalStateException (formatMessage (
 	          "err_table_cyclicRelationalStructure",

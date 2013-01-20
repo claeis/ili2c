@@ -13,7 +13,6 @@
 package ch.interlis.ili2c.metamodel;
 
 
-import java.beans.*;
 import java.beans.beancontext.*;
 import java.net.URL;
 import java.io.InputStream;
@@ -32,17 +31,24 @@ import ch.ehi.basics.logging.EhiLogger;
     @version   January 28, 1999
     @author    Sascha Brawer (mailto:sb@adasys.ch)
 */
-public abstract class Container
+public abstract class Container<E extends Element>
   extends Element
-  implements BeanContext
+  implements BeanContext /*, Collection<E> */
 {
   protected final BeanContextSupport bcs = new BeanContextSupport(this);
 
+  // Here we have a problem for generics with the BeanContext interface which
+  // extends "Collection" without type arguments.
+  // It may be questionnable whether all these Java beans features, which
+  // seemed to be quite a good thing in 1999, are really used today because
+  // they make the metamodel quite heavyweight and do not permit to have an
+  // add(E e) method.
+  // IMHO all this BCS stuff should be removed from the metamodel. **GV1012
 
   /** The elements of this container.
   * has to be created by implementations
   */
-  protected Collection elements;
+  protected Collection<E> elements;
 
 
   protected Container()
@@ -54,35 +60,35 @@ public abstract class Container
 
   /** template method to initialize the elements field
    */
-  abstract protected Collection createElements();
+  abstract protected Collection<E> createElements();
 
 
   /* Support for the Collection interface; delegates to the
      elements member */
   public int size() {
   	if(isAlias()){
-  		return ((Container)getReal()).size();
+  		return ((Container<E>)getReal()).size();
   	}else{
 	  	return elements.size();
   	}
   }
   public boolean isEmpty() {
   	if(isAlias()){
-  		return ((Container)getReal()).isEmpty();
+  		return ((Container<E>)getReal()).isEmpty();
   	}else{
 		return elements.isEmpty();
   	}
   }
   public boolean contains(Object o) {
   	if(isAlias()){
-  		return ((Container)getReal()).contains(o);
+  		return ((Container<E>)getReal()).contains(o);
   	}else{
 	  	return elements.contains(o);
   	}
   }
-  public Iterator iterator() {
+  public final Iterator<E> iterator() {
   	if(isAlias()){
-  		return ((Container)getReal()).iterator();
+  		return ((Container<E>)getReal()).iterator();
   	}else{
 	  	return elements.iterator();
   	}
@@ -111,23 +117,23 @@ public abstract class Container
   */
   public boolean add(Object o) {
   	if(isAlias()){
-  		return ((Container)getReal()).add(o);
+  		return ((Container<E>)getReal()).add(o);
   	}else{
+  	    E e = (E) o;
 	    /* Null is not accepted. */
-	    if (o == null)
-	      throw new IllegalArgumentException();
+	    if (o == null) {
+            throw new IllegalArgumentException();
+        }
 
 
 	    /* Only Interlis elements can be added. */
-	    if (!(o instanceof Element)) {
-	      throw new ClassCastException();
-	    }
+	    if (o instanceof Element) {
 	    try {
-	      ((Element) o).setBeanContext(this);
+	      e.setBeanContext(this);
 	    } catch (java.beans.PropertyVetoException pve) {
 	      throw new IllegalArgumentException(pve.getLocalizedMessage());
 	    }
-	    boolean wasAdded = elements.add(o);
+	    boolean wasAdded = elements.add(e);
 	/*
 	    if (wasAdded)
 	      bcs.fireChildrenAdded(
@@ -135,6 +141,8 @@ public abstract class Container
 	          new Object[] { o }));
 	*/
 	    return wasAdded;
+            }
+            throw new ClassCastException();
   	}
   }
 
@@ -305,10 +313,11 @@ public abstract class Container
   		return ((Container)getReal()).resolveModelName(name);
   	}else{
 	    BeanContext bc = getBeanContext();
-	    if (bc instanceof Container)
-	      return ((Container) bc).resolveModelName(name);
-	    else
-	      return null;
+	    if (bc instanceof Container) {
+            return ((Container) bc).resolveModelName(name);
+        } else {
+            return null;
+        }
   	}
   }
 
@@ -342,8 +351,9 @@ public abstract class Container
 	       the code below would throw an exception, which is not the
 	       desired behaviour.
 	    */
-	    if (name == null)
-	      return null;
+	    if (name == null) {
+            return null;
+        }
 
 
 	    Iterator it = iterator();
@@ -351,8 +361,9 @@ public abstract class Container
 	    {
 	      Element e = (Element) it.next ();
 	      if (klass.isAssignableFrom (e.getClass())
-	          && name.equals (e.getName()))
-	        return e;
+	          && name.equals (e.getName())) {
+            return e;
+        }
 	    }
 	    return null;
   	}
@@ -379,10 +390,11 @@ public abstract class Container
   	if(isAlias()){
   		return ((Container)getReal()).getContainerOrSame(klass);
   	}else{
-	    if (klass.isAssignableFrom(this.getClass()))
-	      return this;
-	    else
-	      return getContainer(klass);
+	    if (klass.isAssignableFrom(this.getClass())) {
+            return this;
+        } else {
+            return getContainer(klass);
+        }
   	}
   }
 
@@ -405,8 +417,9 @@ public abstract class Container
 
 	    while (curContainer != null)
 	    {
-	      if (curContainer == this)
-	        return true;
+	      if (curContainer == this) {
+            return true;
+        }
 
 
 	      curContainer = curContainer.getContainer (Container.class);
@@ -443,13 +456,15 @@ public abstract class Container
       Object obj = iter.next();
 
 
-      if (!(obj instanceof Element))
+      if (!(obj instanceof Element)) {
         continue;
+    }
 
 
       s.add (obj);
-      if (obj instanceof Container)
+      if (obj instanceof Container) {
         ((Container) obj).getIndirectElements_helper (s);
+    }
     }
   }
 
@@ -471,10 +486,11 @@ public abstract class Container
   		return ((Container)getReal()).getRHSNameSpace();
   	}else{
 	    Container c = getContainer();
-	    if (c == null)
-	      return null;
-	    else
-	      return c.getRHSNameSpace ();
+	    if (c == null) {
+            return null;
+        } else {
+            return c.getRHSNameSpace ();
+        }
   	}
   }
 
@@ -505,8 +521,9 @@ public abstract class Container
 	    while (iter.hasNext ())
 	    {
 	      Object obj = iter.next();
-	      if (obj instanceof ch.interlis.ili2c.metamodel.Element)
-	        ((ch.interlis.ili2c.metamodel.Element) obj).checkIntegrity ();
+	      if (obj instanceof ch.interlis.ili2c.metamodel.Element) {
+            ((ch.interlis.ili2c.metamodel.Element) obj).checkIntegrity ();
+        }
 	    }
   	}
   }
@@ -521,8 +538,9 @@ public abstract class Container
   	if(isAlias()){
   		return ((Container)getReal()).checkStructuralEquivalence (with);
   	}else{
-	    if (!super.checkStructuralEquivalence (with))
-	      return false;
+	    if (!super.checkStructuralEquivalence (with)) {
+            return false;
+        }
 
 
 	    /* It is guaranteed, when reaching this code, that "with" is an intance of
@@ -557,8 +575,9 @@ public abstract class Container
 
 	      if (curMy != null)
 	      {
-	        if (!curMy.checkStructuralEquivalence (curOther))
-	          allFine = false;
+	        if (!curMy.checkStructuralEquivalence (curOther)) {
+                allFine = false;
+            }
 	      }
 	    }
 

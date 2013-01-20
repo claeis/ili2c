@@ -9,7 +9,6 @@
 
 
 package ch.interlis.ili2c.metamodel;
-import java.util.*;
 
 
 
@@ -78,8 +77,6 @@ public class DecompositionView extends UnextendableView
   {
     ObjectPath oldValue = this.decomposedAttribute;
     ObjectPath newValue = decomposedAttribute;
-    Type decomposedType = null;
-
 
     if (oldValue == newValue)
       return;

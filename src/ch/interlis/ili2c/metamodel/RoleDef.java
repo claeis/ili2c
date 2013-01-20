@@ -8,7 +8,7 @@ public class RoleDef extends AbstractLeafElement
 	implements Extendable
 {
 	private RoleDef extending;
-	private Set extendedBy=new HashSet(2); // Set<RoleDef>
+	private Set<RoleDef> extendedBy=new HashSet<RoleDef>(2);
 	private boolean _abstract;
 	private boolean _final;
 	private boolean hiding=false;
@@ -16,9 +16,10 @@ public class RoleDef extends AbstractLeafElement
 	private boolean ordered;
 	private int kind=Kind.eASSOCIATE;
 	private Cardinality cardinality;
-	private ArrayList endv=new ArrayList(); // list<ReferenceType tableOrAssociationDef>
+	private ArrayList<ReferenceType> endv = new ArrayList<ReferenceType>(); // list<ReferenceType tableOrAssociationDef>
 	private ObjectPath derivedFrom;
 	private String name;
+        private boolean isIli23;
 
 	public class Kind
 	{
@@ -29,11 +30,17 @@ public class RoleDef extends AbstractLeafElement
 		/** do not instantiate */
 		private Kind(){};
 	}
-	private RoleDef(){};
-	private boolean isIli23=true;
-	public RoleDef(boolean isIli23){
-		this.isIli23=isIli23;
+
+	public RoleDef() {
+	    // This constructor is not used (was private), but Javabeans require a PUBLIC constructor.
+	    // Can be removed if the Javabeans stuff is removed
+	    this(true);
 	}
+
+	public RoleDef(boolean isIli23) {
+		this.isIli23 = isIli23;
+	}
+
 	public void setExtended(boolean v)
 	{
 		extended=v;
@@ -44,7 +51,7 @@ public class RoleDef extends AbstractLeafElement
 	}
 	public void setAbstract(boolean abst)
 	{
-	    boolean oldValue = _abstract;
+	    boolean oldValue = _abstract;  // FIXME: missing Javabeans support (or remove). **GV1012
 	    boolean newValue = abst;
 
 		/* Can not be ABSTRACT and FINAL at the same time. */
@@ -62,7 +69,7 @@ public class RoleDef extends AbstractLeafElement
 	}
 	public void setFinal(boolean fin)
 	{
-	    boolean oldValue = _final;
+	    boolean oldValue = _final;  // FIXME: missing Javabeans support (or remove). **GV1012
 	    boolean newValue = fin;
 
 
@@ -134,10 +141,10 @@ public class RoleDef extends AbstractLeafElement
 	 */
 	public ReferenceType getReference()
 	{
-		if(endv.size()==0)return null;
-		return (ReferenceType)endv.get(0);
+		if(endv.isEmpty())return null;
+		return endv.get(0);
 	}
-	public Iterator iteratorReference()
+	public Iterator<ReferenceType> iteratorReference()
 	{
 		return endv.iterator();
 	}
@@ -168,16 +175,14 @@ public class RoleDef extends AbstractLeafElement
 	 */
 	public AbstractClassDef getDestination()
 	{
-		if(endv.size()==0)return null;
-		return ((ReferenceType)endv.get(0)).getReferred();
+		return endv.isEmpty() ? null : endv.get(0).getReferred();
 	}
-	public Iterator iteratorDestination()
+	public Iterator<AbstractClassDef> iteratorDestination()
 	{
-		ArrayList destv=new ArrayList(endv.size());
-		Iterator endi=endv.iterator();
-		while(endi.hasNext()){
-			ReferenceType end=(ReferenceType)endi.next();
-			destv.add(end.getReferred());
+		ArrayList<AbstractClassDef> destv = new ArrayList<AbstractClassDef>(endv.size());
+
+		for (int i = 0; i < endv.size(); ++i) {
+		    destv.add(endv.get(i).getReferred());
 		}
 		return destv.iterator();
 	}
@@ -284,18 +289,18 @@ public class RoleDef extends AbstractLeafElement
 		Element ext=getExtending();
 		return (ext!=null) ? ext.getReal() : null;
 	}
-	public Set getExtensions ()
+	public Set<RoleDef> getExtensions ()
 	{
-	    Set result = new HashSet ();
-	    getExtensions_recursiveHelper (result);
+	    Set<RoleDef> result = new HashSet<RoleDef>();
+	    getExtensions_recursiveHelper(result);
 	    return result;
 	}
-	private final void getExtensions_recursiveHelper (Set s)
+	private final void getExtensions_recursiveHelper(Set<RoleDef> s)
 	{
 		s.add (this);
-		Iterator iter = extendedBy.iterator();
+		Iterator<RoleDef> iter = extendedBy.iterator();
 		while (iter.hasNext()){
-			((RoleDef) iter.next()).getExtensions_recursiveHelper (s);
+			iter.next().getExtensions_recursiveHelper(s);
 		}
 	}
   /** tests, if the association that this role is an end of,
@@ -323,29 +328,24 @@ public class RoleDef extends AbstractLeafElement
 	RoleDef role[] = new RoleDef[2];
 	role[0] = null;
 	role[1] = null;
-	Iterator rolei =
-		((AssociationDef) this.getContainer()).getAttributesAndRoles();
+	Iterator<Element> rolei = ((AssociationDef) getContainer()).getAttributesAndRoles();
 	int i=0;
 	while (rolei.hasNext()) {
-		Object obj = rolei.next();
+	    Element obj = rolei.next();
 		if (obj instanceof RoleDef) {
-			role[i]=(RoleDef) obj;
-			i++;
+			role[i++] = (RoleDef) obj;
 		}
 	}
-	if (role[0] == this) {
-		return role[1];
-	}
-	return role[0];
+	return (role[0] == this) ? role[1] : role[0];
   }
   /** tests if this belongs to an association with no more than two roles.
    */
   public boolean hasOneOppEnd(){
-	Iterator rolei =
+	Iterator<Element> rolei =
 		((AssociationDef) this.getContainer()).getAttributesAndRoles();
 	int rolec=0;
 	while (rolei.hasNext()) {
-		Object obj = rolei.next();
+	    Element obj = rolei.next();
 		if (obj instanceof RoleDef) {
 			rolec++;
 		}

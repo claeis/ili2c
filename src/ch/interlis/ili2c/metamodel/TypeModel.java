@@ -10,7 +10,6 @@
  *****************************************************************************/
 
 package ch.interlis.ili2c.metamodel;
-import java.util.*;
 
 /** An Interlis Model which is used for modelling data types and units.
 
@@ -23,7 +22,7 @@ public class TypeModel extends Model
   {
   }
 
-  
+
   /** Returns a String consisting of <code>TYPE MODEL</code> followed
               by the model's name.
   */

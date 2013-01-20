@@ -11,8 +11,9 @@
 
 
 package ch.interlis.ili2c.metamodel;
-import java.util.*;
-import ch.ehi.basics.logging.EhiLogger;
+
+import java.util.ArrayList;
+
 
 /** An Interlis Model which contains the pre-defined elements
     that are part of the language specification.
@@ -158,7 +159,7 @@ public class PredefinedModel extends DataModel
   public final Function inEnumRange = new Function();
   public final Function convertUnit = new Function();
   public final Function areAreas = new Function();
-  
+
   public final Table ANYCLASS = new Table ();
   public final Table ANYSTRUCTURE = new Table ();
 
@@ -169,7 +170,7 @@ public class PredefinedModel extends DataModel
   public final Table COORDSYSTEM = new Table ();
   public final Table SCALSYSTEM = new Table ();
   public final Table SIGN = new Table ();
-  
+
   public final TopicTIMESYSTEMS TIMESYSTEMS = new TopicTIMESYSTEMS();
   public final Unit Minute = createModelInterlisNumUnit (
 	"min", "Minute",
@@ -186,11 +187,11 @@ public class PredefinedModel extends DataModel
 	public final Unit Year = createModelInterlisBaseUnit (
 	  "Y", "Year",
 	  TIME, /* abstract */ false);
-	
+
 	public final MetaDataUseDef BaseTimeSystems = new MetaDataUseDef();
 	public final Table TimeOfDay = new Table ();
 	public final Table UTC = new Table ();
-	public final Domain GregorianYear=new Domain("GregorianYear" 
+	public final Domain GregorianYear=new Domain("GregorianYear"
 		,new NumericType(new PrecisionDecimal("1582"),new PrecisionDecimal("2999"))
 		,/* extending */ null, /* abstract */ false, /* final */ false);
 	public final Table GregorianDate = new Table ();
@@ -204,7 +205,7 @@ public class PredefinedModel extends DataModel
 	public final Domain XmlDateTime=new Domain("XMLDateTime"
 		,new FormattedType()
 		,XmlDate, /* abstract */ false, /* final */ false);
-		
+
   public final Table LINE_SEGMENT = new Table ();
   public final Table START_SEGMENT = new Table ();
   public final Table STRAIGHT_SEGMENT = new Table ();
@@ -259,7 +260,7 @@ public class PredefinedModel extends DataModel
     add (NAME);
     add (INTERLIS_1_DATE);
 
-  List ev=new ArrayList();
+  ArrayList<Enumeration.Element> ev=new ArrayList<Enumeration.Element>(2);
   ev.add(new Enumeration.Element ("false"));
   ev.add(new Enumeration.Element ("true"));
   try {
@@ -274,7 +275,7 @@ public class PredefinedModel extends DataModel
 
     add (BOOLEAN);
 
-  ev=new ArrayList();
+  ev=new ArrayList<Enumeration.Element>(3);
   ev.add(new Enumeration.Element ("Left"));
   ev.add(new Enumeration.Element ("Center"));
   ev.add(new Enumeration.Element ("Right"));
@@ -288,7 +289,7 @@ public class PredefinedModel extends DataModel
       /* circular */ false));
     add (HALIGNMENT);
 
-	  ev=new ArrayList();
+	  ev=new ArrayList<Enumeration.Element>(5);
 	  ev.add(new Enumeration.Element ("Top"));
 	  ev.add(new Enumeration.Element ("Cap"));
 	  ev.add(new Enumeration.Element ("Half"));
@@ -338,7 +339,7 @@ einer Unterklasse des zweiten Ar-gumentes entspricht.
         ,new FormalArgument("potSuperClass",clt2)
         });
       TypeAlias tt = new TypeAlias ();
-      ((TypeAlias) tt).setAliasing (BOOLEAN);
+      tt.setAliasing (BOOLEAN);
       isSubClass.setDomain(tt);
       add(isSubClass);
 
@@ -354,7 +355,7 @@ oder zu einer Unterklasse des zweiten Argumentes gehört.
         ,new FormalArgument("Class",clt)
         });
       tt = new TypeAlias ();
-      ((TypeAlias) tt).setAliasing (BOOLEAN);
+      tt.setAliasing (BOOLEAN);
       isOfClass.setDomain(tt);
       add(isOfClass);
 
@@ -380,7 +381,7 @@ Liefert die Anzahl Objekte, welche die gegebene Objektmentmenge enthält
         });
       objectCount.setDomain(new NumericType());
       add(objectCount);
-      
+
       /* FUNCTION len (TextVal: TEXT): NUMERIC;
          FUNCTION lenM (TextVal: MTEXT): NUMERIC;
          Liefert die Länge des Textes als Anzahl Zeichen.
@@ -391,14 +392,14 @@ Liefert die Anzahl Objekte, welche die gegebene Objektmentmenge enthält
         });
       len.setDomain(new NumericType());
       add(len);
-      
+
       lenM.setName("lenM");
       lenM.setArguments(new FormalArgument[]{
         new FormalArgument("TextVal",new TextType(false))
         });
       lenM.setDomain(new NumericType());
       add(lenM);
-      
+
       /* FUNCTION trim (TextVal: TEXT): TEXT;
          FUNCTION trimM (TextVal: MTEXT): MTEXT;
          Liefert den um Leerzeichen am Anfang und Ende befreiten Text.
@@ -409,14 +410,14 @@ Liefert die Anzahl Objekte, welche die gegebene Objektmentmenge enthält
         });
       trim.setDomain(new TextType(true));
       add(trim);
-      
+
       trimM.setName("trimM");
       trimM.setArguments(new FormalArgument[]{
         new FormalArgument("TextVal",new TextType(false))
         });
       trimM.setDomain(new TextType(false));
       add(trimM);
-      
+
       /* FUNCTION isEnumSubVal (SubVal: ENUMTREEVAL; NodeVal: ENUMTREEVAL): BOOLEAN;
          Liefert true, wenn SubVal ein Unterelement, also ein Unterknoten oder ein Blatt, des Knotens NodeVal ist.
       */
@@ -426,11 +427,11 @@ Liefert die Anzahl Objekte, welche die gegebene Objektmentmenge enthält
         new FormalArgument("NodeVal",new EnumValType(false))
         });
       tt = new TypeAlias ();
-      ((TypeAlias) tt).setAliasing (BOOLEAN);
+      tt.setAliasing (BOOLEAN);
       isEnumSubVal.setDomain(tt);
       add(isEnumSubVal);
 
-      
+
       /* FUNCTION inEnumRange (Enum: ENUMVAL; MinVal: ENUMTREEVAL; MaxVal: ENUMTREEVAL): BOOLEAN;
          Liefert true, wenn die Aufzählung zu der Enum gehört, geordnet ist und im Bereich von MinVal und Max-
          Val liegt. Unterelemente von MinVal oder MaxVal gelten als dazu gehörig.
@@ -442,10 +443,10 @@ Liefert die Anzahl Objekte, welche die gegebene Objektmentmenge enthält
         new FormalArgument("MaxVal",new EnumValType(false))
         });
       tt = new TypeAlias ();
-      ((TypeAlias) tt).setAliasing (BOOLEAN);
+      tt.setAliasing (BOOLEAN);
       inEnumRange.setDomain(tt);
       add(inEnumRange);
-      
+
 /* FUNCTION convertUnit (from: NUMERIC): NUMERIC;
 Rechnet den numerischen Wert des Parameters "from" in den numerischen
 Rückgabewert um und be-rücksichtigt dabei die Einheiten, die mit dem
@@ -489,7 +490,7 @@ einer gemeinsamen Einheit abgeleitet werden.
         new FormalArgument("SurfaceAttr",arg3type)
         });
       tt = new TypeAlias ();
-      ((TypeAlias) tt).setAliasing (BOOLEAN);
+      tt.setAliasing (BOOLEAN);
       areAreas.setDomain(tt);
       add(areAreas);
 
@@ -636,7 +637,7 @@ einer gemeinsamen Einheit abgeleitet werden.
 	TIMESYSTEMS.TIMEOFDAYSYS.add (timeofdaysys_Unit);
 	TIMESYSTEMS.add(TIMESYSTEMS.TIMEOFDAYSYS);
   }
-  
+
   add(Minute);
   add(Hour);
   add(Day);
@@ -695,7 +696,7 @@ einer gemeinsamen Einheit abgeleitet werden.
 	timeofday_seconds.setSubdivision(true);
 	timeofday_seconds.setContinuous(true);
 	TimeOfDay.add (timeofday_seconds);
-  }    
+  }
   add(TimeOfDay);
 
   /*
@@ -746,7 +747,7 @@ einer gemeinsamen Einheit abgeleitet werden.
 	gregoriandate_day.setDomain (typ);
 	gregoriandate_day.setSubdivision(true);
 	GregorianDate.add (gregoriandate_day);
-  }    
+  }
   add(GregorianDate);
 
   /*
@@ -788,7 +789,7 @@ einer gemeinsamen Einheit abgeleitet werden.
 	gregoriandatetime_seconds.setSubdivision(true);
 	gregoriandatetime_seconds.setContinuous(true);
 	GregorianDateTime.add (gregoriandatetime_seconds);
-  }    
+  }
   add(GregorianDateTime); // TODO set metaobjref UTC
 
   /*
@@ -838,7 +839,7 @@ einer gemeinsamen Einheit abgeleitet werden.
 	  format.addBaseAttrRef(baseAttr);
   }
   add(XmlDate);
-  
+
   /*
   DOMAIN XMLDateTime EXTENDS XMLDate = FORMAT BASED ON GregorianDateTime
 	( INHERITANCE "T" Hours/2 ":" Minutes ":" Seconds );

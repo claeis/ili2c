@@ -25,6 +25,7 @@ import java.beans.PropertyVetoException;
 import java.beans.beancontext.BeanContext;
 import java.beans.beancontext.BeanContextChild;
 import java.beans.beancontext.BeanContextChildSupport;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.List;
@@ -59,7 +60,7 @@ public abstract class Element implements BeanContextChild,ElementAlias {
 	 */
 	private final int defidx;
 	private static int _defidx=0;
-	
+
 	public Element()
 	{
 		defidx=_defidx++;
@@ -292,16 +293,17 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   /** Helper function to retrieve all instances of a given class
       in a collection.
   */
-  protected static final Object[] retrieveAllInstancesOf (Iterator it, Class clazz)
+  protected static <E> E[] retrieveAllInstancesOf (Iterator<?> it, Class<E> clazz)
   {
-    List l = new LinkedList();
+    List<E> l = new LinkedList<E>();
 
     while (it.hasNext()) {
       Object o = it.next();
-      if (clazz.isInstance(o))
-        l.add(o);
+      if (clazz.isInstance(o)) {
+        l.add((E) o);
     }
-    return l.toArray((Object[]) java.lang.reflect.Array.newInstance(clazz, 0));
+    }
+    return l.toArray((E[]) java.lang.reflect.Array.newInstance(clazz, l.size()));
   }
 
 
@@ -319,13 +321,14 @@ public abstract class Element implements BeanContextChild,ElementAlias {
               bean context is found, but <code>klass</code> is not a
               subclass of <code>ch.interlis.Container</code>
   */
-  public final Container getContainer (Class klass)
+  public final Container<?> getContainer (Class<?> klass)
   {
     BeanContext bc = getBeanContext();
 
     while (bc != null) {
-      if (klass.isInstance(bc))
-        return (Container) bc;
+      if (klass.isInstance(bc)) {
+        return (Container<?>) bc;
+    }
       bc = bc.getBeanContext();
     }
 
@@ -342,10 +345,11 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   {
     BeanContext bc = getBeanContext();
 
-    if (bc instanceof Container)
-      return (Container) bc;
-    else
-      return null;
+    if (bc instanceof Container) {
+        return (Container) bc;
+    } else {
+        return null;
+    }
   }
 
 
@@ -363,12 +367,12 @@ public abstract class Element implements BeanContextChild,ElementAlias {
       from a specified scope.  Pass <code>null</code> to get
       a fully qualified name.
   */
-  public String getScopedName (Container scope)
+  public String getScopedName (Container<?> scope)
   {
     return getName();
   }
 
- 
+
 
   /** Throws an exception if a name is not a valid Interlis name.
   */
@@ -386,20 +390,23 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   protected static final void checkNameSanity (String s, boolean emptyStringIsOK)
     throws IllegalArgumentException
   {
-    if (s == null)
-      throw new IllegalArgumentException();
+    if (s == null) {
+        throw new IllegalArgumentException();
+    }
 
 
     int len = s.length();
-    if (!emptyStringIsOK && (len == 0))
-      throw new IllegalArgumentException();
+    if (!emptyStringIsOK && (len == 0)) {
+        throw new IllegalArgumentException();
+    }
 
     for (int i = 0; i < len; i++)
     {
       char curChar = s.charAt (i);
 
-      if (curChar == ' ')
+      if (curChar == ' ') {
         throw new IllegalArgumentException (formatMessage ("err_name_withSpaces", s));
+    }
     }
   }
 
@@ -441,13 +448,15 @@ public abstract class Element implements BeanContextChild,ElementAlias {
 
     /* If "this" is currently not embedded in a container,
        name conflicts can not occur. */
-    if (container == null)
-      return;
+    if (container == null) {
+        return;
+    }
 
     conflicting = container.getRealElement(klass, proposedName);
     if ((conflicting == null) || (conflicting == this)
-        || (conflicting == acceptable))
-      return;
+        || (conflicting == acceptable)) {
+        return;
+    }
 
     throw new IllegalArgumentException(formatMessage(
       errorKey, proposedName,
@@ -460,10 +469,11 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   */
   public static final String makeErrorName (Element elt)
   {
-    if (elt == null)
-      return rsrc.getString ("err_dumpErrorName");
-    else
-      return elt.toString();
+    if (elt == null) {
+        return rsrc.getString ("err_dumpErrorName");
+    } else {
+        return elt.toString();
+    }
   }
 
 
@@ -492,8 +502,9 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   */
   public Container getCommonContainer (Element elt)
   {
-    if (elt == null)
-      return null;
+    if (elt == null) {
+        return null;
+    }
 
     Container myCtr, eltCtr, commonContainer;
 
@@ -505,8 +516,9 @@ public abstract class Element implements BeanContextChild,ElementAlias {
 
       while (eltCtr != null)
       {
-        if (eltCtr == myCtr)
-          return myCtr;
+        if (eltCtr == myCtr) {
+            return myCtr;
+        }
 
         eltCtr = eltCtr.getContainer ();
       }
@@ -557,29 +569,32 @@ public abstract class Element implements BeanContextChild,ElementAlias {
 
     /* If "this" is in an entirely different containment hierarchy
        as elt, or if elt is null, "this" is not declared before elt. */
-    if (commonContainer == null)
-      return false;
+    if (commonContainer == null) {
+        return false;
+    }
 
-    Iterator iter = commonContainer.iterator ();
+    Iterator<Element> iter = commonContainer.iterator ();
     while (iter.hasNext())
     {
-      Element curElt = (Element) iter.next();
+      Element curElt = iter.next();
 
       /* If "this" or some container that contains "this" comes first,
          "this" is declared before "elt".
       */
       if ((curElt == this)
           || ((curElt instanceof Container)
-              && ((Container) curElt).containsIndirectly (this)))
+              && ((Container) curElt).containsIndirectly (this))) {
         return true;
+    }
 
       /* If "elt" or some container that contains "elt" comes first,
          "this" is not declared before "elt".
       */
       if ((curElt == elt)
           || ((curElt instanceof Container)
-              && ((Container) curElt).containsIndirectly (elt)))
+              && ((Container) curElt).containsIndirectly (elt))) {
         return false;
+    }
     }
 
     /* If we reach this point, something is wrong with getCommonContainer. */
@@ -614,30 +629,36 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   {
     Model myModel, otherModel;
 
-    if (other == null)
-      throw new IllegalArgumentException ();
+    if (other == null) {
+        throw new IllegalArgumentException ();
+    }
 
-    if (this == other)
-      return true;
+    if (this == other) {
+        return true;
+    }
 
-    if (!other.isDeclaredBefore(this))
-      return false;
+    if (!other.isDeclaredBefore(this)) {
+        return false;
+    }
 
-    if (this instanceof Model)
-      myModel = (Model) this;
-    else
-      myModel = (Model) this.getContainer (Model.class);
+    if (this instanceof Model) {
+        myModel = (Model) this;
+    } else {
+        myModel = (Model) this.getContainer (Model.class);
+    }
 
 
-    if (other instanceof Model)
-      otherModel = (Model) other;
-    else
-      otherModel = (Model) other.getContainer (Model.class);
+    if (other instanceof Model) {
+        otherModel = (Model) other;
+    } else {
+        otherModel = (Model) other.getContainer (Model.class);
+    }
 
     /* This should not happen with parsed Elements, but the answer
        in this unlikely case is pretty obvious. */
-    if ((myModel == null) || (otherModel == null))
-      return false;
+    if ((myModel == null) || (otherModel == null)) {
+        return false;
+    }
 
     return (myModel == otherModel)
       || myModel.isImporting (otherModel);
@@ -660,12 +681,13 @@ public abstract class Element implements BeanContextChild,ElementAlias {
       @see #canAccess(ch.interlis.Element)
       @see ch.interlis.Extendable.getExtensions()
   */
-  public Set getAccessiblePolymorphicEquivalents (Extendable forExtendable)
+  public Set<Extendable> getAccessiblePolymorphicEquivalents (Extendable forExtendable)
   {
-    Set result;
+    Set<Extendable> result;
 
-    if (forExtendable == null)
-      return new java.util.HashSet();
+    if (forExtendable == null) {
+        return new HashSet<Extendable>();
+    }
 
     /* calculate the transitive closure of extending relation */
     result = forExtendable.getExtensions();
@@ -677,10 +699,11 @@ public abstract class Element implements BeanContextChild,ElementAlias {
     Iterator iter = result.iterator();
     while (iter.hasNext())
     {
-      ch.interlis.ili2c.metamodel.Element elt = (ch.interlis.ili2c.metamodel.Element) iter.next();
+      Element elt = (Element) iter.next();
 
-      if (!canAccess (elt))
+      if (!canAccess (elt)) {
         iter.remove();
+    }
     }
 
     return result;
@@ -698,14 +721,15 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   public boolean checkStructuralEquivalence (Element with)
   {
   	if(isAlias()){
-  		return ((Element)getReal()).checkStructuralEquivalence (with);
+  		return getReal().checkStructuralEquivalence (with);
   	}else{
 
 	    /* This can only occur due to parsing errors. Do not report additional
 	       errors in that case.
 	    */
-	    if (with == null)
-	      return false;
+	    if (with == null) {
+            return false;
+        }
 
 	    /* Class must be the same for structural equivalence. */
 	    if (this.getClass() != with.getClass())
@@ -726,8 +750,9 @@ public abstract class Element implements BeanContextChild,ElementAlias {
     /* This can only occur due to parsing errors. Do not report additional
        errors in that case.
     */
-    if ((myArray == null) || (withArray == null) || (with == null))
-      return false;
+    if ((myArray == null) || (withArray == null) || (with == null)) {
+        return false;
+    }
 
     if (myArray.length != withArray.length)
     {
@@ -738,13 +763,15 @@ public abstract class Element implements BeanContextChild,ElementAlias {
     boolean fine = true;
     for (int i = 0; i < myArray.length; i++)
     {
-      if ((myArray[i] == null) != (withArray[i] == null))
+      if ((myArray[i] == null) != (withArray[i] == null)) {
         fine = false;
+    }
 
       if (myArray[i] != null)
       {
-        if (!myArray[i].checkStructuralEquivalence (withArray[i]))
-          fine = false;
+        if (!myArray[i].checkStructuralEquivalence (withArray[i])) {
+            fine = false;
+        }
       }
     }
     return fine;

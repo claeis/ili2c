@@ -1,7 +1,9 @@
 package ch.interlis.ili2c.metamodel;
+
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.ArrayList;
-import ch.ehi.basics.logging.EhiLogger;
+import java.util.List;
 
 
 public class FormattedType extends BaseType {
@@ -9,7 +11,7 @@ public class FormattedType extends BaseType {
 	  private Table baseClass=null;
 	  private String minimum=null;
 	  private String maximum=null;
-	  private ArrayList baseAttrRef=null;
+	  private ArrayList<FormattedTypeBaseAttrRef> baseAttrRef;
 	  private String prefix=null;
   public Table getDefinedBaseStruct() {
 		return baseClass;
@@ -63,11 +65,11 @@ public class FormattedType extends BaseType {
 		}
 		if(max==null){
 			// build max from struct
-			StringBuffer fmt=new StringBuffer();
+			StringBuilder fmt=new StringBuilder();
 			FormattedType lastParent=null;
-			Iterator baseAttri=iteratorBaseAttrRef();
+			Iterator<FormattedTypeBaseAttrRef> baseAttri = iteratorBaseAttrRef();
 			while(baseAttri.hasNext()){
-				ch.interlis.ili2c.metamodel.FormattedTypeBaseAttrRef baseAttrRef=(ch.interlis.ili2c.metamodel.FormattedTypeBaseAttrRef)baseAttri.next();
+				FormattedTypeBaseAttrRef baseAttrRef = baseAttri.next();
 				if(lastParent!=baseAttrRef.getParent()){
 					lastParent=baseAttrRef.getParent();
 					String prefix=lastParent.getDefinedPrefix();
@@ -115,11 +117,11 @@ public class FormattedType extends BaseType {
 		}
 		if(min==null){
 			// build min from struct
-			StringBuffer fmt=new StringBuffer();
+			StringBuilder fmt=new StringBuilder();
 			FormattedType lastParent=null;
-			Iterator baseAttri=iteratorBaseAttrRef();
+			Iterator<FormattedTypeBaseAttrRef> baseAttri = iteratorBaseAttrRef();
 			while(baseAttri.hasNext()){
-				ch.interlis.ili2c.metamodel.FormattedTypeBaseAttrRef baseAttrRef=(ch.interlis.ili2c.metamodel.FormattedTypeBaseAttrRef)baseAttri.next();
+				FormattedTypeBaseAttrRef baseAttrRef = baseAttri.next();
 				if(lastParent!=baseAttrRef.getParent()){
 					lastParent=baseAttrRef.getParent();
 					String prefix=lastParent.getDefinedPrefix();
@@ -143,7 +145,7 @@ public class FormattedType extends BaseType {
 	public void setMinimum(String minimum) {
 		this.minimum = minimum;
 	}
-	public PrecisionDecimal[] valueOf(String value) 
+	public PrecisionDecimal[] valueOf(String value)
 	{
 		String regexp=getRegExp();
 		//EhiLogger.debug("value "+value);
@@ -160,7 +162,7 @@ public class FormattedType extends BaseType {
 		}
 		return ret;
 	}
-	public String getRegExp() 
+	public String getRegExp()
 	{
 		FormattedType format=this;
 		if(getDefinedBaseDomain()!=null){
@@ -168,11 +170,11 @@ public class FormattedType extends BaseType {
 			Domain baseDomain=getDefinedBaseDomain();
 			format=(FormattedType)baseDomain.getType();
 		}
-		StringBuffer fmt=new StringBuffer();
+		StringBuilder fmt=new StringBuilder();
 		FormattedType lastParent=null;
-		Iterator baseAttri=format.iteratorBaseAttrRef();
+		Iterator<FormattedTypeBaseAttrRef> baseAttri = format.iteratorBaseAttrRef();
 		while(baseAttri.hasNext()){
-			ch.interlis.ili2c.metamodel.FormattedTypeBaseAttrRef baseAttrRef=(ch.interlis.ili2c.metamodel.FormattedTypeBaseAttrRef)baseAttri.next();
+			FormattedTypeBaseAttrRef baseAttrRef = baseAttri.next();
 			if(lastParent!=baseAttrRef.getParent()){
 				lastParent=baseAttrRef.getParent();
 				String prefix=lastParent.getDefinedPrefix();
@@ -212,18 +214,19 @@ public class FormattedType extends BaseType {
   public void addBaseAttrRef(FormattedTypeBaseAttrRef ref)
   {
 	  if(baseAttrRef==null){
-		  baseAttrRef=new ArrayList();
+		  baseAttrRef=new ArrayList<FormattedTypeBaseAttrRef>();
 	  }
 	  baseAttrRef.add(ref);
   }
-  public Iterator iteratorDefinedBaseAttrRef()
+  public Iterator<FormattedTypeBaseAttrRef> iteratorDefinedBaseAttrRef()
   {
 	  if(baseAttrRef==null){
-		  return new ArrayList().iterator();
+	      List<FormattedTypeBaseAttrRef> empty = Collections.emptyList();
+	      return empty.iterator();
 	  }
 	  return baseAttrRef.iterator();
   }
-  public Iterator iteratorBaseAttrRef()
+  public Iterator<FormattedTypeBaseAttrRef> iteratorBaseAttrRef()
   {
 		if(getDefinedBaseDomain()!=null){
 			// 'FORMAT' FormattedType-DomainRef
@@ -231,7 +234,7 @@ public class FormattedType extends BaseType {
 			FormattedType structFormatType=(FormattedType)baseDomain.getType();
 			return structFormatType.iteratorBaseAttrRef();
 		}
-  		ArrayList ret=new ArrayList();
+  		ArrayList<FormattedTypeBaseAttrRef> ret = new ArrayList<FormattedTypeBaseAttrRef>();
   		if(baseAttrRef!=null){
   			ret.addAll(baseAttrRef);
   		}
@@ -269,11 +272,11 @@ public void setPrefix(String prefix) {
 
 	public String getFormat()
 	{
-		StringBuffer fmt=new StringBuffer();
+		StringBuilder fmt=new StringBuilder();
 		FormattedType lastParent=null;
-		Iterator baseAttri=iteratorBaseAttrRef();
+		Iterator<FormattedTypeBaseAttrRef> baseAttri = iteratorBaseAttrRef();
 		while(baseAttri.hasNext()){
-			ch.interlis.ili2c.metamodel.FormattedTypeBaseAttrRef baseAttrRef=(ch.interlis.ili2c.metamodel.FormattedTypeBaseAttrRef)baseAttri.next();
+			FormattedTypeBaseAttrRef baseAttrRef = baseAttri.next();
 			if(lastParent!=baseAttrRef.getParent()){
 				lastParent=baseAttrRef.getParent();
 				String prefix=lastParent.getDefinedPrefix();
@@ -304,5 +307,21 @@ public void setPrefix(String prefix) {
 	        throw new Ili2cSemanticException (rsrc.getString (
 	        "err_type_ExtOther"));
 	    }
-	  } 
+	  }
+
+
+    public FormattedType clone() {
+        FormattedType cloned = (FormattedType) super.clone();
+
+        if (baseAttrRef != null) {
+            int sz = baseAttrRef.size();
+
+            cloned.baseAttrRef = new ArrayList<FormattedTypeBaseAttrRef>(sz);
+            for (int i = 0; i < sz; ++i) {
+                cloned.baseAttrRef.add(baseAttrRef.get(i).newParent(cloned));
+            }
+        }
+        return cloned;
+    }
+
 }

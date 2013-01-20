@@ -6,37 +6,35 @@
  * Copyright (C) 1999 Adasys AG, Kronenstr. 38, 8006 Zurich, Switzerland
  *
  *****************************************************************************/
- 
-package ch.interlis.ili2c.metamodel;
 
-import java.util.Iterator;
+package ch.interlis.ili2c.metamodel;
 
 /** An abstract class that groups the INTERLIS line types such as
     AreaType, PolylineType and SurfaceType.
-*/ 
+*/
 public abstract class LineType extends Type
 {
   protected PrecisionDecimal    maxOverlap = null;
   protected LineForm[] lineForms = new LineForm[0];
   protected Domain controlPointDomain = null;
-  
+
   /** An concrete type is one that does describe sufficiently
       the set of possible values.
-      
+
       @return Whether or not this type is abstract.
   */
   public boolean isAbstract ()
   {
     if ((lineForms.length == 0) || (controlPointDomain == null))
       return true;
-    
+
     if (controlPointDomain.isAbstract())
       return true;
 
     return false;
   }
-  
-  
+
+
   public PrecisionDecimal getMaxOverlap ()
   {
     return maxOverlap;
@@ -48,14 +46,14 @@ public abstract class LineType extends Type
   {
     PrecisionDecimal oldValue = this.maxOverlap;
     PrecisionDecimal newValue = maxOverlap;
-    
+
     if (oldValue == newValue)
       return;
-    
+
     if ((extending != null) && (newValue != null))
       throw new IllegalArgumentException (rsrc.getString (
         "err_lineType_overlapInExtension"));
-    
+
     fireVetoableChange ("maxOverlap", oldValue, newValue);
     this.maxOverlap = newValue;
     firePropertyChange ("maxOverlap", oldValue, newValue);
@@ -73,13 +71,13 @@ public abstract class LineType extends Type
   {
     LineForm[] oldValue = this.lineForms;
     LineForm[] newValue = lineForms;
-    
+
     if (oldValue == newValue)
       return;
-    
+
     if (newValue == null)
       throw new IllegalArgumentException (rsrc.getString ("err_nullNotAcceptable"));
-    
+
     if (extending != null)
       throw new IllegalStateException ("This order is not implemented; call setExtending() later");
 
@@ -93,18 +91,18 @@ public abstract class LineType extends Type
   {
     return controlPointDomain;
   }
-  
-  
+
+
   public void setControlPointDomain (Domain controlPointDomain)
     throws java.beans.PropertyVetoException
   {
     Domain oldValue = this.controlPointDomain;
     Domain newValue = controlPointDomain;
     Type newValueType;
-    
+
     if (oldValue == newValue)
       return;
-    
+
     if (extending != null)
       throw new IllegalStateException (
         "This order is not implemented; call setExtending() later");
@@ -113,14 +111,14 @@ public abstract class LineType extends Type
       newValueType = null;
     else
       newValueType = newValue.getType ();
-    
+
     if (newValueType != null)
       newValueType = newValueType.resolveAliases ();
-    
+
     if ((newValueType != null) && !(newValueType instanceof CoordType))
       throw new IllegalArgumentException (formatMessage (
         "err_lineType_vertexNotCoordType", newValue.toString()));
-    
+
     fireVetoableChange ("controlPointDomain", oldValue, newValue);
     this.controlPointDomain = newValue;
     firePropertyChange ("controlPointDomain", oldValue, newValue);
@@ -130,7 +128,7 @@ public abstract class LineType extends Type
   /** Checks whether it is possible for this to extend wantToExtend.
       If so, nothing happens; especially, the extension graph is
       <em>not</em> changed.
-      
+
       @exception java.lang.IllegalArgumentException If <code>this</code>
                  can not extend <code>wantToExtend</code>. The message
                  of the exception indicates the reason; it is a localized
@@ -139,11 +137,11 @@ public abstract class LineType extends Type
   void checkTypeExtension (Type wantToExtend)
   {
     LineType   general;
-    
+
     if ((wantToExtend == null)
         || ((wantToExtend = wantToExtend.resolveAliases()) == null))
       return;
-    
+
     general = (LineType) wantToExtend;
     if (general.lineForms.length > 0)
     {
@@ -155,13 +153,13 @@ public abstract class LineType extends Type
           if (lineForms[i] == general.lineForms[j])
             found = true;
         }
-      
+
         if (!found)
           throw new IllegalArgumentException (formatMessage (
             "err_lineType_addedlineFormToInherited", lineForms[i].toString()));
       }
     }
-    
+
     if ((controlPointDomain != null)
       && (general.controlPointDomain != null)
       && !controlPointDomain.isExtendingIndirectly (general.controlPointDomain))
@@ -172,6 +170,10 @@ public abstract class LineType extends Type
         general.controlPointDomain.toString()));
     }
   }
-  
-  
+
+
+  public LineType clone() {
+      return (LineType) super.clone();
+  }
+
 }

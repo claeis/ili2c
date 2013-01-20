@@ -1,29 +1,34 @@
 package ch.interlis.ili2c.metamodel;
 
+import java.io.Serializable;
+import java.util.Comparator;
+
 /** Imposes a total ordering on Interlis Elements based on
     the dependencies.
-    
+
     Note that the Java documentation before JDK 1.2 final stated
     incorrectly that a partial ordering would be acceptable.
 */
 public class DependencyComparator
-  implements java.util.Comparator, java.io.Serializable
+  implements Comparator<Element>, Serializable
 {
-  public int compare(Object o1, Object o2)
+    private static final long serialVersionUID = 4675683207187863196L;  // For serialization. **GV1012
+
+public int compare(Element d1, Element d2)
     throws ClassCastException
   {
-    Element d1 = (Element) o1;
-    Element d2 = (Element) o2;
-  
-    if ((d1 == d2) || (d1.equals(d2)))
+    if (d1 == d2)
       return 0;
 
     if (d1 == null)
       return -1;
-    
+
     if (d2 == null)
       return +1;
-    
+
+    if (d1.equals(d2))
+        return 0;
+
     if (d1.isDependentOn(d2)) {
       //System.out.println("" + d1 + " > " + d2);
       return +1; /* d1 > d2 */

@@ -7,7 +7,6 @@ public class FormalArgument extends AbstractLeafElement
 	private Function func;
 	public FormalArgument(String name,Type domain)
 	{
-		this.func=func;
 		this.domain=domain;
 		this.name=name;
 	}

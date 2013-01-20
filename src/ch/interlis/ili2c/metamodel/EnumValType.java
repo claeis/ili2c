@@ -20,7 +20,13 @@ public class EnumValType extends Type
 		        throw new Ili2cSemanticException (rsrc.getString (
 		        "err_type_ExtOther"));
 		    }
-		  } 
+		  }
+
+
+    public EnumValType clone() {
+        return (EnumValType) super.clone();
+    }
+
 }
 
 

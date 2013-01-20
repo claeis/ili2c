@@ -15,13 +15,13 @@ import java.util.*;
 
     @author Sascha Brawer, sb@adasys.ch
  */
-public class DataContainer extends Container
+public class DataContainer extends Container<MetaObject>
 {
   protected Topic    forTopic;
-  private String xmlFileName;
-  private String boid;
+  private final String xmlFileName;
+  private final String boid;
 
-  protected List     contents = new LinkedList();
+  protected List<MetaObject> contents = new LinkedList<MetaObject>();
 
   public DataContainer (String boid, Topic forTopic, String xmlFileName)
   {
@@ -29,10 +29,10 @@ public class DataContainer extends Container
     this.forTopic = forTopic;
     this.xmlFileName=xmlFileName;
   }
-  protected Collection createElements(){
-    return new AbstractCollection()
+  protected Collection<MetaObject> createElements(){
+    return new AbstractCollection<MetaObject>()
     {
-      public Iterator iterator ()
+      public Iterator<MetaObject> iterator ()
       {
         return contents.iterator();
       }
@@ -44,14 +44,14 @@ public class DataContainer extends Container
       }
 
 
-      public boolean add (Object o)
+      public boolean add (MetaObject o)
       {
         if (o == null)
           throw new IllegalArgumentException(
             rsrc.getString("err_nullNotAcceptable"));
 
         if (o instanceof MetaObject)
-          return contents.add (o);
+          return contents.add (o);  // Kept to insure binary compatibility. **GV1012
 
         throw new ClassCastException();
       }
