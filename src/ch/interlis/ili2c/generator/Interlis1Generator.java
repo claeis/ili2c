@@ -24,10 +24,9 @@ import java.io.Writer;
 import java.util.*;
 import ch.ehi.basics.io.IndentPrintWriter;
 import ch.ehi.basics.tools.TopoSort;
-import ch.ehi.basics.logging.EhiLogger;
 
 /** generates INTERLIS 1 (ili and fmt)
- * 
+ *
  * @author ce
  */
 public final class Interlis1Generator
@@ -311,7 +310,7 @@ public final class Interlis1Generator
 
 	Iterator iter=null;
 	if(genFmt){
-		
+
 	}else{
 		iter = model.iterator();
 		boolean isFirst=true;
@@ -390,7 +389,7 @@ public final class Interlis1Generator
 
 	Iterator defi = null;
 	if(genFmt){
-		
+
 	}else{
 		defi=topic.iterator();
 		boolean isFirst=true;
@@ -450,7 +449,7 @@ public final class Interlis1Generator
 		if(!sortDefs.sort()){
 			throw new IllegalStateException("Cycle in table definitions");
 		}
-		tables=sortDefs.getResult();		
+		tables=sortDefs.getResult();
 	}
     defi = tables.iterator();
     while (defi.hasNext ())
@@ -665,12 +664,12 @@ public final class Interlis1Generator
           	Iterator attri=attribs.iteratorAttribute();
           	String sep="";
             for (; attri.hasNext();)
-            {	
+            {
            		ObjectPath path=(ObjectPath)attri.next();
               if (path == null){
                 printError ();
               }else{
-				ipw.print(sep+((PathEl)path.getPathElements()[0]).getName());
+				ipw.print(sep+path.getPathElements()[0].getName());
               }
 			  sep=", ";
             }
@@ -1064,7 +1063,7 @@ public final class Interlis1Generator
     Unit unit = type.getUnit ();
     if (unit == null)
       return false;
-	if (!((unit instanceof NumericallyDerivedUnit) 
+	if (!((unit instanceof NumericallyDerivedUnit)
 			|| (unit instanceof BaseUnit))){
 	  return false;
 	}
@@ -1589,7 +1588,7 @@ public final class Interlis1Generator
     return Character.toUpperCase(Character.forDigit(idx,Character.MAX_RADIX));
   }
   private String genFmtField(int idx,int size){
-    StringBuffer ret=new StringBuffer(size);
+    StringBuilder ret=new StringBuilder(size);
     char c=getIdxCode(idx);
     for(int i=0;i<size;i++){
       ret.append(c);
@@ -1597,7 +1596,7 @@ public final class Interlis1Generator
     return ret.toString();
   }
   public static String genFmtField(int idx,PrecisionDecimal value){
-    StringBuffer ret=new StringBuffer(10);
+    StringBuilder ret=new StringBuilder(10);
     char c=getIdxCode(idx);
     int size=value.getUnscaledValue().toString().length();
     for(int i=0;i<size;i++){
