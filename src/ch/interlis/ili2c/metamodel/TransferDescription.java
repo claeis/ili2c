@@ -36,7 +36,7 @@ public class TransferDescription extends Container<Model>
 	private HashMap<String, String> basketname2boid = new HashMap<String, String>(); // Map<String qualifiedBasketName,String boid>
 
 
-  public static final PredefinedModel INTERLIS = new PredefinedModel();
+  public final PredefinedModel INTERLIS = new PredefinedModel();
 
 
   public TransferDescription ()

@@ -511,6 +511,7 @@ public class Uml21Generator
 				}else if(type instanceof OIDType){
 					typeId=idOIDType;
 				}else if(type instanceof ReferenceType){
+					// TODO
 					throw new IllegalStateException();
 				}else{
 					throw new IllegalStateException();

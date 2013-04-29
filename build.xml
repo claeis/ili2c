@@ -159,6 +159,7 @@
 		<patternset includes="examples/**/*.xml"/> -->
 		<patternset includes="standard/**/*.ili"/>
 		<patternset includes="iligml/**/*.xsd"/>
+		<patternset includes="xrf/**/*.xsd"/>
 		<patternset includes="iliuml/*.uml"/>
 	</zipfileset>
     </zip>
@@ -201,6 +202,7 @@
 		<patternset includes="examples/**/*.xml"/>
 		<patternset includes="standard/**/*.ili"/>
 		<patternset includes="iligml/**/*.xsd"/>
+		<patternset includes="xrf/**/*.xsd"/>
 		<patternset includes="iliuml/*.uml"/>
     	</zipfileset>
     </zip>

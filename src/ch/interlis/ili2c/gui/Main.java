@@ -103,7 +103,12 @@ public class Main {
   }
 
   private void runCompiler(){
-	  TransferDescription td=ch.interlis.ili2c.Main.runCompiler(config,settings);
+	  TransferDescription td=null;
+	  try{
+		  td=ch.interlis.ili2c.Main.runCompiler(config,settings);
+	  }catch(Throwable e){
+		  EhiLogger.logError(e);
+	  }
       Date today;
       String dateOut;
       DateFormat dateFormatter;
@@ -398,6 +403,7 @@ public class Main {
 					int n;
 					if(config.getOutputKind()==GenerateOutputKind.ILI1FMTDESC
 							|| config.getOutputKind()==GenerateOutputKind.GML32
+							|| config.getOutputKind()==GenerateOutputKind.XRF
 							|| config.getOutputKind()==GenerateOutputKind.ETF1){
 						n = JOptionPane.showConfirmDialog(
 							frame,
@@ -508,6 +514,7 @@ public class Main {
       , new Integer(GenerateOutputKind.ILI1)
       , new Integer(GenerateOutputKind.ILI2) 
       , new Integer(GenerateOutputKind.XMLSCHEMA)
+      , new Integer(GenerateOutputKind.XRF)
 	  , new Integer(GenerateOutputKind.GML32)
       , new Integer(GenerateOutputKind.ILI1FMTDESC)
 	  , new Integer(GenerateOutputKind.IMD)
@@ -530,6 +537,9 @@ public class Main {
 			}else if(kind==GenerateOutputKind.GML32){
 			   outputFileUi.setEditable(true);
 			   fileLabel.setText("Output directory");
+			}else if(kind==GenerateOutputKind.XRF){
+				   outputFileUi.setEditable(true);
+				   fileLabel.setText("Output directory");
 			}else if(kind==GenerateOutputKind.ETF1){
 				   outputFileUi.setEditable(true);
 				   fileLabel.setText("Output directory");
@@ -565,6 +575,8 @@ public class Main {
 				  fc.addChoosableFileFilter(GenericFileFilter.createXmlFilter());
 			}else if(config.getOutputKind()==GenerateOutputKind.GML32){
 			  useDir=true;
+			}else if(config.getOutputKind()==GenerateOutputKind.XRF){
+				  useDir=true;
 			}else if(config.getOutputKind()==GenerateOutputKind.ETF1){
 				  useDir=true;
             }else{
@@ -744,12 +756,14 @@ public class Main {
 		            "Generate no output"
 		          , "Generate an INTERLIS 1 model"
 		          , "Generate an INTERLIS 2 model"
-		          , "Generate an XML-Schema"
+		          , "Generate an XTF XML-Schema"
 		          , "Generate an ILI1 FMT-Description"
-		    	  , "Generate a GML-Schema"
+		    	  , "Generate a GML XML-Schema"
 		    	  , "deprecated (IOM)"
 		    	  , "deprecated (ETF)"
 		    	  , "Generate Model as IlisMeta-Transfer"
+		    	  , "Generate Model as UML/XMI Transfer"
+		    	  , "Generate an XRF XML-Schema"
 		          };
 			setText(kindTexts[kind-1]);
 			return this;
