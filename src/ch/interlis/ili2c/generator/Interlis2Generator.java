@@ -1082,6 +1082,8 @@ private void setup(
       printError ();
     }else if(elt==modelInterlis.ANYCLASS){
 		ipw.print ("ANYCLASS");
+    }else if(elt==modelInterlis.ANYSTRUCTURE){
+        ipw.print ("ANYSTRUCTURE");
     }else{
       ipw.print (elt.getScopedName (scope));
     }
@@ -1893,13 +1895,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib) {
           ipw.print ("OBJECT OF ");
       }
       Viewable ref=ot.getRef();
-      if(ref==modelInterlis.ANYCLASS){
-        ipw.print ("ANYCLASS");
-      }else if(ref==modelInterlis.ANYSTRUCTURE){
-        ipw.print ("ANYSTRUCTURE");
-      }else{
-        printRef(scope,ref);
-      }
+      printRef(scope,ref);
     }else if(dd instanceof MetaobjectType){
       MetaobjectType ot=(MetaobjectType)dd;
       ipw.print ("METAOBJECT");
