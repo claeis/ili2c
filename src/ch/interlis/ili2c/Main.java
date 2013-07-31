@@ -341,7 +341,10 @@ public class Main {
     static public void setDefaultIli2cPathMap(ch.ehi.basics.settings.Settings settings) {
 	HashMap<String, String> pathmap = new HashMap<String, String>();
 
-	pathmap.put(JAR_DIR, getIli2cHome());
+	String ili2cHome = getIli2cHome();
+	if (ili2cHome != null) {
+		pathmap.put(JAR_DIR, ili2cHome + File.separator + JAR_MODELS);
+	}
 	pathmap.put(ILI_DIR, null);
 	settings.setTransientObject(UserSettings.ILIDIRS_PATHMAP, pathmap);
     }
