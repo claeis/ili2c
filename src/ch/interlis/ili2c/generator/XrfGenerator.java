@@ -34,7 +34,7 @@ public final class XrfGenerator
   java.io.File outdir;
   int                 numErrors = 0;
 
-  public static void generate(TransferDescription td,java.io.File outfolder) throws NotSupportedByIliRelational
+  public static void generate(TransferDescription td,java.io.File outfolder)
   {
 		XrfGenerator gen=new XrfGenerator();
 		gen.outdir=outfolder;
@@ -66,11 +66,7 @@ public final class XrfGenerator
 		config.setOutputKind(ch.interlis.ili2c.config.GenerateOutputKind.NOOUTPUT);
 		config.setGenerateWarnings(false);
 		TransferDescription td=ch.interlis.ili2c.Main.runCompiler(config);
-		try {
-			generate(td,out);
-		} catch (NotSupportedByIliRelational e) {
-			EhiLogger.logError("failed to generate xsd",e);
-		}
+		generate(td,out);
   }
 
   /** Returns the name used in the transfer for a given INTERLIS Element.
@@ -110,7 +106,7 @@ public final class XrfGenerator
     throw new IllegalArgumentException ();
   }
   private Model currentModel=null;
-  private void printXSD (TransferDescription td) throws NotSupportedByIliRelational
+  private void printXSD (TransferDescription td)
   {
 		Iterator modeli = td.iterator();
 		while (modeli.hasNext()) {
@@ -228,7 +224,7 @@ public final class XrfGenerator
 	  String eleName=(String)def2name.get(elt);
 	  return eleName;
   }
-  private void printModel(Model model) throws NotSupportedByIliRelational
+  private void printModel(Model model)
   {
 	// setup output
 	java.io.File filename=new java.io.File(outdir,model.getName()+".xsd");
@@ -325,11 +321,8 @@ public final class XrfGenerator
 	ipw.close();
   }
 
-  private void declareTopic (Topic topic) throws NotSupportedByIliRelational
+  private void declareTopic (Topic topic)
   {
-		if(topic.getExtending()!=null){
-			throw new NotSupportedByIliRelational("extended topics not supported ("+topic.getScopedName(null)+")");
-		}
 
    Iterator iter = topic.iterator();
    
@@ -345,19 +338,36 @@ public final class XrfGenerator
 			// if(obj instanceof LineForm){
 		}
 
-	
-   ipw.println("<xsd:element name=\""+getName(topic)+"\" type=\""+getName(topic)+"Type\"/>");
+		Topic extended=(Topic)topic.getExtending();
+		if(extended!=null){
+			   ipw.println("<xsd:element name=\""+getName(topic)+"\" type=\""+getName(topic)+"Type\" substitutionGroup=\""+getScopedName(extended)+"\"/>");
+		}else{
+			   ipw.println("<xsd:element name=\""+getName(topic)+"\" type=\""+getName(topic)+"Type\"/>");
+		}
     ipw.println ("<xsd:complexType name=\""+getName(topic)+"Type\">");
+    if(extended!=null){
+    	ipw.indent ();
+    	ipw.println ("<xsd:complexContent>");
+    	ipw.indent ();
+    	ipw.println ("<xsd:extension base=\""+getScopedName(extended)+"Type"+"\">");
+    }
 	ipw.indent ();
 	ipw.println ("<xsd:sequence>");
 	ipw.indent ();
 	if(true){
-		iter=ModelUtilities.getItfTables(td, topic).iterator();
+		//iter=ModelUtilities.getItfTables(td, topic).iterator();
+		 iter = topic.iterator();
 		while(iter.hasNext()){
 			 Object obj = iter.next();
-		      if ((obj instanceof Viewable) && !AbstractPatternDef.suppressViewableInTransfer((Viewable)obj)){
+		      if (obj instanceof Viewable){
 				 Viewable v = (Viewable) obj;
-				 ipw.println("<xsd:element ref=\"" + getScopedName(v) + "\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
+				 Viewable vbase=(Viewable)v.getExtending();
+				 
+				 if(vbase==null || !(topic.isExtending(vbase.getContainer()) || topic==vbase.getContainer())){
+					 if(!suppressViewableInTopicDef(v)){
+						 ipw.println("<xsd:element ref=\"" + getScopedName(v) + "\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
+					 }
+				 }
 			 }else if(obj instanceof AttributeDef && ((AttributeDef)obj).getDomainResolvingAliases() instanceof AreaType){
 				 AttributeDef attr=(AttributeDef)obj;
 				  AbstractClassDef aclass=(AbstractClassDef)(attr).getContainer();
@@ -389,15 +399,56 @@ public final class XrfGenerator
 
 	ipw.unindent ();
 	ipw.println ("</xsd:sequence>");
-	ipw.println ("<xsd:attribute name=\"BID\" type=\""+getIliXmlns()+"BID\"/>");
+	if(extended==null){
+		ipw.println ("<xsd:attribute name=\"BID\" type=\""+getIliXmlns()+"BID\"/>");
+	}
+    if(extended!=null){
+    	ipw.unindent ();
+    	ipw.println ("</xsd:extension>");
+    	ipw.unindent ();
+    	ipw.println ("</xsd:complexContent>");
+    }
 	ipw.unindent ();
 	ipw.println ("</xsd:complexType>");
 
   }
 
+  static public boolean suppressViewableInTopicDef(Viewable<?> v)
+  {
+    if (v == null) {
+        return true;
+    }
 
 
-  private void declareAbstractClassDef(Viewable v) throws NotSupportedByIliRelational
+    if(v instanceof AssociationDef){
+		AssociationDef assoc=(AssociationDef)v;
+    	if(assoc.isLightweight()){
+    		return true;
+    	}
+		if(assoc.getDerivedFrom()!=null){
+			return true;
+		}
+    }
+
+    Topic topic;
+    if ((v instanceof View) && ((topic=(Topic)v.getContainer (Topic.class)) != null)
+	    && !topic.isViewTopic()) {
+        return true;
+    }
+
+
+    /* STRUCTUREs do not need to be printed with their INTERLIS container,
+       but where they are used. */
+    if ((v instanceof Table) && !((Table)v).isIdentifiable()) {
+        return true;
+    }
+
+
+    return false;
+  }
+
+
+  private void declareAbstractClassDef(Viewable v)
   {
 	  if(v instanceof AssociationDef){ 
 		  AssociationDef assoc=(AssociationDef)v;
@@ -411,11 +462,20 @@ public final class XrfGenerator
 			  return;
 		  }
 	  }
-		if(v.getExtending()!=null){
-			throw new NotSupportedByIliRelational("extended viewable not supported ("+v.getScopedName(null)+")");
+	  
+	  Viewable extended=(Viewable)v.getExtending();
+		if(extended!=null){
+				ipw.println("<xsd:element name=\""+getName(v)+"\" type=\""+getName(v)+"Type\" substitutionGroup=\""+getScopedName(extended)+"\"/>");
+		}else{
+			ipw.println("<xsd:element name=\""+getName(v)+"\" type=\""+getName(v)+"Type\"/>");
 		}
-	ipw.println("<xsd:element name=\""+getName(v)+"\" type=\""+getName(v)+"Type\"/>");
 	ipw.println("<xsd:complexType  name=\"" + getName(v) + "Type\">");
+    if(extended!=null){
+    	ipw.indent ();
+    	ipw.println ("<xsd:complexContent>");
+    	ipw.indent ();
+    	ipw.println ("<xsd:extension base=\""+getScopedName(extended)+"Type"+"\">");
+    }
 	ipw.indent ();
 	ipw.println("<xsd:sequence>");
 	ipw.indent();
@@ -431,23 +491,19 @@ public final class XrfGenerator
 		if (obj.obj instanceof AttributeDef) {
 			AttributeDef attr = (AttributeDef) obj.obj;
 			if(attr.getExtending()!=null){
-				throw new NotSupportedByIliRelational("extended attributes not supported ("+v.getScopedName(null)+"."+attr.getName()+")");
-			}
-			if(attr.getExtending()==null && attr.getContainer()==v && !attr.isTransient()){
+			}else{
 				// define only new attrs (==not EXTENDED)
-				declareAttribute(attr);
+				if(attr.getContainer()==v && !attr.isTransient()){
+					declareAttribute(attr);
+				}
 			}
 		}
 		if(obj.obj instanceof RoleDef){
-			RoleDef role = (RoleDef) obj.obj;
-			if(role.getExtending()!=null){
-				throw new NotSupportedByIliRelational("extended roles not supported ("+v.getScopedName(null)+"."+role.getName()+")");
-			}
-			
+			RoleDef role = (RoleDef) obj.obj;			
 			// not an embedded role and roledef not defined in a lightweight association?
 			if (!obj.embedded && !((AssociationDef)v).isLightweight() && v.getExtending()==null){
 				if(role.getExtending()==null){
-					ipw.println("<xsd:element name=\""+ getTransferName(role)+ ">");
+					ipw.println("<xsd:element name=\""+ getTransferName(role)+ "\">");
 					ipw.indent();
 					ipw.println("<xsd:complexType>");
 					ipw.indent();
@@ -504,17 +560,22 @@ public final class XrfGenerator
 	}
 	ipw.unindent();
 	ipw.println("</xsd:sequence>");
-	ipw.println ("<xsd:attribute name=\"TID\" type=\""+getIliXmlns()+"TID\"/>");
+	if(extended==null){
+		ipw.println ("<xsd:attribute name=\"TID\" type=\""+getIliXmlns()+"TID\"/>");
+	}
+    if(extended!=null){
+    	ipw.unindent ();
+    	ipw.println ("</xsd:extension>");
+    	ipw.unindent ();
+    	ipw.println ("</xsd:complexContent>");
+    }
 	ipw.unindent();
 	ipw.println("</xsd:complexType>");
 
   }
 
-  private void declareDomainDef (Domain domain) throws NotSupportedByIliRelational
+  private void declareDomainDef (Domain domain)
   {
-	  if(domain.getExtending()!=null){
-			throw new NotSupportedByIliRelational("extended domains not supported ("+domain.getScopedName(null)+")");
-	  }
   	Type type=domain.getType();
 	//if (type instanceof CoordType){
 	//}else if (type instanceof PolylineType){
@@ -589,7 +650,7 @@ public final class XrfGenerator
     }
   }
   private ArrayList surfaceOrAreaAttrs=null; // array<AttributeDef attr>
-  private void declareLinetables() throws NotSupportedByIliRelational{
+  private void declareLinetables(){
 	  Iterator attri=surfaceOrAreaAttrs.iterator();
 	  while(attri.hasNext()){
 		  AttributeDef attr=(AttributeDef)attri.next();
@@ -609,12 +670,11 @@ public final class XrfGenerator
 					ViewableTransferElement obj = (ViewableTransferElement)iter.next();
 					if (obj.obj instanceof AttributeDef) {
 						AttributeDef lattr = (AttributeDef) obj.obj;
-						if(lattr.getExtending()!=null){
-							throw new NotSupportedByIliRelational("extended attributes not supported ("+lineattrs.getScopedName(null)+"."+lattr.getName()+")");
-						}
-						if(!lattr.isTransient()){
-							// define only new attrs (==not EXTENDED)
-							declareAttribute(lattr);
+						if(lattr.getExtending()==null){
+							if(!lattr.isTransient()){
+								// define only new attrs (==not EXTENDED)
+								declareAttribute(lattr);
+							}
 						}
 					}
 					if(obj.obj instanceof RoleDef){
