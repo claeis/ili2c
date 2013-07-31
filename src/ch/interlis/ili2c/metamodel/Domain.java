@@ -147,7 +147,7 @@ public class Domain extends AbstractLeafElement
       return getName();
 
     if (enclosingTopic != null)
-      return enclosingTopic.getScopedName (scope) + "." + getName();
+      return enclosingTopic.getScopedName(null) + "." + getName();
     else
       return enclosingModel.getName() + "." + getName();
   }
