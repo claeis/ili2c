@@ -1647,6 +1647,12 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib) {
       else if (et.isOrdered())
         ipw.print(" ORDERED");
     }
+    else if (dd instanceof EnumTreeValueType)
+    {
+      EnumTreeValueType et = (EnumTreeValueType) dd;
+      ipw.print("ALL OF ");
+      printRef (scope, et.getEnumType());
+    }  
     else if (dd instanceof EnumValType)
     {
         if(((EnumValType) dd).isOnlyLeafs()){
