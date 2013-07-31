@@ -1288,7 +1288,7 @@ public class ImdGenerator {
 					iomArg.setKind(Argument_Kind.EnumTreeVal);
 				}
 			}else{
-				EhiLogger.debug("arg "+arg.getName());
+				//EhiLogger.debug("arg "+arg.getName());
 				visitFunctionArgumentLocalType(getTypeTid(argType,arg,func),argType,arg,func);
 				iomArg.setType(getTypeTid(arg.getType(),arg,func));
 			}
@@ -1797,12 +1797,19 @@ public class ImdGenerator {
 		iomType.setLTParent(getAttrTid(attr));
 		iomType.setName(LOCAL_TYPE_NAME);
 		if(domainTid!=null){
-			iomType.setSuper(domainTid);
+			// not yet set?
+			if(iomType.getattrvaluecount("Super")==0){ 
+				iomType.setSuper(domainTid);
+			}else{
+				// replace ref
+			    ch.interlis.iom.IomObject ref=iomType.getattrobj("Super",0);
+			    ref.setobjectrefoid(domainTid);
+			}
 		}else{
 			ch.interlis.ili2c.metamodel.AttributeDef baseAttr=(ch.interlis.ili2c.metamodel.AttributeDef)attr.getExtending();
 			if(baseAttr!=null){
-				// not yet set
-				if(iomType.getattrobj("Super",0)==null){ 
+				// not yet set?
+				if(iomType.getattrvaluecount("Super")==0){ 
 					iomType.setSuper(getTypeTid(baseAttr.getDomain(), baseAttr, null));
 				}
 			}
@@ -1812,6 +1819,7 @@ public class ImdGenerator {
 		if(iomType instanceof DomainType){
 			((DomainType)iomType).setMandatory(attr.getDomain().isMandatoryConsideringAliases());
 		}
+		//EhiLogger.debug("iomType "+iomType.toString());
 		out.write(new ObjectEvent(iomType));
 	}
 	private void visitDomainType(String typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.Domain domain)
