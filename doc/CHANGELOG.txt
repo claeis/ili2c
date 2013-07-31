@@ -1,10 +1,15 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
-ili2c 4.4.13 (2013-07-30)
+ili2c 4.4.13 (2013-07-31)
 ---------------------------
 - bug imd: fixed multiple "Super" on attr.TYPE (if "attr : MANDATORY FormattedType-DomainRef") 
 - bug: map %JAR_DIR to ili2c/standard
+- bug ili2exp: fixed export of ANYSTRUCTURE 
+- bug ili2exp: fixed export of qualified DomainRef
+- bug ili2exp: fixed export of EnumTreeValueType
+- bug ili2exp: fixed export of ModInfo EXTENDS NotASuperTopic.ModInfo
+- keep ordering of MODEL IMPORTS
 
 ili2c 4.4.12 (2013-04-29)
 ---------------------------

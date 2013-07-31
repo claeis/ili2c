@@ -28,8 +28,7 @@ public abstract class Model extends Importable<Element>
 {
   protected List<Element> contents = new LinkedList<Element>();
   protected List<GraphicParameterDef> runtimeParameters = new LinkedList<GraphicParameterDef>();
-  protected List<Model> qualifiedImports = new LinkedList<Model>();
-  protected List<Model> unqualifiedImports = new LinkedList<Model>();
+  protected List<ModelImport> imports = new ArrayList<ModelImport>();
   private final List<Contract> contracts=new LinkedList<Contract>();
   private String language=null;
   private boolean contracted=false;
@@ -41,6 +40,21 @@ public abstract class Model extends Importable<Element>
 	static public final String ILI2_2="2.2";
 	static public final String ILI2_3="2.3";
 
+	  private class ModelImport {
+		  private Model model;
+		  private boolean unqualified;
+		  public ModelImport(Model model1,boolean unqualified1)
+		  {
+			  model=model1;
+			  unqualified=unqualified1;
+		  }
+		public Model getModel() {
+			return model;
+		}
+		public boolean isUnqualified() {
+			return unqualified;
+		}
+	  }
   protected class ElementDelegate extends AbstractCollection<Element>
   {
     @Override
@@ -293,22 +307,23 @@ protected Collection<Element> createElements(){
     return new ElementDelegate();
   }
 
-  public Element getImportedElement(Class<?> aclass, String name)
-  {
-	  Element e=getElement(aclass,name);
-	  if(e!=null){
-		  return e;
-	  }
-	  Iterator<Model> it = unqualifiedImports.iterator();
-	  while(it.hasNext()){
-		  Model i = it.next();
-		  e=i.getElement(aclass,name);
-		  if(e!=null){
-			  return e;
-		  }
-	  }
-	  return null;
-  }
+	public Element getImportedElement(Class<?> aclass, String name) {
+		Element e = getElement(aclass, name);
+		if (e != null) {
+			return e;
+		}
+		for (ModelImport mi : imports) {
+			if (mi.isUnqualified()) {
+				Model i = mi.getModel();
+				e = i.getElement(aclass, name);
+				if (e != null) {
+					return e;
+				}
+			}
+		}
+
+		return null;
+	}
 
   /** find an element with the given name in the type namespace
    */
@@ -436,26 +451,19 @@ public String getModelVersionExpl()
 
   /** Returns the Importables that this model imports.
   */
-  public Model[] getImporting()
-  {
-	  ArrayList<Model> importing=new ArrayList<Model>();
-	  importing.addAll(qualifiedImports);
-	  importing.addAll(unqualifiedImports);
-    return importing.toArray(new Model[importing.size()]);  // Avoid double object creation. **GV1012
-  }
-
+	public Model[] getImporting() {
+		ArrayList<Model> importing = new ArrayList<Model>();
+		for (ModelImport mi : imports) {
+			importing.add(mi.getModel());
+		}
+		return importing.toArray(new Model[importing.size()]);
+	}
 
   /** Let this model import another importable. */
-  public void addImport (Model importing, boolean unqualified)
-  {
-	if(unqualified){
-		unqualifiedImports.add (importing);
-	}else{
-		qualifiedImports.add (importing);
+	public void addImport(Model importing, boolean unqualified) {
+		imports.add(new ModelImport(importing, unqualified));
+		importing.importedBy.add(importing);
 	}
-    importing.importedBy.add (importing);
-  }
-
 
 
   /** Returns whether or not this model imports a specified
@@ -463,17 +471,24 @@ public String getModelVersionExpl()
   */
   public boolean isImporting(Model importing)
   {
-      return qualifiedImports.contains(importing) || unqualifiedImports.contains(importing);
+		for (ModelImport mi : imports) {
+			if(mi.getModel()==importing){
+				return true;
+			}
+		}
+		return false;
   }
   /** Returns whether or not this model imports a specified
       Importable.
   */
   public boolean isImporting(Model importing, boolean qualifiedImport)
   {
-    if(qualifiedImport){
-      return qualifiedImports.contains(importing);
-    }
-    return unqualifiedImports.contains(importing);
+		for (ModelImport mi : imports) {
+			if(mi.isUnqualified()==!qualifiedImport && mi.getModel()==importing){
+				return true;
+			}
+		}
+		return false;
   }
 
 
