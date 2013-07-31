@@ -316,7 +316,7 @@ private void setup(
     if (extending != null)
     {
       Topic myTopic = (Topic) ec.getContainer (Topic.class);
-      Topic extendedTopic = (Topic) ec.getContainer (Topic.class);
+      Topic extendedTopic = (Topic) extending.getContainer (Topic.class);
 
 
       if ((myTopic != null) && (extendedTopic != null)
