@@ -1779,6 +1779,12 @@ public class ImdGenerator {
 				}else if(domain==td.INTERLIS.BOOLEAN){
 					BooleanType iomBoolean=new BooleanType(typeTid);
 					iomType=iomBoolean;
+				}else if(domain==td.INTERLIS.INTERLIS_1_DATE){
+					TextType iomText=new TextType(typeTid);
+					iomText.setKind(TextType_Kind.Text);
+					iomText.setMaxLength(8);
+					iomText.setFinal(true);
+					iomType=iomText;
 				}else{
 					throw new IllegalArgumentException("unexpected type alias "+domain.getScopedName(null));
 				}
