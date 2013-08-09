@@ -1482,24 +1482,33 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib) {
 	printDocumentation(dd.getDocumentation());
 	printMetaValues(dd.getMetaValues());
     ipw.print (dd.getName());
-    printModifiers (dd.isAbstract(), dd.isFinal(),
-      /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
-
-
-    if (extending != null)
-    {
-      ipw.print(" EXTENDS ");
-      printRef (scope, extending);
-    }
-
-
-    ipw.print(" = ");
-    printType (scope, dd.getType());
-    if(dd.getType() instanceof StructuredUnitType){
-        EhiLogger.logError("DOMAIN "+dd.getName()+": StructuredUnitType not supported by INTERLIS 2.3; replace by TextType or FormattedType/XMLDate");
-        ipw.println("; !! Hint: replace by TextType or FormattedType/XMLDate");
-    }else{
+    if(dd.getType() instanceof TypeAlias && ((TypeAlias)dd.getType()).getAliasing()==td.INTERLIS.INTERLIS_1_DATE){
+    	Domain dd2=((TypeAlias)dd.getType()).getAliasing();
+        printModifiers (dd2.isAbstract(), dd2.isFinal(),
+      	      /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
+	    ipw.print(" = ");
+	    printType (scope, dd2.getType());
         ipw.println(';');
+    }else{
+        printModifiers (dd.isAbstract(), dd.isFinal(),
+        	      /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
+
+
+        	    if (extending != null)
+        	    {
+        	      ipw.print(" EXTENDS ");
+        	      printRef (scope, extending);
+        	    }
+
+
+        	    ipw.print(" = ");
+        	    printType (scope, dd.getType());
+        	    if(dd.getType() instanceof StructuredUnitType){
+        	        EhiLogger.logError("DOMAIN "+dd.getName()+": StructuredUnitType not supported by INTERLIS 2.3; replace by TextType or FormattedType/XMLDate");
+        	        ipw.println("; !! Hint: replace by TextType or FormattedType/XMLDate");
+        	    }else{
+        	        ipw.println(';');
+        	    }
     }
   }
 
