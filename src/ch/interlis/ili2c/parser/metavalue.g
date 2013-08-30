@@ -35,7 +35,7 @@ metaValues
 	}
 : (n:VALUE EQUALS v=avalue
 	{ 
-	c=new ch.ehi.basics.settings.Settings();
+	c=new ch.ehi.basics.settings.Settings(true);
 	c.setValue(n.getText(),v);
 	}
  (SEMI (
