@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.5.0 (2013-11-06)
+---------------------------
+- imd: export meta-attributes of CONSTRAINT
+
 ili2c 4.4.14 (2013-09-02)
 ---------------------------
 - bug imd: fixed export of ili1: DOMAIN dateDomain=DATE;

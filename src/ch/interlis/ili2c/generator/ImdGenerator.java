@@ -2,7 +2,9 @@
 package ch.interlis.ili2c.generator;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+
 import ch.ehi.basics.logging.EhiLogger;
 import ch.interlis.iom_j.ViewableProperties;
 import ch.interlis.iom_j.xtf.XtfWriterBase;
@@ -162,21 +164,35 @@ public class ImdGenerator {
 
 	}
 	private final String METAOBJECT="METAOBJECT";
-	private void visitMetaValues(ch.ehi.basics.settings.Settings values,String modelElmentId)
+	private void visitMetaValues(ch.ehi.basics.settings.Settings values,String modelElementId)
 	throws IoxException
 	{
 		if(values!=null){
+			for( MetaAttribute val: getMetaValues(values,modelElementId,null)){
+				out.write(new ObjectEvent(val));
+			}
+		}
+	}
+	private ArrayList<MetaAttribute> getMetaValues(ch.ehi.basics.settings.Settings values,String modelElmentId,String namePrefix)
+	throws IoxException
+	{
+		ArrayList<MetaAttribute> ret=new ArrayList<MetaAttribute>();
+		if(values!=null){
+			if(namePrefix==null){
+				namePrefix="";
+			}
 			Iterator it=values.getValues().iterator();
 			while(it.hasNext()){
 				String name=(String)it.next();
 				String value=values.getValue(name);
-				MetaAttribute iomMetaAttr=new MetaAttribute(modelElmentId+"."+METAOBJECT+"."+name);
+				MetaAttribute iomMetaAttr=new MetaAttribute(modelElmentId+"."+METAOBJECT+"."+namePrefix+name);
 				iomMetaAttr.setMetaElement(modelElmentId);
-				iomMetaAttr.setName(name);
+				iomMetaAttr.setName(namePrefix+name);
 				iomMetaAttr.setValue(value);
-				out.write(new ObjectEvent(iomMetaAttr));
+				ret.add(iomMetaAttr);
 			}
 		}
+		return ret;
 	}
 
 	private final String UNIT_META_NAME="BASKET";
@@ -398,12 +414,15 @@ public class ImdGenerator {
 			}
 		}
 		
+		ArrayList<MetaAttribute> cnstrMetaAttrs=new ArrayList<MetaAttribute>(); 
+		int cnstrIdx=0;
 		int paramOrderPos=1;
 		int roleOrderPos=1;
 		for( Iterator it =  classDef.iterator(); it.hasNext(); ) {
 			ch.interlis.ili2c.metamodel.Element element = (ch.interlis.ili2c.metamodel.Element)it.next();
 			if ( element instanceof ch.interlis.ili2c.metamodel.Constraint ) {
-				Constraint iomConstraint=visitConstraint((ch.interlis.ili2c.metamodel.Constraint)element);
+				Constraint iomConstraint=visitConstraint((ch.interlis.ili2c.metamodel.Constraint)element,cnstrMetaAttrs,iomClass.getobjectoid(),cnstrIdx);
+				cnstrIdx++;
 				iomClass.addConstraints(iomConstraint);
 			} else if ( element instanceof ch.interlis.ili2c.metamodel.Parameter ) {
 				visitParameter((ch.interlis.ili2c.metamodel.Parameter)element,paramOrderPos);
@@ -426,6 +445,9 @@ public class ImdGenerator {
 		
 		out.write(new ObjectEvent(iomClass));
 		visitMetaValues(classDef.getMetaValues(),iomClass.getobjectoid());
+		for(MetaAttribute val:cnstrMetaAttrs){
+			out.write(new ObjectEvent(val));
+		}
 		
 		Iterator iter = classDef.getAttributesAndRoles2();
 		while (iter.hasNext()) {
@@ -790,7 +812,8 @@ public class ImdGenerator {
 		visitMetaValues(lf.getMetaValues(),iomLf.getobjectoid());
 	
 	}
-	private Constraint visitConstraint(ch.interlis.ili2c.metamodel.Constraint cnstrt)
+	private final String CONSTRAINT="CONSTRAINT";
+	private Constraint visitConstraint(ch.interlis.ili2c.metamodel.Constraint cnstrt,ArrayList<MetaAttribute> metaAttrs,String viewableId,int idx)
 	throws IoxException
 	{
 		Constraint iomCnstrt=null;
@@ -874,7 +897,7 @@ public class ImdGenerator {
 		}else{	
 			throw new IllegalArgumentException("unexpected constraint type "+cnstrt.getClass().getName());
 		}
-		
+		metaAttrs.addAll(getMetaValues(cnstrt.getMetaValues(), viewableId, CONSTRAINT+Integer.toString(idx)+"."));
 		return iomCnstrt;
 	}
 	  private void printAttributePath (StringBuffer out,ch.interlis.ili2c.metamodel.Container scope, ch.interlis.ili2c.metamodel.ObjectPath path)
