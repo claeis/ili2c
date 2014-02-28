@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.5.2 (2014-02-xx)
+---------------------------
+- xsd: sort references to structures in structattr xsd:choice
+
 ili2c 4.5.1 (2013-12-09)
 ---------------------------
 - iox-ili 1.9.0

@@ -1160,7 +1160,7 @@ public final class XSDGenerator
 			    if(extv.size()>1){
 					ipw.println ("<xsd:choice"+minOccurs+maxOccurs+">");
 						ipw.indent ();
-						Iterator exti=extv.iterator();
+						Iterator exti=sortMetamodelElements(extv).iterator();
 						while(exti.hasNext()){
 							Table ext=(Table)exti.next();
 							ipw.println ("<xsd:element name=\""+getTransferName(ext)+"\" type=\""+getStructureRef(ext)+"\"/>");
