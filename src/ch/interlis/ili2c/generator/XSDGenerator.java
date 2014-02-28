@@ -133,7 +133,7 @@ public final class XSDGenerator
 		ipw.print(ch.interlis.ili2c.Main.getVersion());
 		ipw.println ("</xsd:appinfo>");
 		{
-			Iterator modeli=td.iterator();
+			Iterator modeli=sortMetamodelElements(td.iterator()).iterator();
 			while(modeli.hasNext()){
 				Object modelo=modeli.next();
 				if(modelo instanceof Model){
@@ -295,7 +295,7 @@ public final class XSDGenerator
 			    ipw.indent ();
 			    ipw.println ("<xsd:choice minOccurs=\"0\" maxOccurs=\"unbounded\">");
 				    ipw.indent ();
-				    Iterator modeli = td.iterator ();
+				    Iterator modeli = sortMetamodelElements(td.iterator ()).iterator();
 				    while (modeli.hasNext ())
 				    {
 				      Object mObj = modeli.next ();
@@ -323,7 +323,7 @@ public final class XSDGenerator
 
             // declare XML-Schema types
 
-	    modeli = td.iterator ();
+	    modeli = sortMetamodelElements(td.iterator ()).iterator();
 	    while (modeli.hasNext ())
 	    {
 	      Object mObj = modeli.next ();
@@ -661,6 +661,15 @@ public final class XSDGenerator
     ipw.println("    ALIAS TABLE -->");
   }
 
+  private ArrayList sortMetamodelElements(Iterator it)
+  {
+	  ArrayList ret=new ArrayList();
+	  for(Object o=null; it.hasNext();){
+		  o=it.next();
+		  ret.add(o);
+	  }
+	  return sortMetamodelElements(ret);
+  }
   private ArrayList sortMetamodelElements(Collection c)
   {
 	  ArrayList ret=new ArrayList(c);

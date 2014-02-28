@@ -4,6 +4,7 @@ Known Issues:
 ili2c 4.5.2 (2014-02-xx)
 ---------------------------
 - xsd: sort references to structures in structattr xsd:choice
+- xsd: sort models to get always the same xsd for the same set of models
 
 ili2c 4.5.1 (2013-12-09)
 ---------------------------
