@@ -25,7 +25,8 @@ import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.parser.Ili1Parser;
 import ch.interlis.ili2c.parser.Ili22Parser;
-import ch.interlis.ili2c.parser.Ili2Parser;
+import ch.interlis.ili2c.parser.Ili23Parser;
+import ch.interlis.ili2c.parser.Ili24Parser;
 
 
 public class Main {
@@ -534,19 +535,27 @@ public class Main {
 		try {
 		    tracker = new ch.ehi.basics.logging.ErrorTracker();
 		    EhiLogger.getInstance().addListener(tracker);
-		    if (version == 2.2) {
-			if (!Ili22Parser.parseIliFile(desc, streamName, stream, checkMetaObjs, 0)) {
-			    return null;
-			}
-		    } else if (version == 1.0) {
-			if (!Ili1Parser.parseIliFile(desc, streamName, stream, 0)) {
-			    return null;
-			}
-		    } else {
-			if (!Ili2Parser.parseIliFile(desc, streamName, stream, checkMetaObjs, 0)) {
-			    return null;
-			}
-		    }
+					if (version == 2.2) {
+						if (!Ili22Parser.parseIliFile(desc, streamName, stream,
+								checkMetaObjs, 0)) {
+							return null;
+						}
+					}else if(version==2.4){
+						if (!Ili24Parser.parseIliFile(desc, streamName, stream,
+								checkMetaObjs, 0)) {
+							return null;
+						}
+					} else if (version == 1.0) {
+						if (!Ili1Parser.parseIliFile(desc, streamName, stream,
+								0)) {
+							return null;
+						}
+					} else {
+						if (!Ili23Parser.parseIliFile(desc, streamName, stream,
+								checkMetaObjs, 0)) {
+							return null;
+						}
+					}
 		    if (tracker.hasSeenErrors()) {
 			return null;
 		    }

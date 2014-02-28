@@ -39,6 +39,7 @@ public abstract class Model extends Importable<Element>
 	static public final String ILI1="1";
 	static public final String ILI2_2="2.2";
 	static public final String ILI2_3="2.3";
+	static public final String ILI2_4="2.4";
 
 	  private class ModelImport {
 		  private Model model;

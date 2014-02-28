@@ -26,7 +26,18 @@
     <!-- <property name="buildnr" value="${DSTAMP}"/> -->
   </target>
 
-  <target depends="init" name="genparser">
+  <target depends="init" name="genparser24">
+    <mkdir dir="${build}/src/ch/interlis/ili2c/parser"/>
+    <!-- <antlr      target="${src}/ch/interlis/parser/interlis21.g"      outputdirectory="${build}/src/ch/interlis/parser"     /> -->
+    <java classname="antlr.Tool" classpath="${java.class.path}" fork="yes">
+    	<arg value="-o"/>
+        <arg value="${build}/src/ch/interlis/ili2c/parser"/>
+    	<!-- <arg value="-diagnostic"/> -->
+    	<arg value="${src}/ch/interlis/ili2c/parser/interlis24.g"/>
+    </java>
+  </target>
+  
+  <target depends="init" name="genparser23">
     <mkdir dir="${build}/src/ch/interlis/ili2c/parser"/>
     <!-- <antlr      target="${src}/ch/interlis/parser/interlis21.g"      outputdirectory="${build}/src/ch/interlis/parser"     /> -->
     <java classname="antlr.Tool" classpath="${java.class.path}" fork="yes">
@@ -84,7 +95,7 @@
     </java>
   </target>
 
-  <target depends="init,genparser,genparser1,genparser22,genmetavalue,genmodelscan,ili1undef" name="compile">
+  <target depends="init,genparser24,genparser1,genparser22,genparser23,genmetavalue,genmodelscan,ili1undef" name="compile">
     <!-- Compile the java code from ${src} into ${build}/classes -->
     <mkdir dir="${build}/classes"/>
     <javac destdir="${build}/classes" includes="**/*.java" debug="on"  source="1.6" target="1.6">

@@ -9,7 +9,7 @@ header
 	import ch.ehi.basics.settings.Settings;
 }
 
-class Ili23Parser extends Parser;
+class Ili24Parser extends Parser;
 
 options
 {
@@ -82,7 +82,7 @@ options
       filter.hide(ILI_METAVALUE);
 
       // connect parser to filter (instead of lexer)
-      Ili23Parser parser = new Ili23Parser (filter);
+      Ili24Parser parser = new Ili24Parser (filter);
       
       // Ili2.3 always check existence of metaobject
       parser.checkMetaObjs=true; // checkMetaObjects;
@@ -766,7 +766,7 @@ protected interlis2Def
 	}
 	:	ili:"INTERLIS" version=decimal
 	    {
-	      if (version.doubleValue()!=2.3) {
+	      if (version.doubleValue()!=2.4) {
 	        reportError(rsrc.getString("err_wrongInterlisVersion"),
 	                    ili.getLine());
 	        panic();
@@ -804,7 +804,7 @@ protected modelDef
                                   md.setFileName(getFilename());
 				  md.setDocumentation(ilidoc);
 				  md.setMetaValues(metaValues);
-				  md.setIliVersion(Model.ILI2_3);
+				  md.setIliVersion(Model.ILI2_4);
 				 td.add(md);
 				} catch (Exception ex) {
 				 reportError(ex, n1.getLine());
