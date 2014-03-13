@@ -3930,11 +3930,11 @@ protected existenceConstraint[Viewable v]
 		{
 			constr.setRestrictedAttribute(attr);
 		}
-	"REQUIRED" "IN" ref=viewableRef[v] COLON attrRef=attributePath[ref]
+	"REQUIRED" "IN" ref=viewableRefDepReq[v] COLON attrRef=attributePath[ref]
 		{
 			constr.addRequiredIn(attrRef); 
 		}
-	( "OR" ref=viewableRef[v] COLON attrRef=attributePath[ref]
+	( "OR" ref=viewableRefDepReq[v] COLON attrRef=attributePath[ref]
 		{
 			constr.addRequiredIn(attrRef); 
 		}
