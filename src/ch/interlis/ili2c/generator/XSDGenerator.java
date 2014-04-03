@@ -818,6 +818,8 @@ public final class XSDGenerator
     	 }else{
     			declareAbstractClassDef((AbstractClassDef)obj);
     	 }
+     }else if(topic.isViewTopic() && obj instanceof View){
+			declareViewDef((View)obj);
      }
    }
     ipw.println ("<xsd:complexType name=\""+getTransferName(topic)+"\">");
@@ -888,7 +890,87 @@ public final class XSDGenerator
 
 
 
-  protected void declareAbstractClassDef(Viewable v)
+private void declareViewDef(View v) {
+	ipw.println("<xsd:complexType  name=\"" + getTransferName(v) + "\">");
+	ipw.indent();
+	ipw.println("<xsd:sequence>");
+	ipw.indent();
+	/* Find which attributes are going to be elements of this class. */
+	Iterator iter = v.getAttributesAndRoles2();
+	while (iter.hasNext()) {
+		ViewableTransferElement obj = (ViewableTransferElement)iter.next();
+		if (obj.obj instanceof AttributeDef) {
+			AttributeDef attr = (AttributeDef) obj.obj;
+			if(!attr.isTransient()){
+				Type proxyType=attr.getDomain();
+				if(proxyType!=null && (proxyType instanceof ObjectType)){
+					// skip implicit particles (base-viewables) of views
+				}else{
+					declareAttribute(attr);
+					
+				}
+			}
+		}
+		if(obj.obj instanceof RoleDef){
+			RoleDef role = (RoleDef) obj.obj;
+
+			// a role of an embedded association?
+			if(obj.embedded){
+				AssociationDef roleOwner = (AssociationDef) role.getContainer();
+				if(roleOwner.getDerivedFrom()==null){
+					// role is oppend;
+					Cardinality card = role.getCardinality();
+					String minOccurs = "";
+					if (card.getMinimum() == 0) {
+						minOccurs = " minOccurs=\"0\"";
+					}
+					ipw.println(
+						"<xsd:element name=\""
+							+ getTransferName(role)
+							+ "\""
+							+ minOccurs
+							+ ">");
+					ipw.indent();
+					ipw.println("<xsd:complexType>");
+					ipw.indent();
+					// not just a link?
+					if (roleOwner.getAttributes().hasNext()
+						|| roleOwner.getLightweightAssociations().iterator().hasNext()) {
+						ipw.println("<xsd:sequence>");
+						ipw.indent();
+						ipw.println(
+							"<xsd:element name=\""
+								+ getTransferName(roleOwner)
+								+ "\" type=\""
+								+ getTransferName(roleOwner)
+								+ "\"/>");
+						ipw.unindent();
+						ipw.println("</xsd:sequence>");
+					}
+					ipw.println("<xsd:attribute name=\"REF\" type=\"IliID\" use=\"required\"/>");
+					ipw.println("<xsd:attribute name=\"BID\" type=\"IliID\"/>");
+					ipw.println("<xsd:attribute name=\"ORDER_POS\" type=\"xsd:positiveInteger\"/>");
+					ipw.unindent();
+					ipw.println("</xsd:complexType>");
+					ipw.unindent();
+					ipw.println("</xsd:element>");
+				}
+			}
+		}
+	}
+	ipw.unindent();
+	ipw.println("</xsd:sequence>");
+	
+	// ViewObjects have an ID
+	ipw.println ("<xsd:attribute name=\"TID\" type=\"IliID\" use=\"required\"/>");
+
+	ipw.unindent();
+	ipw.println("</xsd:complexType>");
+}
+
+
+
+protected void declareAbstractClassDef(Viewable v)
   {
 	ipw.println("<xsd:complexType  name=\"" + getTransferName(v) + "\">");
 	ipw.indent();
@@ -1014,10 +1096,14 @@ public final class XSDGenerator
   {
   	try{
 		String minOccurs = "";
-		if (!attribute.getDomain().isMandatoryConsideringAliases()) {
+		Type type = attribute.getDomain();
+		if(type==null){
+			Evaluable[] ev = (((LocalAttribute)attribute).getBasePaths());
+			type=((ObjectPath)ev[0]).getType();
+		}
+		if (!type.isMandatoryConsideringAliases()) {
 			minOccurs = " minOccurs=\"0\"";
 		}
-		Type type = attribute.getDomain();
 		if (type instanceof TypeAlias) {
 			if (((TypeAlias) type).getAliasing() == td.INTERLIS.BOOLEAN) {
 				ipw.println(
