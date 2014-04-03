@@ -1526,6 +1526,14 @@ protected referenceAttr[Container scope]
 			if(!external){
 				// must be external
 				reportError(formatMessage ("err_refattr_externalreq",""),refkw.getLine());
+			}else{
+				  if(targetTopic!=thisTopic){
+				    if(!thisTopic.isDependentOn(targetTopic)){
+				      reportError(formatMessage ("err_viewableref_topicdepreq",
+					thisTopic.getName(),
+					targetTopic.getName()),refkw.getLine());
+				    }
+				  }
 			}
 		}
 		rt.setExternal(external);
@@ -1830,6 +1838,14 @@ protected roleDef[AssociationDef container]
 				if(!external){
 					// must be external
 					reportError(formatMessage ("err_role_externalreq",""),n.getLine());
+				}else{
+				  if(targetTopic!=thisTopic){
+				    if(!thisTopic.isDependentOn(targetTopic)){
+				      reportError(formatMessage ("err_viewableref_topicdepreq",
+					thisTopic.getName(),
+					targetTopic.getName()),n.getLine());
+				    }
+				  }
 				}
 			}
 			ref.setExternal(external);
@@ -1868,6 +1884,14 @@ protected roleDef[AssociationDef container]
 				if(!external){
 					// must be external
 					reportError(formatMessage ("err_role_externalreq",""),n.getLine());
+				}else{
+				  if(targetTopic!=thisTopic){
+				    if(!thisTopic.isDependentOn(targetTopic)){
+				      reportError(formatMessage ("err_viewableref_topicdepreq",
+					thisTopic.getName(),
+					targetTopic.getName()),n.getLine());
+				    }
+				  }
 				}
 			}
 			ref.setExternal(external);
