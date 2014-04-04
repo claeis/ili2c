@@ -139,11 +139,10 @@ public class Main {
 	    System.err.println("-o1                   Generate INTERLIS-1 output.");
 	    System.err.println("-o2                   Generate INTERLIS-2 output.");
 	    System.err.println("-oXSD                 Generate an XTF XML-Schema.");
-	    System.err.println("-oXRF                 Generate an XRF XML-Schema.");
 	    System.err.println("-oFMT                 Generate an INTERLIS-1 Format.");
 	    System.err.println("-oIMD                 Generate Model as IlisMeta INTERLIS-Transfer (XTF).");
 	    System.err.println("-oIOM                 (deprecated) Generate Model as INTERLIS-Transfer (XTF).");
-	    System.err.println("--out file/dir        file or folder for output.");
+	    System.err.println("--out file/dir        file or folder for output (folder must exist).");
 	    System.err.println("--ilidirs " + ilidirs + " list of directories with ili-files.");
 	    System.err.println("--proxy host          proxy server to access model repositories.");
 	    System.err.println("--proxyPort port      proxy port to access model repositories.");
@@ -225,9 +224,6 @@ public class Main {
 		    continue;
 		} else if (args[i].equals("-oGML")) {
 		    outputKind = GenerateOutputKind.GML32;
-		    continue;
-		} else if (args[i].equals("-oXRF")) {
-		    outputKind = GenerateOutputKind.XRF;
 		    continue;
 		} else if (args[i].equals("-oETF1")) {
 		    outputKind = GenerateOutputKind.ETF1;
@@ -612,23 +608,32 @@ public class Main {
 		    gen.generate(out, desc, emitPredefined);
 		    break;
 		case GenerateOutputKind.XMLSCHEMA:
-		    if ("-".equals(config.getOutputFile())) {
-			out = new BufferedWriter(new OutputStreamWriter(System.out));
-			;
-		    } else {
-			try {
-			    out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(config.getOutputFile()),
-				    "UTF-8"));
-			} catch (IOException ex) {
-			    EhiLogger.logError(ex);
-			    return desc;
-			}
+		{
+			String ver=desc.getLastModel().getIliVersion();
+		    if (ver.equals("2.2") || ver.equals("2.3")) {
+			    if ("-".equals(config.getOutputFile())) {
+					out = new BufferedWriter(new OutputStreamWriter(System.out));
+					;
+				    } else {
+					try {
+					    out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(config.getOutputFile()),
+						    "UTF-8"));
+					} catch (IOException ex) {
+					    EhiLogger.logError(ex);
+					    return desc;
+					}
+				    }
+				    if (ver.equals("2.2")) {
+				    	ch.interlis.ili2c.generator.XSD22Generator.generate(out, desc);
+				    } else if (ver.equals("2.3")){
+				    	ch.interlis.ili2c.generator.XSDGenerator.generate(out, desc);
+				    }
+		    	
+		    }else{
+			    ch.interlis.ili2c.generator.XSD24Generator.generate (desc, new java.io.File(config.getOutputFile()));
 		    }
-		    if (desc.getLastModel().getIliVersion().equals("2.2")) {
-			ch.interlis.ili2c.generator.XSD22Generator.generate(out, desc);
-		    } else {
-			ch.interlis.ili2c.generator.XSDGenerator.generate(out, desc);
-		    }
+			
+		}
 		    break;
 		case GenerateOutputKind.ILI1FMTDESC:
 		    if ("-".equals(config.getOutputFile())) {
@@ -646,9 +651,6 @@ public class Main {
 		    break;
 		case GenerateOutputKind.GML32:
 		    ch.interlis.ili2c.generator.Gml32Generator.generate(desc, config.getOutputFile());
-		    break;
-		case GenerateOutputKind.XRF:
-		    ch.interlis.ili2c.generator.XrfGenerator.generate (desc, new java.io.File(config.getOutputFile()));
 		    break;
 		case GenerateOutputKind.ETF1:
 		    ch.interlis.ili2c.generator.ETF1Generator.generate(desc, config.getOutputFile());

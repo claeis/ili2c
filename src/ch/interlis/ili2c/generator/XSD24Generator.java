@@ -12,22 +12,24 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.io.IndentPrintWriter;
 
-/** writes a IRF schema
+/** writes a ili 2.4 schema
  * 
  * @author ce
  */
-public final class XrfGenerator
+public final class XSD24Generator
 {
-    public static final String XRF_XMLNSBASE="http://www.interlis.ch/irf/1.0";
-    public static final String GEOM_XMLNSBASE="http://www.interlis.ch/geometry/1.0";
-    public static final String TRANSFER="TRANSFER";
-    public static final String ORDER_POS="ORDER_POS";
-    public static final String REF="REF";
+    public static final String XTF24_XMLNSBASE="http://www.interlis.ch/xtf/2.4";
+    public static final String GEOM_XMLNS="http://www.interlis.ch/geometry/1.0";
+    public static final String ORDER_POS_ATTR="order_pos";
+    public static final String ORDER_POS_TYPE="orderposType";
+    public static final String REF_ATTR="ref";
+    public static final String REF_TYPE="refType";
     
   IndentPrintWriter   ipw;
   TransferDescription td;
@@ -36,7 +38,7 @@ public final class XrfGenerator
 
   public static void generate(TransferDescription td,java.io.File outfolder)
   {
-		XrfGenerator gen=new XrfGenerator();
+		XSD24Generator gen=new XSD24Generator();
 		gen.outdir=outfolder;
 		gen.td=td;
 		gen.setupNameMapping();
@@ -149,19 +151,21 @@ public final class XrfGenerator
   public static HashMap createDef2NameMapping(TransferDescription td)
   {
 
-	  HashMap def2name=new HashMap(); // map<Element def,String name>
-		Iterator modeli = td.iterator();
+	  HashMap<Element,String> def2name=new HashMap<Element,String>(); // map<Element def,String name>
+		Iterator<?> modeli = td.iterator();
 		while (modeli.hasNext()) {
 			Object modelo = modeli.next();
 			if (modelo instanceof Model) {
 					Model model = (Model) modelo;
-					HashMap name2def=new HashMap();
-					Iterator topici = model.iterator();
+					HashMap<String,Element> name2def=new HashMap<String,Element>();
+					HashSet<String> nameSet=new HashSet<String>();
+					Iterator<Element> topici = model.iterator();
 					while (topici.hasNext()) {
-						Element topic = (Element)topici.next();
-					    String topicName=topic.getName();
-				    	name2def.put(topicName, topic);
-				    	def2name.put(topic, topicName);
+						Element ele = (Element)topici.next();
+					    String eleName=ele.getName();
+					    nameSet.add(eleName);
+				    	name2def.put(eleName, ele);
+				    	def2name.put(ele, eleName);
 					}
 					topici = model.iterator();
 					while (topici.hasNext()) {
@@ -169,33 +173,33 @@ public final class XrfGenerator
 						if (topico instanceof Topic) {
 							Topic topic = (Topic) topico;
 						    String topicName=topic.getName();
-							   Iterator classi = topic.iterator();
+							   Iterator<?> classi = topic.iterator();
 							   while (classi.hasNext())
 							   {
 							     Element aclass = (Element)classi.next();
 							     String className=aclass.getName();
-							     if(name2def.containsKey(className)){
+							     if(nameSet.contains(className)){
+							    	 	// fix existing entry
+									    	if(name2def.containsKey(className)){
+										    	Element exstEle=name2def.get(className);
+										    	// if exstEle not at ModelDef level
+										    	if(!(exstEle.getContainer() instanceof Model)){
+										    	 	String scopedName=exstEle.getContainer().getName()+"."+exstEle.getName();
+											    	name2def.remove(className);							    	 
+											    	name2def.put(scopedName, exstEle);							    	 
+											    	def2name.remove(exstEle);
+											    	def2name.put(exstEle, scopedName);
+										    	}
+									    	}
+							    	 	// use qualified Name
 							    	 	String scopedName=topicName+"."+className;
 								    	name2def.put(scopedName, aclass);							    	 
 								    	def2name.put(aclass, scopedName);
 							     }else{
+							    	 	// use unqualified Name
 								    	name2def.put(className, aclass);
 								    	def2name.put(aclass, className);
-							     }
-							     if(aclass instanceof AbstractClassDef){
-							    	 AbstractClassDef ili2cClass=(AbstractClassDef)aclass;
-								     Iterator attri=ili2cClass.getDefinedAttributes();
-								     while(attri.hasNext()){
-								    	 AttributeDef attr=(AttributeDef)attri.next();
-								    	 if(attr.getExtending()==null){
-								    		 if(attr.getDomainResolvingAliases() instanceof AreaType){
-								    			 String helperTableName=def2name.get(aclass)+"_"+attr.getName();
-										    	name2def.put(helperTableName, attr);
-										    	def2name.put(attr, helperTableName);
-								    		 }
-								    	 }
-								     }
-							    	 
+									    nameSet.add(className);
 							     }
 							   }
 						}
@@ -237,27 +241,26 @@ public final class XrfGenerator
 	
 	// init globals
 	currentModel=model;
-	surfaceOrAreaAttrs=new ArrayList();
 	
 	// start output
 	ipw.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
 	ipw.println("<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"");
 	ipw.indent();
-	ipw.println("xmlns=\""+XRF_XMLNSBASE+"/"+model.getName()+"\"");
-	ipw.println("targetNamespace=\""+XRF_XMLNSBASE+"/"+model.getName()+"\"");
+	ipw.println("xmlns=\""+XTF24_XMLNSBASE+"/"+model.getName()+"\"");
+	ipw.println("targetNamespace=\""+XTF24_XMLNSBASE+"/"+model.getName()+"\"");
 		// xmlns declartion of geometry schema
-		ipw.println("xmlns:"+getGeomXmlnsNc()+"=\""+GEOM_XMLNSBASE+"\"");
+		ipw.println("xmlns:"+getGeomXmlnsNc()+"=\""+GEOM_XMLNS+"\"");
 		// xmlns declaration of base ITX schema
-		ipw.println("xmlns:"+getIliXmlnsNc()+"=\""+XRF_XMLNSBASE+"/INTERLIS\"");
+		ipw.println("xmlns:"+getIliXmlnsNc()+"=\""+XTF24_XMLNSBASE+"/INTERLIS\"");
 		ipw.println("xmlns:ili2c=\"http://www.interlis.ch/ili2c\"");
 		// xmlns declartion of imported ili-models
 		Model importedModels[]=model.getImporting();
 		for(int modeli=0;modeli<importedModels.length;modeli++){
 			if(importedModels[modeli]!=td.INTERLIS){
-				ipw.println("xmlns:"+importedModels[modeli].getName()+"=\""+XRF_XMLNSBASE+"/"+importedModels[modeli].getName()+"\"");
+				ipw.println("xmlns:"+importedModels[modeli].getName()+"=\""+XTF24_XMLNSBASE+"/"+importedModels[modeli].getName()+"\"");
 			}
 		}
-	ipw.println("elementFormDefault=\"qualified\" attributeFormDefault=\"unqualified\">");
+	ipw.println("elementFormDefault=\"qualified\" attributeFormDefault=\"qualified\">");
 	ipw.unindent();
 
     // compiler info
@@ -287,13 +290,13 @@ public final class XrfGenerator
 
 	
 	// import of geometry schema
-	ipw.println("<xsd:import namespace=\""+GEOM_XMLNSBASE+"\"/>");
+	ipw.println("<xsd:import namespace=\""+GEOM_XMLNS+"\"/>");
 	// import of base ILIGML schema
-	ipw.println("<xsd:import namespace=\""+XRF_XMLNSBASE+"/INTERLIS\"/>");
+	ipw.println("<xsd:import namespace=\""+XTF24_XMLNSBASE+"/INTERLIS\"/>");
 	// import schemas of imported ili-models
 	for(int modeli=0;modeli<importedModels.length;modeli++){
 		if(importedModels[modeli]!=td.INTERLIS){
-			ipw.println("<xsd:import namespace=\""+XRF_XMLNSBASE+"/"+importedModels[modeli].getName()+"\"/>");
+			ipw.println("<xsd:import namespace=\""+XTF24_XMLNSBASE+"/"+importedModels[modeli].getName()+"\"/>");
 		}
 	}
 	Iterator topici = model.iterator();
@@ -316,7 +319,6 @@ public final class XrfGenerator
 			declareTopic(topic);
 		}
 	}
-	declareLinetables();
 	ipw.println ("</xsd:schema>");
 	ipw.close();
   }
@@ -368,39 +370,14 @@ public final class XrfGenerator
 						 ipw.println("<xsd:element ref=\"" + getScopedName(v) + "\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
 					 }
 				 }
-			 }else if(obj instanceof AttributeDef && ((AttributeDef)obj).getDomainResolvingAliases() instanceof AreaType){
-				 AttributeDef attr=(AttributeDef)obj;
-				  AbstractClassDef aclass=(AbstractClassDef)(attr).getContainer();
-				  String linetableName=getName(aclass)+"_"+getTransferName(attr);
-				  ipw.println("<xsd:element ref=\"" + linetableName + "\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
 			 }
 		}
-	}else{
-		 iter = topic.getViewables().iterator();
-		 while (iter.hasNext()) {
-			 Object obj = iter.next();
-		      if ((obj instanceof Viewable) && !AbstractPatternDef.suppressViewableInTransfer((Viewable)obj)){
-				 Viewable v = (Viewable) obj;
-				 ipw.println("<xsd:element ref=\"" + getScopedName(v) + "\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
-			 }
-		 }
-		 // add line tables
-		  Iterator attri=surfaceOrAreaAttrs.iterator();
-		  while(attri.hasNext()){
-			  AttributeDef attr=(AttributeDef)attri.next();
-			  AbstractClassDef aclass=(AbstractClassDef)attr.getContainer();
-			  if(aclass.getContainer()==topic){
-				  String linetableName=getName(aclass)+"_"+getTransferName(attr);
-				  ipw.println("<xsd:element ref=\"" + linetableName + "\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
-			  }
-		  }
-		
 	}
 
 	ipw.unindent ();
 	ipw.println ("</xsd:sequence>");
 	if(extended==null){
-		ipw.println ("<xsd:attribute name=\"BID\" type=\""+getIliXmlns()+"BID\"/>");
+		ipw.println ("<xsd:attribute name=\"bid\" type=\""+getIliXmlns()+"bidType\"/>");
 	}
     if(extended!=null){
     	ipw.unindent ();
@@ -481,11 +458,7 @@ public final class XrfGenerator
 	ipw.indent();
 	/* Find which attributes are going to be elements of this class. */
 	Iterator iter=null;
-	if(td.getIli1Format()!=null){
-		iter=ModelUtilities.getIli1AttrList((AbstractClassDef)v).iterator();
-	}else{
-		iter = v.getAttributesAndRoles2();
-	}
+	iter = v.getAttributesAndRoles2();
 	while (iter.hasNext()) {
 		ViewableTransferElement obj = (ViewableTransferElement)iter.next();
 		if (obj.obj instanceof AttributeDef) {
@@ -508,9 +481,9 @@ public final class XrfGenerator
 					ipw.println("<xsd:complexType>");
 					ipw.indent();
 					//ipw.println("<xsd:sequence/>");
-					ipw.println("<xsd:attribute name=\""+REF+"\" type=\""+getIliXmlns()+REF+"\"/>");					
+					ipw.println("<xsd:attribute name=\""+REF_ATTR+"\" type=\""+getIliXmlns()+REF_TYPE+"\"/>");					
 					if(role.isOrdered()){
-						ipw.println("<xsd:attribute name=\""+ORDER_POS+"\" type=\""+getIliXmlns()+ORDER_POS+"\"/>");					
+						ipw.println("<xsd:attribute name=\""+ORDER_POS_ATTR+"\" type=\""+getIliXmlns()+ORDER_POS_TYPE+"\"/>");					
 					}
 					ipw.unindent();
 					ipw.println("</xsd:complexType>");
@@ -543,9 +516,9 @@ public final class XrfGenerator
 							ipw.unindent();
 							ipw.println("</xsd:sequence>");
 						}
-						ipw.println("<xsd:attribute name=\""+REF+"\" type=\""+getIliXmlns()+REF+"\"/>");					
+						ipw.println("<xsd:attribute name=\""+REF_ATTR+"\" type=\""+getIliXmlns()+REF_TYPE+"\"/>");					
 						if(oppend.isOrdered()){
-							ipw.println("<xsd:attribute name=\""+ORDER_POS+"\" type=\""+getIliXmlns()+ORDER_POS+"\"/>");					
+							ipw.println("<xsd:attribute name=\""+ORDER_POS_ATTR+"\" type=\""+getIliXmlns()+ORDER_POS_TYPE+"\"/>");					
 						}
 						ipw.unindent();
 						ipw.println("</xsd:complexType>");
@@ -561,7 +534,9 @@ public final class XrfGenerator
 	ipw.unindent();
 	ipw.println("</xsd:sequence>");
 	if(extended==null){
-		ipw.println ("<xsd:attribute name=\"TID\" type=\""+getIliXmlns()+"TID\"/>");
+		if((v instanceof Table) && ((Table)v).isIdentifiable()){
+			ipw.println ("<xsd:attribute name=\"tid\" type=\""+getIliXmlns()+"tidType\"/>");
+		}
 	}
     if(extended!=null){
     	ipw.unindent ();
@@ -635,76 +610,9 @@ public final class XrfGenerator
       	  }
       	  ipw.unindent();
       	  ipw.println("</xsd:simpleType>");
-    }else if (type instanceof AreaType){
-			ipw.println("<xsd:complexType name=\"" + getName(domain) + "\">");
-			ipw.indent();
-			ipw.println("<xsd:sequence>");
-			ipw.indent();
-			ipw.println("<xsd:element ref=\"geom:point\"/>");
-			ipw.unindent();
-			ipw.println("</xsd:sequence>");
-			ipw.unindent();
-			ipw.println("</xsd:complexType>");
     }else{
         declareType(type,domain);
     }
-  }
-  private ArrayList surfaceOrAreaAttrs=null; // array<AttributeDef attr>
-  private void declareLinetables(){
-	  Iterator attri=surfaceOrAreaAttrs.iterator();
-	  while(attri.hasNext()){
-		  AttributeDef attr=(AttributeDef)attri.next();
-		  AbstractClassDef aclass=(AbstractClassDef)attr.getContainer();
-		  String linetableName=getName(aclass)+"_"+getTransferName(attr);
-			ipw.println("<xsd:element name=\""+linetableName+"\" type=\""+linetableName+"Type\"/>");
-			ipw.println("<xsd:complexType  name=\"" + linetableName + "Type\">");
-			ipw.indent ();
-			ipw.println("<xsd:sequence>");
-			ipw.indent();
-
-			SurfaceOrAreaType type=(SurfaceOrAreaType)attr.getDomainResolvingAliases();
-			Table lineattrs=type.getLineAttributeStructure();
-			if(lineattrs!=null){
-				Iterator iter=lineattrs.getAttributesAndRoles2();
-				while (iter.hasNext()) {
-					ViewableTransferElement obj = (ViewableTransferElement)iter.next();
-					if (obj.obj instanceof AttributeDef) {
-						AttributeDef lattr = (AttributeDef) obj.obj;
-						if(lattr.getExtending()==null){
-							if(!lattr.isTransient()){
-								// define only new attrs (==not EXTENDED)
-								declareAttribute(lattr);
-							}
-						}
-					}
-					if(obj.obj instanceof RoleDef){
-						throw new IllegalStateException("unexpected RoleDef");
-					}
-				}
-				
-			}
-			
-			ipw.println("<xsd:element name=\"_geometry\">");
-		    ipw.indent ();
-			ipw.println ("<xsd:complexType>");
-		    ipw.indent ();
-			ipw.println("<xsd:sequence>");
-			ipw.indent ();
-			ipw.println("<xsd:element ref=\"geom:polyline\"/>");
-			ipw.unindent ();
-			ipw.println("</xsd:sequence>");
-		    ipw.unindent ();
-		    ipw.println ("</xsd:complexType>");
-		    ipw.unindent ();
-			ipw.println("</xsd:element>");
-						
-			ipw.unindent();
-			ipw.println("</xsd:sequence>");
-			ipw.println ("<xsd:attribute name=\"TID\" type=\""+getIliXmlns()+"TID\"/>");
-			ipw.unindent();
-			ipw.println("</xsd:complexType>");
-		  
-	  }
   }
   private void declareAttribute (AttributeDef attribute)
   {
@@ -756,10 +664,6 @@ public final class XrfGenerator
     		base="xsd:dateTime";
         }else{
         	base=getScopedName(realDomain);
-        	if(realDomain.getType() instanceof AreaType){
-    			// remember to create linetable
-        		surfaceOrAreaAttrs.add(attribute);
-        	}
         }
     	if(facets==null){
         	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\""+base+"\""+minOccurs+"/>");
@@ -779,20 +683,7 @@ public final class XrfGenerator
       	  ipw.println("</xsd:element>");
     	}
     }else{
-		if (type instanceof AreaType){
-			ipw.println(
-				"<xsd:element name=\""
-					+ getTransferName(attribute)
-					+ "\""
-					+ minOccurs
-					+ ">");
-			ipw.indent();
-			declareType(((AreaType)type).getControlPointDomain().getType(),null);
-			ipw.unindent();
-			ipw.println("</xsd:element>");
-			// remember to create linetable
-       		surfaceOrAreaAttrs.add(attribute);
-		}else if (type instanceof CompositionType){
+		if (type instanceof CompositionType){
 			CompositionType composition=(CompositionType)type;
 			Table part=composition.getComponentType();
 			Cardinality card=composition.getCardinality();
@@ -828,7 +719,7 @@ public final class XrfGenerator
 				ipw.indent();
 					ipw.println("<xsd:complexType>");
 					ipw.indent();
-					ipw.println("<xsd:attribute name=\""+REF+"\" type=\""+getIliXmlns()+REF+"\"/>");					
+					ipw.println("<xsd:attribute name=\""+REF_ATTR+"\" type=\""+getIliXmlns()+REF_TYPE+"\"/>");					
 					ipw.unindent();
 					ipw.println("</xsd:complexType>");
 				ipw.unindent();
@@ -863,9 +754,7 @@ public final class XrfGenerator
 			ipw.println("</xsd:sequence>");
 		    ipw.unindent ();
 	    ipw.println ("</xsd:complexType>");
-    }else if (type instanceof AreaType){
-    	throw new IllegalArgumentException("AreaType unexpected");
-    }else if (type instanceof SurfaceType){
+    }else if (type instanceof SurfaceOrAreaType){
 		ipw.println ("<xsd:complexType"+typeName+">");
 		    ipw.indent ();
 			ipw.println("<xsd:sequence>");
@@ -889,15 +778,15 @@ public final class XrfGenerator
 	      ipw.println ("<xsd:simpleType"+typeName+">");
 	        ipw.indent ();
 	        ipw.println ("<xsd:restriction base=\"xsd:normalizedString\">");
-	          ipw.indent ();
-	          java.util.ArrayList ev=new java.util.ArrayList();
-	          buildEnumList(ev,"",((EnumerationType)type).getConsolidatedEnumeration());
-	          Iterator iter=ev.iterator();
-	          while(iter.hasNext()){
-	            String value=(String)iter.next();
-	            ipw.println ("<xsd:enumeration value=\""+value+"\"/>");
-	          }
-	          ipw.unindent ();
+		          ipw.indent ();
+		          java.util.ArrayList ev=new java.util.ArrayList();
+		          buildEnumList(ev,"",((EnumerationType)type).getConsolidatedEnumeration());
+		          Iterator iter=ev.iterator();
+		          while(iter.hasNext()){
+		            String value=(String)iter.next();
+		            ipw.println ("<xsd:enumeration value=\""+value+"\"/>");
+		          }
+		          ipw.unindent ();
 	        ipw.println ("</xsd:restriction>");
 	        ipw.unindent ();
 	      ipw.println ("</xsd:simpleType>");
