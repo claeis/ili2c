@@ -23,10 +23,15 @@ import ch.interlis.ili2c.config.GenerateOutputKind;
 import ch.interlis.ili2c.generator.NotSupportedByIliRelational;
 import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.TransferDescription;
+import ch.interlis.ili2c.modelscan.IliFile;
+import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ili2c.parser.Ili1Parser;
 import ch.interlis.ili2c.parser.Ili22Parser;
 import ch.interlis.ili2c.parser.Ili23Parser;
 import ch.interlis.ili2c.parser.Ili24Parser;
+import ch.interlis.ilirepository.IliFiles;
+import ch.interlis.ilirepository.impl.RepositoryAccess;
+import ch.interlis.ilirepository.impl.RepositoryAccessException;
 
 
 public class Main {
@@ -108,6 +113,7 @@ public class Main {
 	boolean emitPredefined = false;
 	boolean doAuto = true;
 	boolean checkMetaObjs = false;
+	boolean doCheckRepoIlis = false;
 	boolean withWarnings = true;
 	int numErrorsWhileGenerating = 0;
 	String notifyOnError = "compiler@interlis.ch";
@@ -142,6 +148,7 @@ public class Main {
 	    System.err.println("-oFMT                 Generate an INTERLIS-1 Format.");
 	    System.err.println("-oIMD                 Generate Model as IlisMeta INTERLIS-Transfer (XTF).");
 	    System.err.println("-oIOM                 (deprecated) Generate Model as INTERLIS-Transfer (XTF).");
+	    System.err.println("--check-repo-ilis uri   check all ili files in the given repository.");
 	    System.err.println("--out file/dir        file or folder for output (folder must exist).");
 	    System.err.println("--ilidirs " + ilidirs + " list of directories with ili-files.");
 	    System.err.println("--proxy host          proxy server to access model repositories.");
@@ -186,6 +193,10 @@ public class Main {
 		}
 		if (args[i].equals("--no-auto")) {
 		    doAuto = false;
+		    continue;
+		}
+		if (args[i].equals("--check-repo-ilis")) {
+		    doCheckRepoIlis = true;
 		    continue;
 		}
 		if (args[i].equals("--out")) {
@@ -244,12 +255,12 @@ public class Main {
 		    System.err.println(APP_NAME + ":Unknown option: " + args[i]);
 		    continue;
 		} else {
-		    String filename = args[i];
-		    if (new File(filename).isFile()) {
-			ilifilev.add(filename);
-		    } else {
-			EhiLogger.logError(args[i] + ": There is no such file.");
-		    }
+			String filename = args[i];
+			if (doCheckRepoIlis  || new File(filename).isFile()) {
+				ilifilev.add(filename);
+			} else {
+				EhiLogger.logError(args[i] + ": There is no such file.");
+			}
 		}
 
 	    }
@@ -281,12 +292,20 @@ public class Main {
 		}
 	    }
 
-	    // compile models
-	    TransferDescription td = runCompiler(config, settings);
-	    if (td == null) {
-		EhiLogger.logError("compiler failed");
-		System.exit(1);
-	    }
+			if (doCheckRepoIlis) {
+				boolean failed = checkRepoIlis(config, settings);
+				if (failed) {
+					EhiLogger.logError("check of ili's in repositories failed");
+					System.exit(1);
+				}
+			} else {
+				// compile models
+				TransferDescription td = runCompiler(config, settings);
+				if (td == null) {
+					EhiLogger.logError("compiler failed");
+					System.exit(1);
+				}
+			}
 	} catch (Exception ex) {
 	    EhiLogger.logError(APP_NAME + ": An internal error has occured. Please notify " + notifyOnError, ex);
 	    System.exit(1);
@@ -294,7 +313,70 @@ public class Main {
     }
 
 
-    public static ArrayList<String> getIliLookupPaths(ArrayList<String> ilifilev) {
+	private static boolean checkRepoIlis(Configuration config,
+			UserSettings settings) {
+		
+		setHttpProxySystemProperties(settings);
+		
+		/*
+		ch.interlis.ilirepository.IliManager manager = new ch.interlis.ilirepository.IliManager();
+		
+		
+		// set list of repositories to search
+		HashMap pathmap = (HashMap) settings.getTransientObject(UserSettings.ILIDIRS_PATHMAP);
+		ArrayList modeldirv = getModelRepos(settings, new ArrayList(), pathmap);
+		manager.setRepositories((String[]) modeldirv.toArray(new String[1]));
+		*/
+		
+		HashSet<IliFile> failedFiles=new HashSet<IliFile>();
+		Iterator reposi = config.iteratorFileEntry();
+		while (reposi.hasNext()) {
+			FileEntry e = (FileEntry) reposi.next();
+			if (e.getKind() == FileEntryKind.ILIMODELFILE) {
+				String repos = e.getFilename();
+				// get list of current files in repository
+				RepositoryAccess reposAccess=new RepositoryAccess();
+				IliFiles files = reposAccess.getIliFiles(repos);
+				for(Iterator<IliFile> filei=files.iteratorFile();filei.hasNext();){
+					IliFile file=filei.next();
+					ArrayList<String> ilimodels=new ArrayList<String>();
+					for(Iterator modeli=file.iteratorModel();modeli.hasNext();){
+						IliModel model=(IliModel)modeli.next();
+						ilimodels.add(model.getName());
+					}
+						Configuration fileconfig = new Configuration();
+						try {
+							File iliFile = reposAccess.getLocalFileLocation(file.getRepositoryUri(),file.getPath(),0,file.getMd5());
+							fileconfig.addFileEntry(new ch.interlis.ili2c.config.FileEntry(
+									  iliFile.getPath(),ch.interlis.ili2c.config.FileEntryKind.ILIMODELFILE));
+							fileconfig.setAutoCompleteModelList(true);
+							fileconfig.setGenerateWarnings(false);
+							TransferDescription td=runCompiler(fileconfig,settings);
+							if(td==null){
+								failedFiles.add(file);
+							}
+						} catch (RepositoryAccessException e1) {
+							EhiLogger.logError(e1);
+							failedFiles.add(file);
+						}
+
+				}
+			}
+		}
+		if(failedFiles.size()!=0){
+			StringBuilder failed=new StringBuilder();
+			String sep="";
+			for(IliFile f:failedFiles){
+				failed.append(sep);
+				failed.append(f.getPath());
+				sep=", ";
+			}
+			EhiLogger.logState("failed files: "+failed);
+		}
+		return failedFiles.size()!=0;
+	}
+
+	public static ArrayList<String> getIliLookupPaths(ArrayList<String> ilifilev) {
 	ArrayList<String> ilipathv = new ArrayList<String>();
 	HashSet<String> seenDirs = new HashSet<String>();
 	Iterator<String> ilifilei = ilifilev.iterator();
@@ -400,62 +482,11 @@ public class Main {
 		    }
 		}
 
-		String httpProxyHost = settings.getValue(UserSettings.HTTP_PROXY_HOST);
-		String httpProxyPort = settings.getValue(UserSettings.HTTP_PROXY_PORT);
-
-		if (httpProxyHost != null) {
-		    EhiLogger.logState("httpProxyHost <" + httpProxyHost + ">");
-		    System.setProperty("http.proxyHost", httpProxyHost);
-
-		    if (httpProxyPort != null) {
-			EhiLogger.logState("httpProxyPort <" + httpProxyPort + ">");
-			System.setProperty("http.proxyPort", httpProxyPort);
-		    }
-		} else {
-		    System.setProperty("java.net.useSystemProxies", "true");
-		}
-		ArrayList modeldirv = new ArrayList();
+		setHttpProxySystemProperties(settings);
+		
 		HashMap pathmap = (HashMap) settings.getTransientObject(UserSettings.ILIDIRS_PATHMAP);
 
-		if (pathmap == null) {
-		    pathmap = new HashMap();
-		}
-
-		String ilidirs = settings.getValue(UserSettings.ILIDIRS);
-		String modeldirs[] = ilidirs.split(";");
-		HashSet ilifiledirs = new HashSet();
-
-		for (int modeli = 0; modeli < modeldirs.length; modeli++) {
-		    String m = modeldirs[modeli];
-
-		    if (m.equals(ILI_DIR) && pathmap.containsKey(ILI_DIR)) {
-			for (int filei = 0; filei < ilifilev.size(); filei++) {
-			    String ilifile = ilifilev.get(filei);
-
-			    if (GenericFileFilter.getFileExtension(ilifile) != null) {
-				m = new java.io.File(ilifile).getAbsoluteFile().getParentFile().getAbsolutePath();
-				if (m != null && m.length() > 0) {
-				    if (!ilifiledirs.contains(m)) {
-					ilifiledirs.add(m);
-					modeldirv.add(m);
-				    }
-				}
-			    }
-			}
-		    } else if (m.startsWith("%")) {
-			String key = m;
-			if (pathmap.containsKey(key)) {
-			    m = (String) pathmap.get(key);
-			    if (m != null && m.length() > 0) {
-				modeldirv.add(m);
-			    }
-			}
-		    } else {
-			if (m != null && m.length() > 0) {
-			    modeldirv.add(m);
-			}
-		    }
-		}
+		ArrayList modeldirv = getModelRepos(settings, ilifilev, pathmap);
 
 		// create repository manager
 		ch.interlis.ilirepository.IliManager manager = new ch.interlis.ilirepository.IliManager();
@@ -693,6 +724,73 @@ public class Main {
 	}
 	return desc;
     }
+
+
+	private static ArrayList getModelRepos(
+			ch.ehi.basics.settings.Settings settings,
+			ArrayList<String> ilifilev, HashMap pathmap) {
+		ArrayList modeldirv;
+		modeldirv=new ArrayList();
+		if (pathmap == null) {
+		    pathmap = new HashMap();
+		}
+
+		String ilidirs = settings.getValue(UserSettings.ILIDIRS);
+		String modeldirs[] = ilidirs.split(";");
+		HashSet ilifiledirs = new HashSet();
+
+		for (int modeli = 0; modeli < modeldirs.length; modeli++) {
+		    String m = modeldirs[modeli];
+
+		    if (m.equals(ILI_DIR) && pathmap.containsKey(ILI_DIR)) {
+			for (int filei = 0; filei < ilifilev.size(); filei++) {
+			    String ilifile = ilifilev.get(filei);
+
+			    if (GenericFileFilter.getFileExtension(ilifile) != null) {
+				m = new java.io.File(ilifile).getAbsoluteFile().getParentFile().getAbsolutePath();
+				if (m != null && m.length() > 0) {
+				    if (!ilifiledirs.contains(m)) {
+					ilifiledirs.add(m);
+					modeldirv.add(m);
+				    }
+				}
+			    }
+			}
+		    } else if (m.startsWith("%")) {
+			String key = m;
+			if (pathmap.containsKey(key)) {
+			    m = (String) pathmap.get(key);
+			    if (m != null && m.length() > 0) {
+				modeldirv.add(m);
+			    }
+			}
+		    } else {
+			if (m != null && m.length() > 0) {
+			    modeldirv.add(m);
+			}
+		    }
+		}
+		return modeldirv;
+	}
+
+
+	private static void setHttpProxySystemProperties(
+			ch.ehi.basics.settings.Settings settings) {
+		String httpProxyHost = settings.getValue(UserSettings.HTTP_PROXY_HOST);
+		String httpProxyPort = settings.getValue(UserSettings.HTTP_PROXY_PORT);
+
+		if (httpProxyHost != null) {
+		    EhiLogger.logState("httpProxyHost <" + httpProxyHost + ">");
+		    System.setProperty("http.proxyHost", httpProxyHost);
+
+		    if (httpProxyPort != null) {
+			EhiLogger.logState("httpProxyPort <" + httpProxyPort + ">");
+			System.setProperty("http.proxyPort", httpProxyPort);
+		    }
+		} else {
+		    System.setProperty("java.net.useSystemProxies", "true");
+		}
+	}
 
 
     static public boolean editConfig(Configuration config) {

@@ -9,7 +9,10 @@ public class CoordType extends BaseType
   protected int nullAxis;
   protected int piHalfAxis;
   protected NumericalType[] dimensions;
-
+  protected CoordType()
+  {
+	  
+  }
   public CoordType (NumericalType[] dimensions, int nullAxis, int piHalfAxis)
   {
     this.nullAxis = nullAxis;
