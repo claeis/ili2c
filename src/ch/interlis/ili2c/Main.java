@@ -9,12 +9,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.view.GenericFileFilter;
+import ch.ehi.iox.ilisite.IliRepository09.ModelName_;
+import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata;
+import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage;
 import ch.interlis.ili2c.config.BoidEntry;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
@@ -22,6 +26,7 @@ import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.config.GenerateOutputKind;
 import ch.interlis.ili2c.generator.NotSupportedByIliRelational;
 import ch.interlis.ili2c.gui.UserSettings;
+import ch.interlis.ili2c.metamodel.Model;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.modelscan.IliFile;
 import ch.interlis.ili2c.modelscan.IliModel;
@@ -30,6 +35,7 @@ import ch.interlis.ili2c.parser.Ili22Parser;
 import ch.interlis.ili2c.parser.Ili23Parser;
 import ch.interlis.ili2c.parser.Ili24Parser;
 import ch.interlis.ilirepository.IliFiles;
+import ch.interlis.ilirepository.IliManager;
 import ch.interlis.ilirepository.impl.RepositoryAccess;
 import ch.interlis.ilirepository.impl.RepositoryAccessException;
 
@@ -293,7 +299,7 @@ public class Main {
 	    }
 
 			if (doCheckRepoIlis) {
-				boolean failed = checkRepoIlis(config, settings);
+				boolean failed = new CheckReposIlis().checkRepoIlis(config, settings);
 				if (failed) {
 					EhiLogger.logError("check of ili's in repositories failed");
 					System.exit(1);
@@ -313,68 +319,7 @@ public class Main {
     }
 
 
-	private static boolean checkRepoIlis(Configuration config,
-			UserSettings settings) {
-		
-		setHttpProxySystemProperties(settings);
-		
-		/*
-		ch.interlis.ilirepository.IliManager manager = new ch.interlis.ilirepository.IliManager();
-		
-		
-		// set list of repositories to search
-		HashMap pathmap = (HashMap) settings.getTransientObject(UserSettings.ILIDIRS_PATHMAP);
-		ArrayList modeldirv = getModelRepos(settings, new ArrayList(), pathmap);
-		manager.setRepositories((String[]) modeldirv.toArray(new String[1]));
-		*/
-		
-		HashSet<IliFile> failedFiles=new HashSet<IliFile>();
-		Iterator reposi = config.iteratorFileEntry();
-		while (reposi.hasNext()) {
-			FileEntry e = (FileEntry) reposi.next();
-			if (e.getKind() == FileEntryKind.ILIMODELFILE) {
-				String repos = e.getFilename();
-				// get list of current files in repository
-				RepositoryAccess reposAccess=new RepositoryAccess();
-				IliFiles files = reposAccess.getIliFiles(repos);
-				for(Iterator<IliFile> filei=files.iteratorFile();filei.hasNext();){
-					IliFile file=filei.next();
-					ArrayList<String> ilimodels=new ArrayList<String>();
-					for(Iterator modeli=file.iteratorModel();modeli.hasNext();){
-						IliModel model=(IliModel)modeli.next();
-						ilimodels.add(model.getName());
-					}
-						Configuration fileconfig = new Configuration();
-						try {
-							File iliFile = reposAccess.getLocalFileLocation(file.getRepositoryUri(),file.getPath(),0,file.getMd5());
-							fileconfig.addFileEntry(new ch.interlis.ili2c.config.FileEntry(
-									  iliFile.getPath(),ch.interlis.ili2c.config.FileEntryKind.ILIMODELFILE));
-							fileconfig.setAutoCompleteModelList(true);
-							fileconfig.setGenerateWarnings(false);
-							TransferDescription td=runCompiler(fileconfig,settings);
-							if(td==null){
-								failedFiles.add(file);
-							}
-						} catch (RepositoryAccessException e1) {
-							EhiLogger.logError(e1);
-							failedFiles.add(file);
-						}
 
-				}
-			}
-		}
-		if(failedFiles.size()!=0){
-			StringBuilder failed=new StringBuilder();
-			String sep="";
-			for(IliFile f:failedFiles){
-				failed.append(sep);
-				failed.append(f.getPath());
-				sep=", ";
-			}
-			EhiLogger.logState("failed files: "+failed);
-		}
-		return failedFiles.size()!=0;
-	}
 
 	public static ArrayList<String> getIliLookupPaths(ArrayList<String> ilifilev) {
 	ArrayList<String> ilipathv = new ArrayList<String>();
@@ -774,7 +719,7 @@ public class Main {
 	}
 
 
-	private static void setHttpProxySystemProperties(
+	public static void setHttpProxySystemProperties(
 			ch.ehi.basics.settings.Settings settings) {
 		String httpProxyHost = settings.getValue(UserSettings.HTTP_PROXY_HOST);
 		String httpProxyPort = settings.getValue(UserSettings.HTTP_PROXY_PORT);

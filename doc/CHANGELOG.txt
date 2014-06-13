@@ -4,6 +4,7 @@ Known Issues:
 ili2c 4.5.4 (2014-05-xx)
 ---------------------------
 - --check-repo-ilis: new function to check all ili files in a given repository
+- iox-ili 1.10.0
 
 ili2c 4.5.3 (2014-04-04)
 ---------------------------
