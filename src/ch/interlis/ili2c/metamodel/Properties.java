@@ -16,6 +16,7 @@ public class Properties {
 	public static final int eTRANSIENT=0x0200;
 	public static final int eOID=0x0400;
 	public static final int eHIDING=0x0800;
+	public static final int eGENERIC=0x1000;
 	/** do not instantiate 
 	 */
 	private Properties(){};

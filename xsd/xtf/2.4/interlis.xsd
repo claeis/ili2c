@@ -22,7 +22,15 @@
   </xsd:element>
   
   <xsd:attribute name="srs" type="xsd:token"/> 
-
+  <xsd:attribute name="tid" type="tidType"/>
+  <xsd:attribute name="operation" type="operationType"/>
+  <xsd:attribute name="order_pos" type="orderposType"/>
+  <xsd:attribute name="bid" type="bidType"/>
+  <xsd:attribute name="consistency" type="consistencyType"/> 
+  <xsd:attribute name="kind" type="transferKindType"/> 
+  <xsd:attribute name="startstate" type="basketStateType"/>
+  <xsd:attribute name="endstate" type="basketStateType"/>
+  
   <xsd:simpleType name="tidType">
     <xsd:restriction base="xsd:token"/>
   </xsd:simpleType>

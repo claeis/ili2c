@@ -46,7 +46,7 @@ public class SymbologyModel extends Model
   {
     super.checkIntegrity ();
     
-    if (!isContracted())
+    if (isIli23() && !isContracted())
     {
       throw new IllegalStateException (formatMessage (
         "err_symbologyModel_uncontracted",

@@ -23,7 +23,7 @@ options
   protected Table predefinedScalSystemClass;
   protected Table predefinedCoordSystemClass;
   protected TransferDescription td;
-  private Ili2Lexer lexer;
+  private Ili24Lexer lexer;
   private antlr.TokenStreamHiddenTokenFilter filter;
   private boolean checkMetaObjs;
 
@@ -41,7 +41,7 @@ options
     ,int line0Offest
     )
   {
-  	return parseIliFile (td,filename,new Ili2Lexer (stream),checkMetaObjects,line0Offest);
+  	return parseIliFile (td,filename,new Ili24Lexer (stream),checkMetaObjects,line0Offest);
   }
   static public boolean parseIliFile (TransferDescription td
     ,String filename
@@ -50,11 +50,11 @@ options
     ,int line0Offest
     )
   {
-  	return parseIliFile (td,filename,new Ili2Lexer (stream),checkMetaObjects,line0Offest);
+  	return parseIliFile (td,filename,new Ili24Lexer (stream),checkMetaObjects,line0Offest);
   }
   static public boolean parseIliFile (TransferDescription td
     ,String filename
-    ,Ili2Lexer lexer
+    ,Ili24Lexer lexer
     ,boolean checkMetaObjects
     ,int line0Offest
     )
@@ -821,6 +821,7 @@ protected modelDef
 		      }
 		|
 		)
+		("NOINCREMENTALTRANSFER")?
 		"AT" issuerToken:STRING {
 			String issuer=issuerToken.getText();
 			md.setIssuer(issuer);
@@ -849,6 +850,8 @@ protected modelDef
 		|
 		)
 		EQUALS
+		("CHARSET" ianaNameToken:STRING SEMI)?
+		("XMLNS" xmlnsToken:STRING SEMI)?
 		( "IMPORTS" ("UNQUALIFIED" {unqualified=true;} | /* empty */ {unqualified=false;}) 
 			(imp1:NAME
 			{
@@ -884,6 +887,7 @@ protected modelDef
 		|	functionDef[md]
 		|	lineFormTypeDef[md]
 		|	domainDefs[md]
+		|	contextDefs[md]
 		|	runTimeParameterDef[md]
 		|	classDef[md]
 		|	topicDef[md]
@@ -994,6 +998,7 @@ protected definitions[Container scope]
 		|	unitDefs[scope]
 		|	functionDef[scope]
 		|	domainDefs[scope]
+		|	contextDefs[scope]
 		|	classDef[scope]
 		|	associationDef[scope]
 		|	constraintsDef[scope]
@@ -1419,17 +1424,20 @@ protected attrTypeDef[Container  scope,
 		(	card=cardinality
 		|
 		)
-		"OF" ct=restrictedStructureRef[scope]
+		"OF" typ=attrType[scope,allowAliases,extending,line,formalArgs]
 		{
 			try{
-				if(card!=null){
-					ct.setCardinality(card);
+				if(typ instanceof CompositionType){
+					ct=(CompositionType)typ;
+					if(card!=null){
+						ct.setCardinality(card); // FIXME24
+					}
+					ct.setOrdered(ordered); // FIXME24
 				}
-				ct.setOrdered(ordered);
 			}catch(Exception ex){
 			    reportError(ex, line);
 			}
-			typ=ct;
+			//typ=ct;
 		}
 	;
 
@@ -1446,7 +1454,7 @@ protected attrType[Container  scope,
 		int lin=0;
 		CompositionType ct=null;
 	}
-	:	typ=type[scope,extending,formalArgs]
+	:	typ=type[scope,extending,formalArgs,false]
 	//|	domainRef
 	//|	restrictedStructureRef
 	| (lin = names2[nams]
@@ -1951,7 +1959,7 @@ protected domainDef[Container container]
 	}
 	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
 		n:NAME
-		mods=properties[ch.interlis.ili2c.metamodel.Properties.eABSTRACT|ch.interlis.ili2c.metamodel.Properties.eFINAL]
+		mods=properties[ch.interlis.ili2c.metamodel.Properties.eABSTRACT|ch.interlis.ili2c.metamodel.Properties.eFINAL|ch.interlis.ili2c.metamodel.Properties.eGENERIC]
 		(	"EXTENDS" extending=domainRef[container]
 		      {
 			if (extending != null)
@@ -1959,9 +1967,14 @@ protected domainDef[Container container]
 		      }
 		)?
 		eq:EQUALS
-		(	"MANDATORY" (declared=type[container,extendingType,null])?
-		|	declared=type[container,extendingType,null]
+		(	"MANDATORY" (declared=type[container,extendingType,null,(mods&ch.interlis.ili2c.metamodel.Properties.eGENERIC)!=0])?
+		|	declared=type[container,extendingType,null,(mods&ch.interlis.ili2c.metamodel.Properties.eGENERIC)!=0]
 		)
+		( "CONSTRAINTS" 
+		NAME COLON expression[container,predefinedBooleanType,container] 
+			(COMMA NAME COLON expression[container,predefinedBooleanType,container] 
+			)*
+		)?
 		SEMI
 		{
 		Domain dd = new Domain ();
@@ -2020,11 +2033,11 @@ protected domainDefs[Container container]
 	:	"DOMAIN" ( domainDef[container] )*
 	;
 
-protected type[Container scope,Type extending,ArrayList formalArgs]
+protected type[Container scope,Type extending,ArrayList formalArgs,boolean isGeneric]
 	returns [Type typ]
 	{ typ=null;
 	}
-	:	(	typ=baseType[scope,extending,formalArgs]
+	:	(	typ=baseType[scope,extending,formalArgs,isGeneric]
 		|	typ=lineType[scope,extending]
 		)
 
@@ -2045,7 +2058,7 @@ protected domainRef [Container scope]
     }
   ;
 
-protected baseType [Container scope, Type extending,ArrayList formalArgs]
+protected baseType [Container scope, Type extending,ArrayList formalArgs,boolean isGeneric]
 	returns [Type bt]
 	{
 		bt = null;
@@ -2057,7 +2070,8 @@ protected baseType [Container scope, Type extending,ArrayList formalArgs]
 	|	bt=booleanType
 	|	bt=numericType[scope,extending,false]
 	|	bt=formattedType[scope,extending]
-	|	bt=coordinateType[scope,extending]
+	|	bt=dateTimeType[scope,extending]
+	|	bt=coordinateType[scope,extending,isGeneric]
 	|	bt=oIDType[scope,extending]
 	|	bt=blackboxType[scope,extending]
 	|	bt=classType[scope,extending]
@@ -2695,8 +2709,16 @@ protected formattedConst
 	}
 : c=textConst
 ;
+
+protected dateTimeType [Container scope, Type extending]
+  returns [CoordType ct]
+{
+	ct=null;
+}
+: "DATE" | "TIMEOFDAY" | "DATETIME" // FIXME24
+;
 	
-protected coordinateType [Container scope, Type extending]
+protected coordinateType [Container scope, Type extending,boolean isGeneric]
   returns [CoordType ct]
 {
   NumericalType nt1 = null;
@@ -2712,26 +2734,32 @@ protected coordinateType [Container scope, Type extending]
   if (extending instanceof CoordType)
   {
     NumericalType[] ext_dimensions = ((CoordType) extending).getDimensions ();
+    if(extending instanceof CoordTypeAny){
+    }else{
     if (ext_dimensions.length >= 1)
       ext_nt1 = ext_dimensions [0];
     if (ext_dimensions.length >= 2)
       ext_nt2 = ext_dimensions [1];
     if (ext_dimensions.length >= 3)
       ext_nt3 = ext_dimensions [2];
+    }
   }
 }
-  : coord:"COORD"
-    nt1 = numericType [scope, ext_nt1,true]
-    ( COMMA
-      nt2 = numericType [scope, ext_nt2,true]
-      (
-        COMMA
-        ( rots=rotationDef
-        | (nt3=numericType [scope, ext_nt3,true] (COMMA rots=rotationDef)?)
-        )
-      )?
-    )?
+  : (coord:"COORD" | "MULTICOORD")
     
+       (
+	    nt1 = numericType [scope, ext_nt1,true]
+	    ( COMMA
+	      nt2 = numericType [scope, ext_nt2,true]
+	      (
+		COMMA
+		( rots=rotationDef
+		| (nt3=numericType [scope, ext_nt3,true] (COMMA rots=rotationDef)?)
+		)
+	      )?
+	     ("REFSYS" STRING)? 
+	    )?
+	 )
     {
       NumericalType[] nts;
 
@@ -2743,14 +2771,21 @@ protected coordinateType [Container scope, Type extending]
         nts = new NumericalType[] { nt1 };
 
       try {
-        if (rots == null)
+        if(isGeneric){
+          ct = new CoordTypeAny();
+        }else{
+        if (rots == null){
           ct = new CoordType (nts);
-        else
+        }else{
           ct = new CoordType (nts, rots[0], rots[1]);
+        }
+        }
       } catch (Exception ex) {
         reportError (ex, coord.getLine());
       }
     }
+	 
+    
   ;
 
 protected rotationDef
@@ -2772,6 +2807,22 @@ protected rotationDef
     }
   ;
 
+protected contextDefs[Container container]
+	:	"CONTEXT"  NAME EQUALS ( contextDef[container] )*
+	;
+protected contextDef[Container container]
+	{
+	  String ilidoc=null;
+	  Settings metaValues=null;
+	}
+	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
+		domainRef[container]
+		eq:EQUALS
+		domainRef[container]
+		( "OR" domainRef[container] )*
+		SEMI
+	;
+  
 protected oIDType[Container scope,Type extending]
 	returns[OIDType bt]
 	{
@@ -2945,9 +2996,8 @@ protected lineType [Container scope, Type extending]
   int line = 0;
   lt = null;
 }
-  : ( ( "DIRECTED" { directed = true; } )? pl:"POLYLINE"
+  : ( ( "DIRECTED" { directed = true; } )? (pl:"POLYLINE" {line = pl.getLine();} | mpl:"MULTIPOLYLINE" {line = mpl.getLine();})
       {
-        line = pl.getLine();
         lt = new PolylineType ();
         try {
           ((PolylineType) lt).setDirected (directed);
@@ -2956,7 +3006,9 @@ protected lineType [Container scope, Type extending]
         }
       }
     | surf:"SURFACE" { line = surf.getLine(); lt = new SurfaceType(); }
+    |  msurf:"MULTISURFACE" { line = msurf.getLine(); lt = new SurfaceType(); }
     | area:"AREA" {line = area.getLine(); lt = new AreaType(); }
+    |  marea:"MULTIAREA" {line = marea.getLine(); lt = new AreaType(); }
     )
 
     ( theLineForms = lineForm[scope] )?
@@ -3897,7 +3949,7 @@ protected mandatoryConstraint [Viewable v]
   constr = null;
 }
   : mand:"MANDATORY"
-    "CONSTRAINT"
+    "CONSTRAINT" ((NAME COLON) =>NAME COLON )?
     condition = expression [v, /* expectedType */ predefinedBooleanType,v]
     SEMI
 
@@ -3920,7 +3972,7 @@ protected plausibilityConstraint [Viewable v]
   Evaluable              condition = null;
   constr = null;
 }
-  : tok:"CONSTRAINT"
+  : tok:"CONSTRAINT" ((NAME COLON) =>NAME COLON )?
 
     ( LESSEQUAL { direction = PlausibilityConstraint.DIRECTION_AT_MOST; }
     | GREATEREQUAL { direction = PlausibilityConstraint.DIRECTION_AT_LEAST; }
@@ -3950,7 +4002,8 @@ protected existenceConstraint[Viewable v]
 		constr=new ExistenceConstraint();
 		ObjectPath attrRef=null;
 	}
-	: "EXISTENCE" "CONSTRAINT" attr=attributePath[v]
+	: "EXISTENCE" "CONSTRAINT" ((NAME COLON) => NAME COLON )?
+	attr=attributePath[v]
 		{
 			constr.setRestrictedAttribute(attr);
 		}
@@ -3974,7 +4027,7 @@ protected uniquenessConstraint[Viewable v]
 	Evaluable preCond=null;
 		constr=new UniquenessConstraint();
 	}
-	: "UNIQUE"
+	: "UNIQUE" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON) => NAME COLON )?
   	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,v] COLON
 		{ constr.setPreCondition(preCond);
 		}
@@ -4100,7 +4153,7 @@ protected setConstraint [Viewable v]
 	Evaluable condition=null;
   constr = new SetConstraint();
 }
-  : tok:"SET" "CONSTRAINT" 
+  : tok:"SET" "CONSTRAINT" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON)=> NAME COLON )?
   	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,v] COLON
 		{
 	        constr.setPreCondition(preCond);
@@ -4121,7 +4174,7 @@ protected constraintsDef[Container scope]
 		Viewable def;
 		Constraint constr;
 	}
-	:	"CONSTRAINTS" "OF" def=classOrAssociationRef[scope]
+	:	"CONSTRAINTS" "OF" def=viewableRef[scope]
 	EQUALS
 	( constr=constraintDef[def]
 		{if(constr!=null)def.add(constr);}
@@ -4138,6 +4191,19 @@ protected expression [Container ns, Type expectedType,Container functionNs]
 	;
 
 protected term[Container ns, Type expectedType, Container functionNs]
+  returns [Evaluable expr]
+{
+  expr = null;
+  int lineNumber = 0;
+}
+  : expr=term0 [ns, expectedType, functionNs]
+    (
+      IMPLIES
+      expr = term0 [ns, expectedType, functionNs]
+    )?
+  ; 
+  
+protected term0[Container ns, Type expectedType, Container functionNs]
   returns [Evaluable expr]
 {
   List disjoined = null;
@@ -4633,6 +4699,7 @@ protected functionCall[Container ns,Container functionNs]
         expectedType = formalArguments[curArgument - 1].getType();
     }
 
+    (
     arg = argument[ns, expectedType,functionNs]
     {
       args.add (arg);
@@ -4654,6 +4721,7 @@ protected functionCall[Container ns,Container functionNs]
         args.add (arg);
       }
     )*
+    )?
     RPAREN
 
     {
@@ -4729,6 +4797,7 @@ protected functionDef[Container container]
     }
 
     lpar:LPAREN
+    (
     arg = formalArgument[container, lpar.getLine(),args]
     {
       try {
@@ -4748,6 +4817,7 @@ protected functionDef[Container container]
         }
       }
     )*
+    )?
     RPAREN
 
     col:COLON
@@ -6090,6 +6160,10 @@ protected property [int acceptable, int encountered]
 	|	"HIDING"
 		{ // TODO property HIDING
 		}
+	|	g2:"GENERIC"
+		{ // FIXME24 property GENERIC
+		mod=ch.interlis.ili2c.metamodel.Properties.eGENERIC;
+		}
 	;
 
 
@@ -6203,7 +6277,7 @@ protected names2 [List names]
 
 
 
-class Ili2Lexer extends Lexer;
+class Ili24Lexer extends Lexer;
 options {
   charVocabulary = '\u0000'..'\u00FF'; // set the vocabulary to be all 8 bit binary values
   k=5;                   // number of lookahead characters
@@ -6473,6 +6547,10 @@ LESSMINUS options { paraphrase = "'<-'"; }
 
 POINTSTO options { paraphrase = "'->'"; }
   : "->"
+  ;
+
+IMPLIES options { paraphrase = "'=>'"; }
+  : "=>"
   ;
 
 

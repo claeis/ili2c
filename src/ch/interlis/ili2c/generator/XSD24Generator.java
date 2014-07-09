@@ -26,15 +26,37 @@ public final class XSD24Generator
 {
     public static final String XTF24_XMLNSBASE="http://www.interlis.ch/xtf/2.4";
     public static final String GEOM_XMLNS="http://www.interlis.ch/geometry/1.0";
+    public static final String INTERLIS_XMLNS=XTF24_XMLNSBASE+"/INTERLIS";
+
+    public static final String BID_ATTR="bid";
+
+    public static final String CONSISTENCY_ATTR="consistency"; 
+    public static final String CONSISTENCY_ATTR_COMPLETE="COMPLETE";
+    public static final String CONSISTENCY_ATTR_INCOMPLETE="INCOMPLETE";
+
+    public static final String KIND_ATTR="kind"; 
+    public static final String KIND_ATTR_FULL="FULL";
+    public static final String KIND_ATTR_UPDATE="UPDATE";
+    public static final String KIND_ATTR_INITIAL="INITIAL";      
+    public static final String STARTSTATE_ATTR="startstate";
+    public static final String ENDSTATE_ATTR="endstate";
+
+    public static final String TID_ATTR="tid";
+    
+    public static final String OPERATION_ATTR="operation";
+    public static final String OPERATION_ATTR_INSERT="INSERT";
+    public static final String OPERATION_ATTR_UPDATE="UPDATE";
+    public static final String OPERATION_ATTR_DELETE="DELETE";      
+    
     public static final String ORDER_POS_ATTR="order_pos";
     public static final String ORDER_POS_TYPE="orderposType";
+    
     public static final String REF_ATTR="ref";
     public static final String REF_TYPE="refType";
     
   IndentPrintWriter   ipw;
   TransferDescription td;
   java.io.File outdir;
-  int                 numErrors = 0;
 
   public static void generate(TransferDescription td,java.io.File outfolder)
   {
@@ -251,7 +273,7 @@ public final class XSD24Generator
 		// xmlns declartion of geometry schema
 		ipw.println("xmlns:"+getGeomXmlnsNc()+"=\""+GEOM_XMLNS+"\"");
 		// xmlns declaration of base ITX schema
-		ipw.println("xmlns:"+getIliXmlnsNc()+"=\""+XTF24_XMLNSBASE+"/INTERLIS\"");
+		ipw.println("xmlns:"+getIliXmlnsNc()+"=\""+INTERLIS_XMLNS+"\"");
 		ipw.println("xmlns:ili2c=\"http://www.interlis.ch/ili2c\"");
 		// xmlns declartion of imported ili-models
 		Model importedModels[]=model.getImporting();
@@ -373,11 +395,18 @@ public final class XSD24Generator
 			 }
 		}
 	}
+  	boolean supportIncrementalTransfer=getInheritedMetaValueBoolean(topic,XSDGenerator.ILI2C_ILI23XML_SUPPORTINCRMENTALTRANSFER,false);
 
 	ipw.unindent ();
 	ipw.println ("</xsd:sequence>");
 	if(extended==null){
-		ipw.println ("<xsd:attribute name=\"bid\" type=\""+getIliXmlns()+"bidType\"/>");
+		ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+":"+BID_ATTR+"\" use=\"required\"/>");
+		ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+":"+CONSISTENCY_ATTR+"\"/>");
+		if(supportIncrementalTransfer){
+			ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+":"+KIND_ATTR+"\"/>");
+			ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+":"+STARTSTATE_ATTR+"\"/>");
+			ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+":"+ENDSTATE_ATTR+"\"/>");
+		}
 	}
     if(extended!=null){
     	ipw.unindent ();
@@ -481,9 +510,9 @@ public final class XSD24Generator
 					ipw.println("<xsd:complexType>");
 					ipw.indent();
 					//ipw.println("<xsd:sequence/>");
-					ipw.println("<xsd:attribute name=\""+REF_ATTR+"\" type=\""+getIliXmlns()+REF_TYPE+"\"/>");					
+					ipw.println("<xsd:attribute ref=\""+getIliXmlns()+REF_ATTR+"\" use=\"required\"/>");					
 					if(role.isOrdered()){
-						ipw.println("<xsd:attribute name=\""+ORDER_POS_ATTR+"\" type=\""+getIliXmlns()+ORDER_POS_TYPE+"\"/>");					
+						ipw.println("<xsd:attribute ref=\""+getIliXmlns()+ORDER_POS_ATTR+"\" use=\"required\"/>");					
 					}
 					ipw.unindent();
 					ipw.println("</xsd:complexType>");
@@ -516,9 +545,9 @@ public final class XSD24Generator
 							ipw.unindent();
 							ipw.println("</xsd:sequence>");
 						}
-						ipw.println("<xsd:attribute name=\""+REF_ATTR+"\" type=\""+getIliXmlns()+REF_TYPE+"\"/>");					
+						ipw.println("<xsd:attribute ref=\""+getIliXmlns()+REF_ATTR+"\" use=\"required\"/>");					
 						if(oppend.isOrdered()){
-							ipw.println("<xsd:attribute name=\""+ORDER_POS_ATTR+"\" type=\""+getIliXmlns()+ORDER_POS_TYPE+"\"/>");					
+							ipw.println("<xsd:attribute ref=\""+getIliXmlns()+ORDER_POS_ATTR+"\" use=\"required\"/>");					
 						}
 						ipw.unindent();
 						ipw.println("</xsd:complexType>");
@@ -535,7 +564,15 @@ public final class XSD24Generator
 	ipw.println("</xsd:sequence>");
 	if(extended==null){
 		if((v instanceof Table) && ((Table)v).isIdentifiable()){
-			ipw.println ("<xsd:attribute name=\"tid\" type=\""+getIliXmlns()+"tidType\"/>");
+			ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+TID_ATTR+"\" use=\"required\"/>");
+			Container<?> container = v.getContainer();
+			if(container instanceof Topic){
+			  	boolean supportIncrementalTransfer=getInheritedMetaValueBoolean((Topic)container,XSDGenerator.ILI2C_ILI23XML_SUPPORTINCRMENTALTRANSFER,false);
+			  	if(supportIncrementalTransfer){
+					ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+OPERATION_ATTR+"/>");
+			  	}
+			}
+			
 		}
 	}
     if(extended!=null){
@@ -611,7 +648,7 @@ public final class XSD24Generator
       	  ipw.unindent();
       	  ipw.println("</xsd:simpleType>");
     }else{
-        declareType(type,domain);
+        declareType(type,domain,domain.isFinal());
     }
   }
   private void declareAttribute (AttributeDef attribute)
@@ -719,7 +756,7 @@ public final class XSD24Generator
 				ipw.indent();
 					ipw.println("<xsd:complexType>");
 					ipw.indent();
-					ipw.println("<xsd:attribute name=\""+REF_ATTR+"\" type=\""+getIliXmlns()+REF_TYPE+"\"/>");					
+					ipw.println("<xsd:attribute ref=\""+getIliXmlns()+REF_ATTR+"\" use=\"required\"/>");					
 					ipw.unindent();
 					ipw.println("</xsd:complexType>");
 				ipw.unindent();
@@ -732,13 +769,13 @@ public final class XSD24Generator
 					+ minOccurs
 					+ ">");
 			ipw.indent();
-			declareType(type, null);
+			declareType(type, null,attribute.isFinal());
 			ipw.unindent();
 			ipw.println("</xsd:element>");
 		}
     }
   }
-  private void declareType (Type type,Domain domain)
+  private void declareType (Type type,Domain domain,boolean isFinal)
   {
     String typeName="";
     if(domain!=null){
@@ -778,15 +815,17 @@ public final class XSD24Generator
 	      ipw.println ("<xsd:simpleType"+typeName+">");
 	        ipw.indent ();
 	        ipw.println ("<xsd:restriction base=\"xsd:normalizedString\">");
-		          ipw.indent ();
-		          java.util.ArrayList ev=new java.util.ArrayList();
-		          buildEnumList(ev,"",((EnumerationType)type).getConsolidatedEnumeration());
-		          Iterator iter=ev.iterator();
-		          while(iter.hasNext()){
-		            String value=(String)iter.next();
-		            ipw.println ("<xsd:enumeration value=\""+value+"\"/>");
-		          }
-		          ipw.unindent ();
+	        	if(isFinal){
+			          ipw.indent ();
+			          java.util.ArrayList ev=new java.util.ArrayList();
+			          buildEnumList(ev,"",((EnumerationType)type).getConsolidatedEnumeration());
+			          Iterator iter=ev.iterator();
+			          while(iter.hasNext()){
+			            String value=(String)iter.next();
+			            ipw.println ("<xsd:enumeration value=\""+value+"\"/>");
+			          }
+			          ipw.unindent ();
+	        	}
 	        ipw.println ("</xsd:restriction>");
 	        ipw.unindent ();
 	      ipw.println ("</xsd:simpleType>");
@@ -962,5 +1001,22 @@ public final class XSD24Generator
   private String getGeomXmlnsNc()
   {
 	  return "geom";
+  }
+  private boolean getInheritedMetaValueBoolean(Topic topic,String metaAttrName,boolean defVal)
+  {
+	  String val=topic.getMetaValue(metaAttrName);
+	  if(val==null){
+		  val=topic.getContainer().getMetaValue(metaAttrName);
+	  }
+	  if(val!=null){
+		  if(val.equals("true")){
+			  return true;
+		  }
+		  if(val.equals("false")){
+			  return false;
+		  }
+		  EhiLogger.logError(topic.getScopedName(null)+": unexpected value <"+val+"> for "+metaAttrName);
+	  }
+	  return defVal;
   }
 }

@@ -1,10 +1,11 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
-ili2c 4.5.4 (2014-05-xx)
+ili2c 4.5.4 (2014-07-09)
 ---------------------------
 - --check-repo-ilis: new function to check all ili files in a given repository
 - iox-ili 1.10.0
+- ili24 syntax implemented
 
 ili2c 4.5.3 (2014-04-04)
 ---------------------------

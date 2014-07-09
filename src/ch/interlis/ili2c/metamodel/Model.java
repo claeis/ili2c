@@ -129,7 +129,7 @@ public abstract class Model extends Importable<Element>
 		{
 
 
-		  if (!isContracted() && !(Model.this instanceof PredefinedModel)) {
+		  if (isIli23() && (!isContracted() && !(Model.this instanceof PredefinedModel))) {
             throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
 			  "err_model_functionButNoContract",
 			  e.toString(),
@@ -245,6 +245,8 @@ public abstract class Model extends Importable<Element>
 		  "err_container_cannotContain",
 		  Model.this.toString(), e.toString()));
 	}
+
+
 
   };
 
@@ -526,4 +528,7 @@ public void setIliVersion(String string) {
 	iliVersion = string;
 }
 
+public boolean isIli23() {
+	return ILI2_3.equals(iliVersion);
+}
 }

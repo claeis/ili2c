@@ -162,7 +162,7 @@ public abstract class AbstractPatternDef<E extends Element> extends ExtendableCo
 		if (e instanceof Function)
 		{
 			Model enclosingModel = (Model) getContainer(Model.class);
-			if (!enclosingModel.isContracted() && !(enclosingModel instanceof PredefinedModel)) {
+			if (enclosingModel.isIli23() && !enclosingModel.isContracted() && !(enclosingModel instanceof PredefinedModel)) {
                 throw new Ili2cSemanticException (formatMessage (
                 	"err_model_functionButNoContract",
                 	e.toString(),

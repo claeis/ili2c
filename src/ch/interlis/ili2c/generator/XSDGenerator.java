@@ -25,6 +25,7 @@ import java.util.*;
 
 import ch.ehi.basics.io.IndentPrintWriter;
 import ch.ehi.basics.logging.EhiLogger;
+import ch.ehi.basics.settings.Settings;
 
 /** writes a XML-schema according to the ILi specification (ch. 3)
  * 
@@ -35,23 +36,29 @@ public final class XSDGenerator
   IndentPrintWriter   ipw;
   TransferDescription td;
   int                 numErrors = 0;
+  private Settings settings=null;
 
-    public final String ILI2C_TEXTMINIMALCHARSET="ili2c.textMinimalCharset";
-    public final String ILI2C_ILI23XML_SUPPORTSOURCEBASKETID="ili2c.ili23xml.supportSourceBasketId";
-    public final String ILI2C_ILI23XML_SUPPORTINCRMENTALTRANSFER="ili2c.ili23xml.supportIncrementalTransfer";
-    public final String ILI2C_ILI23XML_SUPPORTINCONSISTENTTRANSFER="ili2c.ili23xml.supportInconsistentTransfer";
-    public final String ILI2C_ILI23XML_SUPPORTPOLYMORPHICREAD="ili2c.ili23xml.supportPolymorphicRead";
-    public final String ILI2C_ILI23XSD_ADDALIASTABLEDEFAULT="ili2c.ili23xsd.addAliasTableDefault";
-    public final String ILI2C_ILI23XSD_ADDALLINTERLISTYPESDEFAULT="ili2c.ili23xsd.addAllInterlisTypesDefault";
+    // Metaattributes
+    public static final String ILI2C_TEXTMINIMALCHARSET="ili2c.textMinimalCharset";
+    public static final String ILI2C_ILI23XML_SUPPORTSOURCEBASKETID="ili2c.ili23xml.supportSourceBasketId";
+    public static final String ILI2C_ILI23XML_SUPPORTINCRMENTALTRANSFER="ili2c.ili23xml.supportIncrementalTransfer";
+    public static final String ILI2C_ILI23XML_SUPPORTINCONSISTENTTRANSFER="ili2c.ili23xml.supportInconsistentTransfer";
+    public static final String ILI2C_ILI23XML_SUPPORTPOLYMORPHICREAD="ili2c.ili23xml.supportPolymorphicRead";
+    public static final String ILI2C_ILI23XSD_ADDALIASTABLEDEFAULT="ili2c.ili23xsd.addAliasTableDefault";
+    public static final String ILI2C_ILI23XSD_ADDALLINTERLISTYPESDEFAULT="ili2c.ili23xsd.addAllInterlisTypesDefault";
+    // Settings
+    public static final String SETTING_FULL_XTF_CAPABILITIES="ch.interlis.ili2c.generator.XSDGenerator.fullCapabilities";
+    
   static ResourceBundle rsrc = ResourceBundle.getBundle(
     Interlis1Generator.class.getName(),
     Locale.getDefault());
 
 
-  private XSDGenerator (Writer out, TransferDescription td)
+  private XSDGenerator (Writer out, TransferDescription td,Settings settings)
   {
     ipw = new IndentPrintWriter (out);
     this.td = td;
+    this.settings=settings;
   }
 
 
@@ -65,7 +72,15 @@ public final class XSDGenerator
 
   public static int generate (Writer out, TransferDescription td)
   {
-    XSDGenerator d = new XSDGenerator (out, td);
+    XSDGenerator d = new XSDGenerator (out, td,new Settings());
+   // d.findItemsToDeclare (td);
+    d.printXSD (td);
+    d.finish();
+    return d.numErrors;
+  }
+  public static int generate (Writer out, TransferDescription td,Settings settings)
+  {
+    XSDGenerator d = new XSDGenerator (out, td,settings);
    // d.findItemsToDeclare (td);
     d.printXSD (td);
     d.finish();
