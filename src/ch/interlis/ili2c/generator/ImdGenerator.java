@@ -487,7 +487,43 @@ public class ImdGenerator {
 			}
 			
 		}		
-		// TODO Ili1TransferElement
+		// Ili1TransferElement
+		if(classDef instanceof ch.interlis.ili2c.metamodel.AbstractClassDef){
+			int itfattrOrderPos=1;
+			ArrayList<ch.interlis.ili2c.metamodel.ViewableTransferElement> ili1attrs=ch.interlis.iom_j.itf.ModelUtilities.getIli1AttrList((ch.interlis.ili2c.metamodel.AbstractClassDef) classDef);
+			for(ch.interlis.ili2c.metamodel.ViewableTransferElement obj:ili1attrs){
+				if (obj.obj instanceof ch.interlis.ili2c.metamodel.AttributeDef) {
+					ch.interlis.ili2c.metamodel.AttributeDef attr = (ch.interlis.ili2c.metamodel.AttributeDef) obj.obj;
+					Ili1TransferElement iomTe=new Ili1TransferElement(null);
+					iomTe.setIli1TransferClass(iomClass.getobjectoid());
+					iomTe.setIli1RefAttr(getAttrTid(attr), itfattrOrderPos++);
+					out.write(new ObjectEvent(iomTe));
+				}
+				if(obj.obj instanceof ch.interlis.ili2c.metamodel.RoleDef){
+					ch.interlis.ili2c.metamodel.RoleDef role = (ch.interlis.ili2c.metamodel.RoleDef) obj.obj;
+
+					// not an embedded role and roledef not defined in a lightweight association?
+					if (!obj.embedded){
+						if(!((ch.interlis.ili2c.metamodel.AssociationDef)classDef).isLightweight()){
+							Ili1TransferElement iomTe=new Ili1TransferElement(null);
+							iomTe.setIli1TransferClass(iomClass.getobjectoid());
+							iomTe.setIli1RefAttr(getRoleTid((ch.interlis.ili2c.metamodel.RoleDef)role), itfattrOrderPos++);
+							out.write(new ObjectEvent(iomTe));
+						}
+					}else {
+						// a role of an embedded association
+						ch.interlis.ili2c.metamodel.AssociationDef roleOwner = (ch.interlis.ili2c.metamodel.AssociationDef) role.getContainer();
+						if(roleOwner.getDerivedFrom()==null){
+							Ili1TransferElement iomTe=new Ili1TransferElement(null);
+							iomTe.setIli1TransferClass(iomClass.getobjectoid());
+							iomTe.setIli1RefAttr(getRoleTid((ch.interlis.ili2c.metamodel.RoleDef)role), itfattrOrderPos++);
+							out.write(new ObjectEvent(iomTe));
+						}
+					}
+				}
+				
+			}
+		}
 
 	}
 	private void visitGraphic(ch.interlis.ili2c.metamodel.Graphic graphic ) 

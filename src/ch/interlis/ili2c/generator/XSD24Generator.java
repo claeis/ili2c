@@ -400,12 +400,12 @@ public final class XSD24Generator
 	ipw.unindent ();
 	ipw.println ("</xsd:sequence>");
 	if(extended==null){
-		ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+":"+BID_ATTR+"\" use=\"required\"/>");
-		ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+":"+CONSISTENCY_ATTR+"\"/>");
+		ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+BID_ATTR+"\" use=\"required\"/>");
+		ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+CONSISTENCY_ATTR+"\"/>");
 		if(supportIncrementalTransfer){
-			ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+":"+KIND_ATTR+"\"/>");
-			ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+":"+STARTSTATE_ATTR+"\"/>");
-			ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+":"+ENDSTATE_ATTR+"\"/>");
+			ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+KIND_ATTR+"\"/>");
+			ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+STARTSTATE_ATTR+"\"/>");
+			ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+ENDSTATE_ATTR+"\"/>");
 		}
 	}
     if(extended!=null){
@@ -538,10 +538,10 @@ public final class XSD24Generator
 						ipw.indent();
 						ipw.println("<xsd:complexType>");
 						ipw.indent();
-						if(roleOwner.getAttributes().hasNext()){
+						if(!roleOwner.isFinal() || roleOwner.getAttributes().hasNext()){
 							ipw.println("<xsd:sequence>");
 							ipw.indent();
-							ipw.println("<xsd:element ref=\""+ getScopedName(roleOwner)+ "\"/>");
+							ipw.println("<xsd:element ref=\""+ getScopedName(roleOwner)+ " minOccurs=\"0\"\"/>");
 							ipw.unindent();
 							ipw.println("</xsd:sequence>");
 						}
@@ -806,7 +806,7 @@ public final class XSD24Generator
 			ipw.indent ();
 			ipw.println("<xsd:sequence>");
 			ipw.indent ();
-			ipw.println("<xsd:element ref=\"geom:point\"/>");
+			ipw.println("<xsd:element ref=\"geom:coord\"/>");
 			ipw.unindent ();
 			ipw.println("</xsd:sequence>");
 			ipw.unindent ();
@@ -840,13 +840,17 @@ public final class XSD24Generator
 			if(min.getAccuracy()>0){
 				if(min.getExponent()!=0){
 					ipw.println ("<xsd:restriction base=\"xsd:double\">");
+			          ipw.indent ();
+			          ipw.println ("<xsd:minInclusive value=\""+((NumericType)type).getMinimum().doubleValue()+"\"/>");
+			          ipw.println ("<xsd:maxInclusive value=\""+((NumericType)type).getMaximum().doubleValue()+"\"/>");
+			          ipw.unindent ();
 				}else{
 					ipw.println ("<xsd:restriction base=\"xsd:decimal\">");
+			          ipw.indent ();
+			          ipw.println ("<xsd:minInclusive value=\""+((NumericType)type).getMinimum().toString()+"\"/>");
+			          ipw.println ("<xsd:maxInclusive value=\""+((NumericType)type).getMaximum().toString()+"\"/>");
+			          ipw.unindent ();
 				}
-		          ipw.indent ();
-		          ipw.println ("<xsd:minInclusive value=\""+((NumericType)type).getMinimum().doubleValue()+"\"/>");
-		          ipw.println ("<xsd:maxInclusive value=\""+((NumericType)type).getMaximum().doubleValue()+"\"/>");
-		          ipw.unindent ();
 	            ipw.println ("</xsd:restriction>");
 			}else{
 				ipw.println ("<xsd:restriction base=\"xsd:integer\">");
@@ -996,7 +1000,7 @@ public final class XSD24Generator
   }
   private String getIliXmlnsNc()
   {
-	  return "ili";
+	  return "INTERLIS";
   }
   private String getGeomXmlnsNc()
   {
