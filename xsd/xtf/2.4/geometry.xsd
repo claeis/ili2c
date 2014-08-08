@@ -4,7 +4,7 @@
     targetNamespace=
        "http://www.interlis.ch/geometry/1.0" 
     elementFormDefault="qualified" 
-    attributeFormDefault="qualified"
+    attributeFormDefault="unqualified"
   >
   
   <!-- DRAFT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
@@ -129,7 +129,7 @@
   </xsd:sequence>
 </xsd:complexType>
 
-  <xsd:complexType name="BoundaryType" abstract="true">
+  <xsd:complexType name="BoundaryType">
     <xsd:sequence>
       <xsd:element ref="polyline" minOccurs="1"/>
     </xsd:sequence>
