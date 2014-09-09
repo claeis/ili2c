@@ -1357,13 +1357,50 @@ protected void declareAbstractClassDef(Viewable v)
         ipw.unindent ();
       ipw.println ("</xsd:simpleType>");
 	}else if(type instanceof FormattedType){
+		FormattedType ftype=(FormattedType)type;
 		ipw.println ("<xsd:simpleType"+typeName+">");
 		  ipw.indent ();
-		  ipw.println ("<xsd:restriction base=\"xsd:normalizedString\">");
+		  Domain baseDomain = ((FormattedType) type).getDefinedBaseDomain();
+		  if(baseDomain==td.INTERLIS.XmlDate){
+			  ipw.println ("<xsd:restriction base=\"xsd:date\">");
 			  ipw.indent ();
-			  // TODO add regexp facet
+				  PrecisionDecimal minv[]=ftype.valueOf(ftype.getMinimum());
+				  PrecisionDecimal maxv[]=ftype.valueOf(ftype.getMaximum());
+				  String min = getDateValue(minv);
+				  String max = getDateValue(maxv);
+				  ipw.println ("<xsd:minInclusive value=\""+min+"\"/>");
+				  ipw.println ("<xsd:maxInclusive value=\""+max+"\"/>");
 			  ipw.unindent ();
-		  ipw.println ("</xsd:restriction>");
+			  ipw.println ("</xsd:restriction>");
+		  }else if(baseDomain==td.INTERLIS.XmlDateTime){
+			  ipw.println ("<xsd:restriction base=\"xsd:dateTime\">");
+			  ipw.indent ();
+			  PrecisionDecimal minv[]=ftype.valueOf(ftype.getMinimum());
+			  PrecisionDecimal maxv[]=ftype.valueOf(ftype.getMaximum());
+			  String min = getDateValue(minv)+"T"+getTimeValue(minv,3);
+			  String max = getDateValue(maxv)+"T"+getTimeValue(maxv,3);
+			  ipw.println ("<xsd:minInclusive value=\""+min+"\"/>");
+			  ipw.println ("<xsd:maxInclusive value=\""+max+"\"/>");
+			  ipw.unindent ();
+			  ipw.println ("</xsd:restriction>");			  
+		  }else if(baseDomain==td.INTERLIS.XmlTime){
+			  ipw.println ("<xsd:restriction base=\"xsd:time\">");
+			  ipw.indent ();
+			  PrecisionDecimal minv[]=ftype.valueOf(ftype.getMinimum());
+			  PrecisionDecimal maxv[]=ftype.valueOf(ftype.getMaximum());
+			  String min = getTimeValue(minv,0);
+			  String max = getTimeValue(maxv,0);
+			  ipw.println ("<xsd:minInclusive value=\""+min+"\"/>");
+			  ipw.println ("<xsd:maxInclusive value=\""+max+"\"/>");
+			  ipw.unindent ();
+			  ipw.println ("</xsd:restriction>");
+		  }else{
+			  ipw.println ("<xsd:restriction base=\"xsd:normalizedString\">");
+				  ipw.indent ();
+				  // TODO add regexp facet
+				  ipw.unindent ();
+			  ipw.println ("</xsd:restriction>");
+		  }
 		  ipw.unindent ();
 		ipw.println ("</xsd:simpleType>");
     }else{
@@ -1378,6 +1415,31 @@ protected void declareAbstractClassDef(Viewable v)
 	    ipw.println ("</xsd:complexType>");
 	}
   }
+
+
+
+private String getDateValue(PrecisionDecimal[] minv) {
+	java.text.DecimalFormat nnnn=new java.text.DecimalFormat("0000"); 
+	  java.text.DecimalFormat nn=new java.text.DecimalFormat("00"); 
+	  String min=nnnn.format(new java.math.BigDecimal(minv[0].toString()))
+	  +"-"
+	  +nn.format(new java.math.BigDecimal(minv[1].toString()))
+	  +"-"
+	  +nn.format(new java.math.BigDecimal(minv[2].toString()))
+	  ;
+	return min;
+}
+private String getTimeValue(PrecisionDecimal[] minv,int offset) {
+	java.text.DecimalFormat ss=new java.text.DecimalFormat("00.000"); 
+	  java.text.DecimalFormat nn=new java.text.DecimalFormat("00"); 
+	  String min=nn.format(new java.math.BigDecimal(minv[0+offset].toString()))
+	  +":"
+	  +nn.format(new java.math.BigDecimal(minv[1+offset].toString()))
+	  +":"
+	  +ss.format(new java.math.BigDecimal(minv[2+offset].toString()))
+	  ;
+	return min;
+}
 
 
 
