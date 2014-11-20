@@ -988,6 +988,10 @@ protected topicDef[Container container]
 		      }
 		 )* SEMI
 		)*
+		(	"DEFFERED" "GENERICS" domainRef[container]
+			( COMMA domainRef[container]
+			)* SEMI
+		)?
 		definitions[topic]
 		end[topic]
 		SEMI
@@ -1431,6 +1435,8 @@ protected attrTypeDef[Container  scope,
 					ct=(CompositionType)typ;
 					if(card!=null){
 						ct.setCardinality(card); // FIXME24
+					}else{
+						ct.setCardinality(new Cardinality(0,Cardinality.UNBOUND));
 					}
 					ct.setOrdered(ordered); // FIXME24
 				}
