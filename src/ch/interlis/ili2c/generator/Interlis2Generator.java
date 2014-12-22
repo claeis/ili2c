@@ -797,6 +797,17 @@ private void setup(
       }
     ipw.println (';');
   }
+  protected void printSetConstraint (Viewable forTable, SetConstraint ec)
+  {
+
+      ipw.print ("SET CONSTRAINT ");
+      printExpression (forTable, ec.getPreCondition());
+      ipw.println (':');
+      ipw.indent();
+      printExpression (forTable, ec.getCondition());
+      ipw.println (';');
+      ipw.unindent();
+  }
 
   protected void printUniquenessConstraint (Viewable forTable, UniquenessConstraint uc)
   {
@@ -885,6 +896,10 @@ private void setup(
       else if (elt instanceof ExistenceConstraint)
       {
         printExistenceConstraint((Viewable) container, (ExistenceConstraint) elt);
+      }
+      else if (elt instanceof SetConstraint)
+      {
+        printSetConstraint((Viewable) container, (SetConstraint) elt);
       }
   }
   public void printGraphicParameterDef(GraphicParameterDef gfxp)

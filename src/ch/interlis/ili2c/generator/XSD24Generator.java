@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.io.IndentPrintWriter;
@@ -363,57 +364,33 @@ public final class XSD24Generator
 		}
 
 		Topic extended=(Topic)topic.getExtending();
-		if(extended!=null){
-			   ipw.println("<xsd:element name=\""+getName(topic)+"\" type=\""+getName(topic)+"Type\" substitutionGroup=\""+getScopedName(extended)+"\"/>");
-		}else{
-			   ipw.println("<xsd:element name=\""+getName(topic)+"\" type=\""+getName(topic)+"Type\"/>");
-		}
+		   ipw.println("<xsd:element name=\""+getName(topic)+"\" type=\""+getName(topic)+"Type\"/>");
     ipw.println ("<xsd:complexType name=\""+getName(topic)+"Type\">");
-    if(extended!=null){
-    	ipw.indent ();
-    	ipw.println ("<xsd:complexContent>");
-    	ipw.indent ();
-    	ipw.println ("<xsd:extension base=\""+getScopedName(extended)+"Type"+"\">");
-    }
 	ipw.indent ();
-	ipw.println ("<xsd:sequence>");
+	ipw.println ("<xsd:choice minOccurs=\"0\" maxOccurs=\"unbounded\">");
 	ipw.indent ();
-	if(true){
-		//iter=ModelUtilities.getItfTables(td, topic).iterator();
-		 iter = topic.iterator();
-		while(iter.hasNext()){
-			 Object obj = iter.next();
-		      if (obj instanceof Viewable){
-				 Viewable v = (Viewable) obj;
-				 Viewable vbase=(Viewable)v.getExtending();
-				 
-				 if(vbase==null || !(topic.isExtending(vbase.getContainer()) || topic==vbase.getContainer())){
-					 if(!suppressViewableInTopicDef(v)){
-						 ipw.println("<xsd:element ref=\"" + getScopedName(v) + "\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
-					 }
-				 }
-			 }
-		}
+	/* Find which viewables are going to be elements of this topic. */
+	iter = getTopicXsdElements(topic).iterator();
+	while (iter.hasNext())
+	{
+	  Object obj = iter.next();
+	  if ((obj instanceof Viewable) && !suppressViewableInTopicDef((Viewable)obj))
+	  {
+			Viewable v = (Viewable) obj;		
+			 ipw.println("<xsd:element ref=\"" + getScopedName(v) + "\"/>");
+	  }
 	}
   	boolean supportIncrementalTransfer=getInheritedMetaValueBoolean(topic,XSDGenerator.ILI2C_ILI23XML_SUPPORTINCRMENTALTRANSFER,false);
 
 	ipw.unindent ();
-	ipw.println ("</xsd:sequence>");
-	if(extended==null){
-		ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+BID_ATTR+"\" use=\"required\"/>");
-		ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+CONSISTENCY_ATTR+"\"/>");
-		if(supportIncrementalTransfer){
-			ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+KIND_ATTR+"\"/>");
-			ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+STARTSTATE_ATTR+"\"/>");
-			ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+ENDSTATE_ATTR+"\"/>");
-		}
+	ipw.println ("</xsd:choice>");
+	ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+BID_ATTR+"\" use=\"required\"/>");
+	ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+CONSISTENCY_ATTR+"\"/>");
+	if(supportIncrementalTransfer){
+		ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+KIND_ATTR+"\"/>");
+		ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+STARTSTATE_ATTR+"\"/>");
+		ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+ENDSTATE_ATTR+"\"/>");
 	}
-    if(extended!=null){
-    	ipw.unindent ();
-    	ipw.println ("</xsd:extension>");
-    	ipw.unindent ();
-    	ipw.println ("</xsd:complexContent>");
-    }
 	ipw.unindent ();
 	ipw.println ("</xsd:complexType>");
 
@@ -453,6 +430,33 @@ public final class XSD24Generator
     return false;
   }
 
+  private List<Viewable<?>> getTopicXsdElements(AbstractPatternDef topic){
+	    List<Viewable<?>> result = new ArrayList<Viewable<?>>();
+	    List<AbstractPatternDef> topics=new ArrayList();
+	    // walk topic hierarchy up from the leaf (this) to the base topic
+	    for (AbstractPatternDef t = topic; t != null; t = (AbstractPatternDef) t.getRealExtending())
+	    {
+	    	topics.add(0, t);
+	    }
+	    for(AbstractPatternDef t : topics)
+	    {
+	      Iterator<Element> iter=t.iterator();
+	      while (iter.hasNext ())
+	      {
+	        Element obj = iter.next();
+
+	        if (obj instanceof Viewable)
+	        {
+				if (obj instanceof Table && ((Table) obj).getExtending()==null) {
+					result.add((Viewable<?>) ((Table) obj));
+				} else if (obj instanceof AssociationDef && ((AssociationDef) obj).getExtending()==null) {
+					result.add((Viewable<?>) ((AssociationDef) obj));
+				}
+	        }
+	      }
+	    }
+	    return result;
+  }
 
   private void declareAbstractClassDef(Viewable v)
   {
@@ -541,7 +545,7 @@ public final class XSD24Generator
 						if(!roleOwner.isFinal() || roleOwner.getAttributes().hasNext()){
 							ipw.println("<xsd:sequence>");
 							ipw.indent();
-							ipw.println("<xsd:element ref=\""+ getScopedName(roleOwner)+ " minOccurs=\"0\"\"/>");
+							ipw.println("<xsd:element ref=\""+ getScopedName(roleOwner)+ "\" minOccurs=\"0\"/>");
 							ipw.unindent();
 							ipw.println("</xsd:sequence>");
 						}
@@ -725,8 +729,7 @@ public final class XSD24Generator
 			Table part=composition.getComponentType();
 			Cardinality card=composition.getCardinality();
 			minOccurs="";
-			if(card.getMinimum()>1){
-				// cases 0 and 1 are are handled at attribute level
+			if(card.getMinimum()!=1){
 				minOccurs=" minOccurs=\""+Long.toString(card.getMinimum())+"\"";
 			}
 			String maxOccurs="";
@@ -752,7 +755,7 @@ public final class XSD24Generator
 			ipw.println ("</xsd:element>");
 		}else if (type instanceof ReferenceType){
 				ipw.println("<xsd:element name=\"" + getTransferName(attribute)
-						+ minOccurs + ">");
+						+ "\""+minOccurs + ">");
 				ipw.indent();
 					ipw.println("<xsd:complexType>");
 					ipw.indent();
