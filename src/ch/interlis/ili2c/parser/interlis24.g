@@ -646,9 +646,20 @@ options
 			));
 		}
 	}
-	private Viewable getBaseViewable(Viewable start1,String base,int line)
+	private AttributeDef getBaseViewableProxyAttr(Viewable start1,String base,int line)
 	{
 		AttributeDef baseProxy =  (AttributeDef)start1.getRealElement (AttributeDef.class, base);
+		if(baseProxy==null){
+			return null;
+		}
+		Type proxyType=baseProxy.getDomain();
+		if(!(proxyType instanceof ObjectType)){
+			return null;
+		}
+		return baseProxy;
+	}
+	private Viewable getBaseViewable(AttributeDef baseProxy)
+	{
 		if(baseProxy==null){
 			return null;
 		}
@@ -5337,7 +5348,7 @@ protected baseExtensionDef[Viewable scope]
 	: "BASE" baseName:NAME "EXTENDED" by:"BY" 
 	ext1=renamedViewableRef[scope] 
 	  {
-	base=getBaseViewable(scope,baseName.getText(),baseName.getLine());
+	base=getBaseViewable(getBaseViewableProxyAttr(scope,baseName.getText(),baseName.getLine()));
         if (base == null)
         {
             reportError(
@@ -5417,7 +5428,7 @@ protected viewAttributes[Viewable view]
 	( "ATTRIBUTE" )?
 	(	all:"ALL" "OF" v:NAME SEMI
       {
-      	Viewable allOf=null;
+      	AttributeDef allOfAttr=null;
     {
       Viewable attrScope = (Viewable) view.getContainerOrSame (Viewable.class);
       if (attrScope == null)
@@ -5430,8 +5441,8 @@ protected viewAttributes[Viewable view]
                              v.getText()),
                              v.getLine());
 	}
-	allOf=getBaseViewable(attrScope,v.getText(),v.getLine());
-        if (allOf == null)
+	allOfAttr=getBaseViewableProxyAttr(attrScope,v.getText(),v.getLine());
+        if (allOfAttr == null)
         {
             reportError(
               formatMessage ("err_viewable_noSuchBase",
@@ -5441,8 +5452,11 @@ protected viewAttributes[Viewable view]
       }
     }
 
-        if (allOf != null)
+        if (allOfAttr != null)
         {
+          ObjectType proxyType=(ObjectType)allOfAttr.getDomain();
+          proxyType.setAllOf(true);
+      	  Viewable allOf=getBaseViewable(allOfAttr);
           Iterator attrs = allOf.getAttributes ();
           while (attrs.hasNext ())
           {
@@ -5459,6 +5473,7 @@ protected viewAttributes[Viewable view]
                    v.getLine());
 	    }
             LocalAttribute pa = new LocalAttribute ();
+            pa.setGeneratedByAllOf(true);
             try {
               ObjectPath path;
               AttributeRef[] pathItems;
@@ -5506,8 +5521,8 @@ protected viewAttributes[Viewable view]
 				attrib.setName(n.getText());
 				attrib.setAbstract((mods & ch.interlis.ili2c.metamodel.Properties.eABSTRACT) != 0);
 				attrib.setTransient((mods & ch.interlis.ili2c.metamodel.Properties.eTRANSIENT) != 0);
-				// always final
-				attrib.setFinal(true);
+				// always final, but don't set, so that ili-export is the same as import
+				// attrib.setFinal(true);
 				// TODO attrib.setDomain(type);
 				// type derived from the follwoing constructs
 				// Factor = ( ObjectOrAttributePath

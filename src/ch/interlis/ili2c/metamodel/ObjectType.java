@@ -13,7 +13,9 @@ public class ObjectType extends Type
 	private final Viewable<?> ref;
 	private boolean objects=false;
 	private ArrayList<AbstractClassDef<?>> restrictedTo = new ArrayList<AbstractClassDef<?>>();
+	private boolean allOf=false;
 
+	
 	public ObjectType(Viewable<?> ref)
 	{
 		this.ref=ref;
@@ -56,6 +58,14 @@ public class ObjectType extends Type
         cloned.restrictedTo = (ArrayList<AbstractClassDef<?>>) restrictedTo.clone();
         return cloned;
     }
+    /** true if this is the type of an ALL OF construct in a ViewDef
+     */
+	public boolean isAllOf() {
+		return allOf;
+	}
+	public void setAllOf(boolean allOf) {
+		this.allOf = allOf;
+	}
 
 }
 

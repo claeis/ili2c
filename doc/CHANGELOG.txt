@@ -5,6 +5,8 @@ ili2c 4.5.6 (2014-09-xx)
 ---------------------------
 - xsd: generate xsd:date, xsd:time, xsd:dateTime for FORMAT INTERLIS.XmlDate... domains
 - bug iliexp: failed to export SET CONSTRAINT
+- bug iliexp: failed to export ViewDef/Selection
+- bug iliexp: failed to export ViewDef/ALL OF
 - ili24: syntax DEFFERED GENERICS added
 
 ili2c 4.5.5 (2014-08-08)

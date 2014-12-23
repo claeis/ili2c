@@ -2,8 +2,10 @@ package ch.interlis.ili2c.generator;
 
 
 import ch.interlis.ili2c.metamodel.*;
+
 import java.io.Writer;
 import java.util.Iterator;
+
 import ch.ehi.basics.io.IndentPrintWriter;
 import ch.ehi.basics.logging.EhiLogger;
 
@@ -245,6 +247,8 @@ private void setup(
 
 
     printStart (keyword, def, /* based on */ null);
+    ipw.println (" =");
+    ipw.indent ();
     Domain oid=def.getOid();
     if(oid!=null){
     	if(oid instanceof NoOid){
@@ -352,8 +356,6 @@ private void setup(
     }
 
 
-    ipw.println (" =");
-    ipw.indent ();
   }
 
 
@@ -376,6 +378,8 @@ private void setup(
 	printDocumentation(view.getDocumentation());
 	printMetaValues(view.getMetaValues());
     printStart ("VIEW", view, /* basedOn */ null);
+    ipw.println ("");
+    ipw.indent ();
     if (view instanceof Projection)
     {
       ipw.print("PROJECTION OF ");
@@ -423,7 +427,7 @@ private void setup(
       printError ();
       ipw.println("<unknown view type>");
     }
-    ipw.println (';');
+    ipw.println ("; =");
 
 
     printElements(view);
@@ -439,6 +443,8 @@ private void setup(
 	printDocumentation(graph.getDocumentation());
 	printMetaValues(graph.getMetaValues());
    printStart ("GRAPHIC", graph, /* basedOn */ graph.getBasedOn());
+   ipw.println (" =");
+   ipw.indent ();
     printElements (graph);
     printEnd (graph);
   }
@@ -800,9 +806,14 @@ private void setup(
   protected void printSetConstraint (Viewable forTable, SetConstraint ec)
   {
 
-      ipw.print ("SET CONSTRAINT ");
-      printExpression (forTable, ec.getPreCondition());
-      ipw.println (':');
+      ipw.print ("SET CONSTRAINT");
+      if(ec.getPreCondition()!=null){
+          ipw.print (" WHERE ");
+          printExpression (forTable, ec.getPreCondition());
+          ipw.println(": ");
+      }else{
+          ipw.println("");
+      }
       ipw.indent();
       printExpression (forTable, ec.getCondition());
       ipw.println (';');
@@ -1214,6 +1225,22 @@ private void setup(
       printError ();
       return;
     }
+	if(attrib instanceof LocalAttribute){
+		LocalAttribute la=(LocalAttribute)attrib;
+		if(la.isGeneratedByAllOf()){
+			return;
+		}
+		
+	}
+	Type proxyType=attrib.getDomain();
+	if(proxyType!=null && (proxyType instanceof ObjectType)){
+		if(((ObjectType)proxyType).isAllOf()){
+	        ipw.println("ALL OF "+attrib.getName()+";");
+		}else{
+			// skip implicit particles (base-viewables) of views
+		}
+		return;
+	}
 	printDocumentation(attrib.getDocumentation());
 	printMetaValues(attrib.getMetaValues());
 
@@ -1229,11 +1256,15 @@ private void setup(
     ipw.print(attrib.getName());
     printModifiers(attrib.isAbstract(), attrib.isFinal(),
       /* EXTENDED */ attrib.getExtending() != null, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/attrib.isTransient());
-    ipw.print(" : ");
 
 
     if (attrib instanceof LocalAttribute){
-      printType (scope, attrib.getDomain());
+      if(attrib.getDomain()==null && scope instanceof View){
+    	  // skip typ if attribute inside ViewDef
+      }else{
+          ipw.print(" : ");
+          printType (scope, attrib.getDomain());
+      }
       printAttributeBasePath(scope, attrib);
     }
     if(attrib instanceof LocalAttribute && attrib.getDomain() instanceof StructuredUnitType){
