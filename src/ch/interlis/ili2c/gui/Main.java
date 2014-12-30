@@ -26,7 +26,6 @@ import java.awt.event.*;
 import java.io.*;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.metamodel.ErrorListener;
-import ch.interlis.ili2c.parser.Ili2Parser;
 import ch.interlis.ili2c.config.*;
 import ch.interlis.ili2c.CompilerLogEvent;
 import ch.ehi.basics.logging.EhiLogger;
