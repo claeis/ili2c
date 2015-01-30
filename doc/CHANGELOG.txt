@@ -1,6 +1,11 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.5.7 (2015-01-30)
+---------------------------
+- gml: fixed illegal schema generation if ordered RoleDef
+- gml: ajusted schema generation to approved eCH-0118-1.0
+
 ili2c 4.5.6 (2014-12-30)
 ---------------------------
 - xsd: generate xsd:date, xsd:time, xsd:dateTime for FORMAT INTERLIS.XmlDate... domains

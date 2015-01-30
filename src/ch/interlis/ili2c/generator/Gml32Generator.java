@@ -202,7 +202,7 @@ public final class Gml32Generator
 	// init globals
 	currentModel=model;
 	codelists=new ArrayList();
-	surfaceOrAreaAttrs=new ArrayList();
+	areaAttrs=new ArrayList();
 	
 	// start output
 	ipw.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
@@ -325,7 +325,7 @@ public final class Gml32Generator
 		 }
 	 }
 	 // add line tables
-	  Iterator attri=surfaceOrAreaAttrs.iterator();
+	  Iterator attri=areaAttrs.iterator();
 	  while(attri.hasNext()){
 		  AttributeDef attr=(AttributeDef)attri.next();
 		  AbstractClassDef aclass=(AbstractClassDef)attr.getContainer();
@@ -419,7 +419,7 @@ public final class Gml32Generator
 			if (!obj.embedded && !((AssociationDef)v).isLightweight() && v.getExtending()==null){
 				if(role.getExtending()==null){
 					if(role.isOrdered()){
-						ipw.println("<xsd:element name=\""+ getTransferName(role)+ ">");
+						ipw.println("<xsd:element name=\""+ getTransferName(role)+ "\">");
 					}else{
 						ipw.println("<xsd:element name=\""+ getTransferName(role)+ "\" type=\"gml:ReferenceType\">");
 					}
@@ -587,9 +587,9 @@ public final class Gml32Generator
         declareType(type,domain);
     }
   }
-  private ArrayList surfaceOrAreaAttrs=null; // array<AttributeDef attr>
+  private ArrayList areaAttrs=null; // array<AttributeDef attr>
   private void declareLinetables(){
-	  Iterator attri=surfaceOrAreaAttrs.iterator();
+	  Iterator attri=areaAttrs.iterator();
 	  while(attri.hasNext()){
 		  AttributeDef attr=(AttributeDef)attri.next();
 		  AbstractClassDef aclass=(AbstractClassDef)attr.getContainer();
@@ -605,21 +605,8 @@ public final class Gml32Generator
 			ipw.indent ();
 			ipw.println("<xsd:sequence>");
 			ipw.indent();
-			ipw.println("<xsd:element name=\"mainTable\" type=\"gml:ReferenceType\">");
-			ipw.indent();
-			ipw.println("<xsd:annotation>");
-			ipw.indent();
-			ipw.println("<xsd:appinfo>");
-			ipw.indent();
-			ipw.println("<gml:targetElement>"+getName(aclass)+"</gml:targetElement>");
-			ipw.unindent();
-			ipw.println("</xsd:appinfo>");
-			ipw.unindent();
-			ipw.println("</xsd:annotation>");
-			ipw.unindent();
-			ipw.println("</xsd:element>");
 			ipw.println("<xsd:element name=\"geometry\" type=\"gml:CurvePropertyType\"/>");
-			SurfaceOrAreaType type=(SurfaceOrAreaType)attr.getDomainResolvingAliases();
+			AreaType type=(AreaType)attr.getDomainResolvingAliases();
 			Table lineattrs=type.getLineAttributeStructure();
 			if(lineattrs!=null){
 				ipw.println("<xsd:element name=\"lineattr\">");
@@ -699,9 +686,9 @@ public final class Gml32Generator
     		base="xsd:dateTime";
         }else{
         	base=getScopedName(realDomain);
-        	if(realDomain.getType() instanceof SurfaceOrAreaType){
+        	if(realDomain.getType() instanceof AreaType){
     			// remember to create linetable
-        		surfaceOrAreaAttrs.add(attribute);
+        		areaAttrs.add(attribute);
         	}
         }
     	if(facets==null){
@@ -752,7 +739,7 @@ public final class Gml32Generator
 			//ipw.println("<!-- "+PRBLMTAG+" unable to express overlaps -->");
 			ipw.unindent();
 			ipw.println("</xsd:element>");
-		}else if (type instanceof SurfaceOrAreaType){
+		}else if (type instanceof SurfaceType){
 			ipw.println(
 				"<xsd:element name=\""
 					+ getTransferName(attribute)
@@ -770,8 +757,21 @@ public final class Gml32Generator
 			//}
 			ipw.unindent();
 			ipw.println("</xsd:element>");
+		}else if (type instanceof AreaType){
+        	String base=getScopedName(((AreaType)type).getControlPointDomain());
+      	  	ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\""+base+"\""+minOccurs+">");
+			ipw.indent();
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express domain/unit/crs of control points -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express allowed line forms -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express line attributes -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express overlaps -->");
+			//if(type instanceof AreaType){
+			//	ipw.println("<!-- "+PRBLMTAG+" unable to express AREA constraint -->");
+			//}
+			ipw.unindent();
+			ipw.println("</xsd:element>");
 			// remember to create linetable
-       		surfaceOrAreaAttrs.add(attribute);
+       		areaAttrs.add(attribute);
 		}else if (type instanceof CompositionType){
 			CompositionType composition=(CompositionType)type;
 			Table part=composition.getComponentType();
