@@ -1591,6 +1591,12 @@ protected associationDef[Container scope]
 		  	try{
 			    // check roleDefs
 			    def.fixupRoles();
+			    // in ili22 all not-embedded assocs have a tid
+			    if(!def.isLightweight()){
+			    	def.setIdentifiable(true);
+			    }else{
+			    	def.setIdentifiable(false);
+			    }
 			}catch(Exception ex){
 		            reportError(ex, a.getLine());
 			}

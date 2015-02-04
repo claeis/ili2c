@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.5.8 (2015-02-04)
+---------------------------
+- bug ili22: missing identity (TID) on ASSOCIATIONs that are not embedded
+
 ili2c 4.5.7 (2015-01-30)
 ---------------------------
 - gml: fixed illegal schema generation if ordered RoleDef
