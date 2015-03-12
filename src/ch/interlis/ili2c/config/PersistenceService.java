@@ -74,6 +74,10 @@ static public Configuration readConfig(String filename)
 					String optvalue=arg.substring(8);
 					config.setOutputFile(optvalue);
 				  config.setOutputKind(GenerateOutputKind.IMD);
+			 }else if(arg.startsWith("-oUML ")){
+					String optvalue=arg.substring(8);
+					config.setOutputFile(optvalue);
+				  config.setOutputKind(GenerateOutputKind.UML21);
 			 }else if(arg.startsWith("-oIOM ")){
 	             	// ignore it
 				//String optvalue=arg.substring(8);
@@ -188,6 +192,10 @@ static public Configuration readConfig(String filename)
 				  break;
 		  case GenerateOutputKind.IMD:
 				out.write("-oIMD ");
+				out.write(config.getOutputFile());
+				  break;
+		  case GenerateOutputKind.UML21:
+				out.write("-oUML ");
 				out.write(config.getOutputFile());
 				  break;
           default:

@@ -515,6 +515,7 @@ public class Main {
 	  , new Integer(GenerateOutputKind.GML32)
       , new Integer(GenerateOutputKind.ILI1FMTDESC)
 	  , new Integer(GenerateOutputKind.IMD)
+	  , new Integer(GenerateOutputKind.UML21)
 	  , new Integer(GenerateOutputKind.IOM)
 	  , new Integer(GenerateOutputKind.ETF1)
       };
@@ -567,6 +568,8 @@ public class Main {
 			  fc.addChoosableFileFilter(GenericFileFilter.createXmlFilter());
 			}else if(config.getOutputKind()==GenerateOutputKind.IMD){
 				  fc.addChoosableFileFilter(GenericFileFilter.createXmlFilter());
+			}else if(config.getOutputKind()==GenerateOutputKind.UML21){
+				  fc.addChoosableFileFilter(new GenericFileFilter("UML/XMI format (*.uml)","uml"));
 			}else if(config.getOutputKind()==GenerateOutputKind.GML32){
 			  useDir=true;
 			}else if(config.getOutputKind()==GenerateOutputKind.ETF1){

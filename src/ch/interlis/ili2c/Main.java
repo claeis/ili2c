@@ -153,6 +153,7 @@ public class Main {
 	    System.err.println("-oXSD                 Generate an XTF XML-Schema.");
 	    System.err.println("-oFMT                 Generate an INTERLIS-1 Format.");
 	    System.err.println("-oIMD                 Generate Model as IlisMeta INTERLIS-Transfer (XTF).");
+	    System.err.println("-oUML                 Generate Model as UML2/XMI-Transfer (eclipse flavour).");
 	    System.err.println("-oIOM                 (deprecated) Generate Model as INTERLIS-Transfer (XTF).");
 	    System.err.println("--check-repo-ilis uri   check all ili files in the given repository.");
 	    System.err.println("--out file/dir        file or folder for output (folder must exist).");
@@ -248,6 +249,9 @@ public class Main {
 		} else if (args[i].equals("-oIMD")) {
 		    outputKind = GenerateOutputKind.IMD;
 		    continue;
+		} else if (args[i].equals("-oUML")){
+			outputKind=GenerateOutputKind.UML21;
+			continue;
 		} else if (args[i].equals("-oIOM")) {
 		    outputKind = GenerateOutputKind.IOM;
 		    continue;
@@ -635,6 +639,9 @@ public class Main {
 		    ch.interlis.ili2c.generator.ImdGenerator.generate(new java.io.File(config.getOutputFile()), desc, APP_NAME +
 			    "-" + getVersion());
 		    break;
+		case GenerateOutputKind.UML21:
+			  ch.interlis.ili2c.generator.Uml21Generator.generate(new java.io.File(config.getOutputFile()),desc);
+			  break;
 		case GenerateOutputKind.IOM:
 		    if ("-".equals(config.getOutputFile())) {
 			out = new BufferedWriter(new OutputStreamWriter(System.out));
