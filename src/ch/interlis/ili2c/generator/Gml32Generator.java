@@ -819,6 +819,9 @@ public final class Gml32Generator
 		}else if (type instanceof EnumerationType && !attribute.isFinal()){
   	      ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"gml:CodeWithAuthorityType\""+minOccurs+"/>");
 	      codelists.add(attribute);
+		}else if (type instanceof EnumTreeValueType && !attribute.isFinal()){
+	  	      ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"gml:CodeWithAuthorityType\""+minOccurs+"/>");
+		      codelists.add(attribute);
 		}else{
 			ipw.println(
 				"<xsd:element name=\""
@@ -851,15 +854,15 @@ public final class Gml32Generator
 			while(codelisti.hasNext()){
 				Element codelisto=(Element)codelisti.next();
 				String enumName=null;
-				EnumerationType type=null;
+				Type type=null;
 				if(codelisto instanceof Domain){
 					Domain domain=(Domain)codelisto;
 					enumName=getName(domain);
-					type=(EnumerationType)domain.getType();
+					type=domain.getType();
 				}else{
 					AttributeDef attr=(AttributeDef)codelisto;
 					enumName=getName(attr.getContainer())+"."+getTransferName(attr);
-					type=(EnumerationType)attr.getDomain();
+					type=attr.getDomain();
 				}
 				ipw.println("<gml:Dictionary gml:id=\"o"+ oid++ +"\">");
 				ipw.indent();
@@ -867,7 +870,13 @@ public final class Gml32Generator
 				String codeSpace=ILIGML_XMLNSBASE+"/"+modelName+"/"+enumName;
 				
 				java.util.ArrayList ev = new java.util.ArrayList();
-				buildEnumList(ev, "", type.getConsolidatedEnumeration());
+				if(type instanceof EnumerationType){
+					buildEnumList(ev, "", ((EnumerationType)type).getConsolidatedEnumeration());					
+				}else if(type instanceof EnumTreeValueType){
+					buildEnumValList(ev, "", ((EnumTreeValueType)type).getConsolidatedEnumeration());
+				}else{
+					throw new IllegalStateException("unexpected type "+type);
+				}
 				Iterator iter = ev.iterator();
 				while (iter.hasNext()) {
 					String enumVal = (String) iter.next();
@@ -943,7 +952,7 @@ public final class Gml32Generator
 	    ipw.println ("</xsd:complexType>");
     }else if(type instanceof EnumerationType){
     	if(domain!=null && !domain.isFinal()){
-  		ipw.println ("<xsd:complexType"+typeName+">");
+    		ipw.println ("<xsd:complexType"+typeName+">");
 		    ipw.indent ();
 			ipw.println ("<xsd:simpleContent>");
 			ipw.indent ();
@@ -961,8 +970,8 @@ public final class Gml32Generator
 			ipw.unindent ();
 			ipw.println ("</xsd:simpleContent>");
 		    ipw.unindent ();
-		  ipw.println ("</xsd:complexType>");
-	      codelists.add(domain);
+		    ipw.println ("</xsd:complexType>");
+		    codelists.add(domain);
     	}else{
     	      ipw.println ("<xsd:simpleType"+typeName+">");
     	        ipw.indent ();
@@ -970,6 +979,45 @@ public final class Gml32Generator
     	          ipw.indent ();
     	          java.util.ArrayList ev=new java.util.ArrayList();
     	          buildEnumList(ev,"",((EnumerationType)type).getConsolidatedEnumeration());
+    	          Iterator iter=ev.iterator();
+    	          while(iter.hasNext()){
+    	            String value=(String)iter.next();
+    	            ipw.println ("<xsd:enumeration value=\""+value+"\"/>");
+    	          }
+    	          ipw.unindent ();
+    	        ipw.println ("</xsd:restriction>");
+    	        ipw.unindent ();
+    	      ipw.println ("</xsd:simpleType>");
+    	}
+    }else if(type instanceof EnumTreeValueType){
+    	if(domain!=null && !domain.isFinal()){
+    		ipw.println ("<xsd:complexType"+typeName+">");
+		    ipw.indent ();
+			ipw.println ("<xsd:simpleContent>");
+			ipw.indent ();
+			String base;
+			if(domain!=null && domain.getExtending()!=null){
+				base=getScopedName(domain.getExtending());
+			}else{
+				base="gml:CodeWithAuthorityType";
+			}
+			ipw.println ("<xsd:restriction base=\""+base+"\">");
+			ipw.indent ();
+			ipw.println ("<xsd:attribute name=\"codeSpace\" type=\"xsd:anyURI\" use=\"required\"/>");
+			ipw.unindent ();
+			ipw.println ("</xsd:restriction>");
+			ipw.unindent ();
+			ipw.println ("</xsd:simpleContent>");
+		    ipw.unindent ();
+		    ipw.println ("</xsd:complexType>");
+		    codelists.add(domain);
+    	}else{
+    	      ipw.println ("<xsd:simpleType"+typeName+">");
+    	        ipw.indent ();
+    	        ipw.println ("<xsd:restriction base=\"xsd:normalizedString\">");
+    	          ipw.indent ();
+    	          java.util.ArrayList ev=new java.util.ArrayList();
+    	          buildEnumValList(ev,"",((EnumTreeValueType)type).getConsolidatedEnumeration());
     	          Iterator iter=ev.iterator();
     	          while(iter.hasNext()){
     	            String value=(String)iter.next();
@@ -1173,6 +1221,24 @@ public final class Gml32Generator
         }else{
           // ee is a leaf, add it to accu
           accu.add(prefix+ee.getName());
+        }
+      }
+  }
+  private void buildEnumValList(java.util.List accu,String prefix1,ch.interlis.ili2c.metamodel.Enumeration enumer){
+      Iterator iter = enumer.getElements();
+      String prefix="";
+      if(prefix1.length()>0){
+        prefix=prefix1+".";
+      }
+      while (iter.hasNext()) {
+        ch.interlis.ili2c.metamodel.Enumeration.Element ee=(ch.interlis.ili2c.metamodel.Enumeration.Element) iter.next();
+        ch.interlis.ili2c.metamodel.Enumeration subEnum = ee.getSubEnumeration();
+        // add ee to accu
+        accu.add(prefix+ee.getName());
+        if (subEnum != null)
+        {
+          // ee is not leaf, add its name to prefix and add sub elements to accu
+          buildEnumList(accu,prefix+ee.getName(),subEnum);
         }
       }
   }

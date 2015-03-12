@@ -1,4 +1,5 @@
 package ch.interlis.ili2c.metamodel;
+import java.util.Iterator;
 import java.util.Set;
 
 
@@ -42,5 +43,9 @@ public void setEnumType(Domain domain) {
     public EnumTreeValueType clone() {
         return (EnumTreeValueType) super.clone();
     }
+	public Enumeration getConsolidatedEnumeration() {
+	      Enumeration ret=((EnumerationType)enumType.getType()).getConsolidatedEnumeration();
+	      return ret;
+	}
 
 }
