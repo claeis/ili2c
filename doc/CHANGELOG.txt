@@ -1,6 +1,15 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.5.9 (2015-03-13)
+---------------------------
+- re-added (lost) -oUML option
+- gml: fixed EnumTreeValueType
+- ili23: fixed detection of incomplete SURFACE/AREA definitions (missing OVERLAPS)
+- ili23: check that CONSTRAINTS OF references a viewable in the same scope
+- ili23: check for EXTERNAL because of reference attributes in nested structure attributes 
+- ili23: check for DEPENDS ON because of reference attributes in imported structures
+
 ili2c 4.5.8 (2015-02-04)
 ---------------------------
 - bug ili22: missing identity (TID) on ASSOCIATIONs that are not embedded
@@ -8,7 +17,7 @@ ili2c 4.5.8 (2015-02-04)
 ili2c 4.5.7 (2015-01-30)
 ---------------------------
 - gml: fixed illegal schema generation if ordered RoleDef
-- gml: ajusted schema generation to approved eCH-0118-1.0
+- gml: adjusted schema generation to approved eCH-0118-1.0
 
 ili2c 4.5.6 (2014-12-30)
 ---------------------------
