@@ -4191,8 +4191,14 @@ protected constraintsDef[Container scope]
 		Viewable def;
 		Constraint constr;
 	}
-	:	"CONSTRAINTS" "OF" def=viewableRef[scope]
+	:	c:"CONSTRAINTS" "OF" def=viewableRef[scope]
 	EQUALS
+	{
+	  if(scope!=def.getContainer()){
+				reportError (formatMessage ("err_constraint_viewref",
+				scope.getScopedName(null)), c.getLine());
+	  }
+	}
 	( constr=constraintDef[def]
 		{if(constr!=null)def.add(constr);}
 	)*
