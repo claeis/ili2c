@@ -76,14 +76,8 @@ public class LocalAttribute extends AttributeDef
   public void setDomain (Type domain)
     throws java.beans.PropertyVetoException
   {
-    Type    realDomain; // FIXME: unused ?
-
     if (domain == null)
       throw new IllegalArgumentException(rsrc.getString("err_nullNotAcceptable"));
-
-    realDomain = domain.resolveAliases();
-
-
     super.setDomain(domain);
   }
 

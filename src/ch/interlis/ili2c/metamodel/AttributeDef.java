@@ -543,6 +543,21 @@ public abstract class AttributeDef
         return;
     }
 
+    fireVetoableChange ("domain", oldValue, newValue);
+
+
+    // 20150313 do not touch this.domain.extending here (keep it the same logic as in class Domain)
+    // newValue.extending is already set, or will be set, when calling this.setExtending() 
+    //if (extending == null) {
+    //    newValue.setExtending (null);
+    //} else {
+    //    newValue.setExtending (extending.getDomain());
+    //}
+
+
+    this.domain = newValue;
+    firePropertyChange ("domain", oldValue, newValue);
+    
     if(!acceptAbstract){
         if ((newValue != null)
                 && newValue.isAbstract()
@@ -551,19 +566,7 @@ public abstract class AttributeDef
                 "err_attributeDef_domainIsAbstractButAttrIsNot", this.toString()));
         }
     }
-
-    fireVetoableChange ("domain", oldValue, newValue);
-
-
-    if (extending == null) {
-        newValue.setExtending (null);
-    } else {
-        newValue.setExtending (extending.getDomain());
-    }
-
-
-    this.domain = newValue;
-    firePropertyChange ("domain", oldValue, newValue);
+    
   }
 
 

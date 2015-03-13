@@ -25,10 +25,10 @@ public abstract class LineType extends Type
   */
   public boolean isAbstract ()
   {
-    if ((lineForms.length == 0) || (controlPointDomain == null))
+    if ((getLineForms().length == 0) || (getControlPointDomain() == null))
       return true;
 
-    if (controlPointDomain.isAbstract())
+    if (getControlPointDomain().isAbstract())
       return true;
 
     return false;
@@ -36,6 +36,13 @@ public abstract class LineType extends Type
 
 
   public PrecisionDecimal getMaxOverlap ()
+  {
+	if(maxOverlap==null && extending!=null){
+		return ((LineType)extending).getMaxOverlap();
+	}
+    return maxOverlap;
+  }
+  public PrecisionDecimal getDefinedMaxOverlap ()
   {
     return maxOverlap;
   }
@@ -61,6 +68,13 @@ public abstract class LineType extends Type
 
 
   public LineForm[] getLineForms()
+  {
+		if(lineForms.length==0 && extending!=null){
+			return ((LineType)extending).getLineForms();
+		}
+    return lineForms;
+  }
+  public LineForm[] getDefinedLineForms()
   {
     return lineForms;
   }
@@ -88,6 +102,13 @@ public abstract class LineType extends Type
 
 
   public Domain getControlPointDomain()
+  {
+		if(controlPointDomain==null && extending!=null){
+			return ((LineType)extending).getControlPointDomain();
+		}
+    return controlPointDomain;
+  }
+  public Domain getDefinedControlPointDomain()
   {
     return controlPointDomain;
   }

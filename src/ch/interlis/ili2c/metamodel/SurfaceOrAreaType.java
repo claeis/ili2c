@@ -150,6 +150,10 @@ public abstract class SurfaceOrAreaType extends LineType
     firePropertyChange ("lineAttributeStructure", oldValue, newValue);
   }
 
+  @Override
+  public boolean isAbstract() {
+  	return getMaxOverlap()==null || super.isAbstract();
+  }
 
   /** Changes the maximal overlap and performs a number of additional
       actions to what any LineType does.

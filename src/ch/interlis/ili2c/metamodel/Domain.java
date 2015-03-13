@@ -204,14 +204,13 @@ public class Domain extends AbstractLeafElement
     if (newValue == null)
       throw new IllegalArgumentException (rsrc.getString ("err_nullNotAcceptable"));
 
-
-    if ((type != null) && type.isAbstract() && !this.isAbstract())
-      throw new IllegalArgumentException (formatMessage ("err_domainMustBeAbstractDueToType",
-        this.toString()));
-
     fireVetoableChange("type", oldValue, newValue);
     this.type = newValue;
     firePropertyChange("type", oldValue, newValue);
+    
+    if ((type != null) && type.isAbstract() && !this.isAbstract())
+        throw new Ili2cSemanticException (formatMessage ("err_domainMustBeAbstractDueToType",
+          this.toString()));
   }
 
 

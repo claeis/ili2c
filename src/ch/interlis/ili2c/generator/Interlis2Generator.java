@@ -1814,9 +1814,9 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib) {
       }
 
 
-      LineForm[] lineForms = lt.getLineForms ();
-      PrecisionDecimal maxOverlap = lt.getMaxOverlap ();
-      Domain controlPointDomain = lt.getControlPointDomain ();
+      LineForm[] lineForms = lt.getDefinedLineForms ();
+      PrecisionDecimal maxOverlap = lt.getDefinedMaxOverlap ();
+      Domain controlPointDomain = lt.getDefinedControlPointDomain ();
       Table lineAttributeStructure = null;
 
 

@@ -2975,18 +2975,6 @@ protected lineType [Container scope, Type extending]
     ( "WITHOUT" "OVERLAPS" GREATER theMaxOverlap = decimal )?
 
     {
-      /* If no line forms are specified, take the inherited value. */
-      if ((theLineForms == null) && (extending instanceof LineType))
-        theLineForms = ((LineType) extending).getLineForms ();
-
-      /* If no maximal overlap is specified, take the inherited value. */
-      if ((theMaxOverlap == null) && (extending instanceof LineType))
-        theMaxOverlap = ((LineType) extending).getMaxOverlap ();
-
-      /* If no control point domain is specified, take the inherited value. */
-      if ((controlPointDomain == null) && (extending instanceof LineType))
-        controlPointDomain = ((LineType) extending).getControlPointDomain ();
-
       try {
         if (theLineForms != null)
           lt.setLineForms (theLineForms);
@@ -2995,15 +2983,17 @@ protected lineType [Container scope, Type extending]
       }
 
       try {
-        lt.setControlPointDomain (controlPointDomain);
+      	if(controlPointDomain!=null){
+          lt.setControlPointDomain (controlPointDomain);
+      	}
       } catch (Exception ex) {
         reportError (ex, line);
       }
 
       try {
-        /* FIXME: Check whether it is an AREA; reportError + provide artificial value */
-
-        lt.setMaxOverlap (theMaxOverlap);
+        if(theMaxOverlap!=null){
+          lt.setMaxOverlap (theMaxOverlap);
+        }
       } catch (Exception ex) {
         reportError (ex, line);
       }
@@ -3027,6 +3017,15 @@ protected lineType [Container scope, Type extending]
         }
       }
     )?
+    {
+      if(extending!=null){
+        try{
+          lt.setExtending(extending);
+        }catch(Exception ex){
+          reportError (ex, line);
+        }
+      }
+    }
   ;
 
 protected lineForm [Container scope]
