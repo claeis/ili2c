@@ -20,6 +20,8 @@ package ch.interlis.ili2c.metamodel;
 
 import java.util.*;
 
+import ch.ehi.basics.logging.EhiLogger;
+
 
 public abstract class AbstractPatternDef<E extends Element> extends ExtendableContainer<E> {
 
@@ -92,7 +94,6 @@ public abstract class AbstractPatternDef<E extends Element> extends ExtendableCo
 
           return true;
         }
-
 
 
         if (e instanceof AssociationDef){
@@ -225,7 +226,48 @@ public abstract class AbstractPatternDef<E extends Element> extends ExtendableCo
 		    }
 	  }
   }
-  public void addAfter(E o,Object previous)
+  public static void checkTopicDepOfAttr(AbstractPatternDef<?> thisTopic,
+			AttributeDef attr, String attrPath) {
+	  Type type=attr.getDomain();
+	  if(type instanceof CompositionType){
+		  // check sub-structure
+		  CompositionType bagType=(CompositionType) type;
+		  Table struct = bagType.getComponentType();
+		  for(Iterator<?> attri=struct.getAttributes();attri.hasNext();){
+			  AttributeDef subAttr=(AttributeDef)attri.next();
+			  checkTopicDepOfAttr(thisTopic,subAttr,attrPath+"/"+subAttr.getName());
+		  }
+		  bagType.iteratorRestrictedTo(); // TODO
+	  }else if(type instanceof ReferenceType){
+		  ReferenceType ref=(ReferenceType)type;
+		  Iterator<AbstractClassDef> targeti=ref.iteratorRestrictedTo();
+		  if(targeti.hasNext()){
+			  while(targeti.hasNext()){
+				  AbstractClassDef target=targeti.next();
+			  }
+		  }else{
+			  boolean external=ref.isExternal();
+			  AbstractClassDef target=ref.getReferred();
+			  Container targetTopic = target.getContainer();
+				// target in a topic and targets topic not a base of this topic 
+				if(targetTopic!=null && thisTopic!=null && !thisTopic.isExtending(targetTopic)){
+					if(!external){
+						// must be external
+						throw new Ili2cSemanticException (formatMessage ("err_refattr_externalreq2",attrPath));
+					}else{
+						  if(targetTopic!=thisTopic){
+						    if(!thisTopic.isDependentOn(targetTopic)){
+						    	throw new Ili2cSemanticException (formatMessage ("err_refattr_topicdepreq2",
+							thisTopic.getName(),
+							targetTopic.getName(),attrPath));
+						    }
+						  }
+					}
+				}
+		  }
+	  }
+  }
+public void addAfter(E o,Object previous)
   {
 	  if(((ElementDelegate)elements).check(o)){
 		    try {

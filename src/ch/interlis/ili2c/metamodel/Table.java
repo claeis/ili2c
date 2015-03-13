@@ -13,6 +13,8 @@
 package ch.interlis.ili2c.metamodel;
 import java.util.*;
 
+import ch.ehi.basics.logging.EhiLogger;
+
 
 
 /** A table. Please refer to the INTERLIS reference manual to
@@ -122,6 +124,10 @@ public class Table extends AbstractClassDef<AbstractLeafElement>
 	      }
 	  }
 
+	      // check extref in structattrs in CLASS/ASSOCIATION
+	      if(Table.this.isIdentifiable() && !Table.this.isAbstract() && Table.this.getContainer() instanceof Topic){
+	      	AbstractPatternDef.checkTopicDepOfAttr((Topic)Table.this.getContainer(),ad,ad.getName());
+	      }
 
           throwUponUnwantedAttribute (ad);
         }
