@@ -1530,23 +1530,22 @@ protected referenceAttr[Container scope]
 	rt=restrictedClassOrAssRef[scope]
 	{
 		boolean external=(mods & ch.interlis.ili2c.metamodel.Properties.eEXTERNAL)!=0;
-		Topic targetTopic=(Topic)rt.getReferred().getContainerOrSame(Topic.class);
 		Topic thisTopic=(Topic)scope.getContainerOrSame(Topic.class);
-		// target in a topic and targets topic not a base of this topic 
-		if(targetTopic!=null && thisTopic!=null && !thisTopic.isExtending(targetTopic)){
-			if(!external){
-				// must be external
-				reportError(formatMessage ("err_refattr_externalreq",""),refkw.getLine());
-			}else{
-				  if(targetTopic!=thisTopic){
-				    if(!thisTopic.isDependentOn(targetTopic)){
-				      reportError(formatMessage ("err_viewableref_topicdepreq",
-					thisTopic.getName(),
-					targetTopic.getName()),refkw.getLine());
-				    }
-				  }
-			}
-		}
+	  	try{
+
+		  Iterator<AbstractClassDef> targeti=rt.iteratorRestrictedTo();
+		  if(targeti.hasNext()){
+			  while(targeti.hasNext()){
+				  AbstractClassDef<?> target=targeti.next();
+				  AbstractPatternDef.checkRefTypeTarget(thisTopic, null, target, external);
+			  }
+		  }else{
+			  AbstractClassDef<?> target=rt.getReferred();
+			  AbstractPatternDef.checkRefTypeTarget(thisTopic, null, target, external);
+		  }
+		}catch(Ili2cSemanticException ex){
+	            reportError(ex,refkw.getLine());
+	        }
 		rt.setExternal(external);
 	}
 	;

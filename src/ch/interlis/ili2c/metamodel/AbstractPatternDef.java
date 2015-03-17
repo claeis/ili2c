@@ -232,41 +232,66 @@ public abstract class AbstractPatternDef<E extends Element> extends ExtendableCo
 	  if(type instanceof CompositionType){
 		  // check sub-structure
 		  CompositionType bagType=(CompositionType) type;
-		  Table struct = bagType.getComponentType();
-		  for(Iterator<?> attri=struct.getAttributes();attri.hasNext();){
-			  AttributeDef subAttr=(AttributeDef)attri.next();
-			  checkTopicDepOfAttr(thisTopic,subAttr,attrPath+"/"+subAttr.getName());
+		  Iterator<Table> structi=bagType.iteratorRestrictedTo();
+		  if(structi.hasNext()){
+			  while(structi.hasNext()){
+				  Table struct = structi.next();
+				  for(Iterator<?> attri=struct.getAttributes();attri.hasNext();){
+					  AttributeDef subAttr=(AttributeDef)attri.next();
+					  checkTopicDepOfAttr(thisTopic,subAttr,attrPath+"/"+subAttr.getName());
+				  }
+			  }
+		  }else{
+			  Table struct = bagType.getComponentType();
+			  for(Iterator<?> attri=struct.getAttributes();attri.hasNext();){
+				  AttributeDef subAttr=(AttributeDef)attri.next();
+				  checkTopicDepOfAttr(thisTopic,subAttr,attrPath+"/"+subAttr.getName());
+			  }
 		  }
-		  bagType.iteratorRestrictedTo(); // TODO
 	  }else if(type instanceof ReferenceType){
 		  ReferenceType ref=(ReferenceType)type;
+		  boolean external=ref.isExternal();
 		  Iterator<AbstractClassDef> targeti=ref.iteratorRestrictedTo();
 		  if(targeti.hasNext()){
 			  while(targeti.hasNext()){
-				  AbstractClassDef target=targeti.next();
+				  AbstractClassDef<?> target=targeti.next();
+				  checkRefTypeTarget(thisTopic, attrPath, target, external);
 			  }
 		  }else{
-			  boolean external=ref.isExternal();
-			  AbstractClassDef target=ref.getReferred();
-			  Container targetTopic = target.getContainer();
-				// target in a topic and targets topic not a base of this topic 
-				if(targetTopic!=null && thisTopic!=null && !thisTopic.isExtending(targetTopic)){
-					if(!external){
-						// must be external
-						throw new Ili2cSemanticException (formatMessage ("err_refattr_externalreq2",attrPath));
-					}else{
-						  if(targetTopic!=thisTopic){
-						    if(!thisTopic.isDependentOn(targetTopic)){
-						    	throw new Ili2cSemanticException (formatMessage ("err_refattr_topicdepreq2",
-							thisTopic.getName(),
-							targetTopic.getName(),attrPath));
-						    }
-						  }
-					}
-				}
+			  AbstractClassDef<?> target=ref.getReferred();
+			  checkRefTypeTarget(thisTopic, attrPath, target, external);
 		  }
 	  }
   }
+public static void checkRefTypeTarget(AbstractPatternDef<?> thisTopic,
+		String attrPath, AbstractClassDef<?> target, boolean external) {
+	  Container<?> targetTopic = target.getContainer();
+		// target in a topic and targets topic not a base of this topic 
+		if(targetTopic!=null && thisTopic!=null && !thisTopic.isExtending(targetTopic)){
+			if(!external){
+				// must be external
+				if(attrPath==null){
+					throw new Ili2cSemanticException (formatMessage ("err_refattr_externalreq"));
+				}else{
+					throw new Ili2cSemanticException (formatMessage ("err_refattr_externalreq2",attrPath));
+				}
+			}else{
+				  if(targetTopic!=thisTopic){
+				    if(!thisTopic.isDependentOn(targetTopic)){
+						if(attrPath==null){
+					    	throw new Ili2cSemanticException (formatMessage ("err_refattr_topicdepreq",
+									thisTopic.getName(),
+									targetTopic.getScopedName(null)));
+						}else{
+					    	throw new Ili2cSemanticException (formatMessage ("err_refattr_topicdepreq2",
+									thisTopic.getName(),
+									targetTopic.getScopedName(null),attrPath));
+						}
+				    }
+				  }
+			}
+		}
+}
 public void addAfter(E o,Object previous)
   {
 	  if(((ElementDelegate)elements).check(o)){
