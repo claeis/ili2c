@@ -17,10 +17,15 @@ package ch.interlis.ili2c.metamodel;
 */
 public class SurfaceType extends SurfaceOrAreaType
 {
+	private boolean isIli1=false;
   /** Constructs a new SurfaceType.
   */
   public SurfaceType ()
   {
+  }
+  public SurfaceType (boolean isIli1)
+  {
+	  this.isIli1=isIli1;
   }
   
 
@@ -53,4 +58,9 @@ public class SurfaceType extends SurfaceOrAreaType
         "err_surfaceType_ExtOther"));
     }
   }
+  @Override
+  public boolean isAbstract() {
+  	return (!isIli1 && getMaxOverlap()==null) || super.isAbstract();
+  }
+  
 }

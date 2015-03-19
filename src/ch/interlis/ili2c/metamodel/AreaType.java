@@ -42,5 +42,9 @@ public class AreaType extends SurfaceOrAreaType
         "err_areaType_ExtOther"));
     }
   }
+  @Override
+  public boolean isAbstract() {
+  	return getMaxOverlap()==null || super.isAbstract();
+  }
 
 }

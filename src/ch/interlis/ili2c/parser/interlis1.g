@@ -1425,7 +1425,7 @@ protected ili1_areaType [Model forModel, Topic forTopic,Viewable table]
   : (
       "SURFACE"
       {
-        type = new SurfaceType ();
+        type = new SurfaceType (true);
       }
       ili1_form [type, forModel]
       ili1_controlPoints [type, forModel, forTopic]
