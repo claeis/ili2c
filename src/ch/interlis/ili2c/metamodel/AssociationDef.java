@@ -100,6 +100,11 @@ public class AssociationDef extends AbstractClassDef<Element>
                   AssociationDef.this.toString()));
 	      }
 	  }
+	  
+      // check extref in structattrs in CLASS/ASSOCIATION
+      if(!AssociationDef.this.isAbstract() && AssociationDef.this.getContainer() instanceof Topic){
+      	AbstractPatternDef.checkTopicDepOfAttr((Topic)AssociationDef.this.getContainer(),ad,ad.getName());
+      }
 
 	  return attributes.add(ad);
 	}

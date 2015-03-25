@@ -255,16 +255,16 @@ public abstract class AbstractPatternDef<E extends Element> extends ExtendableCo
 		  if(targeti.hasNext()){
 			  while(targeti.hasNext()){
 				  AbstractClassDef<?> target=targeti.next();
-				  checkRefTypeTarget(thisTopic, attrPath, target, external);
+				  checkRefTypeTarget(thisTopic, attrPath, (AbstractClassDef<?>) attr.getContainer(),target, external);
 			  }
 		  }else{
 			  AbstractClassDef<?> target=ref.getReferred();
-			  checkRefTypeTarget(thisTopic, attrPath, target, external);
+			  checkRefTypeTarget(thisTopic, attrPath, (AbstractClassDef<?>) attr.getContainer(),target, external);
 		  }
 	  }
   }
 public static void checkRefTypeTarget(AbstractPatternDef<?> thisTopic,
-		String attrPath, AbstractClassDef<?> target, boolean external) {
+		String attrPath, AbstractClassDef<?> struct,AbstractClassDef<?> target, boolean external) {
 	  Container<?> targetTopic = target.getContainer();
 		// target in a topic and targets topic not a base of this topic 
 		if(targetTopic!=null && thisTopic!=null && !thisTopic.isExtending(targetTopic)){
@@ -273,7 +273,7 @@ public static void checkRefTypeTarget(AbstractPatternDef<?> thisTopic,
 				if(attrPath==null){
 					throw new Ili2cSemanticException (formatMessage ("err_refattr_externalreq"));
 				}else{
-					throw new Ili2cSemanticException (formatMessage ("err_refattr_externalreq2",attrPath));
+					throw new Ili2cSemanticException (formatMessage ("err_refattr_externalreq2",attrPath,struct.getScopedName(null)));
 				}
 			}else{
 				  if(targetTopic!=thisTopic){
@@ -285,7 +285,7 @@ public static void checkRefTypeTarget(AbstractPatternDef<?> thisTopic,
 						}else{
 					    	throw new Ili2cSemanticException (formatMessage ("err_refattr_topicdepreq2",
 									thisTopic.getName(),
-									targetTopic.getScopedName(null),attrPath));
+									targetTopic.getScopedName(null),attrPath,struct.getScopedName(null)));
 						}
 				    }
 				  }

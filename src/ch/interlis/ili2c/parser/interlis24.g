@@ -1550,11 +1550,11 @@ protected referenceAttr[Container scope]
 		  if(targeti.hasNext()){
 			  while(targeti.hasNext()){
 				  AbstractClassDef<?> target=targeti.next();
-				  AbstractPatternDef.checkRefTypeTarget(thisTopic, null, target, external);
+				  AbstractPatternDef.checkRefTypeTarget(thisTopic, null,null, target, external);
 			  }
 		  }else{
 			  AbstractClassDef<?> target=rt.getReferred();
-			  AbstractPatternDef.checkRefTypeTarget(thisTopic, null, target, external);
+			  AbstractPatternDef.checkRefTypeTarget(thisTopic, null, null,target, external);
 		  }
 		}catch(Ili2cSemanticException ex){
 	            reportError(ex,refkw.getLine());
