@@ -4042,7 +4042,7 @@ protected uniquenessConstraint[Viewable v]
 	Evaluable preCond=null;
 		constr=new UniquenessConstraint();
 	}
-	: "UNIQUE" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON) => NAME COLON )?
+	: u:"UNIQUE" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON) => NAME COLON )?
   	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,v] COLON
 		{ constr.setPreCondition(preCond);
 		}
@@ -4050,6 +4050,17 @@ protected uniquenessConstraint[Viewable v]
 	( constr=globalUniqueness[v]
 	| constr=localUniqueness[v]
 	)
+	{
+		// check that all attrPaths do not point to a struct
+		UniqueEl elements=constr.getElements();
+		Iterator attri=elements.iteratorAttribute();
+		while(attri.hasNext()){
+			ObjectPath attr=(ObjectPath)attri.next();
+			if(attr.getType() instanceof CompositionType){
+				reportError(formatMessage ("err_uniqueness_StructNoAllowed",attr.toString()),u.getLine());
+			}
+		}
+	}
 	SEMI
 	;
 
