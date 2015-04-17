@@ -51,7 +51,10 @@ public class Main {
     public static final String JAR_DIR = "%JAR_DIR";
     public static final String JAR_MODELS = "standard";
     public static final String ILI_REPOSITORY = "http://models.interlis.ch/";
-    public static final String DEFAULT_ILIDIRS = ILI_DIR + ";" + ILI_REPOSITORY + ";" + JAR_DIR;
+    public static final String ILIDIR_SEPARATOR = ";";
+    public static final String MODELS_SEPARATOR = ";";
+    public static final String DEFAULT_ILIDIRS = ILI_DIR + ILIDIR_SEPARATOR + ILI_REPOSITORY + ILIDIR_SEPARATOR + JAR_DIR;
+    
     private static String version = null;
 
 
@@ -688,39 +691,41 @@ public class Main {
 		}
 
 		String ilidirs = settings.getValue(UserSettings.ILIDIRS);
-		String modeldirs[] = ilidirs.split(";");
+		String modeldirs[] = ilidirs.split(ILIDIR_SEPARATOR);
 		HashSet ilifiledirs = new HashSet();
 
 		for (int modeli = 0; modeli < modeldirs.length; modeli++) {
-		    String m = modeldirs[modeli];
+			String m = modeldirs[modeli];
 
-		    if (m.equals(ILI_DIR) && pathmap.containsKey(ILI_DIR)) {
-			for (int filei = 0; filei < ilifilev.size(); filei++) {
-			    String ilifile = ilifilev.get(filei);
+			if (m.equals(ILI_DIR) && pathmap.containsKey(ILI_DIR)) {
+				for (int filei = 0; filei < ilifilev.size(); filei++) {
+					String ilifile = ilifilev.get(filei);
 
-			    if (GenericFileFilter.getFileExtension(ilifile) != null) {
-				m = new java.io.File(ilifile).getAbsoluteFile().getParentFile().getAbsolutePath();
-				if (m != null && m.length() > 0) {
-				    if (!ilifiledirs.contains(m)) {
-					ilifiledirs.add(m);
-					modeldirv.add(m);
-				    }
+					if (GenericFileFilter.getFileExtension(ilifile) != null) {
+						m = new java.io.File(ilifile).getAbsoluteFile()
+								.getParentFile().getAbsolutePath();
+						if (m != null && m.length() > 0) {
+							if (!ilifiledirs.contains(m)) {
+								ilifiledirs.add(m);
+								modeldirv.add(m);
+							}
+						}
+					}
 				}
-			    }
+			} else if (m.startsWith("%")) {
+				String key = m;
+				EhiLogger.traceState("pathmap key <"+key+">");
+				if (pathmap.containsKey(key)) {
+					m = (String) pathmap.get(key);
+					if (m != null && m.length() > 0) {
+						modeldirv.add(m);
+					}
+				}
+			} else {
+				if (m != null && m.length() > 0) {
+					modeldirv.add(m);
+				}
 			}
-		    } else if (m.startsWith("%")) {
-			String key = m;
-			if (pathmap.containsKey(key)) {
-			    m = (String) pathmap.get(key);
-			    if (m != null && m.length() > 0) {
-				modeldirv.add(m);
-			    }
-			}
-		    } else {
-			if (m != null && m.length() > 0) {
-			    modeldirv.add(m);
-			}
-		    }
 		}
 		return modeldirv;
 	}

@@ -44,7 +44,7 @@ public class ModelScan {
 
     public static void main(String[] args) {
 	EhiLogger.getInstance().setTraceFilter(false);
-	ArrayList<String> dirName = new ArrayList<String>(Arrays.asList(args[0].split(";")));
+	ArrayList<String> dirName = new ArrayList<String>(Arrays.asList(args[0].split(Main.ILIDIR_SEPARATOR)));
 	String model = args[1];
 	ArrayList<String> models = new ArrayList<String>();
 	models.add(model);
