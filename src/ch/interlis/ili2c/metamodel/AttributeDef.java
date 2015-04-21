@@ -20,6 +20,7 @@ package ch.interlis.ili2c.metamodel;
 
 
 import java.util.*;
+
 import ch.ehi.basics.logging.EhiLogger;
 
 
@@ -486,6 +487,15 @@ public abstract class AttributeDef
   public Type getDomainResolvingAliases ()
   {
     return Type.findReal (domain);
+  }
+  public Type getDomainResolvingAll()
+  {
+	Type type=domain;
+	if(type==null && this instanceof LocalAttribute){
+		Evaluable[] ev = (((LocalAttribute)this).getBasePaths());
+		type=((ObjectPath)ev[0]).getType();
+	}
+    return Type.findReal (type);
   }
 
 
