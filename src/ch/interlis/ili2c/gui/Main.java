@@ -167,7 +167,7 @@ public class Main {
 
             fc.resetChoosableFileFilters();
             fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fc.addChoosableFileFilter(new GenericFileFilter("INTERLIS-compiler configuration (*.ilc)","ilc"));
+            fc.setFileFilter(new GenericFileFilter("INTERLIS-compiler configuration (*.ilc)","ilc"));
             fc.setCurrentDirectory(new File(settings.getWorkingDirectory()));
             int returnVal = fc.showOpenDialog(frame);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -309,7 +309,7 @@ public class Main {
   void saveAs(){
             fc.resetChoosableFileFilters();
 			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fc.addChoosableFileFilter(new GenericFileFilter("INTERLIS-compiler configuration (*.ilc)","ilc"));
+            fc.setFileFilter(new GenericFileFilter("INTERLIS-compiler configuration (*.ilc)","ilc"));
             fc.setCurrentDirectory(new File(settings.getWorkingDirectory()));
             int returnVal = fc.showSaveDialog(frame);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -561,21 +561,21 @@ public class Main {
 			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
             fc.resetChoosableFileFilters();
             if(config.getOutputKind()==GenerateOutputKind.XMLSCHEMA){
-              fc.addChoosableFileFilter(GenericFileFilter.createXmlSchemaFilter());
+              fc.setFileFilter(GenericFileFilter.createXmlSchemaFilter());
             }else if(config.getOutputKind()==GenerateOutputKind.ILI1FMTDESC){
-              fc.addChoosableFileFilter(new GenericFileFilter("INTERLIS 1 format (*.fmt)","fmt"));
+              fc.setFileFilter(new GenericFileFilter("INTERLIS 1 format (*.fmt)","fmt"));
 			}else if(config.getOutputKind()==GenerateOutputKind.IOM){
-			  fc.addChoosableFileFilter(GenericFileFilter.createXmlFilter());
+			  fc.setFileFilter(GenericFileFilter.createXmlFilter());
 			}else if(config.getOutputKind()==GenerateOutputKind.IMD){
-				  fc.addChoosableFileFilter(GenericFileFilter.createXmlFilter());
+				  fc.setFileFilter(GenericFileFilter.createXmlFilter());
 			}else if(config.getOutputKind()==GenerateOutputKind.UML21){
-				  fc.addChoosableFileFilter(new GenericFileFilter("UML/XMI format (*.uml)","uml"));
+				  fc.setFileFilter(new GenericFileFilter("UML/XMI format (*.uml)","uml"));
 			}else if(config.getOutputKind()==GenerateOutputKind.GML32){
 			  useDir=true;
 			}else if(config.getOutputKind()==GenerateOutputKind.ETF1){
 				  useDir=true;
             }else{
-              fc.addChoosableFileFilter(new GenericFileFilter("INTERLIS models (*.ili)","ili"));
+              fc.setFileFilter(new GenericFileFilter("INTERLIS models (*.ili)","ili"));
             }
             fc.setCurrentDirectory(new File(settings.getWorkingDirectory()));
             // file entries available?
@@ -665,7 +665,7 @@ public class Main {
           public void actionPerformed(java.awt.event.ActionEvent e){
 
             fc.resetChoosableFileFilters();
-            fc.addChoosableFileFilter(new GenericFileFilter("INTERLIS models (*.ili)","ili"));
+            fc.setFileFilter(new GenericFileFilter("INTERLIS models (*.ili)","ili"));
             fc.setCurrentDirectory(new File(settings.getWorkingDirectory()));
             int returnVal = fc.showOpenDialog(frame);
             if (returnVal == JFileChooser.APPROVE_OPTION) {

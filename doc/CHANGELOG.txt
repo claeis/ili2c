@@ -3,6 +3,7 @@ Known Issues:
 
 ili2c 4.5.12 (2015-04-xx)
 ---------------------------
+- gui: set default file filter in file chooser dialog
 - ili23: check that UNIQUE does not use/reference a whole structure
 - iox-ili 1.10.1
 
