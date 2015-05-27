@@ -6,6 +6,7 @@ package ch.interlis.ili2c.metamodel;
 /** A coordinate type. */
 public class CoordType extends BaseType
 {
+  protected boolean _generic=false;
   protected int nullAxis;
   protected int piHalfAxis;
   protected NumericalType[] dimensions;
@@ -86,6 +87,9 @@ public class CoordType extends BaseType
   */
   public boolean isAbstract ()
   {
+	  if(_generic){
+		  return false;
+	  }
     for (int i = 0; i < dimensions.length; i++)
       if (dimensions[i].isAbstract())
         return true;
@@ -132,5 +136,11 @@ public class CoordType extends BaseType
     public CoordType clone() {
         return (CoordType) super.clone();
     }
+	public boolean isGeneric() {
+		return _generic;
+	}
+	public void setGeneric(boolean generic) {
+		this._generic = generic;
+	}
 
 }

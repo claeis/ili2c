@@ -2749,15 +2749,12 @@ protected coordinateType [Container scope, Type extending,boolean isGeneric]
   if (extending instanceof CoordType)
   {
     NumericalType[] ext_dimensions = ((CoordType) extending).getDimensions ();
-    if(extending instanceof CoordTypeAny){
-    }else{
     if (ext_dimensions.length >= 1)
       ext_nt1 = ext_dimensions [0];
     if (ext_dimensions.length >= 2)
       ext_nt2 = ext_dimensions [1];
     if (ext_dimensions.length >= 3)
       ext_nt3 = ext_dimensions [2];
-    }
   }
 }
   : (coord:"COORD" | "MULTICOORD")
@@ -2786,15 +2783,12 @@ protected coordinateType [Container scope, Type extending,boolean isGeneric]
         nts = new NumericalType[] { nt1 };
 
       try {
-        if(isGeneric){
-          ct = new CoordTypeAny();
-        }else{
         if (rots == null){
           ct = new CoordType (nts);
         }else{
           ct = new CoordType (nts, rots[0], rots[1]);
         }
-        }
+        ct.setGeneric(isGeneric);
       } catch (Exception ex) {
         reportError (ex, coord.getLine());
       }
