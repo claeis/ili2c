@@ -760,13 +760,17 @@ protected ili1_attribute [Table table]
 	boolean roleNameConflict=false;
 	do{
 		roleNameConflict=false;
-		Iterator rolei=referred.getOpposideRoles();
-		while (rolei.hasNext()){
-		      RoleDef targetOppRole = (RoleDef)rolei.next();
-		      if(targetOppRole.getName().equals(thisRoleName)){
+		if(referred.getElement(AttributeDef.class,thisRoleName)!=null){
 			roleNameConflict=true;
-			break;
-		      }
+		}else{
+			Iterator rolei=referred.getOpposideRoles();
+			while (rolei.hasNext()){
+			      RoleDef targetOppRole = (RoleDef)rolei.next();
+			      if(targetOppRole.getName().equals(thisRoleName)){
+				roleNameConflict=true;
+				break;
+			      }
+			}
 		}
 		if(roleNameConflict){
 			thisRoleName=thisRoleBasename+Integer.toString(uniqueName);
