@@ -1,12 +1,12 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
-ili2c 4.5.12 (2015-04-xx)
+ili2c 4.5.12 (2015-06-03)
 ---------------------------
 - gui: set default file filter in file chooser dialog
 - ili23: check that UNIQUE does not use/reference a whole structure
 - ili1: avoid name conflict if target table of refattr contains an attribute with same name as source table
-- iox-ili 1.10.1
+- iox-ili 1.10.2
 
 ili2c 4.5.11 (2015-03-25)
 ---------------------------
