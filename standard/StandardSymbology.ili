@@ -1,10 +1,13 @@
-!! File StandardSymbology.ili Release 2005-06-16
+!! File StandardSymbology.ili Release 2015-04-02
 
 INTERLIS 2.3;
 
+!! 2015-04-02 definition of SS_Surface corrected
+!!@precursorVersion = 2005-06-16
+
 CONTRACTED SYMBOLOGY MODEL StandardSymbology (en)
   AT "http://www.interlis.ch/models"
-  VERSION "2005-06-16" =
+  VERSION "2015-04-02" =
 
   !! Extended symbology model with symbol libraries and priorities.
 
@@ -24,7 +27,7 @@ CONTRACTED SYMBOLOGY MODEL StandardSymbology (en)
     SS_Polyline = POLYLINE WITH (STRAIGHTS, ARCS)
                   VERTEX SS_Coord2;
     SS_Surface  = SURFACE WITH (STRAIGHTS, ARCS)
-                  VERTEX SS_Coord2;
+                  VERTEX SS_Coord2 WITHOUT OVERLAPS > 0.0001;
 
 
   TOPIC StandardSigns EXTENDS AbstractSymbology.Signs =
