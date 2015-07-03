@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.5.13 (2015-07-03)
+---------------------------
+- ili23: accept extension of different sub-sub-enumerations, e.g. (rot.orange (dunkel,hell), rot.karmin (dunkel,hell))
+
 ili2c 4.5.12 (2015-06-03)
 ---------------------------
 - gui: set default file filter in file chooser dialog

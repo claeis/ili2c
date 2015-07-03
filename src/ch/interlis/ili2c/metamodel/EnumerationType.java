@@ -253,30 +253,34 @@ public class EnumerationType extends BaseType {
   {
   	return extendedBy;
   }
-  static void checkTree(Enumeration tree,Enumeration.Element newele){
-    Iterator<Enumeration.Element> desti=tree.getElements();
-    while(desti.hasNext()){
-      Enumeration.Element dest = desti.next();
-      if(dest.getName().equals(newele.getName())){
+  static void checkTree(Enumeration baseTree,Enumeration.Element extEle){
+    Iterator<Enumeration.Element> baseElei=baseTree.getElements();
+    while(baseElei.hasNext()){
+      Enumeration.Element baseEle = baseElei.next();
+      if(baseEle.getName().equals(extEle.getName())){
         // found
         // substree?
-        if(newele.getSubEnumeration()!=null
-            && dest.getSubEnumeration()!=null){
+        if(extEle.getSubEnumeration()!=null
+            && baseEle.getSubEnumeration()!=null){
             // check subtree
-            Iterator<Enumeration.Element> elei=newele.getSubEnumeration().getElements();
+            Iterator<Enumeration.Element> elei=extEle.getSubEnumeration().getElements();
             while(elei.hasNext()){
               Enumeration.Element ele = elei.next();
-              checkTree(dest.getSubEnumeration(),ele);
+              checkTree(baseEle.getSubEnumeration(),ele);
             }
+        }else if(extEle.getSubEnumeration()==null){
+        	// illegal duplicate element in extension
+            throw new Ili2cSemanticException(extEle.getSourceLine(),formatMessage (
+                    "err_enumerationType_DupEle",extEle.getName()));
         }
         return;
       }
     }
     // not found, therfore new element
     // no additional elements allowed
-    if(tree.isFinal()){
-      throw new IllegalArgumentException (formatMessage (
-        "err_enumerationType_ExtFinal",newele.getName()));
+    if(baseTree.isFinal()){
+      throw new Ili2cSemanticException (extEle.getSourceLine(),formatMessage (
+        "err_enumerationType_ExtFinal",extEle.getName()));
     }
   }
 

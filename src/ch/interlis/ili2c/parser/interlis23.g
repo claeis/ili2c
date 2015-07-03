@@ -2204,9 +2204,11 @@ protected enumeration [Type extending]
 }
   : LPAREN
     (
-      (curElement = enumElement[extending] { elements.add(curElement); }
-        (COMMA curElement = enumElement[extending] 
+      (curElement = enumElement[elements,extending] { elements.add(curElement); }
+        (COMMA curElement = enumElement[elements,extending] 
     	  { 
+    	  	// new element?
+    	  	if(curElement!=null){
 		  Iterator elei=elements.iterator();
 		  while(elei.hasNext()){
 			  ch.interlis.ili2c.metamodel.Enumeration.Element ele=(ch.interlis.ili2c.metamodel.Enumeration.Element)elei.next();
@@ -2215,7 +2217,10 @@ protected enumeration [Type extending]
 				  break;
 			  }
 		  }
-	  	elements.add(curElement); 
+		  elements.add(curElement); 
+    	  	}else{
+    	  	  // extension of existing element alread done in enumElement[]
+    	  	}
 	  }
         )*
         ( COLON "FINAL"  {isFinal=true;} )?
@@ -2226,13 +2231,12 @@ protected enumeration [Type extending]
     {
       enumer = new ch.interlis.ili2c.metamodel.Enumeration(elements);
       enumer.setFinal(isFinal);
-      // TODO: if extendig, check matching of prefixes with base definition
     }
   ;
 
 
 
-protected enumElement [Type extending]
+protected enumElement [List elements,Type extending]
   returns [ch.interlis.ili2c.metamodel.Enumeration.Element ee]
 {
   ch.interlis.ili2c.metamodel.Enumeration subEnum = null;
@@ -2250,16 +2254,141 @@ protected enumElement [Type extending]
 
     {
       siz = elt.size();
-      for (int i = siz - 1; i >= 0; i--)
-      {
-        // last path element?
-        if (i == siz - 1)
-        {
+      if ((subEnum == null) && (siz > 1)){
+        reportError (rsrc.getString("err_dottedEnum"), lineNumber);
+      }
+      if(extending!=null){
+      	List eles=elements;
+ 	ch.interlis.ili2c.metamodel.Enumeration.Element existingEle=null;
+ 	int existingEleNameIdx=0;
+      	for(int i=0;i<siz;i++){
+      		String curPathEle=(String)elt.get(i);
+      		ch.interlis.ili2c.metamodel.Enumeration.Element foundEle=null;
+		Iterator elei=eles.iterator();
+		while(elei.hasNext()){
+			  ch.interlis.ili2c.metamodel.Enumeration.Element ele=(ch.interlis.ili2c.metamodel.Enumeration.Element)elei.next();
+			  if(ele.getName().equals(curPathEle)){
+			  	foundEle=ele;
+			  	break;
+			  }
+		}
+		if(foundEle!=null){
+			existingEleNameIdx=i;
+			existingEle=foundEle;
+			if(foundEle.getSubEnumeration()!=null){
+				eles=new ArrayList<ch.interlis.ili2c.metamodel.Enumeration.Element>();
+				for(Iterator<ch.interlis.ili2c.metamodel.Enumeration.Element> e=foundEle.getSubEnumeration().getElements();e.hasNext();){
+					eles.add(e.next());
+				}
+				continue;
+			}
+		}
+		break;
+	}
+      	// new path?
+      	if(existingEle==null){
+	      for (int i = siz - 1; i >= 0; i--)
+	      {
+		// last path element?
+		if (i == siz - 1)
+		{
+		  if (subEnum == null)
+		  {
+		    // new leaf
+		    ee = new ch.interlis.ili2c.metamodel.Enumeration.Element (
+		       (String) elt.get(i));
+		    ee.setDocumentation(ilidoc);
+		    ee.setMetaValues(metaValues);
+		    ee.setSourceLine(lineNumber);
+		  }
+		  else
+		  {
+		    // new subtree
+		    ee = new ch.interlis.ili2c.metamodel.Enumeration.Element (
+		       (String) elt.get(i),
+		       subEnum);
+		    ee.setDocumentation(ilidoc);
+		    ee.setMetaValues(metaValues);
+		    ee.setSourceLine(lineNumber);
+		  }
+		}
+		else
+		{
+		  // not last path element
+		  List subEe=new ArrayList();
+		  subEe.add(ee);
+		  ee = new ch.interlis.ili2c.metamodel.Enumeration.Element (
+		       (String) elt.get(i),
+		       new ch.interlis.ili2c.metamodel.Enumeration (subEe)
+		  );
+		  ee.setSourceLine(lineNumber);
+		}
+	      }
+      	}else{
+	      	// extend exisiting path
+	      ch.interlis.ili2c.metamodel.Enumeration.Element newEle=null;
+	      for (int i = siz - 1; i >= existingEleNameIdx; i--)
+	      {
+		// last path element?
+		if (i == siz - 1)
+		{
+		  if (subEnum == null)
+		  {
+		    // new leaf
+		    newEle = new ch.interlis.ili2c.metamodel.Enumeration.Element (
+		       (String) elt.get(i));
+		    newEle.setDocumentation(ilidoc);
+		    newEle.setMetaValues(metaValues);
+		    newEle.setSourceLine(lineNumber);
+		  }
+		  else
+		  {
+		    // new subtree
+		    newEle = new ch.interlis.ili2c.metamodel.Enumeration.Element (
+		       (String) elt.get(i),
+		       subEnum);
+		    newEle.setDocumentation(ilidoc);
+		    newEle.setMetaValues(metaValues);
+		    newEle.setSourceLine(lineNumber);
+		  }
+		}
+		else
+		{
+		  // not last path element
+		  // first new path element?
+		  if(i==existingEleNameIdx){
+		  	// check that it is a new name in this extension
+			  Iterator elei=existingEle.getSubEnumeration().getElements();
+			  while(elei.hasNext()){
+				  ch.interlis.ili2c.metamodel.Enumeration.Element ele=(ch.interlis.ili2c.metamodel.Enumeration.Element)elei.next();
+				  if(ele.getName().equals(newEle.getName())){
+					  reportError(formatMessage("err_enumerationType_DupEle",newEle.getName()),existingEle.getSourceLine());
+					  break;
+				  }
+			  }
+		  	existingEle.getSubEnumeration().addElement(newEle);
+		  }else{
+			  // not first new path element
+			  List subEe=new ArrayList();
+			  subEe.add(newEle);
+			  newEle = new ch.interlis.ili2c.metamodel.Enumeration.Element (
+			       (String) elt.get(i),
+			       new ch.interlis.ili2c.metamodel.Enumeration (subEe)
+			  );
+			  newEle.setSourceLine(lineNumber);
+		  }
+		}
+	      }
+      	}
+      }else{
+      	if(siz > 1){
+        	reportError (rsrc.getString("err_dottedEnum"), lineNumber);
+        }
           if (subEnum == null)
           {
 	    // new leaf
             ee = new ch.interlis.ili2c.metamodel.Enumeration.Element (
-               (String) elt.get(i));
+               (String) elt.get(0));
 	    ee.setDocumentation(ilidoc);
 	    ee.setMetaValues(metaValues);
 	    ee.setSourceLine(lineNumber);
@@ -2268,26 +2397,13 @@ protected enumElement [Type extending]
           {
 	    // new subtree
             ee = new ch.interlis.ili2c.metamodel.Enumeration.Element (
-               (String) elt.get(i),
+               (String) elt.get(0),
                subEnum);
 	    ee.setDocumentation(ilidoc);
 	    ee.setMetaValues(metaValues);
 	    ee.setSourceLine(lineNumber);
           }
-        }
-        else
-        {
-	  List subEe=new ArrayList();
-	  subEe.add(ee);
-          ee = new ch.interlis.ili2c.metamodel.Enumeration.Element (
-               (String) elt.get(i),
-               new ch.interlis.ili2c.metamodel.Enumeration (subEe)
-          );
-	  ee.setSourceLine(lineNumber);
-        }
       }
-      if ((subEnum == null) && (siz > 1))
-        reportError (rsrc.getString("err_dottedEnum"), lineNumber);
     }
   ;
 
