@@ -28,7 +28,7 @@ public class ObjectPath extends Evaluable
 	*/
 	public Type getType()
 	{
-		PathEl last=path[path.length-1];
+		PathEl last=getLastPathEl();
 		if(!(last instanceof AbstractAttributeRef)){
 			throw new IllegalArgumentException(Element.formatMessage(
 				"err_objectPath_notAnAttributePath",toString()));
@@ -54,4 +54,7 @@ public class ObjectPath extends Evaluable
         public PathEl[] getPathElements(){
           return path;
         }
+        public PathEl getLastPathEl(){
+            return path[path.length-1];
+          }
 }
