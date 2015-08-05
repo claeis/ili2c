@@ -134,6 +134,7 @@
     <jar jarfile="${projectjar}" manifest="other/manifest">
 	<fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class" includes="**/*.class"/>
     	<fileset dir="${src}" includes="**/*.properties"/>
+    	<fileset dir="${src}" includes="**/*.xsd"/>
     	<fileset dir="${src}" includes="**/iom/AliasTable.txt"/>
     	<zipfileset src="lib/antlr.jar"/>
     	<!-- zipfileset src="lib/xerces.jar"/>
@@ -199,6 +200,7 @@
 	    	<patternset includes="lib/*.jar"/>
 	    	<patternset includes="other/manifest"/>
 	    	<patternset includes="src/**/*.java" excludes="**/bak~/*.java"/>
+	    	<patternset includes="src/**/*.xsd"/>
 	    	<patternset includes="src/**/*.properties"/>
 		<patternset includes="src/**/iom/AliasTable.txt"/>
 	    	<patternset includes="${build}/src/**/*.java"/>

@@ -1,6 +1,7 @@
 package ch.interlis.ili2c;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -11,6 +12,17 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.iox.ilisite.IliRepository09.ModelName_;
@@ -50,6 +62,7 @@ public class CheckReposIlis {
 		}
 	}
 
+	private boolean validationErrors=false;
 	public boolean checkRepoIlis(Configuration config,
 			UserSettings settings) {
 		
@@ -75,10 +88,68 @@ public class CheckReposIlis {
 					EhiLogger.logAdaption("URL <"+repos+"> contains no "+IliManager.ILIMODELS_XML+"; ignored");
 					continue;
 				}
+				// xsd validate file
+				{
+				    javax.xml.transform.Source schemaFiles[] =  null;
+					try{
+				    javax.xml.transform.Source schemaFiles2[] =  {
+					    		new StreamSource(getClass().getResource( "/IliRepository09.xsd" ).toString())
+					    };
+						schemaFiles=schemaFiles2;
+					}catch(java.lang.NullPointerException ex){
+			        	EhiLogger.logError("failed to create schema",ex);
+					}
+				    Schema schema=null;
+				    if(schemaFiles!=null){
+					    SchemaFactory factory = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+						try {
+							schema = factory.newSchema(schemaFiles);
+						} catch (SAXException ex) {
+							EhiLogger.logError("failed to read schema",ex);
+						}
+				    }
+				    if(schema!=null){
+						javax.xml.validation.ValidatorHandler validator = schema
+								.newValidatorHandler();
+						validator.setErrorHandler(new org.xml.sax.ErrorHandler(){
+							public void error(SAXParseException ex)
+									throws SAXException {
+								EhiLogger.logError(IliManager.ILIMODELS_XML+":"+ex.getLineNumber()+":"+ex.getColumnNumber()+":"+ex.getMessage());
+								validationErrors=true;
+							}
+
+							public void fatalError(SAXParseException ex)
+									throws SAXException {
+								EhiLogger.logError(ex);
+							}
+
+							public void warning(SAXParseException ex)
+									throws SAXException {
+								EhiLogger.logError(ex);
+							}
+						});
+						javax.xml.stream.XMLInputFactory inputFactory = javax.xml.stream.XMLInputFactory.newInstance();
+						FileInputStream inputFile;
+						XMLEventReader reader;
+						try {
+							//inputFile = new java.io.FileInputStream(ilimodelsFile);
+							//reader = inputFactory.createXMLEventReader(inputFile);
+							//validator.validate(new javax.xml.transform.stax.StAXSource(reader));
+							
+							XMLReader parser = XMLReaderFactory.createXMLReader();
+							
+							parser.setErrorHandler(validator.getErrorHandler());
+							parser.setContentHandler(validator);
+							parser.parse(ilimodelsFile.getAbsolutePath());
+						} catch (Exception ex) {
+							EhiLogger.logError("failed to validate "+IliManager.ILIMODELS_XML,ex);
+						}
+				    }
+					
+				}
 				// read file
 				ArrayList<ModelMetadata> modelMetadatav = RepositoryAccess.readIliModelsXml(ilimodelsFile);
 				modelMetadatav = RepositoryAccess.getLatestVersions(modelMetadatav);
-				
 				IliFiles files;
 				try {
 					files = RepositoryAccess.createIliFiles(repos, modelMetadatav);
@@ -116,7 +187,7 @@ public class CheckReposIlis {
 										continue;
 									}
 									if(model.getFileName()!=null && model.getFileName().equals(iliFile.getAbsolutePath())){
-										EhiLogger.logState("ckeck model "+model.getFileName());
+										EhiLogger.logState("check model "+model.getFileName());
 										ModelMetadata_SchemaLanguage csl=null;
 										if(model.getIliVersion().equals(Model.ILI1)){
 											csl=ModelMetadata_SchemaLanguage.ili1;
@@ -216,6 +287,9 @@ public class CheckReposIlis {
 				sep=", ";
 			}
 			EhiLogger.logError("compile failed with files: "+failed);
+			if(validationErrors){
+				EhiLogger.logError("syntax errors in "+IliManager.ILIMODELS_XML);
+			}
 		}
 		return failedFiles.size()!=0;
 	}
