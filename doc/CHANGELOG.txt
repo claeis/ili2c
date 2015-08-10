@@ -1,11 +1,12 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
-ili2c 4.5.14 (2015-07-xx)
+ili2c 4.5.14 (2015-08-10)
 ---------------------------
 - ili23: UniquenessConstraint with roleDef as PathEl fails ("roleName" is not a path to an attribute)
 - repo-check: log ili2c version
 - repo-check: failed to check more than one model with an obsolete version
+- iox-ili 1.10.4
 
 ili2c 4.5.13 (2015-07-03)
 ---------------------------
