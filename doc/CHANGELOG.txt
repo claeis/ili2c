@@ -7,6 +7,7 @@ ili2c 4.5.14 (2015-08-10)
 - repo-check: log ili2c version
 - repo-check: failed to check more than one model with an obsolete version
 - iox-ili 1.10.4
+- gml: added ILIGML (pre-eCH-0118) xsd export as -oETF1
 
 ili2c 4.5.13 (2015-07-03)
 ---------------------------

@@ -12,10 +12,6 @@ import java.util.*;
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.io.IndentPrintWriter;
 
-/** writes a GML 3.2-application schema
- * 
- * @author ce
- */
 public final class ETF1Generator
 {
     public static final String ILIGML_XMLNSBASE="http://www.interlis.ch/INTERLIS2.3/GML32";
@@ -23,7 +19,6 @@ public final class ETF1Generator
     public static final String TRANSFER="TRANSFER";
     public static final String TRANSFERMEMBER="baskets";
     public static final String ORDER_POS="ORDER_POS";
-    public static final String REF="ref";
     public static final String LINK_DATA="LINK_DATA";
     
   IndentPrintWriter   ipw;
@@ -202,66 +197,65 @@ public final class ETF1Generator
 	
 	// init globals
 	currentModel=model;
-	surfaceOrAreaAttrs=new ArrayList();
+	codelists=new ArrayList();
+	areaAttrs=new ArrayList();
 	
 	// start output
 	ipw.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
 	ipw.println("<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"");
 	ipw.indent();
-	ipw.println("xmlns=\""+getNsName(model)+"\""
-	  +" targetNamespace=\""+getNsName(model)+"\""
+	ipw.println("xmlns=\""+ILIGML_XMLNSBASE+"/"+model.getName()+"\""
+	  +" targetNamespace=\""+ILIGML_XMLNSBASE+"/"+model.getName()+"\""
 	  +" elementFormDefault=\"qualified\" attributeFormDefault=\"unqualified\"");
-		ipw.println("xmlns:esd=\"http://esd.ehi.ch/etf/1\"");
-		ipw.println("xmlns:xml=\"http://www.w3.org/XML/1998/namespace\"");
+		// xmlns declartion of GML
+		ipw.println("xmlns:gml=\"http://www.opengis.net/gml/3.2\"");
+		// xmlns declaration of base ILIGML schema
+		ipw.println("xmlns:INTERLIS=\""+ILIGML_XMLNSBASE+"/INTERLIS\"");
+		ipw.println("xmlns:ili2c=\"http://www.interlis.ch/ili2c\"");
 		// xmlns declartion of imported ili-models
 		Model importedModels[]=model.getImporting();
 		for(int modeli=0;modeli<importedModels.length;modeli++){
 			if(importedModels[modeli]!=td.INTERLIS){
-				ipw.println("xmlns:"+importedModels[modeli].getName()+"=\""+getNsName(importedModels[modeli])+"\"");
+				ipw.println("xmlns:"+importedModels[modeli].getName()+"=\""+ILIGML_XMLNSBASE+"/"+importedModels[modeli].getName()+"\"");
 			}
 		}
 	ipw.println(">");
 	ipw.unindent();
 
-	if(false){
-		ipw.println ("<xsd:annotation>");
-		
-	    // compiler info
-		ipw.indent ();
-		ipw.print("<xsd:appinfo source=\"http://www.interlis.ch/ili2c/ili2cversion\">");
-		ipw.print(ch.interlis.ili2c.Main.getVersion());
-		ipw.println ("</xsd:appinfo>");
-		
-		// ilimodel info
-		ipw.println("<xsd:appinfo source=\"http://www.interlis.ch/ili2c\">");
-		ipw.indent();
-		ipw.println("<ili2c:model>"+model.getName()+"</ili2c:model>");
-		if(model.getIliVersion().equals(Model.ILI1)){
-			// ili1 model has no issuer+version
-		}else{
-			ipw.println("<ili2c:modelVersion>"+model.getModelVersion()+"</ili2c:modelVersion>");
-			if(model.getModelVersionExpl()!=null){
-				ipw.println("<ili2c:modelVersionExplanation>"+model.getModelVersionExpl()+"</ili2c:modelVersionExplanation>");
-			}
-			ipw.println("<ili2c:modelAt>"+model.getIssuer()+"</ili2c:modelAt>");
+    // compiler info
+	ipw.println ("<xsd:annotation>");
+	ipw.indent ();
+	ipw.print("<xsd:appinfo source=\"http://www.interlis.ch/ili2c/ili2cversion\">");
+	ipw.print(ch.interlis.ili2c.Main.getVersion());
+	ipw.println ("</xsd:appinfo>");
+	
+	// ilimodel info
+	ipw.println("<xsd:appinfo source=\"http://www.interlis.ch/ili2c\">");
+	ipw.indent();
+	ipw.println("<ili2c:model>"+model.getName()+"</ili2c:model>");
+	if(model.getIliVersion().equals(Model.ILI1)){
+		// ili1 model has no issuer+version
+	}else{
+		ipw.println("<ili2c:modelVersion>"+model.getModelVersion()+"</ili2c:modelVersion>");
+		if(model.getModelVersionExpl()!=null){
+			ipw.println("<ili2c:modelVersionExplanation>"+model.getModelVersionExpl()+"</ili2c:modelVersionExplanation>");
 		}
-		ipw.unindent();
-		ipw.println ("</xsd:appinfo>");
-		ipw.unindent();
-		ipw.println ("</xsd:annotation>");
+		ipw.println("<ili2c:modelAt>"+model.getIssuer()+"</ili2c:modelAt>");
 	}
+	ipw.unindent();
+	ipw.println ("</xsd:appinfo>");
+	ipw.unindent();
+	ipw.println ("</xsd:annotation>");
 
 	
-	if(false){
-		// import of GML schema
-		ipw.println("<xsd:import namespace=\"http://www.opengis.net/gml/3.2\"/>");
-		// import of base ILIGML schema
-		ipw.println("<xsd:import namespace=\""+ILIGML_XMLNSBASE+"/INTERLIS\"/>");
-	}
+	// import of GML schema
+	ipw.println("<xsd:import namespace=\"http://www.opengis.net/gml/3.2\"/>");
+	// import of base ILIGML schema
+	ipw.println("<xsd:import namespace=\""+ILIGML_XMLNSBASE+"/INTERLIS\"/>");
 	// import schemas of imported ili-models
 	for(int modeli=0;modeli<importedModels.length;modeli++){
 		if(importedModels[modeli]!=td.INTERLIS){
-			ipw.println("<xsd:import namespace=\""+getNsName(importedModels[modeli])+"\"/>");
+			ipw.println("<xsd:import namespace=\""+ILIGML_XMLNSBASE+"/"+importedModels[modeli].getName()+"\"/>");
 		}
 	}
 	Iterator topici = model.iterator();
@@ -285,14 +279,11 @@ public final class ETF1Generator
 		}
 	}
 	declareLinetables();
+	declareCodelists();
 	ipw.println ("</xsd:schema>");
 	ipw.close();
   }
 
-  private String getNsName(Model model)
-  {
-	  return ILIGML_XMLNSBASE+"/"+model.getName();
-  }
   private void declareTopic (Topic topic)
   {
 
@@ -309,47 +300,71 @@ public final class ETF1Generator
 			// if(obj instanceof LineForm){
 		}
 
+	// member
+	 ipw.println ("<xsd:complexType name=\""+getName(topic)+"MemberType\">");
+	 ipw.indent ();
+	 ipw.println ("<xsd:complexContent>");
+	 ipw.indent ();
+	 ipw.println ("<xsd:extension base=\"gml:AbstractFeatureMemberType\">");
+	 ipw.indent ();
+	ipw.println ("<xsd:sequence>");
+	ipw.indent ();
+	ipw.println ("<xsd:choice>");
+	ipw.indent ();
+	 /* Find which viewables are going to be elements of this topic. */
+	 iter = topic.getViewables().iterator();
+	 while (iter.hasNext()) {
+		 Object obj = iter.next();
+	      if ((obj instanceof Viewable) && !AbstractPatternDef.suppressViewableInTransfer((Viewable)obj)){
+			 Viewable v = (Viewable) obj;
+			 ipw.println("<xsd:element ref=\"" + getScopedName(v) + "\"/>");
+		 }
+	 }
+	 // add line tables
+	  Iterator attri=areaAttrs.iterator();
+	  while(attri.hasNext()){
+		  AttributeDef attr=(AttributeDef)attri.next();
+		  AbstractClassDef aclass=(AbstractClassDef)attr.getContainer();
+		  if(aclass.getContainer()==topic){
+			  String linetableName=getName(aclass)+"."+getTransferName(attr);
+			  ipw.println("<xsd:element ref=\"" + linetableName + "\"/>");
+		  }
+	  }
+	ipw.unindent();
+	ipw.println ("</xsd:choice>");
+	ipw.unindent();
+	ipw.println ("</xsd:sequence>");
+	 ipw.unindent();
+	 ipw.println ("</xsd:extension>");
+	 ipw.unindent();
+	 ipw.println("</xsd:complexContent>");
+	 ipw.unindent();
+	 ipw.println ("</xsd:complexType>");
+	
+   ipw.println("<xsd:element name=\""+getName(topic)+"\" type=\""+getName(topic)+"Type\" substitutionGroup=\"gml:AbstractFeature\"/>");
+    ipw.println ("<xsd:complexType name=\""+getName(topic)+"Type\">");
+	ipw.indent ();
+    ipw.println ("<xsd:complexContent>");
+	ipw.indent ();
+    ipw.println ("<xsd:extension base=\"gml:AbstractFeatureType\">");
+	ipw.indent ();
+	ipw.println ("<xsd:sequence>");
+	ipw.indent ();
+	ipw.println ("<xsd:element name=\""+BASKETMEMBER+"\" type=\""+getName(topic)+"MemberType\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>");
+	ipw.unindent ();
+	ipw.println ("</xsd:sequence>");
+	ipw.println ("<xsd:attributeGroup ref=\"gml:AggregationAttributeGroup\"/>");
+	ipw.unindent ();
+	ipw.println ("</xsd:extension>");
+	ipw.unindent ();
+	ipw.println ("</xsd:complexContent>");
+	ipw.unindent ();
+	ipw.println ("</xsd:complexType>");
+
   }
 
 
-  private boolean isMultiValueWrapper(Viewable v)
-  {
-	  Domain domain=getMultiValueDomain(v);
-	  return domain!=null ? true : false;
-  }
-  private Domain getMultiValueDomain(Viewable v)
-  {
-	  if(v instanceof AssociationDef){
-		  return null;
-	  }
-	  Table aclass=(Table)v;
-	  if(aclass.isIdentifiable()){
-		  return null;
-	  }
-	  Iterator attri=v.getAttributes();
-	  AttributeDef attr=null;
-	  if(!attri.hasNext()){
-		  return null;
-	  }
-	  attr=(AttributeDef)attri.next();
-	  
-	  // more than one attribute?
-	  if(attri.hasNext()){
-		  return null;
-	  }
-	  if(!attr.getName().equals("value")){
-		  return null;
-	  }
-	  Type type=attr.getDomain();
-	  if(!(type instanceof TypeAlias)){
-		  return null;
-	  }
-	  Domain domain=((TypeAlias)type).getAliasing();
-	  if(!(domain.getName()+"_").equals(v.getName())){
-		  return null;
-	  }
-	  return domain;
-  }
+
   private void declareAbstractClassDef(Viewable v)
   {
 	  if(v instanceof AssociationDef){ 
@@ -358,35 +373,32 @@ public final class ETF1Generator
 			  // derived; skip it
 			  return;
 		  }
-		  if(!v.getAttributes().hasNext()){
-			  // no attributes
+		  if(v.isFinal() && !v.getAttributes().hasNext() && assoc.isLightweight()){
+			  // final lightweight without attributes
 			  // skip it
 			  return;
 		  }
 	  }
-	  if(isMultiValueWrapper(v)){
-		  return;
-	  }
+  	String baseElement="gml:AbstractFeature";
   	Viewable baseType=(Viewable)v.getExtending();
   	if(baseType!=null){
-  		String baseElement=getScopedName(baseType);
-  		ipw.println("<xsd:element name=\""+getName(v)+"\" type=\""+getName(v)+"Type\" substitutionGroup=\""+baseElement+"\"/>");
-  	}else{
-  		ipw.println("<xsd:element name=\""+getName(v)+"\" type=\""+getName(v)+"Type\"/>");
+  		baseElement=getScopedName(baseType);
   	}
+	ipw.println("<xsd:element name=\""+getName(v)+"\" type=\""+getName(v)+"Type\" substitutionGroup=\""+baseElement+"\"/>");
 	ipw.println("<xsd:complexType  name=\"" + getName(v) + "Type\">");
 	ipw.indent ();
+	ipw.println ("<xsd:complexContent>");
+  	ipw.indent ();
+  	String baseXsdType="gml:AbstractFeatureType";
 	if(baseType!=null){
-		String baseXsdType=getScopedName(baseType)+"Type";
-		ipw.println ("<xsd:complexContent>");
-	  	ipw.indent ();
-		ipw.println ("<xsd:extension base=\""+baseXsdType+"\">");
-		ipw.indent ();
+		baseXsdType=getScopedName(baseType)+"Type";
 	}
+	ipw.println ("<xsd:extension base=\""+baseXsdType+"\">");
+	ipw.indent ();
 	ipw.println("<xsd:sequence>");
 	ipw.indent();
 	/* Find which attributes are going to be elements of this class. */
-	Iterator iter = getDefinedAttributesAndRoles(v);
+	Iterator iter = v.getAttributesAndRoles2();
 	while (iter.hasNext()) {
 		ViewableTransferElement obj = (ViewableTransferElement)iter.next();
 		if (obj.obj instanceof AttributeDef) {
@@ -399,20 +411,20 @@ public final class ETF1Generator
 		if(obj.obj instanceof RoleDef){
 			RoleDef role = (RoleDef) obj.obj;
 			
-			// not an embedded role?
-			if (!obj.embedded){
+			// not an embedded role and roledef not defined in a lightweight association?
+			if (!obj.embedded && !((AssociationDef)v).isLightweight() && v.getExtending()==null){
 				if(role.getExtending()==null){
 					if(role.isOrdered()){
-						ipw.println("<xsd:element name=\""+ getTransferName(role)+ ">");
+						ipw.println("<xsd:element name=\""+ getTransferName(role)+ "\">");
 					}else{
-						ipw.println("<xsd:element name=\""+ getTransferName(role)+ "\" type=\"xsd:IDREF\">");
+						ipw.println("<xsd:element name=\""+ getTransferName(role)+ "\" type=\"gml:ReferenceType\">");
 					}
 					ipw.indent();
 					ipw.println("<xsd:annotation>");
 						ipw.indent();
 						ipw.println("<xsd:appinfo>");
 							ipw.indent();
-							ipw.println("<esd:targetElement>"+getScopedName(role.getDestination())+"</esd:targetElement>");
+							ipw.println("<gml:targetElement>"+getScopedName(role.getDestination())+"</gml:targetElement>");
 							ipw.unindent();
 						ipw.println("</xsd:appinfo>");
 						ipw.unindent();
@@ -445,74 +457,49 @@ public final class ETF1Generator
 						if (card.getMinimum() == 0) {
 							minOccurs = " minOccurs=\"0\"";
 						}
-						String maxOccurs = "";
-						if (card.getMaximum()==Cardinality.UNBOUND) {
-							maxOccurs = " maxOccurs=\"unbounded\"";
-						}else if(card.getMaximum()>1){
-							maxOccurs = " maxOccurs=\""+card.getMaximum()+"\"";
+						if(oppend.isOrdered()){
+							ipw.println("<xsd:element name=\""+ getTransferName(role)+"\""+ minOccurs+">");
+						}else{
+							ipw.println("<xsd:element name=\""+ getTransferName(role)+ "\" type=\"gml:ReferenceType\""+minOccurs+">");
 						}
-						if(oppend.getKind()==RoleDef.Kind.eCOMPOSITE){
-							ipw.println("<xsd:element name=\""+ getTransferName(role)+"\""+ minOccurs+ maxOccurs+">");
+						ipw.indent();
+						ipw.println("<xsd:annotation>");
+							ipw.indent();
+							ipw.println("<xsd:appinfo>");
+								ipw.indent();
+								ipw.println("<gml:targetElement>"+getScopedName(role.getDestination())+"</gml:targetElement>");
+								ipw.unindent();
+							ipw.println("</xsd:appinfo>");
+							ipw.unindent();
+						ipw.println("</xsd:annotation>");
+						if(oppend.isOrdered()){
+							ipw.println("<xsd:complexType>");
+							ipw.indent();
+							ipw.println("<xsd:sequence/>");
+							ipw.println("<xsd:attributeGroup ref=\"gml:OwnershipAttributeGroup\"/>");
+							ipw.println("<xsd:attributeGroup ref=\"gml:AssociationAttributeGroup\"/>");
+							ipw.println("<xsd:attribute ref=\"INTERLIS:"+ORDER_POS+"\"/>");					
+							ipw.unindent();
+							ipw.println("</xsd:complexType>");
+						}
+						//ipw.println("<!-- "+PRBLMTAG+" unable to express aggregation kind -->");
+						//ipw.println("<!-- "+PRBLMTAG+" unable to express cardinality -->");
+						ipw.unindent();
+						ipw.println("</xsd:element>");
+						if(!roleOwner.isFinal() || roleOwner.getAttributes().hasNext()){
+							ipw.println("<xsd:element name=\""+ getTransferName(role)+ "."+LINK_DATA+"\" minOccurs=\"0\">");
 							ipw.indent();
 							ipw.println("<xsd:complexType>");
 							ipw.indent();
 							ipw.println("<xsd:sequence>");
-							ipw.println("<xsd:element ref=\""+getScopedName(role.getDestination())+"\"/>");
+							ipw.indent();
+							ipw.println("<xsd:element ref=\""+ getScopedName(roleOwner)+ "\"/>");
+							ipw.unindent();
 							ipw.println("</xsd:sequence>");
 							ipw.unindent();
 							ipw.println("</xsd:complexType>");
 							ipw.unindent();
 							ipw.println("</xsd:element>");
-						}else if(oppend.getKind()==RoleDef.Kind.eAGGREGATE){
-							EhiLogger.logAdaption(roleOwner.getScopedName(null)+": aggregate ignored");
-						}else{
-							if(oppend.isOrdered()){
-								ipw.println("<xsd:element name=\""+ getTransferName(role)+"\""+ minOccurs+ maxOccurs+">");
-							}else{
-								ipw.println("<xsd:element name=\""+ getTransferName(role)+ "\""+minOccurs+maxOccurs+">");
-							}
-							ipw.indent();
-							ipw.println("<xsd:annotation>");
-								ipw.indent();
-								ipw.println("<xsd:appinfo>");
-									ipw.indent();
-									ipw.println("<esd:targetElement>"+getScopedName(role.getDestination())+"</esd:targetElement>");
-									ipw.unindent();
-								ipw.println("</xsd:appinfo>");
-								ipw.unindent();
-							ipw.println("</xsd:annotation>");
-								ipw.println("<xsd:complexType>");
-								ipw.indent();
-								ipw.println("<xsd:sequence/>");
-								ipw.println("<xsd:attribute name=\""+REF+"\" type=\"xsd:IDREF\"/>");					
-								if(oppend.isOrdered()){
-								ipw.println("<xsd:attribute name=\""+ORDER_POS+"\" type=\"xsd:positiveInteger\"/>");					
-								}
-								ipw.unindent();
-								ipw.println("</xsd:complexType>");
-							//ipw.println("<!-- "+PRBLMTAG+" unable to express aggregation kind -->");
-							//ipw.println("<!-- "+PRBLMTAG+" unable to express cardinality -->");
-							ipw.unindent();
-							ipw.println("</xsd:element>");
-							
-						}
-						if(roleOwner.getAttributes().hasNext()){
-							EhiLogger.logAdaption(roleOwner.getScopedName(null)+": assoc attrs ignored");
-							if(false){
-								ipw.println("<xsd:element name=\""+ getTransferName(role)+ "."+LINK_DATA+"\" minOccurs=\"0\">");
-								ipw.indent();
-								ipw.println("<xsd:complexType>");
-								ipw.indent();
-								ipw.println("<xsd:sequence>");
-								ipw.indent();
-								ipw.println("<xsd:element ref=\""+ getScopedName(roleOwner)+ "\"/>");
-								ipw.unindent();
-								ipw.println("</xsd:sequence>");
-								ipw.unindent();
-								ipw.println("</xsd:complexType>");
-								ipw.unindent();
-								ipw.println("</xsd:element>");
-							}
 						}
 					}
 				}
@@ -521,74 +508,15 @@ public final class ETF1Generator
 	}
 	ipw.unindent();
 	ipw.println("</xsd:sequence>");
-	if(baseType!=null){
-		ipw.unindent();
-		ipw.println("</xsd:extension>");
-		ipw.unindent();
-		ipw.println("</xsd:complexContent>");
-	}else{
-		/* ipw.println ("<xsd:attribute ref=\"xml:id\"/>"); */
-		ipw.println ("<xsd:attribute name=\"id\" type=\"xsd:ID\"/>");
-	}
+	ipw.unindent();
+	ipw.println("</xsd:extension>");
+	ipw.unindent();
+	ipw.println("</xsd:complexContent>");
 	ipw.unindent();
 	ipw.println("</xsd:complexType>");
+
   }
 
-  public Iterator getDefinedAttributesAndRoles(Viewable athis)
-  {
-		List result=new ArrayList(); // of Element
-		Viewable v=athis;
-		// for all, at this level defined/extended, attributes and roles
-		Iterator[] it = new Iterator[]
-		{
-			v.getRolesIterator(),
-		  v.getDefinedAttributes()
-		};
-		Iterator attri=new CombiningIterator(it);
-		//Iterator attri=v.iterator();
-		while(attri.hasNext()){
-			Object obj=attri.next();
-			if(obj instanceof AttributeDef){
-				AttributeDef attr=(AttributeDef)obj;
-				result.add(new ViewableTransferElement(obj));
-			}else if(obj instanceof RoleDef){
-				RoleDef role=(RoleDef)obj;
-				result.add(new ViewableTransferElement(obj));
-			}
-		}
-		if(v instanceof AbstractClassDef){
-			// for all, at this level defined/extended, embedded associations
-			Iterator embi= ((AbstractClassDef) v).getDefinedTargetForRoles();
-			List embv = new ArrayList();
-			while(embi.hasNext()){
-				RoleDef emb=(RoleDef)embi.next();
-				if(emb.getKind()==RoleDef.Kind.eCOMPOSITE){
-					embv.add(emb);
-				}else if(emb.getKind()==RoleDef.Kind.eAGGREGATE){
-					embv.add(emb);
-				}else{
-					if(emb.getOppEnd().getKind()==RoleDef.Kind.eASSOCIATE){
-						embv.add(emb);
-					}
-				}
-			}
-			// sort them according to name of opposide role
-			java.util.Collections.sort(embv,new java.util.Comparator(){
-				public int compare(Object o1,Object o2){
-					RoleDef role1=((RoleDef)o1).getOppEnd();
-					RoleDef role2=((RoleDef)o2).getOppEnd();
-					return role1.getName().compareTo(role2.getName());
-				}
-			});
-			attri=embv.iterator();
-			while (attri.hasNext()) {
-				RoleDef role = (RoleDef) attri.next();
-				RoleDef oppend = role.getOppEnd();
-				result.add(new ViewableTransferElement(oppend,true));
-			}
-		}
-	return result.iterator ();
-  }
   private void declareDomainDef (Domain domain)
   {
   	Type type=domain.getType();
@@ -655,9 +583,9 @@ public final class ETF1Generator
         declareType(type,domain);
     }
   }
-  private ArrayList surfaceOrAreaAttrs=null; // array<AttributeDef attr>
+  private ArrayList areaAttrs=null; // array<AttributeDef attr>
   private void declareLinetables(){
-	  Iterator attri=surfaceOrAreaAttrs.iterator();
+	  Iterator attri=areaAttrs.iterator();
 	  while(attri.hasNext()){
 		  AttributeDef attr=(AttributeDef)attri.next();
 		  AbstractClassDef aclass=(AbstractClassDef)attr.getContainer();
@@ -673,21 +601,8 @@ public final class ETF1Generator
 			ipw.indent ();
 			ipw.println("<xsd:sequence>");
 			ipw.indent();
-			ipw.println("<xsd:element name=\"mainTable\" type=\"gml:ReferenceType\">");
-			ipw.indent();
-			ipw.println("<xsd:annotation>");
-			ipw.indent();
-			ipw.println("<xsd:appinfo>");
-			ipw.indent();
-			ipw.println("<gml:targetElement>"+getName(aclass)+"</gml:targetElement>");
-			ipw.unindent();
-			ipw.println("</xsd:appinfo>");
-			ipw.unindent();
-			ipw.println("</xsd:annotation>");
-			ipw.unindent();
-			ipw.println("</xsd:element>");
 			ipw.println("<xsd:element name=\"geometry\" type=\"gml:CurvePropertyType\"/>");
-			SurfaceOrAreaType type=(SurfaceOrAreaType)attr.getDomainResolvingAliases();
+			AreaType type=(AreaType)attr.getDomainResolvingAliases();
 			Table lineattrs=type.getLineAttributeStructure();
 			if(lineattrs!=null){
 				ipw.println("<xsd:element name=\"lineattr\">");
@@ -767,9 +682,9 @@ public final class ETF1Generator
     		base="xsd:dateTime";
         }else{
         	base=getScopedName(realDomain);
-        	if(realDomain.getType() instanceof SurfaceOrAreaType){
+        	if(false && realDomain.getType() instanceof AreaType){
     			// remember to create linetable
-        		surfaceOrAreaAttrs.add(attribute);
+        		areaAttrs.add(attribute);
         	}
         }
     	if(facets==null){
@@ -838,14 +753,28 @@ public final class ETF1Generator
 			//}
 			ipw.unindent();
 			ipw.println("</xsd:element>");
+		}else if (type instanceof AreaType){
+        	String base=getScopedName(((AreaType)type).getControlPointDomain());
+      	  	ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\""+base+"\""+minOccurs+">");
+			ipw.indent();
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express domain/unit/crs of control points -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express allowed line forms -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express line attributes -->");
+			//ipw.println("<!-- "+PRBLMTAG+" unable to express overlaps -->");
+			//if(type instanceof AreaType){
+			//	ipw.println("<!-- "+PRBLMTAG+" unable to express AREA constraint -->");
+			//}
+			ipw.unindent();
+			ipw.println("</xsd:element>");
 			// remember to create linetable
-       		surfaceOrAreaAttrs.add(attribute);
+       		areaAttrs.add(attribute);
 		}else if (type instanceof CompositionType){
 			CompositionType composition=(CompositionType)type;
 			Table part=composition.getComponentType();
 			Cardinality card=composition.getCardinality();
 			minOccurs="";
-			if(card.getMinimum()!=1){
+			if(card.getMinimum()>1){
+				// cases 0 and 1 are are handled at attribute level
 				minOccurs=" minOccurs=\""+Long.toString(card.getMinimum())+"\"";
 			}
 			String maxOccurs="";
@@ -856,38 +785,39 @@ public final class ETF1Generator
 					maxOccurs=" maxOccurs=\""+Long.toString(card.getMaximum())+"\"";
 				}
 			}
-			if(isMultiValueWrapper(part)){
-				Domain valueDomain=getMultiValueDomain(part);
-				ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\""+getScopedName(valueDomain)+"\""+minOccurs+maxOccurs+"/>");
-			}else{
-				ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\""+minOccurs+maxOccurs+">");
+			ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\""+minOccurs+maxOccurs+">");
+			ipw.indent ();
+			ipw.println ("<xsd:complexType>");
 				ipw.indent ();
-				ipw.println ("<xsd:complexType>");
+				ipw.println ("<xsd:sequence>");
 					ipw.indent ();
-					ipw.println ("<xsd:sequence>");
-						ipw.indent ();
-						ipw.println ("<xsd:element ref=\""+getScopedName(part)+"\"/>");
-						ipw.unindent ();
-					ipw.println ("</xsd:sequence>");
+					ipw.println ("<xsd:element ref=\""+getScopedName(part)+"\"/>");
 					ipw.unindent ();
-				ipw.println ("</xsd:complexType>");
+				ipw.println ("</xsd:sequence>");
 				ipw.unindent ();
-				ipw.println ("</xsd:element>");
-			}
+			ipw.println ("</xsd:complexType>");
+			ipw.unindent ();
+			ipw.println ("</xsd:element>");
 		}else if (type instanceof ReferenceType){
-			ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"xsd:IDREF\""+minOccurs+">");
+			ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"gml:ReferenceType\""+minOccurs+">");
 				ipw.indent ();
 				ipw.println("<xsd:annotation>");
 					ipw.indent ();
 					ipw.println("<xsd:appinfo>");
 						ipw.indent ();
-						ipw.println("<esd:targetElement>"+getScopedName(((ReferenceType)type).getReferred())+"</esd:targetElement>");
+						ipw.println("<gml:targetElement>"+getScopedName(((ReferenceType)type).getReferred())+"</gml:targetElement>");
 						ipw.unindent ();
 					ipw.println("</xsd:appinfo>");
 					ipw.unindent ();
 				ipw.println("</xsd:annotation>");
 				ipw.unindent ();
 			ipw.println ("</xsd:element>");
+		}else if (type instanceof EnumerationType && !attribute.isFinal()){
+  	      ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"gml:CodeWithAuthorityType\""+minOccurs+"/>");
+	      codelists.add(attribute);
+		}else if (type instanceof EnumTreeValueType && !attribute.isFinal()){
+	  	      ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"gml:CodeWithAuthorityType\""+minOccurs+"/>");
+		      codelists.add(attribute);
 		}else{
 			ipw.println(
 				"<xsd:element name=\""
@@ -902,7 +832,74 @@ public final class ETF1Generator
 		}
     }
   }
+  private ArrayList codelists=null; // array<Domain | AttributeDef>
+  private void declareCodelists()
+  {
+	  if(codelists.size()>0){
+		  
+		  
+			ipw.println ("<xsd:annotation>");
+			ipw.indent ();
+			
+			ipw.println("<xsd:appinfo source=\"http://www.interlis.ch/ili2c\">");
+			ipw.indent();
+
+			String modelName=currentModel.getName();
+			int oid=1;
+			Iterator codelisti=codelists.iterator();
+			while(codelisti.hasNext()){
+				Element codelisto=(Element)codelisti.next();
+				String enumName=null;
+				Type type=null;
+				if(codelisto instanceof Domain){
+					Domain domain=(Domain)codelisto;
+					enumName=getName(domain);
+					type=domain.getType();
+				}else{
+					AttributeDef attr=(AttributeDef)codelisto;
+					enumName=getName(attr.getContainer())+"."+getTransferName(attr);
+					type=attr.getDomain();
+				}
+				ipw.println("<gml:Dictionary gml:id=\"o"+ oid++ +"\">");
+				ipw.indent();
+				ipw.println("<gml:identifier codeSpace=\""+ILIGML_XMLNSBASE+"/"+modelName+"\">"+enumName+"</gml:identifier>");
+				String codeSpace=ILIGML_XMLNSBASE+"/"+modelName+"/"+enumName;
+				
+				java.util.ArrayList ev = new java.util.ArrayList();
+				if(type instanceof EnumerationType){
+					buildEnumList(ev, "", ((EnumerationType)type).getConsolidatedEnumeration());					
+				}else if(type instanceof EnumTreeValueType){
+					buildEnumValList(ev, "", ((EnumTreeValueType)type).getConsolidatedEnumeration());
+				}else{
+					throw new IllegalStateException("unexpected type "+type);
+				}
+				Iterator iter = ev.iterator();
+				while (iter.hasNext()) {
+					String enumVal = (String) iter.next();
+					ipw.println("<gml:dictionaryEntry>");
+					ipw.indent();
+					ipw.println("<gml:Definition gml:id=\"o"+ oid++ +"\">");
+					ipw.indent();
+					ipw.println("<gml:identifier codeSpace=\""+codeSpace+"\">"+enumVal+"</gml:identifier>");
+					ipw.unindent();
+					ipw.println("</gml:Definition>");
+					ipw.unindent();
+					ipw.println("</gml:dictionaryEntry>");
+				}
+				
+				ipw.unindent();
+				ipw.println("</gml:Dictionary>");
+			
+			}
+
+			ipw.unindent();
+			ipw.println ("</xsd:appinfo>");
+			ipw.unindent();
+			ipw.println ("</xsd:annotation>");
+		  
+	  }
 	  
+  }
   private void declareType (Type type,Domain domain)
   {
     String typeName="";
@@ -950,21 +947,83 @@ public final class ETF1Generator
 		    ipw.unindent ();
 	    ipw.println ("</xsd:complexType>");
     }else if(type instanceof EnumerationType){
-	      ipw.println ("<xsd:simpleType"+typeName+">");
-	        ipw.indent ();
-	        ipw.println ("<xsd:restriction base=\"xsd:normalizedString\">");
-	          ipw.indent ();
-	          java.util.ArrayList ev=new java.util.ArrayList();
-	          buildEnumList(ev,"",((EnumerationType)type).getConsolidatedEnumeration());
-	          Iterator iter=ev.iterator();
-	          while(iter.hasNext()){
-	            String value=(String)iter.next();
-	            ipw.println ("<xsd:enumeration value=\""+value+"\"/>");
-	          }
-	          ipw.unindent ();
-	        ipw.println ("</xsd:restriction>");
-	        ipw.unindent ();
-	      ipw.println ("</xsd:simpleType>");
+    	if(domain!=null && !domain.isFinal()){
+    		ipw.println ("<xsd:complexType"+typeName+">");
+		    ipw.indent ();
+			ipw.println ("<xsd:simpleContent>");
+			ipw.indent ();
+			String base;
+			if(domain!=null && domain.getExtending()!=null){
+				base=getScopedName(domain.getExtending());
+			}else{
+				base="gml:CodeWithAuthorityType";
+			}
+			ipw.println ("<xsd:restriction base=\""+base+"\">");
+			ipw.indent ();
+			ipw.println ("<xsd:attribute name=\"codeSpace\" type=\"xsd:anyURI\" use=\"required\"/>");
+			ipw.unindent ();
+			ipw.println ("</xsd:restriction>");
+			ipw.unindent ();
+			ipw.println ("</xsd:simpleContent>");
+		    ipw.unindent ();
+		    ipw.println ("</xsd:complexType>");
+		    codelists.add(domain);
+    	}else{
+    	      ipw.println ("<xsd:simpleType"+typeName+">");
+    	        ipw.indent ();
+    	        ipw.println ("<xsd:restriction base=\"xsd:normalizedString\">");
+    	          ipw.indent ();
+    	          java.util.ArrayList ev=new java.util.ArrayList();
+    	          buildEnumList(ev,"",((EnumerationType)type).getConsolidatedEnumeration());
+    	          Iterator iter=ev.iterator();
+    	          while(iter.hasNext()){
+    	            String value=(String)iter.next();
+    	            ipw.println ("<xsd:enumeration value=\""+value+"\"/>");
+    	          }
+    	          ipw.unindent ();
+    	        ipw.println ("</xsd:restriction>");
+    	        ipw.unindent ();
+    	      ipw.println ("</xsd:simpleType>");
+    	}
+    }else if(type instanceof EnumTreeValueType){
+    	if(domain!=null && !domain.isFinal()){
+    		ipw.println ("<xsd:complexType"+typeName+">");
+		    ipw.indent ();
+			ipw.println ("<xsd:simpleContent>");
+			ipw.indent ();
+			String base;
+			if(domain!=null && domain.getExtending()!=null){
+				base=getScopedName(domain.getExtending());
+			}else{
+				base="gml:CodeWithAuthorityType";
+			}
+			ipw.println ("<xsd:restriction base=\""+base+"\">");
+			ipw.indent ();
+			ipw.println ("<xsd:attribute name=\"codeSpace\" type=\"xsd:anyURI\" use=\"required\"/>");
+			ipw.unindent ();
+			ipw.println ("</xsd:restriction>");
+			ipw.unindent ();
+			ipw.println ("</xsd:simpleContent>");
+		    ipw.unindent ();
+		    ipw.println ("</xsd:complexType>");
+		    codelists.add(domain);
+    	}else{
+    	      ipw.println ("<xsd:simpleType"+typeName+">");
+    	        ipw.indent ();
+    	        ipw.println ("<xsd:restriction base=\"xsd:normalizedString\">");
+    	          ipw.indent ();
+    	          java.util.ArrayList ev=new java.util.ArrayList();
+    	          buildEnumValList(ev,"",((EnumTreeValueType)type).getConsolidatedEnumeration());
+    	          Iterator iter=ev.iterator();
+    	          while(iter.hasNext()){
+    	            String value=(String)iter.next();
+    	            ipw.println ("<xsd:enumeration value=\""+value+"\"/>");
+    	          }
+    	          ipw.unindent ();
+    	        ipw.println ("</xsd:restriction>");
+    	        ipw.unindent ();
+    	      ipw.println ("</xsd:simpleType>");
+    	}
     }else if(type instanceof NumericType){
       ipw.println ("<xsd:simpleType"+typeName+">");
         ipw.indent ();
@@ -976,19 +1035,14 @@ public final class ETF1Generator
 			if(min.getAccuracy()>0){
 				if(min.getExponent()!=0){
 					ipw.println ("<xsd:restriction base=\"xsd:double\">");
-			          ipw.indent ();
-			          ipw.println ("<xsd:minInclusive value=\""+((NumericType)type).getMinimum().doubleValue()+"\"/>");
-			          ipw.println ("<xsd:maxInclusive value=\""+((NumericType)type).getMaximum().doubleValue()+"\"/>");
-			          ipw.unindent ();
-		            ipw.println ("</xsd:restriction>");
 				}else{
 					ipw.println ("<xsd:restriction base=\"xsd:decimal\">");
-			          ipw.indent ();
-			          ipw.println ("<xsd:minInclusive value=\""+((NumericType)type).getMinimum().toString()+"\"/>");
-			          ipw.println ("<xsd:maxInclusive value=\""+((NumericType)type).getMaximum().toString()+"\"/>");
-			          ipw.unindent ();
-		            ipw.println ("</xsd:restriction>");
 				}
+		          ipw.indent ();
+		          ipw.println ("<xsd:minInclusive value=\""+((NumericType)type).getMinimum().doubleValue()+"\"/>");
+		          ipw.println ("<xsd:maxInclusive value=\""+((NumericType)type).getMaximum().doubleValue()+"\"/>");
+		          ipw.unindent ();
+	            ipw.println ("</xsd:restriction>");
 			}else{
 				ipw.println ("<xsd:restriction base=\"xsd:integer\">");
 		          ipw.indent ();
@@ -1166,5 +1220,22 @@ public final class ETF1Generator
         }
       }
   }
-
+  private void buildEnumValList(java.util.List accu,String prefix1,ch.interlis.ili2c.metamodel.Enumeration enumer){
+      Iterator iter = enumer.getElements();
+      String prefix="";
+      if(prefix1.length()>0){
+        prefix=prefix1+".";
+      }
+      while (iter.hasNext()) {
+        ch.interlis.ili2c.metamodel.Enumeration.Element ee=(ch.interlis.ili2c.metamodel.Enumeration.Element) iter.next();
+        ch.interlis.ili2c.metamodel.Enumeration subEnum = ee.getSubEnumeration();
+        // add ee to accu
+        accu.add(prefix+ee.getName());
+        if (subEnum != null)
+        {
+          // ee is not leaf, add its name to prefix and add sub elements to accu
+          buildEnumList(accu,prefix+ee.getName(),subEnum);
+        }
+      }
+  }
 }
