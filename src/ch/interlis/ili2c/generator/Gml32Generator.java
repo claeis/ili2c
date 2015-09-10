@@ -118,7 +118,29 @@ public final class Gml32Generator
 	  Iterator defi=def2name.keySet().iterator();
 	  while(defi.hasNext()){
 		  Element def=(Element)defi.next();
-		  ret.put(def.getScopedName(null), def2name.get(def));
+		  if(def instanceof AttributeDef){
+			  ret.put(def.getContainer().getScopedName(null)+"."+def.getName(), def2name.get(def));
+		  }else{
+			  ret.put(def.getScopedName(null), def2name.get(def));
+		  }
+	  }
+	  return ret;
+  }
+  /** create mapping from qualified ili name to def.
+   * @return map<String iliQualifiedName,Viewable|Attribute def>
+   */
+  public static HashMap createName2DefMapping(TransferDescription td)
+  {
+	  HashMap def2name=createDef2NameMapping(td);
+	  HashMap ret=new HashMap();
+	  Iterator defi=def2name.keySet().iterator();
+	  while(defi.hasNext()){
+		  Element def=(Element)defi.next();
+		  if(def instanceof AttributeDef){
+			  ret.put(def.getContainer().getScopedName(null)+"."+def.getName(), def);
+		  }else{
+			  ret.put(def.getScopedName(null), def);
+		  }
 	  }
 	  return ret;
   }
@@ -152,14 +174,53 @@ public final class Gml32Generator
 							   while (classi.hasNext())
 							   {
 							     Element aclass = (Element)classi.next();
-							     String className=aclass.getName();
-							     if(name2def.containsKey(className)){
-							    	 	String scopedName=topicName+"."+className;
-								    	name2def.put(scopedName, aclass);							    	 
-								    	def2name.put(aclass, scopedName);
-							     }else{
-								    	name2def.put(className, aclass);
-								    	def2name.put(aclass, className);
+							     {
+								     String className=aclass.getName();
+								     if(name2def.containsKey(className)){
+								    	 	String scopedName=topicName+"."+className;
+									    	name2def.put(scopedName, aclass);							    	 
+									    	def2name.put(aclass, scopedName);
+								     }else{
+									    	name2def.put(className, aclass);
+									    	def2name.put(aclass, className);
+								     }
+							     }
+							     if(aclass instanceof Viewable){
+							    	 	Viewable v=(Viewable) aclass;
+							    		Iterator iter = v.getAttributesAndRoles2();
+							    		while (iter.hasNext()) {
+							    			ViewableTransferElement obj = (ViewableTransferElement)iter.next();
+						    				AttributeDef attrib = null;
+							    			if (obj.obj instanceof AttributeDef) {
+							    				AttributeDef attr = (AttributeDef) obj.obj;
+							    				if(attr.getExtending()==null && attr.getContainer()==v && !attr.isTransient()){
+							    					// define only new attrs (==not EXTENDED)
+							    				    Type type= attr.getDomain();
+							    				    if(type instanceof TypeAlias){
+							    				    	Domain realDomain=((TypeAlias)type).getAliasing();
+							    			        	if(realDomain.getType() instanceof AreaType){
+							    			    			// remember to create linetable
+							    			        		attrib=attr;
+							    			        	}
+							    				    }else if (type instanceof AreaType){
+						    			    			// remember to create linetable
+						    			        		attrib=attr;
+							    				    }
+							    				}
+							    			}
+							    			if(attrib!=null){
+											     String className=v.getName()+"."+attrib.getName();
+											     if(name2def.containsKey(className)){
+											    	 	String scopedName=topicName+"."+className;
+												    	name2def.put(scopedName, attrib);							    	 
+												    	def2name.put(attrib, scopedName);
+											     }else{
+												    	name2def.put(className, attrib);
+												    	def2name.put(attrib, className);
+											     }
+							    			}
+							    		}
+							    	 
 							     }
 							   }
 						}
