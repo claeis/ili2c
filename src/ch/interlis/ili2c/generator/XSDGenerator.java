@@ -1325,8 +1325,8 @@ protected void declareAbstractClassDef(Viewable v)
 			if(min.getAccuracy()>0){
 				ipw.println ("<xsd:restriction base=\"xsd:double\">");
 				ipw.indent ();
-				ipw.println ("<xsd:minInclusive value=\""+((NumericType)type).getMinimum().doubleValue()+"\"/>");
-				ipw.println ("<xsd:maxInclusive value=\""+((NumericType)type).getMaximum().doubleValue()+"\"/>");
+				ipw.println ("<xsd:minInclusive value=\""+((NumericType)type).getMinimum()+"\"/>");
+				ipw.println ("<xsd:maxInclusive value=\""+((NumericType)type).getMaximum()+"\"/>");
 				ipw.unindent ();
 				ipw.println ("</xsd:restriction>");
 			}else{

@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.5.18 (2015-09-xx)
+---------------------------
+- gml,xtf,xtf24: fixed export of 0.000001 
+
 ili2c 4.5.17 (2015-09-10)
 ---------------------------
 - gml: fixed name mapping of area linetable

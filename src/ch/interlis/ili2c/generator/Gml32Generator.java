@@ -1104,8 +1104,8 @@ public final class Gml32Generator
 					ipw.println ("<xsd:restriction base=\"xsd:decimal\">");
 				}
 		          ipw.indent ();
-		          ipw.println ("<xsd:minInclusive value=\""+((NumericType)type).getMinimum().doubleValue()+"\"/>");
-		          ipw.println ("<xsd:maxInclusive value=\""+((NumericType)type).getMaximum().doubleValue()+"\"/>");
+		          ipw.println ("<xsd:minInclusive value=\""+((NumericType)type).getMinimum()+"\"/>");
+		          ipw.println ("<xsd:maxInclusive value=\""+((NumericType)type).getMaximum()+"\"/>");
 		          ipw.unindent ();
 	            ipw.println ("</xsd:restriction>");
 			}else{
