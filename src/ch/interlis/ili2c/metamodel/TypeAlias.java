@@ -41,16 +41,19 @@ public class TypeAlias extends Type
 
       @return The result of <code>aliasing.isAbstract()</code>.
   */
-  public boolean isAbstract ()
+  @Override
+  public boolean isAbstract (StringBuilder err)
   {
     if (aliasing == null)
       return false;
 
-    if (aliasing.isAbstract())
+    if (aliasing.isAbstract()){
+    	err.append("DomainDef "+aliasing.getName()+" is abstract");
       return true;
+    }
 
     Type aliasingType = aliasing.getType();
-    if ((aliasingType != null) && aliasingType.isAbstract())
+    if ((aliasingType != null) && aliasingType.isAbstract(err))
       return true;
 
     return false;

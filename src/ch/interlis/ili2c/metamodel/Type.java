@@ -58,9 +58,13 @@ public abstract class Type
 
       @return Whether or not this type is abstract.
   */
-  public boolean isAbstract ()
+  public boolean isAbstract (StringBuilder err)
   {
     return false;
+  }
+  public boolean isAbstract ()
+  {
+    return isAbstract(new StringBuilder());
   }
 
 

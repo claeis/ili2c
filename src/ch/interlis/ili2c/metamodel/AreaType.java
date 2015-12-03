@@ -43,8 +43,12 @@ public class AreaType extends SurfaceOrAreaType
     }
   }
   @Override
-  public boolean isAbstract() {
-  	return getMaxOverlap()==null || super.isAbstract();
+  public boolean isAbstract(StringBuilder err) {
+  	if(getMaxOverlap()==null){
+  		err.append("missing WITHOUT OVERLAPS");
+  		return true;
+  	}
+  	return super.isAbstract(err);
   }
 
 }

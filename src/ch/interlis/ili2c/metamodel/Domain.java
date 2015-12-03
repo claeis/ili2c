@@ -208,9 +208,10 @@ public class Domain extends AbstractLeafElement
     this.type = newValue;
     firePropertyChange("type", oldValue, newValue);
     
-    if ((type != null) && type.isAbstract() && !this.isAbstract())
+    StringBuilder err=new StringBuilder();
+    if ((type != null) && type.isAbstract(err) && !this.isAbstract())
         throw new Ili2cSemanticException (formatMessage ("err_domainMustBeAbstractDueToType",
-          this.toString()));
+          this.toString(),err.toString()));
   }
 
 

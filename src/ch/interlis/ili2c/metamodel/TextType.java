@@ -57,7 +57,8 @@ public class TextType extends BaseType
       return kw;
   }
 
-  public boolean isAbstract ()
+  @Override
+  public boolean isAbstract (StringBuilder err)
   {
     return false;
   }

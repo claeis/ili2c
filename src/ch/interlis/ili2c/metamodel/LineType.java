@@ -23,13 +23,22 @@ public abstract class LineType extends Type
 
       @return Whether or not this type is abstract.
   */
-  public boolean isAbstract ()
+  @Override
+  public boolean isAbstract (StringBuilder err)
   {
-    if ((getLineForms().length == 0) || (getControlPointDomain() == null))
+    if (getLineForms().length == 0){
+    	err.append("missing line form");
       return true;
+    }
+    if (getControlPointDomain() == null){
+    	err.append("missing VERTEX");
+      return true;
+    }
 
-    if (getControlPointDomain().isAbstract())
+    if (getControlPointDomain().isAbstract()){
+    	err.append("DomainDef "+getControlPointDomain().getName()+" is abstract");
       return true;
+    }
 
     return false;
   }

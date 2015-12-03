@@ -62,11 +62,14 @@ public class StructuredUnitType extends NumericalType
 
       @return Whether or not this type is abstract.
   */
-  public boolean isAbstract ()
+  @Override
+  public boolean isAbstract (StringBuilder err)
   {
     Unit unit = getUnit(); /* considering inherited units */
-    if ((unit != null) && (unit.isAbstract()))
+    if ((unit != null) && (unit.isAbstract())){
+    	err.append("UnitDef is abstract");
       return true;
+    }
 
     return false;
   }

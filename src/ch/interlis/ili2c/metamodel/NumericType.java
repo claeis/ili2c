@@ -99,14 +99,19 @@ public class NumericType extends NumericalType
 
       @return Whether or not this type is abstract.
   */
-  public boolean isAbstract ()
+  @Override
+  public boolean isAbstract (StringBuilder err)
   {
-    if ((minimum == null) || (maximum == null))
+    if ((minimum == null) || (maximum == null)){
+    	err.append("missing min/max");
       return true;
+    }
 
     Unit unit = getUnit(); /* considering inherited units */
-    if ((unit != null) && (unit.isAbstract()))
+    if ((unit != null) && (unit.isAbstract())){
+    	err.append("UnitDef is abstract");
       return true;
+    }
 
     return false;
   }

@@ -85,13 +85,14 @@ public class CoordType extends BaseType
       @see ch.interlis.NumericType#isAbstract()
       @see ch.interlis.StructuredUnitType#isAbstract()
   */
-  public boolean isAbstract ()
+  @Override
+  public boolean isAbstract (StringBuilder err)
   {
 	  if(_generic){
 		  return false;
 	  }
     for (int i = 0; i < dimensions.length; i++)
-      if (dimensions[i].isAbstract())
+      if (dimensions[i].isAbstract(err))
         return true;
 
     return false;

@@ -59,8 +59,12 @@ public class SurfaceType extends SurfaceOrAreaType
     }
   }
   @Override
-  public boolean isAbstract() {
-  	return (!isIli1 && getMaxOverlap()==null) || super.isAbstract();
+  public boolean isAbstract(StringBuilder err) {
+  	if(!isIli1 && getMaxOverlap()==null){
+  		err.append("missing WITHOUT OVERLAPS");
+  		return true;
+  	}
+  	return super.isAbstract(err);
   }
   
 }

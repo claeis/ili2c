@@ -569,11 +569,12 @@ public abstract class AttributeDef
     firePropertyChange ("domain", oldValue, newValue);
     
     if(!acceptAbstract){
+    	StringBuilder err=new StringBuilder();
         if ((newValue != null)
-                && newValue.isAbstract()
+                && newValue.isAbstract(err)
                 && !this.isAbstract()) {
             throw new Ili2cSemanticException (getSourceLine(),formatMessage (
-                "err_attributeDef_domainIsAbstractButAttrIsNot", this.toString()));
+                "err_attributeDef_domainIsAbstractButAttrIsNot", this.toString(),err.toString()));
         }
     }
     
