@@ -4,6 +4,7 @@ Known Issues:
 ili2c 4.5.19 (2015-12-xx)
 ---------------------------
 - improved error message if missing OVERLAPS
+- changed semantic of AbstractClassDef.getOid() to return OID of this class or base class
 
 ili2c 4.5.18 (2015-11-23)
 ---------------------------

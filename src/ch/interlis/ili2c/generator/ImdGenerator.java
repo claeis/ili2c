@@ -289,7 +289,7 @@ public class ImdGenerator {
 			ch.interlis.ili2c.metamodel.Table table=(ch.interlis.ili2c.metamodel.Table)classDef;
 			if ( table.isIdentifiable() ) {
 				iomClass.setKind( Class_Kind._class );
-				ch.interlis.ili2c.metamodel.Domain oidDomain=table.getOid();
+				ch.interlis.ili2c.metamodel.Domain oidDomain=table.getDefinedOid();
 				if(oidDomain==null){
 					ch.interlis.ili2c.metamodel.Topic topic=(ch.interlis.ili2c.metamodel.Topic)table.getContainer(ch.interlis.ili2c.metamodel.Topic.class);
 					if(topic!=null){
@@ -395,7 +395,7 @@ public class ImdGenerator {
 			ch.interlis.ili2c.metamodel.AssociationDef assoc=(ch.interlis.ili2c.metamodel.AssociationDef)classDef;
 			iomClass.setKind(Class_Kind.Association);
 			iomClass.setEmbeddedRoleTransfer(assoc.isLightweight());
-			ch.interlis.ili2c.metamodel.Domain oidDomain=assoc.getOid();
+			ch.interlis.ili2c.metamodel.Domain oidDomain=assoc.getDefinedOid();
 			if(oidDomain==null && assoc.isIdentifiable()){
 				ch.interlis.ili2c.metamodel.Topic topic=(ch.interlis.ili2c.metamodel.Topic)assoc.getContainer(ch.interlis.ili2c.metamodel.Topic.class);
 				if(topic!=null){

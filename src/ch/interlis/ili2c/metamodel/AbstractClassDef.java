@@ -187,7 +187,25 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
 
     return assocv;
   }
-public Domain getOid() {
+  public Domain getOid() {
+	  
+	  AbstractClassDef def=this;
+	  while(def!=null){
+		  def=(AbstractClassDef)def.getExtending();
+			Domain oidDomain=def.getDefinedOid();
+			if(oidDomain==null){
+				Topic topic=(Topic)def.getContainer(Topic.class);
+				if(topic!=null){
+					oidDomain=topic.getOid();
+				}
+			}
+			if(oidDomain!=null && !(oidDomain instanceof NoOid)){
+				return oidDomain;
+			}
+	  }
+		return null;
+	}
+public Domain getDefinedOid() {
 	return oid;
 }
 public void setOid(Domain oid) {

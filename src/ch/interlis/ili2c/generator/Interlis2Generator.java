@@ -249,7 +249,7 @@ private void setup(
     printStart (keyword, def, /* based on */ null);
     ipw.println (" =");
     ipw.indent ();
-    Domain oid=def.getOid();
+    Domain oid=def.getDefinedOid();
     if(oid!=null){
     	if(oid instanceof NoOid){
     	    ipw.println ("NO OID;");

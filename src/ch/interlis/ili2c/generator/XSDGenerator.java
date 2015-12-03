@@ -1073,7 +1073,7 @@ protected void declareAbstractClassDef(Viewable v)
 				// only some LinkObjects have an ID
 				ipw.println ("<xsd:attribute name=\"TID\" type=\"IliID\" use=\"required\"/>");
 			}else{
-				Domain oid=assoc.getOid();
+				Domain oid=assoc.getDefinedOid();
 				/* ignore topic level definition of oid
 				 * model should define "ASSOCATION  (OID) = ..." to get an ID
 				if(oid==null){
@@ -1090,7 +1090,7 @@ protected void declareAbstractClassDef(Viewable v)
 		}else{
 			// Objects have an ID
 			ipw.println ("<xsd:attribute name=\"TID\" type=\"IliID\" use=\"required\"/>");
-		    Domain oid=((AbstractClassDef)v).getOid();
+		    Domain oid=((AbstractClassDef)v).getDefinedOid();
 			if(oid!=null && !(oid instanceof NoOid)){
 		    	refOidSpaces=true;
 		    }
