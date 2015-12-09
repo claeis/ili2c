@@ -1,8 +1,9 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
-ili2c 4.5.19 (2015-12-xx)
+ili2c 4.5.19 (2015-12-09)
 ---------------------------
+- iox-ili 1.11.2
 - improved error message if missing OVERLAPS
 - changed semantic of AbstractClassDef.getOid() to return OID of this class or base class
 
