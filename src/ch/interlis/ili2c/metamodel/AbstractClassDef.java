@@ -191,7 +191,6 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
 	  
 	  AbstractClassDef def=this;
 	  while(def!=null){
-		  def=(AbstractClassDef)def.getExtending();
 			Domain oidDomain=def.getDefinedOid();
 			if(oidDomain==null){
 				Topic topic=(Topic)def.getContainer(Topic.class);
@@ -202,6 +201,7 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
 			if(oidDomain!=null && !(oidDomain instanceof NoOid)){
 				return oidDomain;
 			}
+		  def=(AbstractClassDef)def.getExtending();
 	  }
 		return null;
 	}
