@@ -4,6 +4,8 @@ Known Issues:
 ili2c 4.5.21 (2016-01-xx)
 ---------------------------
 - iox-ili 1.11.3
+- refactored dependency to iox-ili.jar
+- API: LineType.getP() added
 
 ili2c 4.5.20 (2015-12-23)
 ---------------------------

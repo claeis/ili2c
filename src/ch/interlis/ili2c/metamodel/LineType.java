@@ -205,5 +205,22 @@ public abstract class LineType extends Type
   public LineType clone() {
       return (LineType) super.clone();
   }
+  /** maximum stroke to use when removing ARCs.
+   * @return maximum stroke
+   */
+  public double getP()
+  {
+		double p;
+		CoordType coordType=(CoordType)getControlPointDomain().getType();
+		NumericalType dimv[]=coordType.getDimensions();
+		int accuracy=((NumericType)dimv[0]).getMaximum().getAccuracy();
+		if(accuracy==0){
+			p=0.5;
+		}else{
+			p=Math.pow(10.0,-accuracy);
+			//EhiLogger.debug("accuracy "+accuracy+", p "+p);
+		}
+	  return p;
+  }
 
 }
