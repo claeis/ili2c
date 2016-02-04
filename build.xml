@@ -124,12 +124,8 @@
 
   <target depends="srcdist,bindist" name="dist"/>
 
-  <target depends="init,compile" name="jar">
+  <target depends="init,libs" name="jar">
 
-    <propertyfile file="${versionfile}">
-	<!-- <entry  key="versionMicro" type="int" value="1" operation="+"/> -->
-	<entry  key="versionDate" type="date" value="now" pattern="yyyyMMdd"/>
-    </propertyfile>
 
     <jar jarfile="${projectjar}" manifest="other/manifest">
 	<fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class" includes="**/*.class"/>
@@ -142,9 +138,11 @@
     	<zipfileset src="lib/ehibasics.jar"/>
     	<zipfileset src="lib/iox-api.jar"/>
     	<zipfileset src="lib/iox-ili.jar"/>
+        <zipfileset src="${build}/jar/${ant.project.name}-tool.jar"/>
+        <zipfileset src="${build}/jar/${ant.project.name}-core.jar"/>
     </jar>
   </target>
-  <target depends="init,compile" name="jar-lib">
+  <target depends="init,compile" name="libs">
     <propertyfile file="${versionfile}">
 	<!-- <entry  key="versionMicro" type="int" value="1" operation="+"/> -->
 	<entry  key="versionDate" type="date" value="now" pattern="yyyyMMdd"/>
