@@ -1860,7 +1860,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib) {
           ipw.println ();
 
 
-        ipw.print ("WITHOUT OVERLAPS > ");
+        ipw.print (" WITHOUT OVERLAPS > ");
         ipw.print (maxOverlap.toString());
       }
 
