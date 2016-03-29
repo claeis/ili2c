@@ -199,6 +199,10 @@ public abstract class LineType extends Type
         controlPointDomain.toString(),
         general.controlPointDomain.toString()));
     }
+    PrecisionDecimal generalMaxOverlap=general.getMaxOverlap();
+    if(maxOverlap!=null && generalMaxOverlap!=null && generalMaxOverlap.compareTo(maxOverlap)==-1){
+    	throw new Ili2cSemanticException (formatMessage ("err_lineType_moreOverlapInExtension"));
+    }
   }
 
 

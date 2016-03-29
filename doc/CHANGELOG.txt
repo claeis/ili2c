@@ -5,6 +5,7 @@ ili2c 4.5.22 (2016-03-xx)
 ---------------------------
 - fixed AssociationDef.getOid() so that it returns null if it is not marked identifiable
 - iliexp: fixed missing space in "AREA WITHOUT OVERLAPS"
+- ili2: check that OVERLAPS in extended types are more restrictive
 
 ili2c 4.5.21 (2016-02-04)
 ---------------------------
