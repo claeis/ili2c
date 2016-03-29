@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.5.22 (2016-03-xx)
+---------------------------
+- fixed AssociationDef.getOid() so that it returns null if it is not marked identifiable
+
 ili2c 4.5.21 (2016-02-04)
 ---------------------------
 - iox-ili 1.11.4

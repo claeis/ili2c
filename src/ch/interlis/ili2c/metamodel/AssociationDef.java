@@ -579,6 +579,26 @@ public class AssociationDef extends AbstractClassDef<Element>
 	public boolean isIdentifiable() {
 		return identifiable;
 	}
+	@Override
+	  public Domain getOid() {
+		  
+		  AssociationDef def=this;
+		  while(def!=null){
+				Domain oidDomain=def.getDefinedOid();
+				if(oidDomain==null && def.isIdentifiable()){
+					Topic topic=(Topic)def.getContainer(Topic.class);
+					if(topic!=null){
+						oidDomain=topic.getOid();
+					}
+				}
+				if(oidDomain!=null && !(oidDomain instanceof NoOid)){
+					return oidDomain;
+				}
+			  def=(AssociationDef)def.getExtending();
+		  }
+			return null;
+		}
+	
 
 	/**
 	 * @param b
