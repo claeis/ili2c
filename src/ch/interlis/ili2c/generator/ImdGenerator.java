@@ -25,7 +25,7 @@ public class ImdGenerator {
 	private static String AGGREGATES="AGGREGATES";
 	private static String ALIAS="ALIAS";
 	ch.interlis.ili2c.metamodel.TransferDescription td=null;
-	private ImdGenerator( IoxWriter out ) {
+	public ImdGenerator( IoxWriter out ) {
 		this.out = out;
 	}
 

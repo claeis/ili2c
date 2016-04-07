@@ -1,11 +1,13 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
-ili2c 4.5.22 (2016-03-xx)
+ili2c 4.5.22 (2016-04-07)
 ---------------------------
+- iox-ili 1.11.5
 - fixed AssociationDef.getOid() so that it returns null if it is not marked identifiable
 - iliexp: fixed missing space in "AREA WITHOUT OVERLAPS"
 - ili2: check that OVERLAPS in extended types are more restrictive
+- API: make ImdGenerator(writer) visible/pulic
 
 ili2c 4.5.21 (2016-02-04)
 ---------------------------
