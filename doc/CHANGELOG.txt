@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.5.23 (2016-05-xx)
+---------------------------
+- fixed: "Duplicate EnumElement name" if EXTENDED AttributeDef with equal DomainRef
+
 ili2c 4.5.22 (2016-04-07)
 ---------------------------
 - iox-ili 1.11.5

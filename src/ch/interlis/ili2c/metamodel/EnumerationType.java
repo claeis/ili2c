@@ -234,7 +234,9 @@ public class EnumerationType extends BaseType {
       throw new IllegalArgumentException (rsrc.getString (
         "err_enumerationType_ExtOther"));
 
-
+    if(wantToExtend==this){
+    	return;
+    }
     general = (EnumerationType) wantToExtend;
     thisEnum = this.enumeration;
     generalEnum = general.getConsolidatedEnumeration();
