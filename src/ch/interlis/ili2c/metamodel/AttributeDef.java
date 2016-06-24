@@ -631,4 +631,98 @@ public abstract class AttributeDef
 		this._transient = _transient;
 	}
 
+	public boolean isDomainBoolean(){
+		TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
+		Type type=getDomain();
+		while(type instanceof TypeAlias) {
+			if (((TypeAlias) type).getAliasing() == td.INTERLIS.BOOLEAN) {
+				return true;
+			}
+			type=((TypeAlias) type).getAliasing().getType();
+		}
+		return false;
+		
+	}
+	public boolean isDomainIli1Date(){
+		TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
+		Type type=getDomain();
+		while(type instanceof TypeAlias) {
+			if (((TypeAlias) type).getAliasing() == td.INTERLIS.INTERLIS_1_DATE) {
+				return true;
+			}
+			type=((TypeAlias) type).getAliasing().getType();
+		}
+		return false;
+	}
+	public boolean isDomainIli2Date(){
+		TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
+		Type type=getDomain();
+		if (type instanceof TypeAlias){
+			while(type instanceof TypeAlias) {
+				if (((TypeAlias) type).getAliasing() == td.INTERLIS.XmlDate) {
+					return true;
+				}
+				type=((TypeAlias) type).getAliasing().getType();
+			}
+		}
+		if(type instanceof FormattedType){
+			FormattedType ft=(FormattedType)type;
+			if(ft.getDefinedBaseDomain()== td.INTERLIS.XmlDate){
+				return true;
+			}
+		}
+		return false;
+	}
+	public boolean isDomainIli2DateTime(){
+		TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
+		Type type=getDomain();
+		if (type instanceof TypeAlias){
+			while(type instanceof TypeAlias) {
+				if (((TypeAlias) type).getAliasing() == td.INTERLIS.XmlDateTime) {
+					return true;
+				}
+				type=((TypeAlias) type).getAliasing().getType();
+			}
+		}
+		if(type instanceof FormattedType){
+			FormattedType ft=(FormattedType)type;
+			if(ft.getDefinedBaseDomain()== td.INTERLIS.XmlDateTime){
+				return true;
+			}
+		}
+		return false;
+	}
+	public boolean isDomainIli2Time(){
+		TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
+		Type type=getDomain();
+		if (type instanceof TypeAlias){
+			while(type instanceof TypeAlias) {
+				if (((TypeAlias) type).getAliasing() == td.INTERLIS.XmlTime) {
+					return true;
+				}
+				type=((TypeAlias) type).getAliasing().getType();
+			}
+		}
+		if(type instanceof FormattedType){
+			FormattedType ft=(FormattedType)type;
+			if(ft.getDefinedBaseDomain()== td.INTERLIS.XmlTime){
+				return true;
+			}
+		}
+		return false;
+	}
+	public boolean isDomainIliUuid(){
+		TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
+		Type type=getDomain();
+		if (type instanceof TypeAlias){
+			while(type instanceof TypeAlias) {
+				if (((TypeAlias) type).getAliasing() == td.INTERLIS.UUIDOID) {
+					return true;
+				}
+				type=((TypeAlias) type).getAliasing().getType();
+			}
+		}
+		return false;
+	}
+	
 }
