@@ -7,7 +7,8 @@ import ch.ehi.basics.tools.StringUtility;
 import java.awt.*;
 import java.awt.event.*;
 
-class RepositoriesDialog extends JDialog {
+public class RepositoriesDialog extends JDialog {
+	private java.util.ResourceBundle rsrc=java.util.ResourceBundle.getBundle("ch.interlis.ili2c.gui.Ili2cTexts");
     public final static int OK_OPTION=1;
     public final static int CANCEL_OPTION=2;
     private int pressedButton=CANCEL_OPTION;
@@ -20,7 +21,7 @@ class RepositoriesDialog extends JDialog {
     public RepositoriesDialog(Frame aFrame) {
         super(aFrame, /* modal */ true);
 
-        setTitle("Model Repository Settings");
+        setTitle(rsrc.getString("RepositoriesDialog.Title"));
         JPanel pane=new JPanel();
         pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 
@@ -31,7 +32,7 @@ class RepositoriesDialog extends JDialog {
             JPanel dataPane = new JPanel();
             dataPane.setLayout(new GridBagLayout());
             
-            lbl=new JLabel("Model Repositories");
+            lbl=new JLabel(rsrc.getString("RepositoriesDialog.iliDirsLabel"));
 			cnstrts=new java.awt.GridBagConstraints();
 			cnstrts.gridx = 0; cnstrts.gridy = 0;
 			cnstrts.anchor = java.awt.GridBagConstraints.SOUTHEAST;
@@ -50,7 +51,7 @@ class RepositoriesDialog extends JDialog {
 			cnstrts.insets = new java.awt.Insets(5, 5, 5, 5);
             dataPane.add(ilidirsUi,cnstrts);
 
-            lbl=new JLabel("http Proxy Host");
+            lbl=new JLabel(rsrc.getString("RepositoriesDialog.proxyHostLabel"));
 			cnstrts=new java.awt.GridBagConstraints();
 			cnstrts.gridx = 0; cnstrts.gridy = 1;
 			cnstrts.anchor = java.awt.GridBagConstraints.SOUTHEAST;
@@ -69,7 +70,7 @@ class RepositoriesDialog extends JDialog {
 			cnstrts.insets = new java.awt.Insets(5, 5, 5, 5);
             dataPane.add(hostUi,cnstrts);
             
-            lbl=new JLabel("http Proxy Port");
+            lbl=new JLabel(rsrc.getString("RepositoriesDialog.proxyPortLabel"));
 			cnstrts=new java.awt.GridBagConstraints();
 			cnstrts.gridx = 0; cnstrts.gridy = 2;
 			cnstrts.anchor = java.awt.GridBagConstraints.SOUTHEAST;
@@ -98,7 +99,7 @@ class RepositoriesDialog extends JDialog {
             buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.X_AXIS));
             buttonPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
             buttonPane.add(Box.createHorizontalGlue());
-            ok=new JButton("Ok");
+            ok=new JButton(rsrc.getString("RepositoriesDialog.okButton"));
             ok.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     pressedButton=OK_OPTION;
@@ -110,7 +111,7 @@ class RepositoriesDialog extends JDialog {
             });
             buttonPane.add(ok);
             buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
-            JButton cancel=new JButton("Cancel");
+            JButton cancel=new JButton(rsrc.getString("RepositoriesDialog.cancelButton"));
             cancel.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     pressedButton=CANCEL_OPTION;
