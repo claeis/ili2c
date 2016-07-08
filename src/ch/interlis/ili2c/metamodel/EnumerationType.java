@@ -209,6 +209,7 @@ public class EnumerationType extends BaseType {
     fireVetoableChange("enumeration", oldValue, newValue);
     this.enumeration = newValue;
     firePropertyChange("enumeration", oldValue, newValue);
+    cachedValues=null;
   }
 
   /** Checks whether it is possible for this to extend wantToExtend.
@@ -363,4 +364,33 @@ public class EnumerationType extends BaseType {
       return cloned;
   }
 
+  private java.util.ArrayList<String> cachedValues=null;
+  public java.util.List<String> getValues()
+  {
+	  if(cachedValues==null){
+		  cachedValues=new java.util.ArrayList<String>();
+	      buildEnumList(cachedValues,"",getConsolidatedEnumeration());
+	  }
+      return cachedValues;
+  }
+  public static void buildEnumList(java.util.List<String> accu,String prefix1,Enumeration enumer){
+      Iterator iter = enumer.getElements();
+      String prefix="";
+      if(prefix1.length()>0){
+        prefix=prefix1+".";
+      }
+      while (iter.hasNext()) {
+        Enumeration.Element ee=(Enumeration.Element) iter.next();
+        Enumeration subEnum = ee.getSubEnumeration();
+        if (subEnum != null)
+        {
+          // ee is not leaf, add its name to prefix and add sub elements to accu
+          buildEnumList(accu,prefix+ee.getName(),subEnum);
+        }else{
+          // ee is a leaf, add it to accu
+          accu.add(prefix+ee.getName());
+        }
+      }
+  }
+  
 }
