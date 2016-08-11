@@ -1,13 +1,16 @@
-!! File StandardSymbology.ili Release 2015-04-02
+!! File StandardSymbology.ili Release 2016-01-21
 
 INTERLIS 2.3;
 
-!! 2015-04-02 definition of SS_Surface corrected
-!!@precursorVersion = 2005-06-16
+!! 2015-04-02 Definition of SS_Surface corrected (line 33)
+!!            Cardinalities adapted (line 151 and 172)
+!! 2016-01-21 Cardinalities adapted (line 156 and 177)
+!!            Force of relationship adapted (line 214)
+!!@precursorVersion = 2015-04-02
 
 CONTRACTED SYMBOLOGY MODEL StandardSymbology (en)
   AT "http://www.interlis.ch/models"
-  VERSION "2015-04-02" =
+  VERSION "2016-01-21" =
 
   !! Extended symbology model with symbol libraries and priorities.
 
@@ -27,7 +30,7 @@ CONTRACTED SYMBOLOGY MODEL StandardSymbology (en)
     SS_Polyline = POLYLINE WITH (STRAIGHTS, ARCS)
                   VERTEX SS_Coord2;
     SS_Surface  = SURFACE WITH (STRAIGHTS, ARCS)
-                  VERTEX SS_Coord2 WITHOUT OVERLAPS > 0.0001;
+                  VERTEX SS_Coord2 WITHOUT OVERLAPS > 0.001;
 
 
   TOPIC StandardSigns EXTENDS AbstractSymbology.Signs =
@@ -145,12 +148,12 @@ CONTRACTED SYMBOLOGY MODEL StandardSymbology (en)
 
     ASSOCIATION LineStyle_SolidColorAssoc =
       Color -- {0..1} Color;
-      LineStyle -- {1} LineStyle_Solid;
+      LineStyle -- {0..*} LineStyle_Solid;
     END LineStyle_SolidColorAssoc;
 
     ASSOCIATION LineStyle_SolidPolylineAttrsAssoc =
       LineAttrs -- {0..1} PolylineAttrs;
-      LineStyle -- {1} LineStyle_Solid;
+      LineStyle -- {0..*} LineStyle_Solid;
     END LineStyle_SolidPolylineAttrsAssoc;
 
     STRUCTURE DashRec =
@@ -166,12 +169,12 @@ CONTRACTED SYMBOLOGY MODEL StandardSymbology (en)
 
     ASSOCIATION LineStyle_DashedColorAssoc =
       Color -- {0..1} Color;
-      LineStyle_Dashed -- {1} LineStyle_Dashed;
+      LineStyle_Dashed -- {0..*} LineStyle_Dashed;
     END LineStyle_DashedColorAssoc;
 
     ASSOCIATION LineStyle_DashedLineAttrsAssoc =
       LineAttrs -- {0..1} PolylineAttrs;
-      LineStyle_Dashed -- {1} LineStyle_Dashed;
+      LineStyle_Dashed -- {0..*} LineStyle_Dashed;
     END LineStyle_DashedLineAttrsAssoc;
 
     STRUCTURE Pattern_Symbol =
@@ -208,7 +211,7 @@ CONTRACTED SYMBOLOGY MODEL StandardSymbology (en)
     END TextSign;
 
     ASSOCIATION TextSignFontAssoc =
-      Font -- {1} Font;
+      Font -<#> {1} Font;
       TextSign -- {0..*} TextSign;
     MANDATORY CONSTRAINT
       Font -> Type == #text;

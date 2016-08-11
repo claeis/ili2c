@@ -1,9 +1,13 @@
-!! File CoordSys.ili Release 2005-06-16
+!! File CoordSys.ili Release 2015-11-24
 
 INTERLIS 2.3;
 
+!! 2015-11-24 Cardinalities adapted (line 122, 123, 124, 132, 133, 134, 142, 143,
+!!                                   148, 149, 163, 164, 168, 169, 206 and 207)
+!!@precursorVersion = 2005-06-16
+
 REFSYSTEM MODEL CoordSys (en) AT "http://www.interlis.ch/models"
-  VERSION "2005-06-16" =
+  VERSION "2015-11-24" =
 
   UNIT
     Angle_Degree = 180 / PI [INTERLIS.rad];
@@ -116,9 +120,9 @@ REFSYSTEM MODEL CoordSys (en) AT "http://www.interlis.ch/models"
     !! ***********************************
 
     ASSOCIATION ToGeoEllipsoidal =
-      From -- {1..*} GeoCartesian3D;
-      To -- {1..*} GeoEllipsoidal;
-      ToHeight -- {1..*} GeoHeight;
+      From -- {0..*} GeoCartesian3D;
+      To -- {0..*} GeoEllipsoidal;
+      ToHeight -- {0..*} GeoHeight;
     MANDATORY CONSTRAINT
       ToHeight -> System == #ellipsoidal;
     MANDATORY CONSTRAINT
@@ -126,9 +130,9 @@ REFSYSTEM MODEL CoordSys (en) AT "http://www.interlis.ch/models"
     END ToGeoEllipsoidal;
 
     ASSOCIATION ToGeoCartesian3D =
-      From2 -- {1..*} GeoEllipsoidal;
-      FromHeight-- {1..*} GeoHeight;
-      To3 -- {1..*} GeoCartesian3D;
+      From2 -- {0..*} GeoEllipsoidal;
+      FromHeight-- {0..*} GeoHeight;
+      To3 -- {0..*} GeoCartesian3D;
     MANDATORY CONSTRAINT
       FromHeight -> System == #ellipsoidal;
     MANDATORY CONSTRAINT
@@ -136,13 +140,13 @@ REFSYSTEM MODEL CoordSys (en) AT "http://www.interlis.ch/models"
     END ToGeoCartesian3D;
 
     ASSOCIATION BidirectGeoCartesian2D =
-      From -- {1..*} GeoCartesian2D;
-      To -- {1..*} GeoCartesian2D;
+      From -- {0..*} GeoCartesian2D;
+      To -- {0..*} GeoCartesian2D;
     END BidirectGeoCartesian2D;
 
     ASSOCIATION BidirectGeoCartesian3D =
-      From -- {1..*} GeoCartesian3D;
-      To2 -- {1..*} GeoCartesian3D;
+      From -- {0..*} GeoCartesian3D;
+      To2 -- {0..*} GeoCartesian3D;
       Precision: MANDATORY (
         exact,
         measure_based);
@@ -156,13 +160,13 @@ REFSYSTEM MODEL CoordSys (en) AT "http://www.interlis.ch/models"
     END BidirectGeoCartesian3D;
 
     ASSOCIATION BidirectGeoEllipsoidal =
-      From4 -- {1..*} GeoEllipsoidal;
-      To4 -- {1..*} GeoEllipsoidal;
+      From4 -- {0..*} GeoEllipsoidal;
+      To4 -- {0..*} GeoEllipsoidal;
     END BidirectGeoEllipsoidal;
 
     ASSOCIATION MapProjection (ABSTRACT) =
-      From5 -- {1..*} GeoEllipsoidal;
-      To5 -- {1..*} GeoCartesian2D;
+      From5 -- {0..*} GeoEllipsoidal;
+      To5 -- {0..*} GeoCartesian2D;
       FromCo1_FundPt: MANDATORY Angle_DMS_90;
       FromCo2_FundPt: MANDATORY Angle_DMS_90;
       ToCoord1_FundPt: MANDATORY -10000000 .. +10000000 [INTERLIS.m];
@@ -199,8 +203,8 @@ REFSYSTEM MODEL CoordSys (en) AT "http://www.interlis.ch/models"
     END Stereographic;
 
     ASSOCIATION HeightConversion =
-      FromHeight -- {1..*} GeoHeight;
-      ToHeight -- {1..*} GeoHeight;
+      FromHeight -- {0..*} GeoHeight;
+      ToHeight -- {0..*} GeoHeight;
       Definition: TEXT*70;
     END HeightConversion;
 
