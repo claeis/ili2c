@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.5.25 (2016-08-29)
+---------------------------
+- iox-ili 1.13.1
+
 ili2c 4.5.24 (2016-08-11)
 ---------------------------
 - iox-ili: use own objpool instead of jdbm-2.4.jar
