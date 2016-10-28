@@ -1403,6 +1403,43 @@ protected void declareAbstractClassDef(Viewable v)
 		  }
 		  ipw.unindent ();
 		ipw.println ("</xsd:simpleType>");
+	}else if(type instanceof BlackboxType){
+		BlackboxType ftype=(BlackboxType)type;
+	    ipw.println ("<xsd:complexType"+typeName+">");
+		    ipw.indent ();
+		    ipw.println ("<xsd:sequence>");
+			    ipw.indent ();
+			    if(ftype.getKind()==BlackboxType.eBINARY){
+				    ipw.println ("<xsd:element name=\"BINBLBOX\">");
+			    }else{
+				    ipw.println ("<xsd:element name=\"XMLBLBOX\">");
+			    }
+				    ipw.indent ();
+				    ipw.println ("<xsd:complexType>");
+					    if(ftype.getKind()==BlackboxType.eBINARY){
+						    ipw.indent ();
+						    ipw.println ("<xsd:simpleContent>");
+							    ipw.indent ();
+							    ipw.println ("<xsd:extension base=\"xsd:base64Binary\"/>");
+							    ipw.unindent ();
+						    ipw.println ("</xsd:simpleContent>");
+						    ipw.unindent ();
+					    }else{
+						    ipw.indent ();
+						    ipw.println ("<xsd:sequence>");
+							    ipw.indent ();
+							    ipw.println ("<xsd:any minOccurs=\"0\" maxOccurs=\"unbounded\" processContents=\"skip\"/>");
+							    ipw.unindent ();
+						    ipw.println ("</xsd:sequence>");
+						    ipw.unindent ();
+					    }
+				    ipw.println ("</xsd:complexType>");
+				    ipw.unindent ();
+			    ipw.println ("</xsd:element>");
+			    ipw.unindent ();
+		    ipw.println ("</xsd:sequence>");
+		    ipw.unindent ();
+	    ipw.println ("</xsd:complexType>");
     }else{
 	    ipw.println ("<xsd:complexType"+typeName+">");
 		    ipw.indent ();
