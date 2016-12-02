@@ -598,11 +598,18 @@ public class RepositoryAccess {
 	}
 	// if http
 	String urilc=uri.toLowerCase();
-	if(urilc.startsWith("http:")){
+	boolean isHttps= urilc.startsWith("https:");
+	boolean isHttp=urilc.startsWith("http:");
+	if(isHttp || isHttps){
 		// translate uri to location in cache
 		StringBuffer localFileName=new StringBuffer();
 		{
-			String urib=uri.substring("http:".length()); 
+			String urib=null;
+			if(isHttps){
+				urib=uri.substring("https:".length()); 
+			}else{
+				urib=uri.substring("http:".length()); 
+			}
 			// escape characters
 			// win < > : " / \ | ? * %
 			for(int i=0;i<urib.length();i++){
