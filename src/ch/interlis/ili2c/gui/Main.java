@@ -402,6 +402,7 @@ public class Main {
 					int n;
 					if(config.getOutputKind()==GenerateOutputKind.ILI1FMTDESC
 							|| config.getOutputKind()==GenerateOutputKind.GML32
+							|| config.getOutputKind()==GenerateOutputKind.ILIGML2
 							|| config.getOutputKind()==GenerateOutputKind.ETF1){
 						n = JOptionPane.showConfirmDialog(
 							frame,
@@ -513,8 +514,10 @@ public class Main {
       , new Integer(GenerateOutputKind.ILI2) 
       , new Integer(GenerateOutputKind.XMLSCHEMA)
 	  , new Integer(GenerateOutputKind.GML32)
+   	  , new Integer(GenerateOutputKind.ILIGML2)
       , new Integer(GenerateOutputKind.ILI1FMTDESC)
 	  , new Integer(GenerateOutputKind.IMD)
+      , new Integer(GenerateOutputKind.IMD16)
 	  , new Integer(GenerateOutputKind.UML21)
 	  , new Integer(GenerateOutputKind.IOM)
 	  , new Integer(GenerateOutputKind.ETF1)
@@ -535,6 +538,9 @@ public class Main {
 			}else if(kind==GenerateOutputKind.GML32){
 			   outputFileUi.setEditable(true);
 			   fileLabel.setText("Output directory");
+			}else if(kind==GenerateOutputKind.ILIGML2){
+				   outputFileUi.setEditable(true);
+				   fileLabel.setText("Output directory");
 			}else if(kind==GenerateOutputKind.ETF1){
 				   outputFileUi.setEditable(true);
 				   fileLabel.setText("Output directory");
@@ -568,10 +574,14 @@ public class Main {
 			  fc.setFileFilter(GenericFileFilter.createXmlFilter());
 			}else if(config.getOutputKind()==GenerateOutputKind.IMD){
 				  fc.setFileFilter(GenericFileFilter.createXmlFilter());
+			}else if(config.getOutputKind()==GenerateOutputKind.IMD16){
+				  fc.setFileFilter(GenericFileFilter.createXmlFilter());
 			}else if(config.getOutputKind()==GenerateOutputKind.UML21){
 				  fc.setFileFilter(new GenericFileFilter("UML/XMI format (*.uml)","uml"));
 			}else if(config.getOutputKind()==GenerateOutputKind.GML32){
 			  useDir=true;
+			}else if(config.getOutputKind()==GenerateOutputKind.ILIGML2){
+				  useDir=true;
 			}else if(config.getOutputKind()==GenerateOutputKind.ETF1){
 				  useDir=true;
             }else{
@@ -747,19 +757,7 @@ public class Main {
 		public Component getListCellRendererComponent(JList arg0, Object obj,
 				int arg2, boolean arg3, boolean arg4) {
 			int kind=((Integer)obj).intValue();
-		    String kindTexts[] = {
-		            "Generate no output"
-		          , "Generate an INTERLIS 1 model"
-		          , "Generate an INTERLIS 2 model"
-		          , "Generate an XTF XML-Schema"
-		          , "Generate an ILI1 FMT-Description"
-		    	  , "Generate a GML XML-Schema"
-		    	  , "deprecated (IOM)"
-		    	  , "deprecated (ETF)"
-		    	  , "Generate Model as IlisMeta-Transfer"
-		    	  , "Generate Model as UML/XMI Transfer"
-		          };
-			setText(kindTexts[kind-1]);
+			setText(GenerateOutputKind.getDescription(kind));
 			return this;
 		}
   	

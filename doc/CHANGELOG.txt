@@ -1,9 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
-ili2c 4.5.28 (2016-12-xx)
+ili2c 4.6.0 (2016-12-xx)
 ---------------------------
 - support repositories with https
+- added eCH-0118-2.0 support (option -oILIGML2)
 
 ili2c 4.5.27 (2016-11-02)
 ---------------------------

@@ -66,6 +66,10 @@ static public Configuration readConfig(String filename)
 				String optvalue=arg.substring(8);
 				config.setOutputFile(optvalue);
 			  config.setOutputKind(GenerateOutputKind.GML32);
+			 }else if(arg.startsWith("-oILIGML2 ")){
+				String optvalue=arg.substring(12);
+				config.setOutputFile(optvalue);
+			  config.setOutputKind(GenerateOutputKind.ILIGML2);
 			 }else if(arg.startsWith("-oETF1 ")){
 					String optvalue=arg.substring(9);
 					config.setOutputFile(optvalue);
@@ -74,6 +78,10 @@ static public Configuration readConfig(String filename)
 					String optvalue=arg.substring(8);
 					config.setOutputFile(optvalue);
 				  config.setOutputKind(GenerateOutputKind.IMD);
+			 }else if(arg.startsWith("-oIMD16 ")){
+					String optvalue=arg.substring(8);
+					config.setOutputFile(optvalue);
+				  config.setOutputKind(GenerateOutputKind.IMD16);
 			 }else if(arg.startsWith("-oUML ")){
 					String optvalue=arg.substring(8);
 					config.setOutputFile(optvalue);
@@ -186,12 +194,20 @@ static public Configuration readConfig(String filename)
 			out.write("-oGML ");
 			out.write(config.getOutputFile());
 			  break;
+		  case GenerateOutputKind.ILIGML2:
+			out.write("-oILIGML2 ");
+			out.write(config.getOutputFile());
+			  break;
 		  case GenerateOutputKind.ETF1:
 				out.write("-oETF1 ");
 				out.write(config.getOutputFile());
 				  break;
 		  case GenerateOutputKind.IMD:
 				out.write("-oIMD ");
+				out.write(config.getOutputFile());
+				  break;
+		  case GenerateOutputKind.IMD16:
+				out.write("-oIMD16 ");
 				out.write(config.getOutputFile());
 				  break;
 		  case GenerateOutputKind.UML21:

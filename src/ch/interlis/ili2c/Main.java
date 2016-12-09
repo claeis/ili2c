@@ -154,8 +154,11 @@ public class Main {
 	    System.err.println("-o1                   Generate INTERLIS-1 output.");
 	    System.err.println("-o2                   Generate INTERLIS-2 output.");
 	    System.err.println("-oXSD                 Generate an XTF XML-Schema.");
+	    System.err.println("-oGML                 Generate an eCH-118-1.0/GML3.2-Schema.");
+	    System.err.println("-oILIGML2             Generate an eCH-118-2.0/GML3.2-Schema.");
 	    System.err.println("-oFMT                 Generate an INTERLIS-1 Format.");
-	    System.err.println("-oIMD                 Generate Model as IlisMeta INTERLIS-Transfer (XTF).");
+	    System.err.println("-oIMD                 Generate Model as IlisMeta07 INTERLIS-Transfer (XTF).");
+	    System.err.println("-oIMD16               Generate Model as IlisMeta16 INTERLIS-Transfer (XTF).");
 	    System.err.println("-oUML                 Generate Model as UML2/XMI-Transfer (eclipse flavour).");
 	    System.err.println("-oIOM                 (deprecated) Generate Model as INTERLIS-Transfer (XTF).");
 	    System.err.println("--check-repo-ilis uri   check all ili files in the given repository.");
@@ -246,11 +249,17 @@ public class Main {
 		} else if (args[i].equals("-oGML")) {
 		    outputKind = GenerateOutputKind.GML32;
 		    continue;
+		} else if (args[i].equals("-oILIGML2")) {
+		    outputKind = GenerateOutputKind.ILIGML2;
+		    continue;
 		} else if (args[i].equals("-oETF1")) {
 		    outputKind = GenerateOutputKind.ETF1;
 		    continue;
 		} else if (args[i].equals("-oIMD")) {
 		    outputKind = GenerateOutputKind.IMD;
+		    continue;
+		} else if (args[i].equals("-oIMD16")) {
+		    outputKind = GenerateOutputKind.IMD16;
 		    continue;
 		} else if (args[i].equals("-oUML")){
 			outputKind=GenerateOutputKind.UML21;
@@ -636,11 +645,18 @@ public class Main {
 		case GenerateOutputKind.GML32:
 		    ch.interlis.ili2c.generator.Gml32Generator.generate(desc, config.getOutputFile());
 		    break;
+		case GenerateOutputKind.ILIGML2:
+		    ch.interlis.ili2c.generator.Iligml2Generator.generate(desc, config.getOutputFile());
+		    break;
 		case GenerateOutputKind.ETF1:
 		    ch.interlis.ili2c.generator.ETF1Generator.generate(desc, config.getOutputFile());
 		    break;
 		case GenerateOutputKind.IMD:
 		    ch.interlis.ili2c.generator.ImdGenerator.generate(new java.io.File(config.getOutputFile()), desc, APP_NAME +
+			    "-" + getVersion());
+		    break;
+		case GenerateOutputKind.IMD16:
+		    ch.interlis.ili2c.generator.Imd16Generator.generate(new java.io.File(config.getOutputFile()), desc, APP_NAME +
 			    "-" + getVersion());
 		    break;
 		case GenerateOutputKind.UML21:

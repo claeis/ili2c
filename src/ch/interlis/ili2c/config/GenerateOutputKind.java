@@ -52,6 +52,26 @@ public class GenerateOutputKind
   public static final int IMD = 9;
   public static final int UML21 = 10;
 
+  public static final int ILIGML2 = 11;
+  public static final int IMD16 = 12;
+  
+  private static final String kindTexts[] = {
+          "Generate no output"
+        , "Generate an INTERLIS 1 model"
+        , "Generate an INTERLIS 2 model"
+        , "Generate an XTF XML-Schema"
+        , "Generate an ILI1 FMT-Description"
+  	  , "Generate a GML/eCH-118-1.0 XML-Schema"
+  	  , "deprecated (IOM)"
+  	  , "deprecated (ETF)"
+  	  , "Generate Model as IlisMeta07-Transfer"
+  	  , "Generate Model as UML/XMI Transfer"
+  	  , "Generate a GML/eCH-118-2.0 XML-Schema"
+  	  , "Generate Model as IlisMeta16-Transfer"
+        };
+  public static String getDescription(int kind){
+	  return kindTexts[kind-1];
+  }
   // -end- 3C6262B9035B detail_end "GenerateOutputKind"
 
 }

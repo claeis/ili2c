@@ -1,0 +1,75 @@
+<xsd:schema 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns="http://www.interlis.ch/ILIGML-2.0/INTERLIS" 
+	xmlns:ili2="http://www.interlis.ch/ili2" targetNamespace="http://www.interlis.ch/ILIGML-2.0/INTERLIS" 
+	xmlns:gml="http://www.opengis.net/gml/3.2" 
+	elementFormDefault="qualified" 
+	attributeFormDefault="unqualified">
+
+    <xsd:import namespace="http://www.opengis.net/gml/3.2" schemaLocation="http://schemas.opengis.net/gml/3.2.1/gml.xsd"/>	
+	
+	<xsd:annotation>
+		<xsd:appinfo source="http://www.interlis.ch/ili2c">
+			<ili2:model>INTERLIS</ili2:model>
+			<ili2:modelVersion>2016-01-01</ili2:modelVersion>
+			<ili2:modelAt>http://www.interlis.ch</ili2:modelAt>
+		</xsd:appinfo>
+	</xsd:annotation>
+	
+	<xsd:attribute name="ORDER_POS" type="xsd:positiveInteger"/>
+	<xsd:simpleType name="HALIGNMENT">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Left"/>
+			<xsd:enumeration value="Center"/>
+			<xsd:enumeration value="Right"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="VALIGNMENT">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Top"/>
+			<xsd:enumeration value="Cap"/>
+			<xsd:enumeration value="Half"/>
+			<xsd:enumeration value="Base"/>
+			<xsd:enumeration value="Bottom"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="I32OID">
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="STANDARDOID">
+		<xsd:restriction base="xsd:token">
+			<xsd:length value="16"/>
+			<xsd:pattern value="[a-zA-Z][a-zA-Z0-9]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="UUIDOID">
+		<xsd:restriction base="xsd:token">
+			<xsd:length value="36"/>
+			<xsd:pattern value="[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:complexType name="TRANSFERMemberType">
+		<xsd:complexContent>
+			<xsd:extension base="gml:AbstractFeatureMemberType">
+				<xsd:sequence>
+					<xsd:choice>
+						<xsd:element ref="gml:AbstractFeature"/>
+					</xsd:choice>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="TRANSFER" type="TRANSFERType" substitutionGroup="gml:AbstractFeature"/>
+	<xsd:complexType name="TRANSFERType">
+		<xsd:complexContent>
+			<xsd:extension base="gml:AbstractFeatureType">
+				<xsd:sequence>
+					<xsd:element name="baskets" type="TRANSFERMemberType" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:sequence>
+				<xsd:attributeGroup ref="gml:AggregationAttributeGroup"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+</xsd:schema>

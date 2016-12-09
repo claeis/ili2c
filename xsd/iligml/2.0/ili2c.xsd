@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://www.interlis.ch/ili2c/ILIGML-2.0" 
+    targetNamespace=
+    "http://www.interlis.ch/ili2c/ILIGML-2.0" 
+    elementFormDefault="qualified" 
+    attributeFormDefault="unqualified"
+    >
+    
+    <xsd:element name="Model" type="ModelType"/>
+    <xsd:complexType name="ModelType">
+        <xsd:sequence>
+            <xsd:element name="modelName" type="xsd:token"/>
+            <xsd:element name="modelVersion" type="xsd:normalizedString" minOccurs="0"/>
+            <xsd:element name="modelIssuer" type="xsd:anyURI"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="ExtendedCodelistAttr" type="ExtendedCodelistAttrType"/>
+    <xsd:complexType name="ExtendedCodelistAttrType">
+        <xsd:sequence>
+            <xsd:element name="extendedAttribute" type="xsd:Name"/>
+            <xsd:element name="codelist" type="xsd:QName"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+</xsd:schema>
