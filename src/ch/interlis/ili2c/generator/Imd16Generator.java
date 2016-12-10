@@ -35,7 +35,7 @@ public class Imd16Generator {
 		Imd16Generator d = null;
 		try {
 			try{
-				ioxWriter = new XtfWriterBase( out,  getIoxMapping(),"2.3");
+				ioxWriter = new XtfWriterBase( out,  getIoxMapping(),"2.4");
 				((XtfWriterBase)ioxWriter).setModels(new XtfModel[]{ILISMETA16.getXtfModel()});
 				d = new Imd16Generator( ioxWriter );
 

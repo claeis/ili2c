@@ -5,6 +5,8 @@ ili2c 4.6.0 (2016-12-xx)
 ---------------------------
 - support repositories with https
 - added eCH-0118-2.0 support (option -oILIGML2)
+- ili24: support BAG/LIST OF AttrType
+- added IlisMeta16 support (option -oIMD16)
 
 ili2c 4.5.27 (2016-11-02)
 ---------------------------
