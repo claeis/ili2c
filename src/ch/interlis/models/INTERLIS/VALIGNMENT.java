@@ -13,8 +13,13 @@ public class VALIGNMENT{
      return (VALIGNMENT)valuev.get(value);
   }
   static public VALIGNMENT Top=new VALIGNMENT("Top");
+  public final static String tag_Top="Top";
   static public VALIGNMENT Cap=new VALIGNMENT("Cap");
+  public final static String tag_Cap="Cap";
   static public VALIGNMENT Half=new VALIGNMENT("Half");
+  public final static String tag_Half="Half";
   static public VALIGNMENT Base=new VALIGNMENT("Base");
+  public final static String tag_Base="Base";
   static public VALIGNMENT Bottom=new VALIGNMENT("Bottom");
+  public final static String tag_Bottom="Bottom";
 }

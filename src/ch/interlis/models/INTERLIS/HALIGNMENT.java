@@ -13,6 +13,9 @@ public class HALIGNMENT{
      return (HALIGNMENT)valuev.get(value);
   }
   static public HALIGNMENT Left=new HALIGNMENT("Left");
+  public final static String tag_Left="Left";
   static public HALIGNMENT Center=new HALIGNMENT("Center");
+  public final static String tag_Center="Center";
   static public HALIGNMENT Right=new HALIGNMENT("Right");
+  public final static String tag_Right="Right";
 }

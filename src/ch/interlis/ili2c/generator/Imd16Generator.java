@@ -16,7 +16,7 @@ import ch.interlis.iox_j.EndTransferEvent;
 import ch.interlis.iox_j.ObjectEvent;
 import ch.interlis.iox_j.StartBasketEvent;
 import ch.interlis.iox_j.StartTransferEvent;
-import ch.interlis.models.IlisMeta07.ModelData.*;
+import ch.interlis.models.IlisMeta16.ModelData.*;
 import ch.interlis.models.*;
 
 public class Imd16Generator {
@@ -36,7 +36,7 @@ public class Imd16Generator {
 		try {
 			try{
 				ioxWriter = new XtfWriterBase( out,  getIoxMapping(),"2.3");
-				((XtfWriterBase)ioxWriter).setModels(new XtfModel[]{ILISMETA07.getXtfModel()});
+				((XtfWriterBase)ioxWriter).setModels(new XtfModel[]{ILISMETA16.getXtfModel()});
 				d = new Imd16Generator( ioxWriter );
 
 				d.encode( td,sender );
@@ -82,11 +82,11 @@ public class Imd16Generator {
 	throws IoxException
 	{
 
-		StartBasketEvent startBasketEvent = new StartBasketEvent( ILISMETA07.ModelData, "MODEL."+model.getScopedName(null) );
+		StartBasketEvent startBasketEvent = new StartBasketEvent( ILISMETA16.ModelData, "MODEL."+model.getScopedName(null) );
 		out.write( startBasketEvent );
 		
 		
-		ch.interlis.models.IlisMeta07.ModelData.Model iomModel = new ch.interlis.models.IlisMeta07.ModelData.Model( model.getScopedName(null) );
+		ch.interlis.models.IlisMeta16.ModelData.Model iomModel = new ch.interlis.models.IlisMeta16.ModelData.Model( model.getScopedName(null) );
 				
 		iomModel.setName( model.getName() );
 		
@@ -258,11 +258,11 @@ public class Imd16Generator {
 	private void visitViewable(ch.interlis.ili2c.metamodel.Viewable classDef ) 
 	throws IoxException
 	{
-		ch.interlis.models.IlisMeta07.ModelData.Class iomClass = null;
+		ch.interlis.models.IlisMeta16.ModelData.Class iomClass = null;
 		if(classDef instanceof ch.interlis.ili2c.metamodel.View){
-			iomClass=new ch.interlis.models.IlisMeta07.ModelData.View(classDef.getScopedName(null) );
+			iomClass=new ch.interlis.models.IlisMeta16.ModelData.View(classDef.getScopedName(null) );
 		}else if(classDef instanceof ch.interlis.ili2c.metamodel.AbstractClassDef){
-			iomClass=new ch.interlis.models.IlisMeta07.ModelData.Class(classDef.getScopedName(null) );
+			iomClass=new ch.interlis.models.IlisMeta16.ModelData.Class(classDef.getScopedName(null) );
 		}else{
 			throw new IllegalArgumentException( "Unknown subclass of Viewable: " + classDef.getClass() );
 		}
@@ -423,7 +423,7 @@ public class Imd16Generator {
 			if ( element instanceof ch.interlis.ili2c.metamodel.Constraint ) {
 				Constraint iomConstraint=visitConstraint((ch.interlis.ili2c.metamodel.Constraint)element,cnstrMetaAttrs,iomClass.getobjectoid(),cnstrIdx);
 				cnstrIdx++;
-				iomClass.addConstraints(iomConstraint);
+				// FIXME iomClass.addConstraints(iomConstraint); // was STRCUTURE
 			} else if ( element instanceof ch.interlis.ili2c.metamodel.Parameter ) {
 				visitParameter((ch.interlis.ili2c.metamodel.Parameter)element,paramOrderPos);
 				paramOrderPos++;
@@ -529,7 +529,7 @@ public class Imd16Generator {
 	private void visitGraphic(ch.interlis.ili2c.metamodel.Graphic graphic ) 
 	throws IoxException
 	{
-		ch.interlis.models.IlisMeta07.ModelData.Graphic iomGraphic = new ch.interlis.models.IlisMeta07.ModelData.Graphic(graphic.getScopedName(null) );
+		ch.interlis.models.IlisMeta16.ModelData.Graphic iomGraphic = new ch.interlis.models.IlisMeta16.ModelData.Graphic(graphic.getScopedName(null) );
 		iomGraphic.setElementInPackage( graphic.getContainer().getScopedName(null) );
 
 		iomGraphic.setName( graphic.getName() );
@@ -567,7 +567,7 @@ public class Imd16Generator {
 	private void visitSignAttribute(ch.interlis.ili2c.metamodel.SignAttribute graphic ) 
 	throws IoxException
 	{
-		ch.interlis.models.IlisMeta07.ModelData.DrawingRule iomGraphic = new ch.interlis.models.IlisMeta07.ModelData.DrawingRule(graphic.getScopedName(null) );
+		ch.interlis.models.IlisMeta16.ModelData.DrawingRule iomGraphic = new ch.interlis.models.IlisMeta16.ModelData.DrawingRule(graphic.getScopedName(null) );
 		iomGraphic.setGraphic(graphic.getContainer().getScopedName(null) );
 
 		iomGraphic.setName( graphic.getName() );
@@ -852,10 +852,11 @@ public class Imd16Generator {
 	private Constraint visitConstraint(ch.interlis.ili2c.metamodel.Constraint cnstrt,ArrayList<MetaAttribute> metaAttrs,String viewableId,int idx)
 	throws IoxException
 	{
+		String cnstrdTid= CONSTRAINT+Integer.toString(idx)+"."+viewableId; // FIXME use name, if available
 		Constraint iomCnstrt=null;
 		if(cnstrt instanceof ch.interlis.ili2c.metamodel.ExistenceConstraint){
 			ch.interlis.ili2c.metamodel.ExistenceConstraint existenceConstraint = (ch.interlis.ili2c.metamodel.ExistenceConstraint)cnstrt;
-			ExistenceConstraint iomConstraint = new ExistenceConstraint();
+			ExistenceConstraint iomConstraint = new ExistenceConstraint(cnstrdTid);
 			PathOrInspFactor iomRestrictedAttr=visitObjectPath(existenceConstraint.getRestrictedAttribute());
 			iomConstraint.setAttr(iomRestrictedAttr);
 			Iterator requiredInIt=existenceConstraint.iteratorRequiredIn();
@@ -869,7 +870,7 @@ public class Imd16Generator {
 			iomCnstrt=iomConstraint;
 		}else if(cnstrt instanceof ch.interlis.ili2c.metamodel.MandatoryConstraint){
 			ch.interlis.ili2c.metamodel.MandatoryConstraint mandatoryConstraint = (ch.interlis.ili2c.metamodel.MandatoryConstraint)cnstrt;
-			SimpleConstraint iomConstraint = new SimpleConstraint();
+			SimpleConstraint iomConstraint = new SimpleConstraint(cnstrdTid);
 			iomCnstrt=iomConstraint;
 			
 			ch.interlis.ili2c.metamodel.Evaluable condition = mandatoryConstraint.getCondition();
@@ -879,7 +880,7 @@ public class Imd16Generator {
 			iomConstraint.setKind( SimpleConstraint_Kind.MandC );
 		}else if(cnstrt instanceof ch.interlis.ili2c.metamodel.PlausibilityConstraint){
 			ch.interlis.ili2c.metamodel.PlausibilityConstraint plausibilityConstraint = (ch.interlis.ili2c.metamodel.PlausibilityConstraint)cnstrt;
-			SimpleConstraint iomConstraint = new SimpleConstraint();
+			SimpleConstraint iomConstraint = new SimpleConstraint(cnstrdTid);
 			iomCnstrt=iomConstraint;
 			
 			ch.interlis.ili2c.metamodel.Evaluable condition = plausibilityConstraint.getCondition();
@@ -896,7 +897,7 @@ public class Imd16Generator {
 			double percentage = plausibilityConstraint.getPercentage();
 			iomConstraint.setPercentage( percentage );
 		}else if(cnstrt instanceof ch.interlis.ili2c.metamodel.UniquenessConstraint){
-			UniqueConstraint iomUniqueConstraint = new UniqueConstraint();
+			UniqueConstraint iomUniqueConstraint = new UniqueConstraint(cnstrdTid);
 			iomCnstrt=iomUniqueConstraint;
 			ch.interlis.ili2c.metamodel.UniquenessConstraint uc=(ch.interlis.ili2c.metamodel.UniquenessConstraint)cnstrt;
 			if ( uc.getLocal() ) {
@@ -923,7 +924,7 @@ public class Imd16Generator {
 			}
 		}else if(cnstrt instanceof ch.interlis.ili2c.metamodel.SetConstraint){
 			ch.interlis.ili2c.metamodel.SetConstraint sc=(ch.interlis.ili2c.metamodel.SetConstraint)cnstrt;
-			SetConstraint iomConstraint = new SetConstraint();
+			SetConstraint iomConstraint = new SetConstraint(cnstrdTid);
 			iomCnstrt=iomConstraint;
 			iomConstraint.setConstraint( visitExpression(sc.getCondition()) );
 			if(sc.getPreCondition()!=null){
@@ -933,7 +934,7 @@ public class Imd16Generator {
 		}else{	
 			throw new IllegalArgumentException("unexpected constraint type "+cnstrt.getClass().getName());
 		}
-		metaAttrs.addAll(getMetaValues(cnstrt.getMetaValues(), viewableId, CONSTRAINT+Integer.toString(idx)+"."));
+		metaAttrs.addAll(getMetaValues(cnstrt.getMetaValues(), cnstrdTid,null));
 		return iomCnstrt;
 	}
 	  private void printAttributePath (StringBuffer out,ch.interlis.ili2c.metamodel.Container scope, ch.interlis.ili2c.metamodel.ObjectPath path)
@@ -2091,7 +2092,7 @@ public class Imd16Generator {
 	private static ViewableProperties getIoxMapping()
 	{
 	   ViewableProperties mapping=INTERLIS_.getIoxMapping();
-	   mapping.addAll(ILISMETA07.getIoxMapping());
+	   mapping.addAll(ILISMETA16.getIoxMapping());
 
 		  return mapping;
 	}
