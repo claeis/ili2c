@@ -1442,19 +1442,15 @@ protected attrTypeDef[Container  scope,
 		"OF" typ=attrType[scope,allowAliases,extending,line,formalArgs]
 		{
 			try{
-				if(typ instanceof CompositionType){
-					ct=(CompositionType)typ;
-					if(card!=null){
-						ct.setCardinality(card); // FIXME24
-					}else{
-						ct.setCardinality(new Cardinality(0,Cardinality.UNBOUND));
-					}
-					ct.setOrdered(ordered); // FIXME24
+				if(card!=null){
+					typ.setCardinality(card);
+				}else{
+					typ.setCardinality(new Cardinality(0,Cardinality.UNBOUND));
 				}
+				typ.setOrdered(ordered);
 			}catch(Exception ex){
 			    reportError(ex, line);
 			}
-			//typ=ct;
 		}
 	;
 

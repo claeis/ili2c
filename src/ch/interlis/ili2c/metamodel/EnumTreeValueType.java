@@ -30,6 +30,7 @@ public class EnumTreeValueType extends BaseType {
         throw new Ili2cSemanticException (rsrc.getString (
         "err_type_ExtOther"));
     }
+    checkCardinalityExtension(wantToExtend);
   }
 
 public Domain getEnumType() {

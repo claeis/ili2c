@@ -288,6 +288,7 @@ public class NumericType extends NumericalType
 
     if (errorString != null)
       throw new Ili2cSemanticException (rsrc.getString (errorString));
+    checkCardinalityExtension(wantToExtend);
   }
 
 

@@ -784,10 +784,19 @@ private void declareDomainDef (Domain domain)
   }
   private void declareAttribute (AttributeDef attribute)
   {
-        String minOccurs="";
-        if(!attribute.getDomain().isMandatoryConsideringAliases()){
-       	  minOccurs=" minOccurs=\"0\"";
-        }
+	  Cardinality card=attribute.getDomain().getCardinality();
+		String minOccurs="";
+		if(card.getMinimum()!=1){
+			minOccurs=" minOccurs=\""+Long.toString(card.getMinimum())+"\"";
+		}
+		String maxOccurs="";
+		if(card.getMaximum()!=1){
+			if(card.getMaximum()==Cardinality.UNBOUND){
+				maxOccurs=" maxOccurs=\"unbounded\"";
+			}else{
+				maxOccurs=" maxOccurs=\""+Long.toString(card.getMaximum())+"\"";
+			}
+		}
     Type type= attribute.getDomain();
     if(type instanceof TypeAlias){
     	Domain realDomain=((TypeAlias)type).getAliasing();
@@ -840,9 +849,9 @@ private void declareDomainDef (Domain domain)
         	}
         }
     	if(facets==null){
-        	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\""+base+"\""+minOccurs+"/>");
+        	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\""+base+"\""+minOccurs+maxOccurs+"/>");
     	}else{
-      	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\""+minOccurs+">");
+      	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\""+minOccurs+maxOccurs+">");
        	  ipw.indent();
       	  ipw.println("<xsd:simpleType>");
       	  ipw.indent();
@@ -863,13 +872,10 @@ private void declareDomainDef (Domain domain)
 					+ getTransferName(attribute)
 					+ "\""
 					+ minOccurs
+					+ maxOccurs
 					+ " type=\"gml:PointPropertyType\""
 					+ ">");
 			ipw.indent();
-			//ipw.println("<!-- "+PRBLMTAG+" unable to express domain of values -->");
-			//ipw.println("<!-- "+PRBLMTAG+" unable to express unit of values -->");
-			//ipw.println("<!-- "+PRBLMTAG+" unable to express CRS -->");
-			//ipw.println("<!-- "+PRBLMTAG+" unable to express rotation -->");
 			ipw.unindent();
 			ipw.println("</xsd:element>");
 		}else if (type instanceof PolylineType){
@@ -878,13 +884,10 @@ private void declareDomainDef (Domain domain)
 					+ getTransferName(attribute)
 					+ "\""
 					+ minOccurs
+					+ maxOccurs
 					+ " type=\"gml:CurvePropertyType\""
 					+ ">");
 			ipw.indent();
-			//ipw.println("<!-- "+PRBLMTAG+" unable to express domain/unit/crs of control points -->");
-			//ipw.println("<!-- "+PRBLMTAG+" unable to express allowed line forms -->");
-			//ipw.println("<!-- "+PRBLMTAG+" unable to express line attributes -->");
-			//ipw.println("<!-- "+PRBLMTAG+" unable to express overlaps -->");
 			ipw.unindent();
 			ipw.println("</xsd:element>");
 		}else if (type instanceof SurfaceOrAreaType){
@@ -893,6 +896,7 @@ private void declareDomainDef (Domain domain)
 					+ getTransferName(attribute)
 					+ "\""
 					+ minOccurs
+					+ maxOccurs
 					+ " type=\"gml:SurfacePropertyType\""
 					+ ">");
 			ipw.indent();
@@ -905,20 +909,6 @@ private void declareDomainDef (Domain domain)
 		}else if (type instanceof CompositionType){
 			CompositionType composition=(CompositionType)type;
 			Table part=composition.getComponentType();
-			Cardinality card=composition.getCardinality();
-			minOccurs="";
-			if(card.getMinimum()>1){
-				// cases 0 and 1 are are handled at attribute level
-				minOccurs=" minOccurs=\""+Long.toString(card.getMinimum())+"\"";
-			}
-			String maxOccurs="";
-			if(card.getMaximum()!=1){
-				if(card.getMaximum()==Cardinality.UNBOUND){
-					maxOccurs=" maxOccurs=\"unbounded\"";
-				}else{
-					maxOccurs=" maxOccurs=\""+Long.toString(card.getMaximum())+"\"";
-				}
-			}
 			ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\""+minOccurs+maxOccurs+">");
 			ipw.indent ();
 			ipw.println ("<xsd:complexType>");
@@ -933,7 +923,7 @@ private void declareDomainDef (Domain domain)
 			ipw.unindent ();
 			ipw.println ("</xsd:element>");
 		}else if (type instanceof ReferenceType){
-			ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"gml:ReferenceType\""+minOccurs+">");
+			ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"gml:ReferenceType\""+minOccurs+maxOccurs+">");
 				ipw.indent ();
 				ipw.println("<xsd:annotation>");
 					ipw.indent ();
@@ -947,10 +937,10 @@ private void declareDomainDef (Domain domain)
 				ipw.unindent ();
 			ipw.println ("</xsd:element>");
 		}else if (type instanceof EnumerationType && !attribute.isFinal()){
-  	      ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"gml:CodeType\""+minOccurs+"/>");
+  	      ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"gml:CodeType\""+minOccurs+maxOccurs+"/>");
 	      codelists.add(attribute);
 		}else if (type instanceof EnumTreeValueType && !attribute.isFinal()){
-	  	      ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"gml:CodeType\""+minOccurs+"/>");
+	  	      ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\"gml:CodeType\""+minOccurs+maxOccurs+"/>");
 		      codelists.add(attribute);
 		}else{
 			ipw.println(
@@ -958,6 +948,7 @@ private void declareDomainDef (Domain domain)
 					+ getTransferName(attribute)
 					+ "\""
 					+ minOccurs
+					+ maxOccurs
 					+ ">");
 			ipw.indent();
 			declareType(type, null);

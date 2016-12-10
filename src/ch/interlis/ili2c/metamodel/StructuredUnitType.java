@@ -161,6 +161,7 @@ public class StructuredUnitType extends NumericalType
           generalUnit.toString()));
       }
     }
+    checkCardinalityExtension(wantToExtend);
   }
 
 

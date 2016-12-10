@@ -10,9 +10,7 @@ import java.util.*;
 */
 public class CompositionType extends Type
 {
-  Cardinality  cardinality = new Cardinality(0,Cardinality.UNBOUND);
   Table        componentType;
-  boolean      ordered = false;
   private LinkedList<Table> restrictedTo = new LinkedList<Table>();
 
 
@@ -21,55 +19,8 @@ public class CompositionType extends Type
   */
   public CompositionType ()
   {
+	  cardinality = new Cardinality(0,Cardinality.UNBOUND);
   }
-
-
-  public boolean isMandatory ()
-  {
-    return cardinality.getMinimum()==0 ? false : true;
-  }
-  public void setMandatory (boolean mand)
-  {
-    if(mand){
-      if(cardinality.getMinimum()==0)cardinality.setMinimum(1);
-    }else{
-      if(cardinality.getMinimum()>0)cardinality.setMinimum(0);
-    }
-  }
-
-
-  /** Returns the cardinality of the composition.
-  */
-  public Cardinality getCardinality ()
-  {
-    return cardinality;
-  }
-
-
-
-  /** Sets the cardinality of the composition.
-  */
-  public void setCardinality (Cardinality cardinality)
-    throws java.beans.PropertyVetoException
-  {
-    Cardinality oldValue = this.cardinality;
-    Cardinality newValue = cardinality;
-
-
-    if (newValue == null)
-      throw new IllegalArgumentException();
-
-
-    if (newValue.equals(oldValue)){
-      return;
-    }
-
-
-    fireVetoableChange ("cardinality", oldValue, newValue);
-    this.cardinality = newValue;
-    firePropertyChange ("cardinality", oldValue, newValue);
-  }
-
 
 
   /** Returns the structure or table of whose instances an
@@ -132,38 +83,6 @@ public class CompositionType extends Type
     firePropertyChange ("componentType", oldValue, newValue);
   }
 
-
-
-  /** Returns whether or not this composition type is ordered.
-  */
-  public boolean isOrdered()
-  {
-    return ordered;
-  }
-
-
-
-
-/** Sets whether or not this composition type is ordered.
-  */
-  public void setOrdered(boolean ordered)
-    throws java.beans.PropertyVetoException
-  {
-    boolean oldValue = this.ordered;
-    boolean newValue = ordered;
-
-
-	if (oldValue == newValue)
-	  return;
-
-
-    fireVetoableChange("ordered", oldValue, newValue);
-    this.ordered = newValue;
-    firePropertyChange("ordered", oldValue, newValue);
-  }
-
-
-
   /** Checks whether it is possible for this to extend wantToExtend.
       If so, nothing happens; especially, the extension graph is
       <em>not</em> changed.
@@ -194,13 +113,6 @@ public class CompositionType extends Type
     myComponent = this.getComponentType();
     generalComponent = general.getComponentType();
 
-
-    // compare ordering only if more than one object possible
-    if (this.cardinality.getMaximum()>1 && !this.isOrdered() && general.isOrdered())
-      throw new IllegalArgumentException (rsrc.getString (
-        "err_compositionType_UnorderedExtOrdered"));
-
-
     if ((myComponent != null)
         && (generalComponent != null)
         && !myComponent.isExtending (generalComponent))
@@ -210,11 +122,7 @@ public class CompositionType extends Type
         myComponent.toString(), generalComponent.toString()));
     }
 
-
-    if (!general.cardinality.isGeneralizing(this.cardinality))
-      throw new IllegalArgumentException (formatMessage (
-        "err_compositionType_cardExtMismatch",
-        this.cardinality.toString(), general.cardinality.toString()));
+    checkCardinalityExtension(general);
   }
   public void addRestrictedTo(Table structure)
   {
@@ -237,7 +145,6 @@ public class CompositionType extends Type
     public CompositionType clone() {
         CompositionType cloned = (CompositionType) super.clone();
 
-        cloned.cardinality = cardinality.clone();
         if (restrictedTo != null) {
             cloned.restrictedTo = (LinkedList<Table>) restrictedTo.clone();
         }

@@ -57,6 +57,7 @@ public class SurfaceType extends SurfaceOrAreaType
       throw new IllegalArgumentException (rsrc.getString (
         "err_surfaceType_ExtOther"));
     }
+    checkCardinalityExtension(wantToExtend);
   }
   @Override
   public boolean isAbstract(StringBuilder err) {

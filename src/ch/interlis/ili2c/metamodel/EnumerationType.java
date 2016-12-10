@@ -250,6 +250,7 @@ public class EnumerationType extends BaseType {
       Enumeration.Element ele=(Enumeration.Element)elei.next();
       checkTree(generalEnum,ele);
     }
+    checkCardinalityExtension(wantToExtend);
 
   }
   public Set getDirectExtensions()

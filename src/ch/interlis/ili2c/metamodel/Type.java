@@ -28,7 +28,8 @@ public abstract class Type
 {
   protected Type       extending = null;
   protected Set<Type>  extendedBy = new HashSet<Type>(2);
-  protected boolean    mandatory = false;
+  protected Cardinality  cardinality = new Cardinality(0,1);
+  private boolean      ordered = false;
 
 
   protected Type()
@@ -46,6 +47,7 @@ public abstract class Type
             if (cloned.extending != null) {
                 cloned.extending.extendedBy.add(cloned);
             }
+            cloned.cardinality = cardinality.clone();
         } catch (CloneNotSupportedException e) {
             // Never happens because the object is cloneable
         }
@@ -67,13 +69,70 @@ public abstract class Type
     return isAbstract(new StringBuilder());
   }
 
-
-  public boolean isMandatory ()
+  /** Returns whether or not this composition type is ordered.
+  */
+  public boolean isOrdered()
   {
-    return mandatory;
+    return ordered;
   }
 
 
+
+
+/** Sets whether or not this composition type is ordered.
+  */
+  public void setOrdered(boolean ordered)
+    throws java.beans.PropertyVetoException
+  {
+    boolean oldValue = this.ordered;
+    boolean newValue = ordered;
+
+
+	if (oldValue == newValue)
+	  return;
+
+
+    fireVetoableChange("ordered", oldValue, newValue);
+    this.ordered = newValue;
+    firePropertyChange("ordered", oldValue, newValue);
+  }
+
+  /** Returns the cardinality of the composition.
+  */
+  public Cardinality getCardinality ()
+  {
+    return cardinality;
+  }
+
+
+
+  /** Sets the cardinality of the composition.
+  */
+  public void setCardinality (Cardinality cardinality)
+    throws java.beans.PropertyVetoException
+  {
+    Cardinality oldValue = this.cardinality;
+    Cardinality newValue = cardinality;
+
+
+    if (newValue == null)
+      throw new IllegalArgumentException();
+
+
+    if (newValue.equals(oldValue)){
+      return;
+    }
+
+
+    fireVetoableChange ("cardinality", oldValue, newValue);
+    this.cardinality = newValue;
+    firePropertyChange ("cardinality", oldValue, newValue);
+  }
+  
+  public boolean isMandatory ()
+  {
+    return cardinality.getMinimum()==0 ? false : true;
+  }
 
   public boolean isMandatoryConsideringAliases ()
   {
@@ -89,11 +148,15 @@ public abstract class Type
   public void setMandatory (boolean mand)
     throws java.beans.PropertyVetoException
   {
-    boolean oldValue = this.mandatory;
+    boolean oldValue = isMandatory();
     boolean newValue = mand;
 
     fireVetoableChange("mandatory", oldValue, newValue);
-    mandatory = mand;
+    if(mand){
+        if(cardinality.getMinimum()==0)cardinality.setMinimum(1);
+      }else{
+        if(cardinality.getMinimum()>0)cardinality.setMinimum(0);
+      }
     firePropertyChange("mandatory", oldValue, newValue);
   }
 
@@ -170,17 +233,19 @@ public abstract class Type
   */
 
   abstract void checkTypeExtension (Type wantToExtend);
-  /*
+  void checkCardinalityExtension (Type general)
   {
-    if ((wantToExtend == null)
-      || ((wantToExtend = wantToExtend.resolveAliases()) == null))
-      return;
-    if (!(wantToExtend.getClass().equals(this.getClass()))){
-        throw new Ili2cSemanticException (rsrc.getString (
-        "err_type_ExtOther"));
-    }
+	  
+	    // compare ordering only if more than one object possible
+	    if (this.cardinality.getMaximum()>1 && !this.isOrdered() && general.isOrdered())
+	      throw new IllegalArgumentException (rsrc.getString (
+	        "err_compositionType_UnorderedExtOrdered"));
+	    
+	    if (!general.cardinality.isGeneralizing(this.cardinality))
+	        throw new IllegalArgumentException (formatMessage (
+	          "err_compositionType_cardExtMismatch",
+	          this.cardinality.toString(), general.cardinality.toString()));
   }
-  */
 
 
 

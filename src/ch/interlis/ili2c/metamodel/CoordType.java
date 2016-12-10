@@ -107,6 +107,7 @@ public class CoordType extends BaseType
         throw new Ili2cSemanticException (rsrc.getString (
         "err_coordType_ExtOther"));
     }
+    checkCardinalityExtension(wantToExtend);
   }
   public boolean checkStructuralEquivalence (Element with)
   {

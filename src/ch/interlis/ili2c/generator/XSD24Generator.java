@@ -657,10 +657,19 @@ public final class XSD24Generator
   }
   private void declareAttribute (AttributeDef attribute)
   {
-        String minOccurs="";
-        if(!attribute.getDomain().isMandatoryConsideringAliases()){
-       	  minOccurs=" minOccurs=\"0\"";
-        }
+	  Cardinality card=attribute.getDomain().getCardinality();
+		String minOccurs="";
+		if(card.getMinimum()!=1){
+			minOccurs=" minOccurs=\""+Long.toString(card.getMinimum())+"\"";
+		}
+		String maxOccurs="";
+		if(card.getMaximum()!=1){
+			if(card.getMaximum()==Cardinality.UNBOUND){
+				maxOccurs=" maxOccurs=\"unbounded\"";
+			}else{
+				maxOccurs=" maxOccurs=\""+Long.toString(card.getMaximum())+"\"";
+			}
+		}
     Type type= attribute.getDomain();
     if(type instanceof TypeAlias){
     	Domain realDomain=((TypeAlias)type).getAliasing();
@@ -707,9 +716,9 @@ public final class XSD24Generator
         	base=getScopedName(realDomain);
         }
     	if(facets==null){
-        	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\""+base+"\""+minOccurs+"/>");
+        	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\" type=\""+base+"\""+minOccurs+maxOccurs+"/>");
     	}else{
-      	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\""+minOccurs+">");
+      	  ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\""+minOccurs+maxOccurs+">");
        	  ipw.indent();
       	  ipw.println("<xsd:simpleType>");
       	  ipw.indent();
@@ -727,19 +736,6 @@ public final class XSD24Generator
 		if (type instanceof CompositionType){
 			CompositionType composition=(CompositionType)type;
 			Table part=composition.getComponentType();
-			Cardinality card=composition.getCardinality();
-			minOccurs="";
-			if(card.getMinimum()!=1){
-				minOccurs=" minOccurs=\""+Long.toString(card.getMinimum())+"\"";
-			}
-			String maxOccurs="";
-			if(card.getMaximum()!=1){
-				if(card.getMaximum()==Cardinality.UNBOUND){
-					maxOccurs=" maxOccurs=\"unbounded\"";
-				}else{
-					maxOccurs=" maxOccurs=\""+Long.toString(card.getMaximum())+"\"";
-				}
-			}
 			ipw.println ("<xsd:element name=\""+getTransferName(attribute)+"\""+minOccurs+maxOccurs+">");
 			ipw.indent ();
 			ipw.println ("<xsd:complexType>");
@@ -755,7 +751,7 @@ public final class XSD24Generator
 			ipw.println ("</xsd:element>");
 		}else if (type instanceof ReferenceType){
 				ipw.println("<xsd:element name=\"" + getTransferName(attribute)
-						+ "\""+minOccurs + ">");
+						+ "\""+minOccurs + maxOccurs+">");
 				ipw.indent();
 					ipw.println("<xsd:complexType>");
 					ipw.indent();
@@ -770,6 +766,7 @@ public final class XSD24Generator
 					+ getTransferName(attribute)
 					+ "\""
 					+ minOccurs
+					+ maxOccurs
 					+ ">");
 			ipw.indent();
 			declareType(type, null,attribute.isFinal());
