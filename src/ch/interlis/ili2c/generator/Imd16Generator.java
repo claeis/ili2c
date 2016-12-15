@@ -1593,9 +1593,9 @@ public class Imd16Generator {
 			ch.interlis.ili2c.metamodel.BlackboxType bb=(ch.interlis.ili2c.metamodel.BlackboxType)type;
 			iomText.setKind(bb.getKind()==ch.interlis.ili2c.metamodel.BlackboxType.eBINARY?BlackboxType_Kind.Binary:BlackboxType_Kind.Xml);
 			iomType=iomText;
-		}else if(type instanceof ch.interlis.ili2c.metamodel.CoordType){
+		}else if(type instanceof ch.interlis.ili2c.metamodel.AbstractCoordType){
 			CoordType iomCoord=new CoordType(typeTid);
-			ch.interlis.ili2c.metamodel.CoordType coord=(ch.interlis.ili2c.metamodel.CoordType)type;
+			ch.interlis.ili2c.metamodel.AbstractCoordType coord=(ch.interlis.ili2c.metamodel.AbstractCoordType)type;
 			ch.interlis.ili2c.metamodel.NumericalType dimv[]=coord.getDimensions();
 			for(int dimi=0;dimi<dimv.length;dimi++){
 				String name="C"+Integer.toString(dimi+1);
@@ -1609,6 +1609,11 @@ public class Imd16Generator {
 				iomAxisSpec.setAxis(iomNum.getobjectoid(),dimi+1);
 				iomAxisSpec.setCoordType(iomCoord.getobjectoid());
 				out.write(new ObjectEvent(iomAxisSpec));
+			}
+			if(coord instanceof ch.interlis.ili2c.metamodel.MultiCoordType){
+				iomCoord.setMulti(true);
+			}else{
+				iomCoord.setMulti(false);
 			}
 			iomType=iomCoord;
 		}else if(type instanceof ch.interlis.ili2c.metamodel.EnumerationType){
@@ -1717,9 +1722,28 @@ public class Imd16Generator {
 				}else{
 					throw new IllegalArgumentException("unexpected type "+type.getClass().getName());
 				}
+				iomLineType.setMulti(false);
+			}else if(lineType instanceof ch.interlis.ili2c.metamodel.MultiSurfaceOrAreaType){
+				ch.interlis.ili2c.metamodel.MultiSurfaceOrAreaType surface=(ch.interlis.ili2c.metamodel.MultiSurfaceOrAreaType)lineType;
+				if(surface.getLineAttributeStructure()!=null){
+					iomLineType.setLAStructure(surface.getLineAttributeStructure().getScopedName(null));
+				}
+				if(surface instanceof ch.interlis.ili2c.metamodel.MultiSurfaceType){
+					iomLineType.setKind(LineType_Kind.Surface);
+				}else if(surface instanceof ch.interlis.ili2c.metamodel.MultiAreaType){
+					iomLineType.setKind(LineType_Kind.Area);
+				}else{
+					throw new IllegalArgumentException("unexpected type "+type.getClass().getName());
+				}
+				iomLineType.setMulti(true);
 			}else if(lineType instanceof ch.interlis.ili2c.metamodel.PolylineType){
 				ch.interlis.ili2c.metamodel.PolylineType polyline=(ch.interlis.ili2c.metamodel.PolylineType)lineType;
 				iomLineType.setKind(polyline.isDirected()?LineType_Kind.DirectedPolyline:LineType_Kind.Polyline);
+				iomLineType.setMulti(false);
+			}else if(lineType instanceof ch.interlis.ili2c.metamodel.MultiPolylineType){
+				ch.interlis.ili2c.metamodel.MultiPolylineType polyline=(ch.interlis.ili2c.metamodel.MultiPolylineType)lineType;
+				iomLineType.setKind(polyline.isDirected()?LineType_Kind.DirectedPolyline:LineType_Kind.Polyline);
+				iomLineType.setMulti(true);
 			}else{
 				throw new IllegalArgumentException("unexpected type "+type.getClass().getName());
 			}
@@ -2071,23 +2095,6 @@ public class Imd16Generator {
 			}
 		}
 	
-	}
-	private void writeAliasTable() {
-		// TODO writeAliasTable()
-		try {
-			if(false){
-				java.io.InputStream template = getClass().getResourceAsStream(
-				"/ch/interlis/ili2c/generator/iom/AliasTable.txt" );
-		byte[] bt = new byte[1024];
-		int i;
-		while ( ( i = template.read( bt ) ) != -1 ) {
-			//out.write( new String( bt, 0, i ) ); 
-		}
-				
-			}
-		} catch ( IOException ex ) {
-			EhiLogger.logError( ex );
-		}
 	}
 	private static ViewableProperties getIoxMapping()
 	{

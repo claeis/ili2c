@@ -791,6 +791,16 @@ public final class XSD24Generator
 			ipw.println("</xsd:sequence>");
 		    ipw.unindent ();
 	    ipw.println ("</xsd:complexType>");
+    }else if (type instanceof MultiPolylineType){
+		ipw.println ("<xsd:complexType"+typeName+">");
+	    ipw.indent ();
+		ipw.println("<xsd:sequence>");
+		ipw.indent ();
+		ipw.println("<xsd:element ref=\"geom:multipolyline\"/>");
+		ipw.unindent ();
+		ipw.println("</xsd:sequence>");
+	    ipw.unindent ();
+	    ipw.println ("</xsd:complexType>");
     }else if (type instanceof SurfaceOrAreaType){
 		ipw.println ("<xsd:complexType"+typeName+">");
 		    ipw.indent ();
@@ -801,12 +811,32 @@ public final class XSD24Generator
 			ipw.println("</xsd:sequence>");
 		    ipw.unindent ();
 	    ipw.println ("</xsd:complexType>");
+    }else if (type instanceof MultiSurfaceOrAreaType){
+		ipw.println ("<xsd:complexType"+typeName+">");
+		    ipw.indent ();
+			ipw.println("<xsd:sequence>");
+			ipw.indent ();
+			ipw.println("<xsd:element ref=\"geom:multisurface\"/>");
+			ipw.unindent ();
+			ipw.println("</xsd:sequence>");
+		    ipw.unindent ();
+	    ipw.println ("</xsd:complexType>");
     }else if (type instanceof CoordType){
 		ipw.println ("<xsd:complexType"+typeName+">");
 			ipw.indent ();
 			ipw.println("<xsd:sequence>");
 			ipw.indent ();
 			ipw.println("<xsd:element ref=\"geom:coord\"/>");
+			ipw.unindent ();
+			ipw.println("</xsd:sequence>");
+			ipw.unindent ();
+	    ipw.println ("</xsd:complexType>");
+    }else if (type instanceof MultiCoordType){
+		ipw.println ("<xsd:complexType"+typeName+">");
+			ipw.indent ();
+			ipw.println("<xsd:sequence>");
+			ipw.indent ();
+			ipw.println("<xsd:element ref=\"geom:multicoord\"/>");
 			ipw.unindent ();
 			ipw.println("</xsd:sequence>");
 			ipw.unindent ();

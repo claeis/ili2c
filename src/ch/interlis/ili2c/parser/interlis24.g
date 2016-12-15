@@ -2846,14 +2846,14 @@ protected dateTimeType [Container scope, Type extending]
 ;
 	
 protected coordinateType [Container scope, Type extending,boolean isGeneric]
-  returns [CoordType ct]
+  returns [AbstractCoordType ct]
 {
   NumericalType nt1 = null;
   NumericalType nt2 = null;
   NumericalType nt3 = null;
   int[] rots = null;
   ct = null;
-
+  boolean multiCoord=false;
   NumericalType ext_nt1 = null;
   NumericalType ext_nt2 = null;
   NumericalType ext_nt3 = null;
@@ -2869,7 +2869,7 @@ protected coordinateType [Container scope, Type extending,boolean isGeneric]
       ext_nt3 = ext_dimensions [2];
   }
 }
-  : (coord:"COORD" | "MULTICOORD")
+  : (coord:"COORD" | "MULTICOORD" {multiCoord=true;})
     
        (
 	    nt1 = numericType [scope, ext_nt1,true]
@@ -2896,9 +2896,17 @@ protected coordinateType [Container scope, Type extending,boolean isGeneric]
 
       try {
         if (rots == null){
-          ct = new CoordType (nts);
+          if(multiCoord){
+	          ct = new MultiCoordType (nts);
+          }else{
+	          ct = new CoordType (nts);
+          }
         }else{
-          ct = new CoordType (nts, rots[0], rots[1]);
+          if(multiCoord){
+	          ct = new MultiCoordType (nts, rots[0], rots[1]);
+          }else{
+	          ct = new CoordType (nts, rots[0], rots[1]);
+          }
         }
         ct.setGeneric(isGeneric);
       } catch (Exception ex) {
@@ -3113,23 +3121,31 @@ protected lineType [Container scope, Type extending]
   LineForm[] theLineForms = null;
   PrecisionDecimal theMaxOverlap = null;
   Domain controlPointDomain = null;
-  Table lineAttrStructure = null;
   int line = 0;
   lt = null;
 }
   : ( ( "DIRECTED" { directed = true; } )? (pl:"POLYLINE" {line = pl.getLine();} | mpl:"MULTIPOLYLINE" {line = mpl.getLine();})
       {
-        lt = new PolylineType ();
-        try {
-          ((PolylineType) lt).setDirected (directed);
-        } catch (Exception ex) {
-          reportError (ex, line);
-        }
+      	if(pl!=null){
+		lt = new PolylineType ();
+		try {
+		  ((PolylineType) lt).setDirected (directed);
+		} catch (Exception ex) {
+		  reportError (ex, line);
+		}
+      	}else{
+		lt = new MultiPolylineType ();
+		try {
+		  ((MultiPolylineType) lt).setDirected (directed);
+		} catch (Exception ex) {
+		  reportError (ex, line);
+		}
+      	}
       }
     | surf:"SURFACE" { line = surf.getLine(); lt = new SurfaceType(); }
-    |  msurf:"MULTISURFACE" { line = msurf.getLine(); lt = new SurfaceType(); }
+    |  msurf:"MULTISURFACE" { line = msurf.getLine(); lt = new MultiSurfaceType(); }
     | area:"AREA" {line = area.getLine(); lt = new AreaType(); }
-    |  marea:"MULTIAREA" {line = marea.getLine(); lt = new AreaType(); }
+    |  marea:"MULTIAREA" {line = marea.getLine(); lt = new MultiAreaType(); }
     )
 
     ( theLineForms = lineForm[scope] )?
@@ -3162,24 +3178,6 @@ protected lineType [Container scope, Type extending]
       }
     }
 
-    (
-      att:"LINE" "ATTRIBUTES"
-      lineAttrStructure=structureRef[scope]
-      {
-      /* TODO als Verweis ist hier nur ein Name auf eine STRUCTURE zulaessig
-      */
-        try {
-          if (lt instanceof SurfaceOrAreaType)
-            ((SurfaceOrAreaType) lt).setLineAttributeStructure (lineAttrStructure);
-          else
-            reportError (
-              formatMessage ("err_lineType_lineAttrForPolyline", ""),
-              att.getLine());
-        } catch (Exception ex) {
-          reportError (ex, att.getLine ());
-        }
-      }
-    )?
     {
       if(extending!=null){
         try{

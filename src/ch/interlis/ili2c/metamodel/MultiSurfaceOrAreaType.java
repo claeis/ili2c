@@ -14,9 +14,9 @@ package ch.interlis.ili2c.metamodel;
 /** An abstract class that groups SurfaceType and AreaType, because these
     two have many things in common.
 */
-public abstract class SurfaceOrAreaType extends AbstractSurfaceOrAreaType
+public abstract class MultiSurfaceOrAreaType extends AbstractSurfaceOrAreaType
 {
-  protected SurfaceOrAreaType ()
+  protected MultiSurfaceOrAreaType ()
   {
   }
 }

@@ -878,6 +878,18 @@ private void declareDomainDef (Domain domain)
 			ipw.indent();
 			ipw.unindent();
 			ipw.println("</xsd:element>");
+		}else if (type instanceof MultiCoordType){
+			ipw.println(
+					"<xsd:element name=\""
+						+ getTransferName(attribute)
+						+ "\""
+						+ minOccurs
+						+ maxOccurs
+						+ " type=\"gml:MultiPointPropertyType\""
+						+ ">");
+				ipw.indent();
+				ipw.unindent();
+				ipw.println("</xsd:element>");
 		}else if (type instanceof PolylineType){
 			ipw.println(
 				"<xsd:element name=\""
@@ -890,6 +902,18 @@ private void declareDomainDef (Domain domain)
 			ipw.indent();
 			ipw.unindent();
 			ipw.println("</xsd:element>");
+		}else if (type instanceof MultiPolylineType){
+			ipw.println(
+				"<xsd:element name=\""
+					+ getTransferName(attribute)
+					+ "\""
+					+ minOccurs
+					+ maxOccurs
+					+ " type=\"gml:MultiCurvePropertyType\""
+					+ ">");
+			ipw.indent();
+			ipw.unindent();
+			ipw.println("</xsd:element>");
 		}else if (type instanceof SurfaceOrAreaType){
 			ipw.println(
 				"<xsd:element name=\""
@@ -898,6 +922,22 @@ private void declareDomainDef (Domain domain)
 					+ minOccurs
 					+ maxOccurs
 					+ " type=\"gml:SurfacePropertyType\""
+					+ ">");
+			ipw.indent();
+			ipw.unindent();
+			ipw.println("</xsd:element>");
+			if(((SurfaceOrAreaType)type).getLineAttributeStructure()!=null){
+				// remember to create linetable
+	       		linetables.add(attribute);
+			}
+		}else if (type instanceof MultiSurfaceOrAreaType){
+			ipw.println(
+				"<xsd:element name=\""
+					+ getTransferName(attribute)
+					+ "\""
+					+ minOccurs
+					+ maxOccurs
+					+ " type=\"gml:MultiSurfacePropertyType\""
 					+ ">");
 			ipw.indent();
 			ipw.unindent();
@@ -1048,18 +1088,12 @@ private void declareDomainDef (Domain domain)
     if(domain!=null){
       typeName=" name=\""+getName(domain)+"\"";
     }
-    if (type instanceof PolylineType){
+    if (type instanceof LineType){
 		ipw.println ("<xsd:complexType"+typeName+">");
 		    ipw.indent ();
-			declarePolylineValue(domain,(PolylineType)type);
+			declarePolylineValue(domain,(LineType)type);
 		    ipw.unindent ();
-	    ipw.println ("</xsd:complexType>");
-    }else if (type instanceof SurfaceOrAreaType){
-		ipw.println ("<xsd:complexType"+typeName+">");
-		    ipw.indent ();
-			declarePolylineValue(domain,(SurfaceOrAreaType)type);
-		    ipw.unindent ();
-	    ipw.println ("</xsd:complexType>");
+		    ipw.println ("</xsd:complexType>");
     }else if (type instanceof CoordType){
 		ipw.println ("<xsd:complexType"+typeName+">");
 		    ipw.indent ();
@@ -1076,6 +1110,30 @@ private void declareDomainDef (Domain domain)
 			ipw.println("<xsd:sequence>");
 			ipw.indent ();
 			ipw.println("<xsd:element ref=\"gml:Point\"/>");
+			ipw.unindent ();
+			ipw.println("</xsd:sequence>");
+			ipw.unindent ();
+			ipw.println ("</xsd:restriction>");
+			ipw.unindent ();
+			ipw.println ("</xsd:complexContent>");
+		    ipw.unindent ();
+	    ipw.println ("</xsd:complexType>");
+    }else if (type instanceof MultiCoordType){
+		ipw.println ("<xsd:complexType"+typeName+">");
+		    ipw.indent ();
+			ipw.println ("<xsd:complexContent>");
+			ipw.indent ();
+			String base;
+			if(domain!=null && domain.getExtending()!=null){
+				base=getScopedName(domain.getExtending());
+			}else{
+				base="gml:MultiPointPropertyType";
+			}
+			ipw.println ("<xsd:restriction base=\""+base+"\">");
+			ipw.indent ();
+			ipw.println("<xsd:sequence>");
+			ipw.indent ();
+			ipw.println("<xsd:element ref=\"gml:MultiPoint\"/>");
 			ipw.unindent ();
 			ipw.println("</xsd:sequence>");
 			ipw.unindent ();
@@ -1295,34 +1353,31 @@ private void declareDomainDef (Domain domain)
   {
 	ipw.println ("<xsd:complexContent>");
 	ipw.indent ();
-	String base;
+	String base=null;
+	String baseEle=null;
+	if (type instanceof SurfaceOrAreaType){
+		base="gml:SurfacePropertyType";
+		baseEle="gml:Polygon";
+	}else if (type instanceof MultiSurfaceOrAreaType){
+		base="gml:MultiSurfacePropertyType";
+		baseEle="gml:MultiSurface";
+	}else if (type instanceof MultiPolylineType){
+		base="gml:MultiCurvePropertyType";
+		baseEle="gml:MultiCurve";
+	}else{
+		base="gml:CurvePropertyType";
+		baseEle="gml:Curve";
+	}
 	if(domain!=null && domain.getExtending()!=null){
 		base=getScopedName(domain.getExtending());
-	}else{
-		if (type instanceof SurfaceOrAreaType){
-			base="gml:SurfacePropertyType";
-		}else{
-			base="gml:CurvePropertyType";
-		}
 	}
 	ipw.println ("<xsd:restriction base=\""+base+"\">");
 	ipw.indent ();
 	ipw.println("<xsd:sequence>");
 	ipw.indent ();
-	if (type instanceof SurfaceOrAreaType){
-		ipw.println("<xsd:element ref=\"gml:Polygon\"/>"); // gml:AbstractSurface
-	}else{
-		ipw.println("<xsd:element ref=\"gml:AbstractCurve\"/>"); // 
-	}
+	ipw.println("<xsd:element ref=\""+ baseEle+"\"/>"); // 
 	ipw.unindent ();
 	ipw.println("</xsd:sequence>");
-	//ipw.println("<!-- "+PRBLMTAG+" unable to express domain/unit/crs of control points -->");
-	//ipw.println("<!-- "+PRBLMTAG+" unable to express allowed line forms -->");
-	//ipw.println("<!-- "+PRBLMTAG+" unable to express line attributes -->");
-	//ipw.println("<!-- "+PRBLMTAG+" unable to express overlaps -->");
-	//if(type instanceof AreaType){
-	//	ipw.println("<!-- "+PRBLMTAG+" unable to express AREA constraint -->");
-	//}
 	ipw.unindent ();
 	ipw.println ("</xsd:restriction>");
 	ipw.unindent ();

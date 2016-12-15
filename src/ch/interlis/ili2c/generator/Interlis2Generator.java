@@ -1771,14 +1771,17 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib) {
 				ipw.print(")");
 			}
     }
-    else if (dd instanceof CoordType)
+    else if (dd instanceof AbstractCoordType)
     {
-      NumericalType[] nts = ((CoordType) dd).getDimensions();
-      int nullAxis = ((CoordType) dd).getNullAxis();
-      int piHalfAxis = ((CoordType) dd).getPiHalfAxis();
+      NumericalType[] nts = ((AbstractCoordType) dd).getDimensions();
+      int nullAxis = ((AbstractCoordType) dd).getNullAxis();
+      int piHalfAxis = ((AbstractCoordType) dd).getPiHalfAxis();
 
-
-      ipw.print ("COORD ");
+      if(dd instanceof MultiCoordType){
+          ipw.print ("MULTICOORD ");
+      }else{
+          ipw.print ("COORD ");
+      }
       ipw.indent ();
       for (int i = 0; i < nts.length; i++)
       {
@@ -1802,14 +1805,19 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib) {
     else if (dd instanceof LineType)
     {
       LineType lt = (LineType) dd;
-      if (lt instanceof PolylineType)
+      if (lt instanceof PolylineType){
         ipw.print (((PolylineType) lt).isDirected() ? "DIRECTED POLYLINE" : "POLYLINE");
-      else if (lt instanceof SurfaceType)
+      }else if (lt instanceof MultiPolylineType){
+          ipw.print (((PolylineType) lt).isDirected() ? "DIRECTED MULTIPOLYLINE" : "MULTIPOLYLINE");
+      }else if (lt instanceof SurfaceType){
         ipw.print ("SURFACE");
-      else if (lt instanceof AreaType)
+      }else if (lt instanceof MultiSurfaceType){
+        ipw.print ("MULTISURFACE");
+      }else if (lt instanceof AreaType){
         ipw.print ("AREA");
-      else
-      {
+      }else if (lt instanceof MultiAreaType){
+          ipw.print ("MULTIAREA");
+      }else{
         printError ();
       }
 
@@ -1820,9 +1828,11 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib) {
       Table lineAttributeStructure = null;
 
 
-      if (lt instanceof SurfaceOrAreaType)
+      if (lt instanceof SurfaceOrAreaType){
         lineAttributeStructure = ((SurfaceOrAreaType) lt).getLineAttributeStructure ();
-
+      }else if(lt instanceof MultiSurfaceOrAreaType){
+          lineAttributeStructure = ((MultiSurfaceOrAreaType) lt).getLineAttributeStructure ();
+      }
 
       ipw.indent ();
       boolean needNewLine = false;
