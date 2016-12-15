@@ -12,6 +12,7 @@ public class MultiCoordType extends AbstractCoordType
   }
   public MultiCoordType (NumericalType[] dimensions, int nullAxis, int piHalfAxis)
   {
+	  super(dimensions, nullAxis, piHalfAxis);
   }
 
 

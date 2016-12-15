@@ -423,7 +423,7 @@ public class Imd16Generator {
 			if ( element instanceof ch.interlis.ili2c.metamodel.Constraint ) {
 				Constraint iomConstraint=visitConstraint((ch.interlis.ili2c.metamodel.Constraint)element,cnstrMetaAttrs,iomClass.getobjectoid(),cnstrIdx);
 				cnstrIdx++;
-				// FIXME iomClass.addConstraints(iomConstraint); // was STRCUTURE
+				out.write(new ObjectEvent(iomConstraint));
 			} else if ( element instanceof ch.interlis.ili2c.metamodel.Parameter ) {
 				visitParameter((ch.interlis.ili2c.metamodel.Parameter)element,paramOrderPos);
 				paramOrderPos++;
@@ -852,7 +852,14 @@ public class Imd16Generator {
 	private Constraint visitConstraint(ch.interlis.ili2c.metamodel.Constraint cnstrt,ArrayList<MetaAttribute> metaAttrs,String viewableId,int idx)
 	throws IoxException
 	{
-		String cnstrdTid= CONSTRAINT+Integer.toString(idx)+"."+viewableId; // FIXME use name, if available
+		String cnstrdName=cnstrt.getName();
+		String cnstrdTid= null;
+		if(cnstrdName==null){
+			cnstrdName=CONSTRAINT+Integer.toString(idx);
+			cnstrdTid= CONSTRAINT+Integer.toString(idx)+"."+viewableId;
+		}else{
+			cnstrdTid= viewableId+"."+cnstrdName;
+		}
 		Constraint iomCnstrt=null;
 		if(cnstrt instanceof ch.interlis.ili2c.metamodel.ExistenceConstraint){
 			ch.interlis.ili2c.metamodel.ExistenceConstraint existenceConstraint = (ch.interlis.ili2c.metamodel.ExistenceConstraint)cnstrt;
@@ -929,7 +936,6 @@ public class Imd16Generator {
 			iomConstraint.setConstraint( visitExpression(sc.getCondition()) );
 			if(sc.getPreCondition()!=null){
 				iomConstraint.setWhere( visitExpression(sc.getPreCondition()) );
-				
 			}
 		}else{	
 			throw new IllegalArgumentException("unexpected constraint type "+cnstrt.getClass().getName());

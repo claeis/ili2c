@@ -12,6 +12,7 @@ public class CoordType extends AbstractCoordType
   }
   public CoordType (NumericalType[] dimensions, int nullAxis, int piHalfAxis)
   {
+	  super(dimensions, nullAxis, piHalfAxis);
   }
 
 
