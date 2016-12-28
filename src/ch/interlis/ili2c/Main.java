@@ -646,7 +646,7 @@ public class Main {
 		    ch.interlis.ili2c.generator.Gml32Generator.generate(desc, config.getOutputFile());
 		    break;
 		case GenerateOutputKind.ILIGML2:
-		    ch.interlis.ili2c.generator.Iligml2Generator.generate(desc, config.getOutputFile());
+		    ch.interlis.ili2c.generator.Iligml20Generator.generate(desc, config.getOutputFile());
 		    break;
 		case GenerateOutputKind.ETF1:
 		    ch.interlis.ili2c.generator.ETF1Generator.generate(desc, config.getOutputFile());

@@ -16,7 +16,7 @@ import ch.ehi.basics.io.IndentPrintWriter;
  * 
  * @author ce
  */
-public final class Iligml2Generator
+public final class Iligml20Generator
 {
     public static final String ILIGML_XMLNSBASE="http://www.interlis.ch/ILIGML-2.0";
     public static final String BASKETMEMBER="member";
@@ -35,7 +35,7 @@ public final class Iligml2Generator
     Locale.getDefault());
 
 
-  private Iligml2Generator(TransferDescription td, String outdir)
+  private Iligml20Generator(TransferDescription td, String outdir)
   {
     this.td = td;
     this.outdir = outdir;
@@ -44,7 +44,7 @@ public final class Iligml2Generator
 
   public static int generate (TransferDescription td,String outdir)
   {
-    Iligml2Generator d = new Iligml2Generator (td,outdir);
+    Iligml20Generator d = new Iligml20Generator (td,outdir);
     d.printXSD (td);
     return d.numErrors;
   }
@@ -590,39 +590,12 @@ private void declareAbstractClassDef(Viewable v)
 			}
 			// a role of an embedded association (embedded according to XTF rules)?
 			if(obj.embedded){
-				// ILIGML-2.0 has different rules, about embedding
+				// print later; ILIGML-2.0 has embedding rules that differ to XTF
 			}
 		}
 	}
-	// get list of embedded roles
-	ArrayList<RoleDef> embeddedRoles=new ArrayList<RoleDef>();
-	iter = ((AbstractClassDef)v).getTargetForRoles();
-	while (iter.hasNext()) {
-		RoleDef thisEnd = (RoleDef)iter.next();
-
-		AssociationDef roleOwner = (AssociationDef) thisEnd.getContainer();
-		// not a derived association?
-		if(roleOwner.getDerivedFrom()==null){
-			// association targets this class (not a base class and not a derived role)?
-			if(thisEnd.getExtending()==null && thisEnd.getDestination()==v){
-				if(thisEnd.isExternal()){
-					// otherEnd can not point to this, because thisEnd might be external to others end basket
-				}else{
-					// keep it
-					embeddedRoles.add(thisEnd.getOppEnd());
-				}
-			}
-		}
-	}	
-	// sort embedded roles according to name
-	Collections.sort(embeddedRoles,new Comparator<RoleDef>(){
-		public int compare(RoleDef arg0, RoleDef arg1) {
-			return arg0.getName().compareTo(arg1.getName());
-		}
-	});
-	iter = embeddedRoles.iterator();
-	while (iter.hasNext()) {
-		RoleDef otherEnd = (RoleDef)iter.next();
+	ArrayList<RoleDef> embRoles=getDefinedLightweightAssociations(v);
+	for(RoleDef otherEnd:embRoles){
 		Cardinality card = otherEnd.getCardinality();
 		String minOccurs = " minOccurs=\""+card.getMinimum()+"\"";
 		String maxOccurs = null;
@@ -644,7 +617,7 @@ private void declareAbstractClassDef(Viewable v)
 		ipw.println("</xsd:annotation>");
 		ipw.unindent();
 		ipw.println("</xsd:element>");
-	}	
+	}
 	ipw.unindent();
 	ipw.println("</xsd:sequence>");
 	ipw.unindent();
@@ -656,6 +629,130 @@ private void declareAbstractClassDef(Viewable v)
 
   }
 
+public static ArrayList<RoleDef> getDefinedLightweightAssociations(Viewable v) {
+	Iterator iter;
+	ArrayList<RoleDef> embeddedRoles=new ArrayList<RoleDef>();
+	if(v instanceof AbstractClassDef){
+		iter = ((AbstractClassDef)v).getTargetForRoles();
+		while (iter.hasNext()) {
+			RoleDef thisEnd = (RoleDef)iter.next();
+
+			AssociationDef roleOwner = (AssociationDef) thisEnd.getContainer();
+			// not a derived association?
+			if(roleOwner.getDerivedFrom()==null){
+				// association targets this class (not a base class and not a derived role)?
+				if(thisEnd.getExtending()==null && thisEnd.getDestination()==v){
+					if(thisEnd.isExternal()){
+						// otherEnd can not point to this, because thisEnd might be external to others end basket
+					}else{
+						// keep it
+						embeddedRoles.add(thisEnd.getOppEnd());
+					}
+				}
+			}
+		}	
+		// sort embedded roles according to name
+		Collections.sort(embeddedRoles,new Comparator<RoleDef>(){
+			public int compare(RoleDef arg0, RoleDef arg1) {
+				return arg0.getName().compareTo(arg1.getName());
+			}
+		});
+	}
+	return embeddedRoles;
+}
+
+static public Iterator<ViewableTransferElement> getAttributesAndRoles2(Viewable thiso)
+{
+	if(thiso.isAlias()){
+		return ((Viewable)thiso.getReal()).getAttributesAndRoles2();
+	}else{
+		List<ViewableTransferElement> result=new ArrayList<ViewableTransferElement>(); // of Element
+		List<Viewable> baseviewv = new ArrayList<Viewable>(); // list of bases of v; first element is root, last is this
+		for (Viewable v = thiso; v != null; v = (Viewable) v.getRealExtending())
+		{
+			baseviewv.add(0,v);
+		}
+		Iterator<Viewable> baseviewi = baseviewv.iterator();
+		while(baseviewi.hasNext()){
+			Viewable v = baseviewi.next();
+			// for all, at this level defined/extended, attributes and roles
+			Iterator[] it = new Iterator[]
+			{
+				v.getRolesIterator(),
+			  v.getDefinedAttributes()
+			};
+			Iterator attri=new CombiningIterator(it);
+			//Iterator attri=v.iterator();
+			while(attri.hasNext()){
+				Object obj=attri.next();
+				if(obj instanceof AttributeDef){
+					AttributeDef attr=(AttributeDef)obj;
+					int idx=0;
+					boolean found=false;
+					for(Iterator<ViewableTransferElement> resi=result.iterator();resi.hasNext();idx++){
+						Object res=resi.next();
+						// extended/specialized attribute?
+						if((((ViewableTransferElement)res).obj instanceof AttributeDef && ((AttributeDef)((ViewableTransferElement)res).obj).getName().equals(attr.getName()))){
+							found=true;
+							ViewableTransferElement ele=result.get(idx);
+							ele.obj=attr;
+							break;
+						}
+					}
+					// new attribute?
+					if(!found){
+						result.add(new ViewableTransferElement(obj));
+					}
+				}else if(obj instanceof RoleDef){
+					RoleDef role=(RoleDef)obj;
+					int idx=0;
+					boolean found=false;
+					for(Iterator<ViewableTransferElement> resi=result.iterator();resi.hasNext();idx++){
+						Object res=resi.next();
+						// extended/specialized role?
+						if((((ViewableTransferElement)res).obj instanceof RoleDef && ((RoleDef)((ViewableTransferElement)res).obj).getName().equals(role.getName()))){
+							found=true;
+							ViewableTransferElement ele=result.get(idx);
+							ele.obj=role;
+							break;
+						}
+					}
+					// new role?
+					if(!found){
+						result.add(new ViewableTransferElement(obj));
+					}
+				}
+			}
+			if(v instanceof AbstractClassDef){
+				// for all, at this level defined/extended, embedded associations
+				List embv = getDefinedLightweightAssociations((AbstractClassDef) v);
+				attri=embv.iterator();
+				while (attri.hasNext()) {
+					RoleDef role = (RoleDef) attri.next();
+					RoleDef oppend = role.getOppEnd();
+					int idx=0;
+					boolean found=false;
+					for(Iterator<ViewableTransferElement> resi=result.iterator();resi.hasNext();idx++){
+						Object res=resi.next();
+						// extended/specialized role?
+						if((((ViewableTransferElement)res).obj instanceof RoleDef && ((RoleDef)((ViewableTransferElement)res).obj).getName().equals(oppend.getName()))){
+							found=true;
+							ViewableTransferElement ele=result.get(idx);
+							ele.obj=oppend;
+							ele.embedded=true;
+							break;
+						}
+					}
+					// new role?
+					if(!found){
+						result.add(new ViewableTransferElement(oppend,true));
+					}
+				}
+			}
+		}
+		return result.iterator ();
+	}
+}
   private static boolean hasExternalRoles(AssociationDef assoc) {
 	for(Iterator<RoleDef> rolei=assoc.getRolesIterator();rolei.hasNext();){
 		RoleDef role=rolei.next();
