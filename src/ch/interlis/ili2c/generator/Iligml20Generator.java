@@ -664,7 +664,7 @@ public static ArrayList<RoleDef> getDefinedLightweightAssociations(Viewable v) {
 static public Iterator<ViewableTransferElement> getAttributesAndRoles2(Viewable thiso)
 {
 	if(thiso.isAlias()){
-		return ((Viewable)thiso.getReal()).getAttributesAndRoles2();
+		return getAttributesAndRoles2((Viewable)thiso.getReal());
 	}else{
 		List<ViewableTransferElement> result=new ArrayList<ViewableTransferElement>(); // of Element
 		List<Viewable> baseviewv = new ArrayList<Viewable>(); // list of bases of v; first element is root, last is this
@@ -728,24 +728,23 @@ static public Iterator<ViewableTransferElement> getAttributesAndRoles2(Viewable 
 				List embv = getDefinedLightweightAssociations((AbstractClassDef) v);
 				attri=embv.iterator();
 				while (attri.hasNext()) {
-					RoleDef role = (RoleDef) attri.next();
-					RoleDef oppend = role.getOppEnd();
+					RoleDef otherEnd = (RoleDef) attri.next();
 					int idx=0;
 					boolean found=false;
 					for(Iterator<ViewableTransferElement> resi=result.iterator();resi.hasNext();idx++){
 						Object res=resi.next();
 						// extended/specialized role?
-						if((((ViewableTransferElement)res).obj instanceof RoleDef && ((RoleDef)((ViewableTransferElement)res).obj).getName().equals(oppend.getName()))){
+						if((((ViewableTransferElement)res).obj instanceof RoleDef && ((RoleDef)((ViewableTransferElement)res).obj).getName().equals(otherEnd.getName()))){
 							found=true;
 							ViewableTransferElement ele=result.get(idx);
-							ele.obj=oppend;
+							ele.obj=otherEnd;
 							ele.embedded=true;
 							break;
 						}
 					}
 					// new role?
 					if(!found){
-						result.add(new ViewableTransferElement(oppend,true));
+						result.add(new ViewableTransferElement(otherEnd,true));
 					}
 				}
 			}
