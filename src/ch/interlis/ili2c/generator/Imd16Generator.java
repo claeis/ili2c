@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.xml.ws.Holder;
+
 import ch.ehi.basics.logging.EhiLogger;
 import ch.interlis.iom_j.ViewableProperties;
 import ch.interlis.iom_j.xtf.XtfWriterBase;
@@ -608,7 +610,7 @@ public class Imd16Generator {
 	private void visitDomain(ch.interlis.ili2c.metamodel.Domain domain)
 	throws IoxException
 	{
-		visitDomainType(getTypeTid(domain.getType(),domain,null),domain.getType(),domain);
+		visitDomainType(new Holder<String>(),domain.getType(),domain);
 	}
 	private void visitAttribute(ch.interlis.ili2c.metamodel.LocalAttribute attr,int attrPos)
 	throws IoxException
@@ -678,19 +680,29 @@ public class Imd16Generator {
 				ch.interlis.ili2c.metamodel.TypeAlias alias=(ch.interlis.ili2c.metamodel.TypeAlias)type;
 				ch.interlis.ili2c.metamodel.Domain domain=alias.getAliasing();
 				if(domain==td.INTERLIS.URI || domain==td.INTERLIS.NAME  || domain==td.INTERLIS.BOOLEAN){
-					visitAttrLocalType(getTypeTid(type,attr,null),type,attr,null); 
-					iomAttr.setType(getTypeTid(type,attr,null));
+					Holder<String> typeTid=new Holder<String>();
+					visitAttrLocalType(typeTid,type,attr); 
+					iomAttr.setType(typeTid.value);
 				}else{
-					if(alias.isMandatory()){
-						visitAttrLocalType(getTypeTid(type,attr,null),domain.getType(),attr,domain.getScopedName(null)); 
-						iomAttr.setType(getTypeTid(type,attr,null));
+					if(alias.getCardinality().getMaximum()>1){						
+						MultiValue iomMultiValue=new MultiValue(attr.getContainer().getScopedName(null)+"."+attr.getName()+"."+MVT_TYPE_NAME);
+						iomMultiValue.setName(MVT_TYPE_NAME);
+						iomMultiValue.setLTParent(getAttrTid(attr));
+						iomMultiValue.setOrdered(type.isOrdered());
+						ch.interlis.ili2c.metamodel.Cardinality card=type.getCardinality();
+						Multiplicity iomMultiplicity = visitCardinality(card);
+						iomMultiValue.setMultiplicity(iomMultiplicity);
+						iomMultiValue.setBaseType(domain.getScopedName(null));
+						out.write(new ObjectEvent(iomMultiValue));
+						iomAttr.setType(iomMultiValue.getobjectoid());
 					}else{
 						iomAttr.setType(domain.getScopedName(null));
 					}
 				}
 			}else{
-				visitAttrLocalType(getTypeTid(type,attr,null),type,attr,null);
-				iomAttr.setType(getTypeTid(type,attr,null));
+				Holder<String> typeTid=new Holder<String>();
+				visitAttrLocalType(typeTid,type,attr);
+				iomAttr.setType(typeTid.value);
 			}
 			out.write(new ObjectEvent(iomAttr));
 			visitMetaValues(attr.getMetaValues(),iomAttr.getobjectoid());
@@ -724,19 +736,22 @@ public class Imd16Generator {
 				ch.interlis.ili2c.metamodel.TypeAlias alias=(ch.interlis.ili2c.metamodel.TypeAlias)type;
 				ch.interlis.ili2c.metamodel.Domain domain=alias.getAliasing();
 				if(domain==td.INTERLIS.URI || domain==td.INTERLIS.NAME || domain==td.INTERLIS.BOOLEAN){
-					visitParameterLocalType(getTypeTid(type,param,null),type,param);
-					iomParam.setType(getTypeTid(type,param,null));
+					Holder<String> typeTid=new Holder<String>();
+					visitParameterLocalType(typeTid,type,param);
+					iomParam.setType(typeTid.value);
 				}else{
 					if(alias.isMandatory()){
-						visitParameterLocalType(getTypeTid(type,param,null),domain.getType(),param);
-						iomParam.setType(getTypeTid(type,param,null));
+						Holder<String> typeTid=new Holder<String>();
+						visitParameterLocalType(typeTid,domain.getType(),param);
+						iomParam.setType(typeTid.value);
 					}else{
 						iomParam.setType(domain.getScopedName(null));
 					}
 				}
 			}else{
-				visitParameterLocalType(getTypeTid(type,param,null),type,param);
-				iomParam.setType(getTypeTid(type,param,null));
+				Holder<String> typeTid=new Holder<String>();
+				visitParameterLocalType(typeTid,type,param);
+				iomParam.setType(typeTid.value);
 			}
 			out.write(new ObjectEvent(iomParam));
 			visitMetaValues(param.getMetaValues(),iomParam.getobjectoid());
@@ -1309,22 +1324,24 @@ public class Imd16Generator {
 		iomFunc.setExplanation(func.getExplanation());
 		
 		ch.interlis.ili2c.metamodel.Type retType=func.getDomain();
+		Holder<String> typeTid=new Holder<String>();
 		if(retType instanceof ch.interlis.ili2c.metamodel.TypeAlias){
 			ch.interlis.ili2c.metamodel.TypeAlias alias=(ch.interlis.ili2c.metamodel.TypeAlias)retType;
 			ch.interlis.ili2c.metamodel.Domain domain=alias.getAliasing();
 			if(domain==td.INTERLIS.URI || domain==td.INTERLIS.NAME  || domain==td.INTERLIS.BOOLEAN){
-				visitFunctionReturnLocalType(getTypeTid(retType,func,null),retType,func);
+				visitFunctionReturnLocalType(typeTid,retType,func);
 			}else{
 				if(alias.isMandatory()){
-					visitFunctionReturnLocalType(getTypeTid(retType,func,null),domain.getType(),func);
+					visitFunctionReturnLocalType(typeTid,domain.getType(),func);
 				}else{
 					// skip it (written as part of DomainDef)
+					typeTid.value=getTypeTid(retType,func,null);
 				}
 			}
 		}else{
-			visitFunctionReturnLocalType(getTypeTid(retType,func,null),retType,func);
+			visitFunctionReturnLocalType(typeTid,retType,func);
 		}
-		iomFunc.setResultType(getTypeTid(retType, func,null));
+		iomFunc.setResultType(typeTid.value);
 		
 		ch.interlis.ili2c.metamodel.FormalArgument args[]=func.getArguments();
 		for(int argi=0;argi<args.length;argi++){
@@ -1335,15 +1352,17 @@ public class Imd16Generator {
 			iomArg.setFunction(iomFunc.getobjectoid(),argi+1);
 			ch.interlis.ili2c.metamodel.Type argType=arg.getType();
 			if(argType instanceof ch.interlis.ili2c.metamodel.TypeAlias){
+				Holder<String> argTypeTid=new Holder<String>();
 				ch.interlis.ili2c.metamodel.TypeAlias alias=(ch.interlis.ili2c.metamodel.TypeAlias)argType;
 				ch.interlis.ili2c.metamodel.Domain domain=alias.getAliasing();
 				if(domain==td.INTERLIS.URI || domain==td.INTERLIS.NAME || domain==td.INTERLIS.BOOLEAN){
-					visitFunctionArgumentLocalType(getTypeTid(argType,arg,func),argType,arg,func); 
+					visitFunctionArgumentLocalType(argTypeTid,argType,arg,func); 
 				}else{
 					if(alias.isMandatory()){
-						visitFunctionArgumentLocalType(getTypeTid(argType,arg,func),domain.getType(),arg,func); 
+						visitFunctionArgumentLocalType(argTypeTid,domain.getType(),arg,func); 
 					}else{
 						// skip it (written as part of DomainDef)
+						argTypeTid.value=getTypeTid(argType,arg,func);
 					}
 				}
 				iomArg.setType(getTypeTid(arg.getType(),arg,func));
@@ -1355,8 +1374,9 @@ public class Imd16Generator {
 				}
 			}else{
 				//EhiLogger.debug("arg "+arg.getName());
-				visitFunctionArgumentLocalType(getTypeTid(argType,arg,func),argType,arg,func);
-				iomArg.setType(getTypeTid(arg.getType(),arg,func));
+				Holder<String> argTypeTid=new Holder<String>();
+				visitFunctionArgumentLocalType(argTypeTid,argType,arg,func);
+				iomArg.setType(argTypeTid.value);
 			}
 			out.write(new ObjectEvent(iomArg));
 		}
@@ -1497,6 +1517,7 @@ public class Imd16Generator {
 		return role.getContainer().getScopedName(null)+"."+role.getName();
 	}
 	private static final String LOCAL_TYPE_NAME="TYPE";
+	private static final String MVT_TYPE_NAME="MVT";
 	private String getAttrTypeTid(ch.interlis.ili2c.metamodel.AttributeDef attr) {
 		ch.interlis.ili2c.metamodel.Type type=attr.getDomain();
 		return getTypeTid(type,attr,null);
@@ -1886,28 +1907,17 @@ public class Imd16Generator {
 		}
 		return iomType;
 	}
-	private void visitAttrLocalType(String typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.AttributeDef attr,String domainTid)
+	private void visitAttrLocalType(Holder<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.AttributeDef attr)
 	throws IoxException
 	{
-		Type iomType=visitType(typeTid,type);
-		iomType.setLTParent(getAttrTid(attr));
+		typeTid.value=getTypeTid(type,attr,null);
+		Type iomType=visitType(typeTid.value,type);
 		iomType.setName(LOCAL_TYPE_NAME);
-		if(domainTid!=null){
+		ch.interlis.ili2c.metamodel.AttributeDef baseAttr=(ch.interlis.ili2c.metamodel.AttributeDef)attr.getExtending();
+		if(baseAttr!=null){
 			// not yet set?
 			if(iomType.getattrvaluecount("Super")==0){ 
-				iomType.setSuper(domainTid);
-			}else{
-				// replace ref
-			    ch.interlis.iom.IomObject ref=iomType.getattrobj("Super",0);
-			    ref.setobjectrefoid(domainTid);
-			}
-		}else{
-			ch.interlis.ili2c.metamodel.AttributeDef baseAttr=(ch.interlis.ili2c.metamodel.AttributeDef)attr.getExtending();
-			if(baseAttr!=null){
-				// not yet set?
-				if(iomType.getattrvaluecount("Super")==0){ 
-					iomType.setSuper(getTypeTid(baseAttr.getDomain(), baseAttr, null));
-				}
+				iomType.setSuper(getTypeTid(baseAttr.getDomain(), baseAttr, null));
 			}
 		}
 		iomType.setAbstract( type.isAbstract() );
@@ -1915,13 +1925,28 @@ public class Imd16Generator {
 		if(iomType instanceof DomainType){
 			((DomainType)iomType).setMandatory(attr.getDomain().isMandatoryConsideringAliases());
 		}
+		if(!(iomType instanceof MultiValue) && type.getCardinality().getMaximum()>1){
+			MultiValue iomMultiValue=new MultiValue(attr.getContainer().getScopedName(null)+"."+attr.getName()+"."+MVT_TYPE_NAME);
+			iomMultiValue.setName(MVT_TYPE_NAME);
+			iomMultiValue.setLTParent(getAttrTid(attr));
+			iomMultiValue.setOrdered(type.isOrdered());
+			ch.interlis.ili2c.metamodel.Cardinality card=type.getCardinality();
+			Multiplicity iomMultiplicity = visitCardinality(card);
+			iomMultiValue.setMultiplicity(iomMultiplicity);
+			iomMultiValue.setBaseType(typeTid.value);
+			typeTid.value=iomMultiValue.getobjectoid();
+			out.write(new ObjectEvent(iomMultiValue));
+		}else{
+			iomType.setLTParent(getAttrTid(attr));
+		}
 		//EhiLogger.debug("iomType "+iomType.toString());
 		out.write(new ObjectEvent(iomType));
 	}
-	private void visitDomainType(String typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.Domain domain)
+	private void visitDomainType(Holder<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.Domain domain)
 	throws IoxException
 	{
-		Type iomType=visitType(typeTid,type);
+		typeTid.value=getTypeTid(type,domain,null);
+		Type iomType=visitType(typeTid.value,type);
 		DomainType iomDomain=(DomainType)iomType;
 		iomDomain.setElementInPackage( domain.getContainer().getScopedName(null) );
 		iomDomain.setName( domain.getName() );
@@ -1945,10 +1970,11 @@ public class Imd16Generator {
 		out.write(new ObjectEvent(iomType));
 	}
 	
-	private void visitFunctionReturnLocalType(String typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.Function func)
+	private void visitFunctionReturnLocalType(Holder<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.Function func)
 	throws IoxException
 	{
-		Type iomType=visitType(typeTid,type);
+		typeTid.value=getTypeTid(type,func,null);
+		Type iomType=visitType(typeTid.value,type);
 		iomType.setLFTParent(func.getScopedName(null));
 		iomType.setName(LOCAL_TYPE_NAME);
 		iomType.setAbstract( type.isAbstract() );
@@ -1958,10 +1984,11 @@ public class Imd16Generator {
 		}
 		out.write(new ObjectEvent(iomType));
 	}
-	private void visitFunctionArgumentLocalType(String typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.FormalArgument arg,ch.interlis.ili2c.metamodel.Function function)
+	private void visitFunctionArgumentLocalType(Holder<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.FormalArgument arg,ch.interlis.ili2c.metamodel.Function function)
 	throws IoxException
 	{
-		Type iomType=visitType(typeTid,type);
+		typeTid.value=getTypeTid(type,arg,function);
+		Type iomType=visitType(typeTid.value,type);
 		iomType.setLFTParent(function.getScopedName(null));
 		iomType.setName(arg.getName());
 		iomType.setAbstract( type.isAbstract() );
@@ -1971,10 +1998,11 @@ public class Imd16Generator {
 		}
 		out.write(new ObjectEvent(iomType));
 	}
-	private void visitParameterLocalType(String typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.Parameter param)
+	private void visitParameterLocalType(Holder<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.Parameter param)
 	throws IoxException
 	{
-		Type iomType=visitType(typeTid,type);
+		typeTid.value=getTypeTid(type,param,null);
+		Type iomType=visitType(typeTid.value,type);
 		iomType.setLTParent(param.getContainer().getScopedName(null)+"."+param.getName());
 		iomType.setName(LOCAL_TYPE_NAME);
 		ch.interlis.ili2c.metamodel.Parameter baseParam=(ch.interlis.ili2c.metamodel.Parameter)param.getExtending();
@@ -1987,7 +2015,6 @@ public class Imd16Generator {
 			((DomainType)iomType).setMandatory(param.getType().isMandatoryConsideringAliases());
 		}
 		out.write(new ObjectEvent(iomType));
-		
 	}
 
 	private void visitTextType(TextType iomText, ch.interlis.ili2c.metamodel.TextType text) {
