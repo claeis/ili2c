@@ -103,6 +103,11 @@ public class Imd16Generator {
 		iomModel.setContracted( model.isContracted() );
 		iomModel.setiliVersion( model.getIliVersion() );
 		iomModel.setLanguage( model.getLanguage() );
+		iomModel.setCharSetIANAName(model.getCharSetIANAName());
+		iomModel.setxmlns(model.getXmlns());
+		if(model.getNoIncrementalTransfer()!=null){
+			iomModel.setNoIncrementalTransfer(model.getNoIncrementalTransfer());
+		}
 		if(model.getIliVersion().equals(ch.interlis.ili2c.metamodel.Model.ILI2_3)){
 			iomModel.setAt( model.getIssuer() );
 			iomModel.setVersion( model.getModelVersion() );

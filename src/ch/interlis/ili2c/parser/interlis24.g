@@ -832,7 +832,10 @@ protected modelDef
 		      }
 		|
 		)
-		("NOINCREMENTALTRANSFER")?
+		("NOINCREMENTALTRANSFER"  {
+			md.setNoIncrementalTransfer(true);
+		}
+		)?
 		"AT" issuerToken:STRING {
 			String issuer=issuerToken.getText();
 			md.setIssuer(issuer);
@@ -861,8 +864,14 @@ protected modelDef
 		|
 		)
 		EQUALS
-		("CHARSET" ianaNameToken:STRING SEMI)?
-		("XMLNS" xmlnsToken:STRING SEMI)?
+		("CHARSET" ianaNameToken:STRING SEMI {
+			md.setCharSetIANAName(ianaNameToken.getText());
+		}	
+		)?
+		("XMLNS" xmlnsToken:STRING SEMI {
+			md.setXmlns(xmlnsToken.getText());
+		}
+		)?
 		( "IMPORTS" ("UNQUALIFIED" {unqualified=true;} | /* empty */ {unqualified=false;}) 
 			(imp1:NAME
 			{

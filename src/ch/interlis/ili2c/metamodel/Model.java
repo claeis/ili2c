@@ -35,6 +35,9 @@ public abstract class Model extends Importable<Element>
   private String issuer=null;
   private String modelVersion=null;
   private String modelVersionExpl=null;
+  private Boolean noIncrementalTransfer=null;
+  private String charSetIANAName=null;
+  private String xmlns=null;
   private String iliVersion=ILI2_3;
 	static public final String ILI1="1";
 	static public final String ILI2_2="2.2";
@@ -530,5 +533,23 @@ public void setIliVersion(String string) {
 
 public boolean isIli23() {
 	return ILI2_3.equals(iliVersion);
+}
+public Boolean getNoIncrementalTransfer() {
+	return noIncrementalTransfer;
+}
+public void setNoIncrementalTransfer(boolean noIncrementalTransfer) {
+	this.noIncrementalTransfer = noIncrementalTransfer;
+}
+public String getCharSetIANAName() {
+	return charSetIANAName;
+}
+public void setCharSetIANAName(String charSetIANAName) {
+	this.charSetIANAName = charSetIANAName;
+}
+public String getXmlns() {
+	return xmlns;
+}
+public void setXmlns(String xmlns) {
+	this.xmlns = xmlns;
 }
 }
