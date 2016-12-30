@@ -4068,13 +4068,14 @@ protected mandatoryConstraint [Viewable v]
   constr = null;
 }
   : mand:"MANDATORY"
-    "CONSTRAINT" ((NAME COLON) =>NAME COLON )?
+    "CONSTRAINT" ((NAME COLON) =>n:NAME COLON )?
     condition = expression [v, /* expectedType */ predefinedBooleanType,v]
     SEMI
 
     {
       try {
         constr = new MandatoryConstraint();
+	if(n!=null){constr.setName(n.getText());}
         constr.setCondition(condition);
       } catch (Exception ex) {
         reportError(ex, mand.getLine());
@@ -4091,7 +4092,7 @@ protected plausibilityConstraint [Viewable v]
   Evaluable              condition = null;
   constr = null;
 }
-  : tok:"CONSTRAINT" ((NAME COLON) =>NAME COLON )?
+  : tok:"CONSTRAINT" ((NAME COLON) =>n:NAME COLON )?
 
     ( LESSEQUAL { direction = PlausibilityConstraint.DIRECTION_AT_MOST; }
     | GREATEREQUAL { direction = PlausibilityConstraint.DIRECTION_AT_LEAST; }
@@ -4103,6 +4104,7 @@ protected plausibilityConstraint [Viewable v]
     {
       try {
         constr = new PlausibilityConstraint();
+	if(n!=null){constr.setName(n.getText());}
         constr.setDirection(direction);
         constr.setCondition(condition);
         constr.setPercentage(percentage.doubleValue());
@@ -4121,9 +4123,14 @@ protected existenceConstraint[Viewable v]
 		constr=new ExistenceConstraint();
 		ObjectPath attrRef=null;
 	}
-	: "EXISTENCE" "CONSTRAINT" ((NAME COLON) => NAME COLON )?
+	: e:"EXISTENCE" "CONSTRAINT" ((NAME COLON) => n:NAME COLON )?
 	attr=attributePath[v]
 		{
+			try{
+				if(n!=null){constr.setName(n.getText());}
+			} catch (Exception ex) {
+				reportError(ex, e.getLine());
+			}
 			constr.setRestrictedAttribute(attr);
 		}
 	"REQUIRED" "IN" ref=viewableRefDepReq[v] COLON attrRef=attributePath[ref]
@@ -4146,7 +4153,14 @@ protected uniquenessConstraint[Viewable v]
 	Evaluable preCond=null;
 		constr=new UniquenessConstraint();
 	}
-	: u:"UNIQUE" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON) => NAME COLON )?
+	: u:"UNIQUE" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON) => n:NAME COLON )?
+	{
+		try{
+			if(n!=null){constr.setName(n.getText());}
+		} catch (Exception ex) {
+			reportError(ex, u.getLine());
+		}
+	}
   	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,v] COLON
 		{ constr.setPreCondition(preCond);
 		}
@@ -4283,7 +4297,7 @@ protected setConstraint [Viewable v]
 	Evaluable condition=null;
   constr = new SetConstraint();
 }
-  : tok:"SET" "CONSTRAINT" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON)=> NAME COLON )?
+  : tok:"SET" "CONSTRAINT" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON)=> n:NAME COLON )?
   	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,v] COLON
 		{
 	        constr.setPreCondition(preCond);
@@ -4293,6 +4307,7 @@ protected setConstraint [Viewable v]
 	SEMI
 	{
       try {
+	if(n!=null){constr.setName(n.getText());}
         constr.setCondition(condition);
       } catch (Exception ex) {
         reportError(ex, tok.getLine());

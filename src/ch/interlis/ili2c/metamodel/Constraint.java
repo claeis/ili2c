@@ -17,7 +17,9 @@ package ch.interlis.ili2c.metamodel;
 public abstract class Constraint extends AbstractLeafElement
 {
   protected Evaluable condition = null;
-
+  protected String name=null;
+  protected int constraintIdx=0;
+  
   /** Returns the condition that must hold for this
       constraint to be satisfied.
   */
@@ -72,5 +74,37 @@ public abstract class Constraint extends AbstractLeafElement
 	{
 		return selfStanding;
 	}
+
+
+	@Override
+	public String getName() {
+		if(name==null){
+			String nameFromMetaValue=getMetaValue("name");
+			if(nameFromMetaValue==null){
+				return "Constraint"+constraintIdx;
+			}
+			return nameFromMetaValue;
+		}
+		return name;
+	}
+	  public void setNameIdx (int idx){
+		  constraintIdx=idx;
+	  }
+	  public void setName (String name)
+			    throws java.beans.PropertyVetoException
+			  {
+			    String oldValue = this.name;
+			    String newValue = name;
+			    if(name!=null){
+				    checkNameSanity(name, /* empty names acceptable? */ false);
+				    checkNameUniqueness(name, Constraint.class, null,
+				      "err_duplicateFunctionName");
+			    }
+
+
+			    fireVetoableChange("name", oldValue, newValue);
+			    this.name = newValue;
+			    firePropertyChange("name", oldValue, newValue);
+			  }
 
 }

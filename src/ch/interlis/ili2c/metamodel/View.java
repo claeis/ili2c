@@ -64,8 +64,10 @@ public abstract class View extends Viewable<AbstractLeafElement>
         if (o instanceof LocalAttribute)
           return attributes.add((LocalAttribute) o);
 
-        if (o instanceof Constraint)
+        if (o instanceof Constraint){
+        	((Constraint) o).setNameIdx(constraints.size()+1);
           return constraints.add((Constraint) o);
+        }
 
         throw new ClassCastException();
       }

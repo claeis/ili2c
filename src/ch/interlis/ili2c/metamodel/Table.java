@@ -91,9 +91,10 @@ public class Table extends AbstractClassDef<AbstractLeafElement>
             "err_structure_unique",
             Table.this.toString ()));
 
-        if (o instanceof Constraint)
+        if (o instanceof Constraint){
+        	((Constraint) o).setNameIdx(constraints.size()+1);
           return constraints.add((Constraint) o);
-
+        }
         if (o instanceof Parameter)
           return parameters.add((Parameter) o);
 

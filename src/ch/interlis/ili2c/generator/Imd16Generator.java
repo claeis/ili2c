@@ -8,6 +8,7 @@ import java.util.Iterator;
 import javax.xml.ws.Holder;
 
 import ch.ehi.basics.logging.EhiLogger;
+import ch.interlis.iom.IomConstants;
 import ch.interlis.iom_j.ViewableProperties;
 import ch.interlis.iom_j.xtf.XtfWriterBase;
 import ch.interlis.iom_j.xtf.XtfModel;
@@ -417,14 +418,12 @@ public class Imd16Generator {
 		}
 		
 		ArrayList<MetaAttribute> cnstrMetaAttrs=new ArrayList<MetaAttribute>(); 
-		int cnstrIdx=0;
 		int paramOrderPos=1;
 		int roleOrderPos=1;
 		for( Iterator it =  classDef.iterator(); it.hasNext(); ) {
 			ch.interlis.ili2c.metamodel.Element element = (ch.interlis.ili2c.metamodel.Element)it.next();
 			if ( element instanceof ch.interlis.ili2c.metamodel.Constraint ) {
-				Constraint iomConstraint=visitConstraint((ch.interlis.ili2c.metamodel.Constraint)element,cnstrMetaAttrs,iomClass.getobjectoid(),cnstrIdx);
-				cnstrIdx++;
+				Constraint iomConstraint=visitConstraint((ch.interlis.ili2c.metamodel.Constraint)element,cnstrMetaAttrs,iomClass.getobjectoid());
 				out.write(new ObjectEvent(iomConstraint));
 			} else if ( element instanceof ch.interlis.ili2c.metamodel.Parameter ) {
 				visitParameter((ch.interlis.ili2c.metamodel.Parameter)element,paramOrderPos);
@@ -863,18 +862,12 @@ public class Imd16Generator {
 		visitMetaValues(lf.getMetaValues(),iomLf.getobjectoid());
 	
 	}
-	private final String CONSTRAINT="CONSTRAINT";
-	private Constraint visitConstraint(ch.interlis.ili2c.metamodel.Constraint cnstrt,ArrayList<MetaAttribute> metaAttrs,String viewableId,int idx)
+	private Constraint visitConstraint(ch.interlis.ili2c.metamodel.Constraint cnstrt,ArrayList<MetaAttribute> metaAttrs,String viewableId)
 	throws IoxException
 	{
 		String cnstrdName=cnstrt.getName();
 		String cnstrdTid= null;
-		if(cnstrdName==null){
-			cnstrdName=CONSTRAINT+Integer.toString(idx);
-			cnstrdTid= CONSTRAINT+Integer.toString(idx)+"."+viewableId;
-		}else{
-			cnstrdTid= viewableId+"."+cnstrdName;
-		}
+		cnstrdTid= viewableId+"."+cnstrdName;
 		Constraint iomCnstrt=null;
 		if(cnstrt instanceof ch.interlis.ili2c.metamodel.ExistenceConstraint){
 			ch.interlis.ili2c.metamodel.ExistenceConstraint existenceConstraint = (ch.interlis.ili2c.metamodel.ExistenceConstraint)cnstrt;
@@ -956,6 +949,12 @@ public class Imd16Generator {
 			throw new IllegalArgumentException("unexpected constraint type "+cnstrt.getClass().getName());
 		}
 		metaAttrs.addAll(getMetaValues(cnstrt.getMetaValues(), cnstrdTid,null));
+		iomCnstrt.setName(cnstrdName);
+		if ( cnstrt.getDocumentation() != null ) {
+			DocText doc = new DocText();
+			doc.setText( cnstrt.getDocumentation() );
+			iomCnstrt.addDocumentation( doc );
+		}
 		return iomCnstrt;
 	}
 	  private void printAttributePath (StringBuffer out,ch.interlis.ili2c.metamodel.Container scope, ch.interlis.ili2c.metamodel.ObjectPath path)

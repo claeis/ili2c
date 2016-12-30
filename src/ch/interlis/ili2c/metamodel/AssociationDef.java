@@ -60,6 +60,7 @@ public class AssociationDef extends AbstractClassDef<Element>
 
 
         if (o instanceof Constraint) {
+        	((Constraint) o).setNameIdx(constraints.size()+1);
             return constraints.add((Constraint) o);
         }
 
