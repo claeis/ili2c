@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -38,6 +39,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import ch.ehi.basics.logging.EhiLogger;
+import ch.ehi.iox.ilisite.IliRepository09.ModelName_;
 import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata;
 import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage;
 import ch.interlis.ili2c.modelscan.IliFile;
@@ -141,13 +143,50 @@ public class RepositoryAccess {
 		if(reposIliSite.containsKey(uri) && reposIliFiles.containsKey(uri)){
 			return;
 		}
-		EhiLogger.logAdaption("repository <"+uri+"> ignored; "+e.getCause());
+		EhiLogger.logAdaption("repository <"+uri+"> ignored; "+toString(e));
 		if(!reposIliSite.containsKey(uri)){
 			reposIliSite.put(uri, null);
 		}
 		if(reposIliFiles.containsKey(uri)){
 			reposIliFiles.put(uri, null);
 		}
+	}
+	private String toString(Throwable ex)
+	{
+		StringBuilder ret=new StringBuilder();
+		String msg=ex.getLocalizedMessage();
+		if(msg!=null){
+			msg=msg.trim();
+			if(msg.length()==0){
+				msg=null;
+			}
+		}
+		if(msg==null){
+			msg=ex.getClass().getName();
+		}
+		ret.append(msg);
+		Throwable ex2=ex.getCause();
+		if(ex2!=null){
+			ret.append("; ");
+			ret.append(toString(ex2));
+		}
+		if(ex instanceof java.sql.SQLException){
+			java.sql.SQLException exTarget=(java.sql.SQLException)ex;
+			java.sql.SQLException exTarget2=exTarget.getNextException();
+			if(exTarget2!=null){
+				ret.append("; ");
+				ret.append(toString(exTarget2));
+			}
+		}
+		if(ex instanceof InvocationTargetException){
+			InvocationTargetException exTarget=(InvocationTargetException)ex;
+			Throwable exTarget2=exTarget.getTargetException();
+			if(exTarget2!=null){
+				ret.append("; ");
+				ret.append(toString(exTarget2));
+			}
+		}
+		return ret.toString();
 	}
 	private boolean isLegacyDir(String uri)
 	{
@@ -245,7 +284,10 @@ public class RepositoryAccess {
 		modelv=getLatestVersions(modelv);
 		return createIliFiles(uri, modelv);
 	}
-	static public ArrayList<ModelMetadata> readIliModelsXml(File file) {
+	static private final String REGEX_ILI_NAME="[a-zA-Z]([a-zA-Z0-9_]*)";
+	static public ArrayList<ModelMetadata> readIliModelsXml(File file) 
+	throws RepositoryAccessException
+	{
 		ArrayList<ModelMetadata> modelv=new ArrayList<ModelMetadata>();
 		ch.interlis.iom_j.xtf.XtfReader reader=null;
 		try {
@@ -262,6 +304,10 @@ public class RepositoryAccess {
 							 String mName=model.getName();
 							 if(mName==null || mName.trim().length()==0){
 								 EhiLogger.logAdaption("TID="+iomObj.getobjectoid()+": ignored; no modelname");
+								 continue;
+							 }
+							 if(!mName.matches(REGEX_ILI_NAME)){
+								 EhiLogger.logAdaption("TID="+iomObj.getobjectoid()+": ignored; <"+mName+"> is not a valid modelname");
 								 continue;
 							 }
 							 ModelMetadata_SchemaLanguage mCsl=model.getSchemaLanguage();
@@ -282,13 +328,13 @@ public class RepositoryAccess {
 				 }
 			}while(!(event instanceof ch.interlis.iox.EndTransferEvent));
 		} catch (IoxException e) {
-			throw new IllegalStateException(e);
+			throw new RepositoryAccessException("failed to read "+IliManager.ILIMODELS_XML,e);
 		}finally{
 			if(reader!=null){
 				try {
 					reader.close();
 				} catch (IoxException e) {
-					throw new IllegalStateException(e);
+					throw new RepositoryAccessException(e);
 				}
 				reader=null;
 			}
@@ -334,13 +380,13 @@ public class RepositoryAccess {
 				 }
 			}while(!(event instanceof ch.interlis.iox.EndTransferEvent));
 		} catch (IoxException e) {
-			throw new IllegalStateException(e);
+			throw new RepositoryAccessException("failed to read "+IliManager.ILISITE_XML,e);
 		}finally{
 			if(reader!=null){
 				try {
 					reader.close();
 				} catch (IoxException e) {
-					throw new IllegalStateException(e);
+					throw new RepositoryAccessException(e);
 				}
 				reader=null;
 			}

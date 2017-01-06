@@ -148,10 +148,11 @@ public class CheckReposIlis {
 					
 				}
 				// read file
-				ArrayList<ModelMetadata> modelMetadatav = RepositoryAccess.readIliModelsXml(ilimodelsFile);
-				modelMetadatav = RepositoryAccess.getLatestVersions(modelMetadatav);
-				IliFiles files;
+				IliFiles files=null;
+				ArrayList<ModelMetadata> modelMetadatav = null;
 				try {
+					modelMetadatav = RepositoryAccess.readIliModelsXml(ilimodelsFile);
+					modelMetadatav = RepositoryAccess.getLatestVersions(modelMetadatav);
 					files = RepositoryAccess.createIliFiles(repos, modelMetadatav);
 				} catch (RepositoryAccessException e2) {
 					EhiLogger.logError(e2);
