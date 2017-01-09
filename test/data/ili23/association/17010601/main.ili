@@ -1,0 +1,33 @@
+INTERLIS 2.3;
+
+MODEL modelB AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC topicA =
+
+		CLASS ClassB =
+		END ClassB;
+
+		CLASS ClassC =
+		END ClassC;
+
+	END topicA;
+
+	TOPIC topicB =
+	DEPENDS ON topicA;
+		CLASS ClassA =
+		END ClassA;
+
+
+		ASSOCIATION =
+			a --ClassA;
+			other (EXTERNAL)--modelB.topicA.ClassB; 
+		END ;
+
+		ASSOCIATION =
+			a --ClassA;
+			other (EXTERNAL)--modelB.topicA.ClassC;  !! illegal; source class (ClassA) has already a target (ClassB) with rolename other 
+		END ;
+
+	END topicB;
+	
+END modelB.

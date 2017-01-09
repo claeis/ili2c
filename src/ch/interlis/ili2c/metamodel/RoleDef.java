@@ -358,4 +358,15 @@ public boolean isHiding() {
 public void setHiding(boolean hiding) {
 	this.hiding = hiding;
 }
+public String toString ()
+{
+  Container<?> cont = getContainer(Viewable.class);
+
+  if (cont == null) {
+      return getName();
+  }
+
+  return cont.getScopedName(null) + ":" + getName();
+}
+
 }

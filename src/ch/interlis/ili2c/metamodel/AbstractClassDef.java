@@ -17,10 +17,10 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
 
     // check role name is unique with respect to attributes and roles in other roles target
     AssociationDef assoc=(AssociationDef)role.getContainer();
-    RoleDef rootRole=role.getRootExtending();
-    if(rootRole==null) {
-        rootRole=role;
-    }
+    
+    AbstractClassDef<?> targetClass=this;
+    
+    // for all oppends of role
     Iterator<Element> iter = assoc.getAttributesAndRoles();
     while (iter.hasNext()){
       Element obj = iter.next();
@@ -29,30 +29,37 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
         if(otherRole==role) {
             continue;
         }
-        AbstractClassDef<?> targetClass=otherRole.getDestination();
+        
+        // compare name of new role oppend with list of attributes in target class (and and list of roles if target is an association)
         Iterator<Element> attri=targetClass.getAttributesAndRoles();
         while (attri.hasNext()){
         	Element attrOrRole = attri.next();
-            if(attrOrRole.getName().equals(role.getName())){
+            if(attrOrRole.getName().equals(otherRole.getName())){
                 throw new Ili2cSemanticException (role.getSourceLine(),formatMessage (
                   "err_abstractClassDef_nameConflictInOtherRoleTarget",
-                  role.getName(),
-                  otherRole.getName(),targetClass.getName()));
+                  otherRole.getName(),
+                  role.getName(),targetClass.getName()));
             }
         }
+        
+        // compare name of new role oppend with list of outgoing roles in target class
         Iterator<RoleDef> rolei=targetClass.getOpposideRoles();
         while (rolei.hasNext()){
-	      RoleDef targetOppRole = rolei.next();
-	      RoleDef rootTargetOppRole = targetOppRole.getRootExtending();
-	      if(rootTargetOppRole==null) {
-            rootTargetOppRole=targetOppRole;
+	      RoleDef targetClassOutgoingRole = rolei.next();
+	      RoleDef tragetClassOutgoingRoleRoot = targetClassOutgoingRole.getRootExtending();
+	      if(tragetClassOutgoingRoleRoot==null) {
+            tragetClassOutgoingRoleRoot=targetClassOutgoingRole;
         }
-	      if(targetOppRole.getName().equals(role.getName())
-                  && rootRole!=rootTargetOppRole){
+	      RoleDef otherRoleRoot=otherRole.getRootExtending();
+	      if(otherRoleRoot==null) {
+	          otherRoleRoot=role;
+	      }
+	      if(targetClassOutgoingRole.getName().equals(otherRole.getName())
+                  && otherRoleRoot!=tragetClassOutgoingRoleRoot){
                 throw new Ili2cSemanticException (role.getSourceLine(),formatMessage (
                   "err_abstractClassDef_nameConflictInOtherRoleTarget",
-                  role.getName(),
-                  otherRole.getName(),targetClass.getName()));
+                  otherRole.getName(),
+                  role.getName(),targetClass.getName()));
 	      }
         }
       }
@@ -114,6 +121,8 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
 	    }
 	    return result.iterator ();
   }
+  /** get list of outgoing roles (embedded and not embedded, including inherited ones)
+   */
   public Iterator<RoleDef> getOpposideRoles()
   {
     List<RoleDef> result = new ArrayList<RoleDef>();
