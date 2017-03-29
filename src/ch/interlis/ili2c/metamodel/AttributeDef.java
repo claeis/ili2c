@@ -725,4 +725,20 @@ public abstract class AttributeDef
 		return false;
 	}
 	
+	@Override
+  	protected void linkTranslationOf(Element baseElement)
+  	{
+	    super.linkTranslationOf(baseElement);
+		Type type=getDomain();
+		Type baseType=((AttributeDef) baseElement).getDomain();
+		if(type.getClass()!=baseType.getClass()){
+	        throw new IllegalStateException (formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName()));
+		}
+		if (type instanceof TypeAlias){
+			if(((TypeAlias)type).getAliasing().getTranslationOfOrSame()!=((TypeAlias)baseType).getAliasing().getTranslationOfOrSame()){
+		        throw new IllegalStateException (formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName()));
+			}
+		}
+	    
+  	}
 }

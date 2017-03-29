@@ -14,6 +14,7 @@ package ch.interlis.ili2c.metamodel;
 
 import java.util.Set;
 import java.util.HashSet;
+
 import ch.ehi.basics.logging.EhiLogger;
 
 
@@ -491,4 +492,20 @@ public class Domain extends AbstractLeafElement
 
     return true;
   }
+	@Override
+  	protected void linkTranslationOf(Element baseElement)
+  	{
+	    super.linkTranslationOf(baseElement);
+		Type type=getType();
+		Type baseType=((Domain) baseElement).getType();
+		if(type.getClass()!=baseType.getClass()){
+	        throw new IllegalStateException (formatMessage("err_diff_domainType",getScopedName(),((Domain) baseElement).getScopedName()));
+		}
+		if (type instanceof TypeAlias){
+			if(((TypeAlias)type).getAliasing().getTranslationOfOrSame()!=((TypeAlias)baseType).getAliasing().getTranslationOfOrSame()){
+		        throw new IllegalStateException (formatMessage("err_diff_domainType",getScopedName(),((Domain) baseElement).getScopedName()));
+			}
+		}
+	    
+  	}
 }

@@ -552,4 +552,26 @@ public String getXmlns() {
 public void setXmlns(String xmlns) {
 	this.xmlns = xmlns;
 }
+	private String translationOf=null;
+	private String translationOfVersion=null;
+	public void setTranslationOf(String baseModel,String baseVersion)
+	{
+		translationOf=baseModel;
+		translationOfVersion=baseVersion;
+		// link in checkIntegrity()
+	}
+	@Override
+	public void checkIntegrity() throws java.lang.IllegalStateException {
+		super.checkIntegrity();
+		if(translationOf!=null){
+			Element baseModel=getContainer().getElement(Model.class,translationOf);
+			if(baseModel==null){
+		        throw new IllegalStateException (formatMessage (
+		  	          "err_noSuchModel",translationOf));
+			}
+			linkTranslationOf(baseModel);
+		}
+		
+	}
+	
 }

@@ -856,7 +856,7 @@ protected modelDef
 				md.setModelVersionExpl(verexpl.getText());
 			}
 		}
-		(	"TRANSLATION" "OF" NAME LBRACE STRING RBRACE { /* TODO */ }
+		(	"TRANSLATION" "OF" translationOf:NAME LBRACE translationOfVersion:STRING RBRACE { md.setTranslationOf(translationOf.getText(),translationOfVersion.getText()); }
 		|
 		)
 		EQUALS

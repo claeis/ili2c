@@ -371,6 +371,10 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   {
     return getName();
   }
+  public String getScopedName ()
+  {
+    return getScopedName(null);
+  }
 
 
 
@@ -869,5 +873,21 @@ public void setDocumentation(String string) {
 	public int getDefidx() {
 		return defidx;
 	}
+  	private Element baseLanguageElement=null;
+  	public Element getTranslationOf()
+  	{
+  		return baseLanguageElement;
+  	}
+  	public Element getTranslationOfOrSame()
+  	{
+  		if(baseLanguageElement==null){
+  			return this;
+  		}
+  		return baseLanguageElement.getTranslationOfOrSame();
+  	}
+  	protected void linkTranslationOf(Element baseElement)
+  	{
+  		this.baseLanguageElement=baseElement;
+  	}
 
 }

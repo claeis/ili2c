@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Set;
+
 import ch.ehi.basics.logging.EhiLogger;
 
 
@@ -527,6 +528,36 @@ public abstract class Container<E extends Element>
 	    }
   	}
   }
+	@Override
+  	protected void linkTranslationOf(Element baseElement)
+  	{
+	    super.linkTranslationOf(baseElement);
+
+
+	    Iterator baseIter = ((Container)baseElement).iterator();
+	    Iterator iter = iterator();
+	    while (iter.hasNext ())
+	    {
+	    	if(!baseIter.hasNext()){
+		        throw new IllegalStateException (formatMessage("err_diff_unequalNumberOfElts",getScopedName(),((Element) baseElement).getScopedName()));
+	    	}
+	      Object baseChild = baseIter.next();
+	      Object child = iter.next();
+	      if (child instanceof Element) {
+	    	  if(((Element) child).isDirty() || ((Element) baseChild).isDirty()){
+	    		  continue;
+	    	  }
+	    	  if(child.getClass()!=baseChild.getClass()){
+			        throw new IllegalStateException (formatMessage("err_diff_mismatchInClass",((Element) child).getScopedName(),((Element) baseChild).getScopedName()));
+	    	  }else{
+	              ((ch.interlis.ili2c.metamodel.Element) child).linkTranslationOf ((ch.interlis.ili2c.metamodel.Element)baseChild);
+	    	  }
+        }
+	    }
+    	if(baseIter.hasNext()){
+	        throw new IllegalStateException (formatMessage("err_diff_unequalNumberOfElts",getScopedName(),((Element) baseElement).getScopedName()));
+    	}
+  	}
 
 
 
