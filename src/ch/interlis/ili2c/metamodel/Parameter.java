@@ -52,48 +52,6 @@ public class Parameter extends AbstractLeafElement
     return "PARAMETER " + getScopedName (null);
   }
 
-
-  /** Returns a dot-separated name sequence which correctly
-      designates this parameter in a specified name space.
-
-      @param scope The naming context in question. If you
-                   pass <code>null</code>, a fully scoped
-                   name is returned.
-  */
-  public String getScopedName (Container scope)
-  {
-    Model enclosingModel, scopeModel;
-    Viewable enclosingViewable, scopeViewable;
-
-    enclosingModel = (Model) getContainer(Model.class);
-    if (enclosingModel == null)
-      return getName();
-
-    enclosingViewable = (Viewable) getContainer (Viewable.class);
-    if (scope != null)
-    {
-      scopeViewable = (Viewable) scope.getContainerOrSame (Viewable.class);
-      scopeModel = (Model) scope.getContainerOrSame (Model.class);
-    }
-    else
-    {
-      scopeViewable = null;
-      scopeModel = null;
-    }
-
-    if ((scopeViewable != null) && scopeViewable.isExtending (enclosingViewable))
-      return getName ();
-
-    if ((enclosingViewable != null) && (enclosingViewable != scopeViewable))
-      return enclosingViewable.getScopedName (null) + "." + getName();
-
-    if ((enclosingModel != null) && (enclosingModel != scopeModel))
-      return enclosingModel.getScopedName (null) + "." + getName();
-
-    return getName ();
-  }
-
-
   /** Returns the value of the <code>name</code> property
       which indicates the name of this parameter without any scope
       prefixes.

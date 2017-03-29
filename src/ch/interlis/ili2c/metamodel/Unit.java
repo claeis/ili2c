@@ -47,47 +47,6 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
     return docName;
   }
 
-
-  public String getScopedName(Container scope) {
-    Model enclosingModel, scopeModel;
-    Topic enclosingTopic, scopeTopic;
-
-    enclosingModel = (Model) getContainer (Model.class);
-    enclosingTopic = (Topic) getContainer (Topic.class);
-
-    /* A unit which is not embeded in a model is weird, but possible
-       due to using the JavaBeans component model which requires us to
-       allow for an empty constructor. Therefore, a Unit object's
-       lifetime includes a (typically short) period in which it
-       has an empty bean context.
-    */
-    if ((enclosingModel == null) && (enclosingTopic == null))
-      return getName();
-
-    if (scope != null)
-    {
-      scopeModel = (Model) scope.getContainerOrSame(Model.class);
-      scopeTopic = (Topic) scope.getContainerOrSame(Topic.class);
-    }
-    else
-    {
-      scopeModel = null;
-      scopeTopic = null;
-    }
-
-    if ((enclosingModel == scopeModel) && (enclosingTopic == null))
-      return getName();
-
-    if ((enclosingTopic == scopeTopic) && (enclosingTopic != null))
-      return getName();
-
-    if (enclosingTopic == null)
-      return enclosingModel.getName() + "." + getName();
-    else
-      return enclosingTopic.getScopedName(scope) + "." + getName();
-  }
-
-
   public void setName(String name)
     throws java.beans.PropertyVetoException
   {

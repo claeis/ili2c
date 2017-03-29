@@ -79,51 +79,6 @@ public class Graphic extends ExtendableContainer<Element>
   }
 
 
-  /** Returns a dot-separated name sequence which correctly
-      designates this graphic in a specified name space.
-
-      @param scope The naming context in question. If you
-                   pass <code>null</code>, a fully scoped
-                   name is returned.
-  */
-  public String getScopedName (Container scope)
-  {
-    Topic enclosingTopic, scopeTopic;
-    Model enclosingModel, scopeModel;
-
-    enclosingTopic = (Topic) getContainer (Topic.class);
-    enclosingModel = (Model) getContainer (Model.class);
-
-    if (enclosingModel == null)
-      return getName();
-
-    if (scope != null)
-    {
-      scopeModel = (Model) scope.getContainerOrSame (Model.class);
-      scopeTopic = (Topic) scope.getContainerOrSame (Topic.class);
-    }
-    else
-    {
-      scopeTopic = null;
-      scopeModel = null;
-    }
-
-    if (enclosingTopic != null)
-    {
-      if (enclosingTopic == scopeTopic)
-        return getName ();
-      else
-        return enclosingTopic.getScopedName(null) + "." + getName();
-    }
-
-
-    if (enclosingModel == scopeModel)
-      return getName ();
-    else
-      return enclosingModel.getScopedName(null) + "." + getName();
-  }
-
-
   /** Returns a String that designates this graphic. This is useful
       to generate error messages, window titles etc. However,
       you probably would not want to use this method for generating

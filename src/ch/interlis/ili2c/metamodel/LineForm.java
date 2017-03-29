@@ -32,38 +32,6 @@ public class LineForm extends AbstractLeafElement
   }
 
 
-
-  /** Returns a dot-separated name sequence which correctly
-      designates this line form in a specified name space.
-
-      @param scope The naming context in question. If you
-                   pass <code>null</code>, a fully scoped
-                   name is returned.
-  */
-  public String getScopedName (Container scope)
-  {
-    Model enclosingModel, scopeModel;
-
-    enclosingModel = (Model) getContainer(Model.class);
-    /* A line form which is not embeded in a model is weird, but possible
-       due to using the JavaBeans component model which requires us to
-       allow for an empty constructor.
-    */
-    if (enclosingModel == null)
-      return getName();
-
-    if (scope != null)
-      scopeModel = (Model) scope.getContainerOrSame(Model.class);
-    else
-      scopeModel = null;
-
-    if (enclosingModel == scopeModel)
-      return getName();
-    else
-      return enclosingModel.getName() + "." + getName();
-  }
-
-
   /** Determines the current value of the <code>name</code> property.
       Line forms are identified and used by specifying their name.
 

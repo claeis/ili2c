@@ -367,10 +367,39 @@ public abstract class Element implements BeanContextChild,ElementAlias {
       from a specified scope.  Pass <code>null</code> to get
       a fully qualified name.
   */
-  public String getScopedName (Container<?> scope)
+  public String getScopedName(Container<?> scope)
   {
-    return getName();
+		Model enclosingModel, scopeModel;
+		Topic enclosingTopic, scopeTopic;
+
+		enclosingModel = (Model) getContainer(Model.class);
+		enclosingTopic = (Topic) getContainer(Topic.class);
+
+		if (enclosingModel == null){
+			return getName();
+		}
+
+		if (scope != null) {
+			scopeModel = (Model) scope.getContainerOrSame(Model.class);
+			scopeTopic = (Topic) scope.getContainerOrSame(Topic.class);
+		} else {
+			scopeModel = null;
+			scopeTopic = null;
+		}
+
+		if ((enclosingModel == null)
+				|| ((enclosingTopic == null) && (enclosingModel == scopeModel))
+				|| ((enclosingTopic != null) && (enclosingTopic == scopeTopic))){
+			return getName();
+		}
+
+		if (enclosingTopic != null){
+			return enclosingTopic.getScopedName(null) + "." + getName();
+		}else{
+			return enclosingModel.getName() + "." + getName();
+		}
   }
+  
   public String getScopedName ()
   {
     return getScopedName(null);

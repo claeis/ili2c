@@ -96,32 +96,6 @@ public class SignAttribute extends ExtendableContainer<Element>
     return name;
   }
 
-
-  /** Returns a dot-separated name sequence which correctly
-      designates this sign attribute in a specified name space.
-
-      @param scope The naming context in question. If you
-                   pass <code>null</code>, a fully scoped
-                   name is returned.
-  */
-  public String getScopedName (Container scope)
-  {
-    Graphic myGraphic;
-    Graphic scopeGraphic;
-
-    if (scope != null)
-      scopeGraphic = (Graphic) scope.getContainerOrSame (Graphic.class);
-    else
-      scopeGraphic = null;
-
-    myGraphic = (Graphic) getContainer (Graphic.class);
-    if ((myGraphic == null) || (scopeGraphic == myGraphic))
-      return getName ();
-
-    return myGraphic.getScopedName (null) + ":" + getName();
-  }
-
-
   public String toString ()
   {
     return getScopedName (null);

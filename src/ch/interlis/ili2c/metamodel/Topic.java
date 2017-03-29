@@ -47,7 +47,7 @@ public class Topic extends AbstractPatternDef<Element>
   }
 
 
-
+  @Override
   public String getScopedName(Container<?> scope)
   {
     Model enclosingModel, scopeModel;

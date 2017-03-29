@@ -64,44 +64,6 @@ public class MetaDataUseDef extends ExtendableContainer<MetaObject>
 	{
 		return dataContainer;
 	}
-  public String getScopedName(Container scope) {
-    Model enclosingModel, scopeModel;
-    Topic enclosingTopic, scopeTopic;
-
-
-    enclosingModel = (Model) getContainer (Model.class);
-    enclosingTopic = (Topic) getContainer (Topic.class);
-
-
-    if ((enclosingModel == null) && (enclosingTopic == null))
-      return getName();
-
-
-    if (scope != null)
-    {
-      scopeModel = (Model) scope.getContainerOrSame(Model.class);
-      scopeTopic = (Topic) scope.getContainerOrSame(Topic.class);
-    }
-    else
-    {
-      scopeModel = null;
-      scopeTopic = null;
-    }
-
-
-    if ((enclosingModel == scopeModel) && (enclosingTopic == null))
-      return getName();
-
-
-    if ((enclosingTopic == scopeTopic) && (enclosingTopic != null))
-      return getName();
-
-
-    if (enclosingTopic == null)
-      return enclosingModel.getName() + "." + getName();
-    else
-      return enclosingTopic.getScopedName(scope) + "." + getName();
-  }
   /** Returns a list with MetaObjects in imported DataContainers
       that are polymorphic equivalents to a given INTERLIS class
       and that have a specified name. If you do not care about

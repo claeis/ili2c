@@ -41,14 +41,6 @@ public class MetaObject extends AbstractLeafElement
   }
 
 
-
-  public String getScopedName (Container scope)
-  {
-	  // TODO in case of multiple MetaDataUseDefs, this should return a qualified name
-    return getName();
-  }
-
-
   /** Determines the current value of the <code>name</code> property.
       Coordinate systems are identified and used by specifying
       their name.
