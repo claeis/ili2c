@@ -732,13 +732,14 @@ public abstract class AttributeDef
 		Type type=getDomain();
 		Type baseType=((AttributeDef) baseElement).getDomain();
 		if(type.getClass()!=baseType.getClass()){
-	        throw new IllegalStateException (formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName()));
+	        throw new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName()));
 		}
 		if (type instanceof TypeAlias){
 			if(((TypeAlias)type).getAliasing().getTranslationOfOrSame()!=((TypeAlias)baseType).getAliasing().getTranslationOfOrSame()){
-		        throw new IllegalStateException (formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName()));
+		        throw new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName()));
 			}
 		}
+		type.linkTranslationOf(baseType);
 	    
   	}
 }

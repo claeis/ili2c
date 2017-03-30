@@ -32,6 +32,7 @@ public class Enumeration implements Cloneable
 	private String documentation=null;
 	private ch.ehi.basics.settings.Settings metaValues=null;
 	private int sourceLine=0;
+  	private Element baseLanguageElement=null;
     /** copy constructor
      */
     public Element(Element src)
@@ -43,6 +44,7 @@ public class Enumeration implements Cloneable
       }
       sourceLine=src.sourceLine;
       metaValues=new ch.ehi.basics.settings.Settings(src.metaValues);
+      baseLanguageElement=src.baseLanguageElement;
     }
 
     public Element (String name)
@@ -103,6 +105,35 @@ public class Enumeration implements Cloneable
 	public void setMetaValues(ch.ehi.basics.settings.Settings metaValues) {
 		this.metaValues = metaValues;
 	}
+  	public Element getTranslationOf()
+  	{
+  		return baseLanguageElement;
+  	}
+  	public Element getTranslationOfOrSame()
+  	{
+  		if(baseLanguageElement==null){
+  			return this;
+  		}
+  		return baseLanguageElement.getTranslationOfOrSame();
+  	}
+  	protected void linkTranslationOf(Element baseElement)
+  	{
+  		this.baseLanguageElement=baseElement;
+  		if(subEnum==null){
+  			if(baseElement.subEnum!=null){
+  				throw new Ili2cSemanticException(sourceLine,ch.interlis.ili2c.metamodel.Element.formatMessage("err_diff_enumType_unequalSubEnum",name,baseElement.name));
+  			}
+  		}else{
+  			// ASSERT subEnum!=null
+  			if(baseElement.subEnum==null){
+  				throw new Ili2cSemanticException(ch.interlis.ili2c.metamodel.Element.formatMessage("err_diff_enumType_unequalSubEnum",name,baseElement.name));
+  			}
+  	        if(subEnum.elements.size()!=baseElement.subEnum.elements.size()){
+  				throw new Ili2cSemanticException(sourceLine,ch.interlis.ili2c.metamodel.Element.formatMessage("err_diff_enumType_unequalSubEnum",name,baseElement.name));
+  	        }
+  			subEnum.linkTranslationOf(baseElement.subEnum);
+  		}
+  	}
 
 
         public Element clone() {
@@ -116,6 +147,7 @@ public class Enumeration implements Cloneable
                 if (metaValues != null) {
                     cloned.metaValues = new Settings(metaValues);
                 }
+                cloned.baseLanguageElement=baseLanguageElement;
             } catch (CloneNotSupportedException e) {
                 // Never happens because the object is cloneable
             }
@@ -125,6 +157,7 @@ public class Enumeration implements Cloneable
 
   private List<Element> elements;
   private boolean is_Final=false;
+private int sourceLine;
 
   public Enumeration(List<Element> elements)
   {
@@ -218,6 +251,19 @@ public class Enumeration implements Cloneable
     return buf.toString ();
   }
 
+	public void setSourceLine(int sourceLine) {
+		this.sourceLine = sourceLine;
+	}
+	protected void linkTranslationOf(Enumeration baseEnum)
+	{
+        int sz = elements.size();
+        if(sz!=baseEnum.elements.size()){
+			throw new Ili2cSemanticException(sourceLine,ch.interlis.ili2c.metamodel.Element.formatMessage("err_diff_enumType_unequalNumberOfElts"));
+        }
+        for(int i = 0 ; i < sz; i++){
+    		this.elements.get(i).linkTranslationOf(baseEnum.elements.get(i));
+        }
+	}
 
     public Enumeration clone() {
         Enumeration cloned = null;

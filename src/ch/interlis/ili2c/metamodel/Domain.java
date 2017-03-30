@@ -462,13 +462,13 @@ public class Domain extends AbstractLeafElement
 		Type type=getType();
 		Type baseType=((Domain) baseElement).getType();
 		if(type.getClass()!=baseType.getClass()){
-	        throw new IllegalStateException (formatMessage("err_diff_domainType",getScopedName(),((Domain) baseElement).getScopedName()));
+	        throw new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_domainType",getScopedName(),((Domain) baseElement).getScopedName()));
 		}
 		if (type instanceof TypeAlias){
 			if(((TypeAlias)type).getAliasing().getTranslationOfOrSame()!=((TypeAlias)baseType).getAliasing().getTranslationOfOrSame()){
-		        throw new IllegalStateException (formatMessage("err_diff_domainType",getScopedName(),((Domain) baseElement).getScopedName()));
+		        throw new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_domainType",getScopedName(),((Domain) baseElement).getScopedName()));
 			}
 		}
-	    
+		type.linkTranslationOf(baseType);
   	}
 }

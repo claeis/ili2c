@@ -539,7 +539,7 @@ public abstract class Container<E extends Element>
 	    while (iter.hasNext ())
 	    {
 	    	if(!baseIter.hasNext()){
-		        throw new IllegalStateException (formatMessage("err_diff_unequalNumberOfElts",getScopedName(),((Element) baseElement).getScopedName()));
+		        throw new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_unequalNumberOfElts",getScopedName(),((Element) baseElement).getScopedName()));
 	    	}
 	      Object baseChild = baseIter.next();
 	      Object child = iter.next();
@@ -548,14 +548,14 @@ public abstract class Container<E extends Element>
 	    		  continue;
 	    	  }
 	    	  if(child.getClass()!=baseChild.getClass()){
-			        throw new IllegalStateException (formatMessage("err_diff_mismatchInClass",((Element) child).getScopedName(),((Element) baseChild).getScopedName()));
+			        throw new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInClass",((Element) child).getScopedName(),((Element) baseChild).getScopedName()));
 	    	  }else{
 	              ((ch.interlis.ili2c.metamodel.Element) child).linkTranslationOf ((ch.interlis.ili2c.metamodel.Element)baseChild);
 	    	  }
         }
 	    }
     	if(baseIter.hasNext()){
-	        throw new IllegalStateException (formatMessage("err_diff_unequalNumberOfElts",getScopedName(),((Element) baseElement).getScopedName()));
+	        throw new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_unequalNumberOfElts",getScopedName(),((Element) baseElement).getScopedName()));
     	}
   	}
 

@@ -40,6 +40,13 @@ public class EnumerationType extends BaseType {
     this.circular = circular;
     this.enumeration = enumeration;
   }
+  @Override
+	public void setSourceLine(int sourceLine) {
+		super.setSourceLine(sourceLine);
+		if(enumeration!=null){
+			enumeration.setSourceLine(sourceLine);
+		}
+	}
 
 
   /** Sets the value of the <code>ordered</code> property.
@@ -393,5 +400,9 @@ public class EnumerationType extends BaseType {
         }
       }
   }
-  
+	@Override
+  	protected void linkTranslationOf(Element baseElement)
+  	{
+		enumeration.linkTranslationOf(((EnumerationType)baseElement).enumeration);
+  	}  
 }

@@ -812,6 +812,7 @@ protected modelDef
 				try {
 				 md.setContracted(contracted);
 				 md.setName(n1.getText());
+				 md.setSourceLine(n1.getLine());
                                   md.setFileName(getFilename());
 				  md.setDocumentation(ilidoc);
 				  md.setMetaValues(metaValues);
@@ -860,7 +861,7 @@ protected modelDef
 				md.setModelVersionExpl(verexpl.getText());
 			}
 		}
-		(	"TRANSLATION" "OF" NAME LBRACE STRING RBRACE { /* TODO */ }
+		(	"TRANSLATION" "OF" translationOf:NAME LBRACE translationOfVersion:STRING RBRACE { md.setTranslationOf(translationOf.getText(),translationOfVersion.getText()); }
 		|
 		)
 		EQUALS
@@ -916,6 +917,8 @@ protected modelDef
 	     {
 	       try {
 	         md.checkIntegrity ();
+	       } catch (Ili2cSemanticException ex) {
+	         reportError (ex);
 	       } catch (Exception ex) {
 	         reportError (ex, endDot.getLine());
 	       }
@@ -943,6 +946,7 @@ protected topicDef[Container container]
 		    {
 		      try {
 		        topic = new Topic();
+		        topic.setSourceLine(n1.getLine());
 			topic.setViewTopic(viewTopic);
 		        topic.setName(n1.getText());
 			topic.setDocumentation(ilidoc);
@@ -1104,6 +1108,7 @@ protected classDef[Container container]
 	    {
 	      try {
 	        table = new Table();
+	        table.setSourceLine(n1.getLine());
 	        table.setName (n1.getText());
 		table.setDocumentation(ilidoc);
 		table.setMetaValues(metaValues);
@@ -1336,6 +1341,7 @@ protected attributeDef[Viewable container]
  	attrib = new LocalAttribute();
         try {
           attrib.setName(n.getText());
+          attrib.setSourceLine(n.getLine());
 	  attrib.setDocumentation(ilidoc);
 	  attrib.setMetaValues(metaValues);
           attrib.setAbstract((mods & ch.interlis.ili2c.metamodel.Properties.eABSTRACT) != 0);
@@ -2226,7 +2232,7 @@ protected enumeration [Type extending]
   boolean isFinal=false;
   enumer = null;
 }
-  : LPAREN
+  : lp:LPAREN
     (
       (curElement = enumElement[elements,extending] { elements.add(curElement); }
         (COMMA curElement = enumElement[elements,extending] 
@@ -2255,6 +2261,7 @@ protected enumeration [Type extending]
     {
       enumer = new ch.interlis.ili2c.metamodel.Enumeration(elements);
       enumer.setFinal(isFinal);
+      enumer.setSourceLine(lp.getLine());
     }
   ;
 

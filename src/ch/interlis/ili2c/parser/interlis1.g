@@ -391,7 +391,7 @@ protected enumeration [Type extending]
   ch.interlis.ili2c.metamodel.Enumeration.Element curElement;
   enumer = null;
 }
-  : LPAREN
+  : lp:LPAREN
     (
       (curElement = enumElement[extending] { elements.add(curElement); }
         (COMMA curElement = enumElement[extending] 
@@ -413,6 +413,7 @@ protected enumeration [Type extending]
     {
       enumer = new ch.interlis.ili2c.metamodel.Enumeration(elements);
       enumer.setFinal(false);
+      enumer.setSourceLine(lp.getLine());
     }
   ;
 
@@ -513,6 +514,7 @@ protected interlis1Def
     {
       try {
         model.setName (modelName.getText ());
+        model.setSourceLine (modelName.getLine());
         model.setFileName(getFilename());
       } catch (Exception ex) {
         reportError (ex, transferName.getLine ());
@@ -570,6 +572,7 @@ protected ili1_domainDefs [Container container]
 
         try {
           domain = new Domain ();
+          domain.setSourceLine(domainName.getLine ());
           domain.setName (domainName.getText ());
           if (type != null)
             domain.setType (type);
@@ -608,6 +611,7 @@ protected ili1_topic [Model model]
       ili1assocs=new ArrayList();
       topic = new Topic ();
       try {
+        topic.setSourceLine(topicName.getLine());
         topic.setName (topicName.getText ());
         topic.setAbstract (false);
         model.add (topic);
@@ -675,6 +679,7 @@ protected ili1_table [Topic topic]
       ili1TableRefAttrs=new HashMap();
       try {
         table.setName (tableName.getText ());
+        table.setSourceLine(tableName.getLine());
         table.setAbstract (false);
 	table.setIli1Optional(optional);
         topic.add (table);
@@ -827,6 +832,7 @@ protected ili1_attribute [Table table]
       if(attrib!=null){
       try {
         attrib.setName (attributeName.getText ());
+        attrib.setSourceLine(attributeName.getLine());
       } catch (Exception ex) {
         reportError (ex, attributeName.getLine ());
         panic ();
