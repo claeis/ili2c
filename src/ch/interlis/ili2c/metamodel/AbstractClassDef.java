@@ -9,6 +9,10 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
    *  of a RoleDef.
    */
   private final Set<RoleDef> targetForRoles = new HashSet<RoleDef>(2);
+  /** backlink to RoleDef, if this ClassDef or AssociationDef is used as target
+   *  of a RoleDef that is not in the same container ant therefore not navigable.
+   */
+  private final Set<RoleDef> nonNavigableTargetForRoles = new HashSet<RoleDef>(2);
   /** adds a backlink to the given RoleDef that has this ClassDef or
    *  AssociationDef as a target.
    */
@@ -75,6 +79,10 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
   {
   	return targetForRoles.iterator();
   }
+  public Iterator<RoleDef> getDefinedTargetForNonNavigableRoles()
+  {
+  	return nonNavigableTargetForRoles.iterator();
+  }
   /** get the list of roles that target this.
    *  Returns also inherited ones.
    * @returns list<RoleDef>
@@ -121,6 +129,52 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
 	    }
 	    return result.iterator ();
   }
+  public Iterator<RoleDef> getTargetForNonNavigableRoles()
+  {
+	    List<RoleDef> result = new LinkedList<RoleDef>();
+	    Map<Extendable, RoleDef> mostDerived = new HashMap<Extendable, RoleDef>();
+	    for (AbstractClassDef<?> v = this; v != null; v = (AbstractClassDef<?>) v.getRealExtending())
+	    {
+	      List<RoleDef> attrsOfV_reversed = new LinkedList<RoleDef>(); /* a stack */
+	      Iterator<RoleDef> iter = v.getDefinedTargetForNonNavigableRoles();
+	      while (iter.hasNext ())
+	      {
+	        RoleDef role = iter.next();
+	          /* Find least derived; put it into the map if there is not
+	             already a even more derived role. */
+	          Extendable leastDerived = role;
+	          Extendable leastDerivedParent = null;
+	          while ((leastDerivedParent = (Extendable) leastDerived.getRealExtending()) != null) {
+                leastDerived = leastDerivedParent;
+            }
+
+
+	          if (!mostDerived.containsKey(leastDerived)) {
+                mostDerived.put(leastDerived, role);
+            }
+
+
+	          /* If this mentioning of role is the least derived one, this
+	             is the time to add it to the stack of encountered attributes. */
+	          if (role == leastDerived)
+	          {
+	            attrsOfV_reversed.add (/* at frontmost position */ 0,
+	              mostDerived.get(role));
+	          }
+	      }
+
+
+	      Iterator<RoleDef> attrsOfV_iter = attrsOfV_reversed.iterator();
+	      while (attrsOfV_iter.hasNext()) {
+            result.add (/* at frontmost position */ 0, attrsOfV_iter.next());
+        }
+	    }
+	    return result.iterator ();
+  }
+  public void addNonNavigableTargetForRole(RoleDef role) {
+		nonNavigableTargetForRoles.add(role);
+	}
+  
   /** get list of outgoing roles (embedded and not embedded, including inherited ones)
    */
   public Iterator<RoleDef> getOpposideRoles()
@@ -144,6 +198,41 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
     return result.iterator();
   }
 
+  /** find the opposide role with the given Name. 
+   * Will also check associations that are only visible from the given context.
+   * @returns Null or found RoleDef.
+   */
+  public RoleDef findOpposideRole(Container context,String roleName){
+	  RoleDef ret=findOpposideRole(roleName);
+	  if(ret!=null){
+		  return ret;
+	  }
+
+	  if(!(context instanceof Topic || context instanceof Model)){
+		  throw new IllegalArgumentException("illegal context "+context.getScopedName());
+	  }
+	  
+	    Iterator<RoleDef> rolei = getTargetForNonNavigableRoles();
+	    while(rolei.hasNext()){
+	      RoleDef role = rolei.next();
+	      AssociationDef assoc=(AssociationDef)role.getContainer();
+	      if(assoc.getContainer()==context || (context instanceof Extendable && ((Extendable) context).isExtending(assoc.getContainer()))){
+		      Iterator<Element> iter = assoc.getAttributesAndRoles();
+		      while (iter.hasNext()){
+		          Element oppRole = iter.next();
+		        if(oppRole instanceof RoleDef){
+		          if (oppRole != role) {
+		            if(oppRole.getName().equals(roleName)){
+		            	return (RoleDef)oppRole;
+		            }
+		          }
+		        }
+		      }
+	      }
+	    }
+	  
+	  return null;
+  }
   /** find the opposide role with the given Name.
    * @returns Null or found RoleDef.
    */

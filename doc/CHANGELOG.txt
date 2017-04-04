@@ -6,6 +6,7 @@ ili2c 4.7.0 (2017-04-xx)
 - support TRANSLATION OF
 - API: refactored getScopedName()
 - fixed: CONSTRAINTS OF classes in base topic
+- fixed: Role-Name resolution in PathEl if Association is only available in context of ObjectOrAttributePath
 
 ili2c 4.6.1 (2017-01-09)
 ---------------------------

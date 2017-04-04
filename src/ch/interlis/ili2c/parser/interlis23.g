@@ -1173,7 +1173,7 @@ protected classDef[Container container]
 		|
 		)
 		( attributeDef[table] )*
-		( constr=constraintDef[table]
+		( constr=constraintDef[table,table.getContainer()]
 		      {
 		        if (constr != null)
 		          table.add (constr);
@@ -1766,7 +1766,7 @@ protected associationDef[Container scope]
 			def.setCardinality(card);
 			}
 		)?
-		( constr=constraintDef[def]
+		( constr=constraintDef[def,def.getContainer()]
 			{if(constr!=null)def.add(constr);}
 		)*
 		"END"
@@ -2971,7 +2971,7 @@ protected attributePathType  [Container scope, Type extending,ArrayList formalAr
 }
 : "ATTRIBUTE" 
 	( of:"OF" (
-		({scope instanceof Viewable}? attrRestr=attributePath[(Viewable)scope]
+		({scope instanceof Viewable}? attrRestr=attributePath[(Viewable)scope,scope]
 		{
 			Type attrType=null;
 			try{
@@ -4001,7 +4001,7 @@ protected runTimeParameterDef[Container scope]
 	)*
 	;
 
-protected constraintDef[Viewable constrained]
+protected constraintDef[Viewable constrained,Container context]
 	returns [Constraint constr]
 	{
 	constr = null;
@@ -4011,18 +4011,18 @@ protected constraintDef[Viewable constrained]
 
 	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
 	(
-	constr=mandatoryConstraint[constrained]
-	| constr=plausibilityConstraint[constrained]
-	| constr=existenceConstraint[constrained]
-	| constr=uniquenessConstraint[constrained]
-	| constr=setConstraint[constrained]
+	constr=mandatoryConstraint[constrained,context]
+	| constr=plausibilityConstraint[constrained,context]
+	| constr=existenceConstraint[constrained,context]
+	| constr=uniquenessConstraint[constrained,context]
+	| constr=setConstraint[constrained,context]
 	)
 	{constr.setDocumentation(ilidoc);
 	constr.setMetaValues(metaValues);
 	}
 	;
 
-protected mandatoryConstraint [Viewable v]
+protected mandatoryConstraint [Viewable v,Container context]
   returns [MandatoryConstraint constr]
 {
   Evaluable condition = null;
@@ -4044,7 +4044,7 @@ protected mandatoryConstraint [Viewable v]
   ;
 
 
-protected plausibilityConstraint [Viewable v]
+protected plausibilityConstraint [Viewable v,Container context]
   returns [PlausibilityConstraint constr]
 {
   PrecisionDecimal       percentage;
@@ -4074,7 +4074,7 @@ protected plausibilityConstraint [Viewable v]
   ;
 
 
-protected existenceConstraint[Viewable v]
+protected existenceConstraint[Viewable v,Container context]
 	returns [ExistenceConstraint constr]
 	{
 		ObjectPath attr;
@@ -4082,15 +4082,15 @@ protected existenceConstraint[Viewable v]
 		constr=new ExistenceConstraint();
 		ObjectPath attrRef=null;
 	}
-	: "EXISTENCE" "CONSTRAINT" attr=attributePath[v]
+	: "EXISTENCE" "CONSTRAINT" attr=attributePath[v,context]
 		{
 			constr.setRestrictedAttribute(attr);
 		}
-	"REQUIRED" "IN" ref=viewableRefDepReq[v] COLON attrRef=attributePath[ref]
+	"REQUIRED" "IN" ref=viewableRefDepReq[v] COLON attrRef=attributePath[ref,context]
 		{
 			constr.addRequiredIn(attrRef); 
 		}
-	( "OR" ref=viewableRefDepReq[v] COLON attrRef=attributePath[ref]
+	( "OR" ref=viewableRefDepReq[v] COLON attrRef=attributePath[ref,context]
 		{
 			constr.addRequiredIn(attrRef); 
 		}
@@ -4100,7 +4100,7 @@ protected existenceConstraint[Viewable v]
 	;
 
 
-protected uniquenessConstraint[Viewable v]
+protected uniquenessConstraint[Viewable v,Container context]
 	returns [UniquenessConstraint constr]
   	{
 	Evaluable preCond=null;
@@ -4111,7 +4111,7 @@ protected uniquenessConstraint[Viewable v]
 		{ constr.setPreCondition(preCond);
 		}
 	)?
-	( constr=globalUniqueness[v]
+	( constr=globalUniqueness[v,context]
 	| constr=localUniqueness[v]
 	)
 	{
@@ -4128,30 +4128,30 @@ protected uniquenessConstraint[Viewable v]
 	SEMI
 	;
 
-protected globalUniqueness[Viewable scope]
+protected globalUniqueness[Viewable scope,Container context]
 	returns [UniquenessConstraint constr]
   	{
 		constr=new UniquenessConstraint();
 		UniqueEl elements=null;
 	}
-	: elements=uniqueEl[scope]
+	: elements=uniqueEl[scope,context]
 	{
 		constr.setElements(elements);
 	}
 	;
 
-protected uniqueEl[Viewable scope]
+protected uniqueEl[Viewable scope,Container context]
 	returns[UniqueEl ret]
 	{
 		ret=null;
 		ObjectPath attr=null;
 	}
-	: attr=objectOrAttributePath[scope]
+	: attr=objectOrAttributePath[scope,context]
 		{ 
 			ret=new UniqueEl();
 			ret.addAttribute(attr);
 		}
-	( COMMA attr=objectOrAttributePath[scope]
+	( COMMA attr=objectOrAttributePath[scope,context]
 		{
 			ret.addAttribute(attr);
 		}
@@ -4236,7 +4236,7 @@ protected localUniqueness[Viewable start]
 	)*
 	;
 
-protected setConstraint [Viewable v]
+protected setConstraint [Viewable v,Container context]
   returns [SetConstraint constr]
 {
 	Evaluable preCond=null;
@@ -4274,7 +4274,7 @@ protected constraintsDef[Container scope]
 				scope.getScopedName(null)), c.getLine());
 	  }
 	}
-	( constr=constraintDef[def]
+	( constr=constraintDef[def,scope]
 		{if(constr!=null)def.add(constr);}
 	)*
 	"END" SEMI
@@ -4497,7 +4497,7 @@ protected factor[Container ns,Container functionNs]
 			inspFactor.setInspectionViewable((DecompositionView)dummy);
 			} 
 		) 
-		("OF" inspRestriction=objectOrAttributePath[(Viewable)ns]
+		("OF" inspRestriction=objectOrAttributePath[(Viewable)ns,functionNs]
 			{ inspFactor.setRestriction(inspRestriction); 
 			}
 		)?) 
@@ -4507,13 +4507,13 @@ protected factor[Container ns,Container functionNs]
 				ns.toString()), LT(1).getLine());
 			}
 		}
-		ev=objectOrAttributePath[(Viewable)ns]
+		ev=objectOrAttributePath[(Viewable)ns,functionNs]
 		)
 	|	ev=constant[ns]
 		
 	;
 
-protected objectOrAttributePath[Viewable start]
+protected objectOrAttributePath[Viewable start,Container context]
 	returns[ObjectPath object]
 	{
 		object=null;
@@ -4521,7 +4521,7 @@ protected objectOrAttributePath[Viewable start]
 		LinkedList path=new LinkedList();
 		Viewable next=null;
 	}
-	: el=pathEl[start]
+	: el=pathEl[start,context]
 		{
 			path.add(el);
 			next=start;
@@ -4532,7 +4532,7 @@ protected objectOrAttributePath[Viewable start]
 			next=el.getViewable();
 			// System.err.println(el+": "+prenext+"->"+next);
 		}
-	el=pathEl[next]
+	el=pathEl[next,null]
 		{
 			path.add(el);
 		}
@@ -4542,15 +4542,15 @@ protected objectOrAttributePath[Viewable start]
 		}
 	;
 
-protected attributePath[Viewable ns]
+protected attributePath[Viewable ns,Container context]
 	returns[ObjectPath object]
 	{
 	object=null;
 	}
-	: object=objectOrAttributePath[ns]
+	: object=objectOrAttributePath[ns,context]
 	;
 
-protected pathEl[Viewable currentViewable]
+protected pathEl[Viewable currentViewable,Container context]
 	returns[PathEl el]
 	{
 		el=null;
@@ -4590,10 +4590,18 @@ protected pathEl[Viewable currentViewable]
         */
 	|	n:NAME
 		{ 
-		// ReferenceAttribute?
 		AttributeDef refattr=null;
 		refattr=findAttribute(currentViewable,n.getText());
+		RoleDef oppend=null;
+		if(currentViewable instanceof AbstractClassDef){
+			if(context!=null){
+				oppend=((AbstractClassDef)currentViewable).findOpposideRole(context,n.getText());
+			}else{
+				oppend=((AbstractClassDef)currentViewable).findOpposideRole(n.getText());
+			}
+		}
 		if(refattr!=null && refattr.getDomainResolvingAliases() instanceof ReferenceType){
+			// ReferenceAttribute
 			el=new PathElRefAttr(refattr);
 		}else if(refattr!=null && refattr.getDomainResolvingAliases() instanceof ObjectType){
 			ObjectType ref=(ObjectType)refattr.getDomainResolvingAliases();
@@ -4601,9 +4609,8 @@ protected pathEl[Viewable currentViewable]
 		}else if(currentViewable instanceof AssociationDef && currentViewable.getRealElement(RoleDef.class,n.getText())!=null){
 			// currentView is an Association? -> role name
 			el=new PathElAssocRole((RoleDef)currentViewable.getRealElement(RoleDef.class,n.getText()));
-		}else if(currentViewable instanceof AbstractClassDef && ((AbstractClassDef)currentViewable).findOpposideRole(n.getText())!=null){
+		}else if(currentViewable instanceof AbstractClassDef && oppend!=null){
 			// currentView is an AbstractClassDef -> role name
-			RoleDef oppend=((AbstractClassDef)currentViewable).findOpposideRole(n.getText());
 			el=new PathElAbstractClassRole(oppend);
 		}else{
 			reportError (formatMessage ("err_pathEl_wrongName",
@@ -5098,7 +5105,7 @@ protected viewDef[Container container]
 	}
 	viewAttributes[view] 
 
-    ( constr=constraintDef[view]
+    ( constr=constraintDef[view,view.getContainer()]
       {
         if (constr != null)
           view.add (constr);
@@ -5244,7 +5251,7 @@ protected aggregation[Container container]
 			}
 			(	"ALL"
 			|	eq:"EQUAL"
-                            LPAREN cols=uniqueEl[view] RPAREN
+                            LPAREN cols=uniqueEl[view,container] RPAREN
 			    {
                                 view.setEqual(cols);
 			    }
@@ -5988,7 +5995,7 @@ protected conditionalExpression [Graphic graph, Type expectedType,Table metaobje
   condex = null;
 }
   : "ACCORDING"
-    attrPath = attributePath[basedOn]
+    attrPath = attributePath[basedOn,graph.getContainer()]
 
     LPAREN
     cond = enumAssignment [graph, expectedType,metaobjectclass]

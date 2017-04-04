@@ -456,6 +456,8 @@ public class AssociationDef extends AbstractClassDef<Element>
 			AbstractClassDef targetClass=(AbstractClassDef)desti.next();
 			if(targetClass.getContainer()==getContainer()){
 				targetClass.addTargetForRole(role);
+			}else{
+				targetClass.addNonNavigableTargetForRole(role);
 			}
 		}
 	}
