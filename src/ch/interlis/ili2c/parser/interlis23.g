@@ -4267,7 +4267,9 @@ protected constraintsDef[Container scope]
 	:	c:"CONSTRAINTS" "OF" def=classOrAssociationRef[scope]
 	EQUALS
 	{
-	  if(scope!=def.getContainer()){
+	  if(scope==def.getContainer() || (scope instanceof Extendable && ((Extendable)scope).isExtending(def.getContainer()))){
+	  	// ok
+	  }else{
 				reportError (formatMessage ("err_constraint_viewref",
 				scope.getScopedName(null)), c.getLine());
 	  }
