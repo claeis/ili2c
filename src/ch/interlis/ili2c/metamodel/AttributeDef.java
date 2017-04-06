@@ -239,17 +239,6 @@ public abstract class AttributeDef
     }
 
 
-    if (domain != null)
-    {
-      if (newValue == null) {
-        domain.checkTypeExtension (null);
-    } else {
-        domain.checkTypeExtension (newValue.getDomain ());
-    }
-    }
-
-
-
     fireVetoableChange ("extending", oldValue, newValue);
 
 	if (domain != null)

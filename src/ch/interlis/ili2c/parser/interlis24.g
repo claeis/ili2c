@@ -1427,6 +1427,16 @@ protected attrTypeDef[Container  scope,
 	:	
 	"MANDATORY" (	
 		typ=attrType[scope,allowAliases,extending,line,formalArgs]
+			{
+			  if(extending!=null && typ instanceof EnumerationType){
+				try {
+				  ((EnumerationType)typ).checkTypeExtension(extending,false);
+				} catch (Exception ex) {
+				  reportError (ex, line);
+				  typ = null;
+				}
+			  }
+			}
 		| /* empty */
 		    {
 		      if (extending != null){
@@ -1452,6 +1462,16 @@ protected attrTypeDef[Container  scope,
 	      }
 	    }
 	|	typ=attrType[scope,allowAliases,extending,line,formalArgs] 
+		{
+			  if(extending!=null && typ instanceof EnumerationType){
+				try {
+				  ((EnumerationType)typ).checkTypeExtension(extending,false);
+				} catch (Exception ex) {
+				  reportError (ex, line);
+				  typ = null;
+				}
+			  }
+		}
 	|	(	"BAG" {ordered=false;}
 		|	"LIST" {ordered=true;}
 		)
@@ -2047,6 +2067,13 @@ protected domainDef[Container container]
 		    declared.setMandatory(true);
 		  }
 
+		  if(declared!=null && declared instanceof EnumerationType){
+			try {
+			  ((EnumerationType)declared).checkTypeExtension(extendingType,false);
+			} catch (Exception ex) {
+			  reportError (ex, n.getLine());
+			}
+		  }
 		  dd.setExtending (extending);
 		} catch (Exception ex) {
 		  reportError(ex, n.getLine());

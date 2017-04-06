@@ -1,0 +1,27 @@
+INTERLIS 2.3;
+
+MODEL ExtendedEnum
+	AT "http://www.interlis.ch/ili2c/tests/" 
+	VERSION "2017-04-06" =
+
+  DOMAIN
+  
+    Enum1 = (Test1, Test2, Test3 (Test3a, Test3b));
+    Enum2 EXTENDS Enum1 = (Test2 (Test2a, Test2b));
+    Enum3 EXTENDS Enum1 = (Test1, Test2 (Test2a, Test2b)); !! fails, duplicate "Test1"
+    Enum4 EXTENDS Enum1 = (Test3.Test3a(a1,a2),Test3.Test3b(a1,a2));
+
+  TOPIC TopicA =
+    
+    CLASS ClassA1 =
+    	attr2 : (Test1, Test2, Test3 (Test3a, Test3b));
+    END ClassA1;
+    
+    CLASS ClassA2 EXTENDS ClassA1 =
+    	attr2 (EXTENDED): (Test1, Test2 (Test2a, Test2b)); !! fails, duplicate "Test1"
+    END ClassA2;
+    
+  END TopicA;
+    
+END ExtendedEnum.
+

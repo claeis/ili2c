@@ -228,7 +228,12 @@ public class EnumerationType extends BaseType {
                  of the exception indicates the reason; it is a localized
                  string that is intended for being displayed to the user.
   */
+  @Override
   void checkTypeExtension (Type wantToExtend)
+  {
+	  checkTypeExtension(wantToExtend, true);
+  }
+  public void checkTypeExtension (Type wantToExtend,boolean allowDuplicateLeafs)
   {
     EnumerationType   general;
     Enumeration       thisEnum;
@@ -255,7 +260,7 @@ public class EnumerationType extends BaseType {
     Iterator elei=thisEnum.getElements();
     while(elei.hasNext()){
       Enumeration.Element ele=(Enumeration.Element)elei.next();
-      checkTree(generalEnum,ele);
+      checkTree(generalEnum,ele,allowDuplicateLeafs);
     }
     checkCardinalityExtension(wantToExtend);
 
@@ -264,7 +269,7 @@ public class EnumerationType extends BaseType {
   {
   	return extendedBy;
   }
-  static void checkTree(Enumeration baseTree,Enumeration.Element extEle){
+  static void checkTree(Enumeration baseTree,Enumeration.Element extEle,boolean allowDuplicateLeafs){
     Iterator<Enumeration.Element> baseElei=baseTree.getElements();
     while(baseElei.hasNext()){
       Enumeration.Element baseEle = baseElei.next();
@@ -277,12 +282,14 @@ public class EnumerationType extends BaseType {
             Iterator<Enumeration.Element> elei=extEle.getSubEnumeration().getElements();
             while(elei.hasNext()){
               Enumeration.Element ele = elei.next();
-              checkTree(baseEle.getSubEnumeration(),ele);
+              checkTree(baseEle.getSubEnumeration(),ele,allowDuplicateLeafs);
             }
         }else if(extEle.getSubEnumeration()==null){
-        	// illegal duplicate element in extension
-            throw new Ili2cSemanticException(extEle.getSourceLine(),formatMessage (
-                    "err_enumerationType_DupEle",extEle.getName()));
+        	if(!allowDuplicateLeafs){
+            	// illegal duplicate element in extension
+                throw new Ili2cSemanticException(extEle.getSourceLine(),formatMessage (
+                        "err_enumerationType_DupEle",extEle.getName()));
+        	}
         }
         return;
       }
