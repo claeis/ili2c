@@ -4089,7 +4089,7 @@ protected mandatoryConstraint [Viewable v,Container context]
 }
   : mand:"MANDATORY"
     "CONSTRAINT" ((NAME COLON) =>n:NAME COLON )?
-    condition = expression [v, /* expectedType */ predefinedBooleanType,v]
+    condition = expression [v, /* expectedType */ predefinedBooleanType,context]
     SEMI
 
     {
@@ -4119,7 +4119,7 @@ protected plausibilityConstraint [Viewable v,Container context]
     )
 
     percentage = decimal PERCENT
-    condition = expression [v, /* expectedType */ predefinedBooleanType,v]
+    condition = expression [v, /* expectedType */ predefinedBooleanType,context]
     SEMI
     {
       try {
@@ -4181,7 +4181,7 @@ protected uniquenessConstraint[Viewable v,Container context]
 			reportError(ex, u.getLine());
 		}
 	}
-  	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,v] COLON
+  	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,context] COLON
 		{ constr.setPreCondition(preCond);
 		}
 	)?
@@ -4318,12 +4318,12 @@ protected setConstraint [Viewable v,Container context]
   constr = new SetConstraint();
 }
   : tok:"SET" "CONSTRAINT" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON)=> n:NAME COLON )?
-  	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,v] COLON
+  	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,context] COLON
 		{
 	        constr.setPreCondition(preCond);
 		}
 	)?
-	condition=expression[v, /* expectedType */ predefinedBooleanType,v]
+	condition=expression[v, /* expectedType */ predefinedBooleanType,context]
 	SEMI
 	{
       try {
@@ -4525,7 +4525,7 @@ protected predicate[Container ns, Type expectedType,Container functionNs]
 			      }
 			}
 		    }
-	| def:"DEFINED" LPAREN expr=factor[ns,ns] RPAREN
+	| def:"DEFINED" LPAREN expr=factor[ns,functionNs] RPAREN
 		{
 		      try {
 			expr = new Expression.DefinedCheck (expr);
@@ -4533,7 +4533,7 @@ protected predicate[Container ns, Type expectedType,Container functionNs]
 			reportError (ex, def.getLine());
 		      }
 		}
-	| expr=factor[ns,ns]
+	| expr=factor[ns,functionNs]
 	;
 
 
