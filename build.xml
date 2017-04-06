@@ -142,7 +142,7 @@
         <zipfileset src="${build}/jar/${ant.project.name}-core.jar"/>
     </jar>
   </target>
-  <target depends="init,compile" name="libs">
+  <target depends="init,compile,copyres" name="libs">
     <propertyfile file="${versionfile}">
 	<!-- <entry  key="versionMicro" type="int" value="1" operation="+"/> -->
 	<entry  key="versionDate" type="date" value="now" pattern="yyyyMMdd"/>
