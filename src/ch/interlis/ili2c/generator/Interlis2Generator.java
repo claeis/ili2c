@@ -375,8 +375,14 @@ private void setup(
 
   public void printView (View view)
   {
-	printDocumentation(view.getDocumentation());
-	printMetaValues(view.getMetaValues());
+	  printView (view,false);
+  }
+  public void printView (View view,boolean suppressDoc)
+  {
+	  if(!suppressDoc){
+			printDocumentation(view.getDocumentation());
+			printMetaValues(view.getMetaValues());
+	  }
     printStart ("VIEW", view, /* basedOn */ null);
     ipw.println ("");
     ipw.indent ();
@@ -436,12 +442,17 @@ private void setup(
 
   public void printGraphic (Graphic graph)
   {
+	  printGraphic (graph,false);
+  }
+  public void printGraphic (Graphic graph,boolean suppressDoc)
+  {
     if (graph == null)
       return;
 
-
-	printDocumentation(graph.getDocumentation());
-	printMetaValues(graph.getMetaValues());
+    if(!suppressDoc){
+    	printDocumentation(graph.getDocumentation());
+    	printMetaValues(graph.getMetaValues());
+    }
    printStart ("GRAPHIC", graph, /* basedOn */ graph.getBasedOn());
    ipw.println (" =");
    ipw.indent ();
@@ -873,8 +884,14 @@ private void setup(
 
   public void printConstraint(Constraint elt)
   {
-	printDocumentation(elt.getDocumentation());
-	printMetaValues(elt.getMetaValues());
+	  printConstraint(elt,false);  
+  }
+  public void printConstraint(Constraint elt,boolean suppressDoc)
+  {
+	  if(suppressDoc){
+			printDocumentation(elt.getDocumentation());
+			printMetaValues(elt.getMetaValues());
+	  }
       Container container=elt.getContainer();
       if (elt instanceof MandatoryConstraint)
       {
@@ -915,8 +932,14 @@ private void setup(
   }
   public void printGraphicParameterDef(GraphicParameterDef gfxp)
   {
-	printDocumentation(gfxp.getDocumentation());
-	printMetaValues(gfxp.getMetaValues());
+	  printGraphicParameterDef(gfxp,false);
+  }
+  public void printGraphicParameterDef(GraphicParameterDef gfxp,boolean suppressDoc)
+  {
+	  if(!suppressDoc){
+			printDocumentation(gfxp.getDocumentation());
+			printMetaValues(gfxp.getMetaValues());
+	  }
     ipw.print(gfxp.getName());
     ipw.print(" : ");
     printType(gfxp.getContainer(),gfxp.getDomain());
@@ -924,8 +947,14 @@ private void setup(
   }
   public void printMetaDataUseDef(MetaDataUseDef mu)
   {
-	printDocumentation(mu.getDocumentation());
-	printMetaValues(mu.getMetaValues());
+	  printMetaDataUseDef(mu,false);
+  }
+  public void printMetaDataUseDef(MetaDataUseDef mu,boolean suppressDoc)
+  {
+	  if(!suppressDoc){
+			printDocumentation(mu.getDocumentation());
+			printMetaValues(mu.getMetaValues());
+	  }
     if(mu.isSignData()){
       ipw.print("SIGN BASKET ");
     }else{
@@ -983,6 +1012,10 @@ private void setup(
 
   public void printUnit (Container scope, Unit u)
   {
+	  printUnit (scope, u,false);
+  }
+  public void printUnit (Container scope, Unit u,boolean suppressDoc)
+  {
     if (u == null)
     {
       printError ();
@@ -992,9 +1025,10 @@ private void setup(
 
     Unit extending = (Unit)u.getExtending();
 
-
-	printDocumentation(u.getDocumentation());
-	printMetaValues(u.getMetaValues());
+    if(!suppressDoc){
+    	printDocumentation(u.getDocumentation());
+    	printMetaValues(u.getMetaValues());
+    }
     ipw.print(u.getDocName());
     if (!u.getDocName().equals(u.getName())) {
       ipw.print(" [");
@@ -1119,6 +1153,10 @@ private void setup(
 
   public void printParameter (Container scope, Parameter par)
   {
+	  printParameter (scope, par,false);
+  }
+  public void printParameter (Container scope, Parameter par,boolean suppressDoc)
+  {
     if (par == null)
     {
       printError ();
@@ -1126,8 +1164,10 @@ private void setup(
     }
 
 
-	printDocumentation(par.getDocumentation());
-	printMetaValues(par.getMetaValues());
+    if(!suppressDoc){
+    	printDocumentation(par.getDocumentation());
+    	printMetaValues(par.getMetaValues());
+    }
     ipw.print(par.getName());
 
 
@@ -2125,14 +2165,20 @@ private void printFormatedTypeMinMax(FormattedType ft) {
 
   public void printFunctionDeclaration(Container scope, Function f)
   {
+	  printFunctionDeclaration(scope,f,false);
+  }
+  public void printFunctionDeclaration(Container scope, Function f,boolean suppressDoc)
+  {
     if (f == null) {
       printError ();
       return;
     }
 
 
-	printDocumentation(f.getDocumentation());
-	printMetaValues(f.getMetaValues());
+    if(!suppressDoc){
+    	printDocumentation(f.getDocumentation());
+    	printMetaValues(f.getMetaValues());
+    }
     ipw.print("FUNCTION ");
     ipw.print(f.getName());
     ipw.print("(");
