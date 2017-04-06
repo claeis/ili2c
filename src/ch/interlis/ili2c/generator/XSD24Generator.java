@@ -380,7 +380,7 @@ public final class XSD24Generator
 			 ipw.println("<xsd:element ref=\"" + getScopedName(v) + "\"/>");
 	  }
 	}
-  	boolean supportIncrementalTransfer=getInheritedMetaValueBoolean(topic,XSDGenerator.ILI2C_ILI23XML_SUPPORTINCRMENTALTRANSFER,false);
+  	boolean supportIncrementalTransfer=getInheritedMetaValueBoolean(topic,Ili2cMetaAttrs.ILI2C_ILI23XML_SUPPORTINCRMENTALTRANSFER,false);
 
 	ipw.unindent ();
 	ipw.println ("</xsd:choice>");
@@ -571,7 +571,7 @@ public final class XSD24Generator
 			ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+TID_ATTR+"\" use=\"required\"/>");
 			Container<?> container = v.getContainer();
 			if(container instanceof Topic){
-			  	boolean supportIncrementalTransfer=getInheritedMetaValueBoolean((Topic)container,XSDGenerator.ILI2C_ILI23XML_SUPPORTINCRMENTALTRANSFER,false);
+			  	boolean supportIncrementalTransfer=getInheritedMetaValueBoolean((Topic)container,Ili2cMetaAttrs.ILI2C_ILI23XML_SUPPORTINCRMENTALTRANSFER,false);
 			  	if(supportIncrementalTransfer){
 					ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+OPERATION_ATTR+"/>");
 			  	}

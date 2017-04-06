@@ -21,6 +21,7 @@ options
   protected TransferDescription td;
   private Ili2Lexer lexer;
   private Set ili1TableRefAttrs;
+  private Ili2cMetaAttrs externalMetaAttrs=new Ili2cMetaAttrs();
   
   /** Parse the contents of a stream according to INTERLIS-1 or INTERLIS-2 syntax
       (the version is detected automatically by the parser) and add the
@@ -32,7 +33,9 @@ options
   static public boolean parseIliFile (TransferDescription td,
     String filename,
     java.io.InputStream stream,
-    ErrorListener listener)
+    ErrorListener listener
+    ,Ili2cMetaAttrs metaAttrs
+    )
   {
 
     try {

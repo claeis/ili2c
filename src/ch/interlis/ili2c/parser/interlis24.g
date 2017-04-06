@@ -26,6 +26,7 @@ options
   private Ili24Lexer lexer;
   private antlr.TokenStreamHiddenTokenFilter filter;
   private boolean checkMetaObjs;
+  private Ili2cMetaAttrs externalMetaAttrs=new Ili2cMetaAttrs();
 
   /** Parse the contents of a stream according to INTERLIS-1 or INTERLIS-2 syntax
       (the version is detected automatically by the parser) and add the
@@ -39,24 +40,27 @@ options
     ,java.io.Reader stream
     ,boolean checkMetaObjects
     ,int line0Offest
+    ,Ili2cMetaAttrs metaAttrs
     )
   {
-  	return parseIliFile (td,filename,new Ili24Lexer (stream),checkMetaObjects,line0Offest);
+  	return parseIliFile (td,filename,new Ili24Lexer (stream),checkMetaObjects,line0Offest,metaAttrs);
   }
   static public boolean parseIliFile (TransferDescription td
     ,String filename
     ,java.io.InputStream stream
     ,boolean checkMetaObjects
     ,int line0Offest
+    ,Ili2cMetaAttrs metaAttrs
     )
   {
-  	return parseIliFile (td,filename,new Ili24Lexer (stream),checkMetaObjects,line0Offest);
+  	return parseIliFile (td,filename,new Ili24Lexer (stream),checkMetaObjects,line0Offest,metaAttrs);
   }
   static public boolean parseIliFile (TransferDescription td
     ,String filename
     ,Ili24Lexer lexer
     ,boolean checkMetaObjects
     ,int line0Offest
+    ,Ili2cMetaAttrs metaAttrs
     )
   {
 

@@ -24,6 +24,7 @@ options
   private Ili22Lexer lexer;
   private Map ili1TableRefAttrs;
   private boolean checkMetaObjs;
+  private Ili2cMetaAttrs externalMetaAttrs=new Ili2cMetaAttrs();
   /** ensure uniqueness of generate role names
   */
   private int ili1RoleCounter=0;
@@ -43,24 +44,27 @@ options
     ,java.io.Reader stream
     ,boolean checkMetaObjects
     ,int line0Offest
+    ,Ili2cMetaAttrs metaAttrs
     )
   {
-  	return parseIliFile (td,filename,new Ili22Lexer (stream),checkMetaObjects,line0Offest);
+  	return parseIliFile (td,filename,new Ili22Lexer (stream),checkMetaObjects,line0Offest,metaAttrs);
   }
   static public boolean parseIliFile (TransferDescription td
     ,String filename
     ,java.io.InputStream stream
     ,boolean checkMetaObjects
     ,int line0Offest
+    ,Ili2cMetaAttrs metaAttrs
     )
   {
-  	return parseIliFile (td,filename,new Ili22Lexer (stream),checkMetaObjects,line0Offest);
+  	return parseIliFile (td,filename,new Ili22Lexer (stream),checkMetaObjects,line0Offest,metaAttrs);
   }
   static public boolean parseIliFile (TransferDescription td
     ,String filename
     ,Ili22Lexer lexer
     ,boolean checkMetaObjects
     ,int line0Offest
+    ,Ili2cMetaAttrs metaAttrs
     )
   {
 

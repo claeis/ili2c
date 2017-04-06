@@ -38,14 +38,6 @@ public final class XSDGenerator
   int                 numErrors = 0;
   private Settings settings=null;
 
-    // Metaattributes
-    public static final String ILI2C_TEXTMINIMALCHARSET="ili2c.textMinimalCharset";
-    public static final String ILI2C_ILI23XML_SUPPORTSOURCEBASKETID="ili2c.ili23xml.supportSourceBasketId";
-    public static final String ILI2C_ILI23XML_SUPPORTINCRMENTALTRANSFER="ili2c.ili23xml.supportIncrementalTransfer";
-    public static final String ILI2C_ILI23XML_SUPPORTINCONSISTENTTRANSFER="ili2c.ili23xml.supportInconsistentTransfer";
-    public static final String ILI2C_ILI23XML_SUPPORTPOLYMORPHICREAD="ili2c.ili23xml.supportPolymorphicRead";
-    public static final String ILI2C_ILI23XSD_ADDALIASTABLEDEFAULT="ili2c.ili23xsd.addAliasTableDefault";
-    public static final String ILI2C_ILI23XSD_ADDALLINTERLISTYPESDEFAULT="ili2c.ili23xsd.addAllInterlisTypesDefault";
     // Settings
     public static final String SETTING_FULL_XTF_CAPABILITIES="ch.interlis.ili2c.generator.XSDGenerator.fullCapabilities";
     
@@ -131,8 +123,8 @@ public final class XSDGenerator
 	  boolean addAliasTable=false;
 	  Model lastModel=td.getLastModel();
 	  if(lastModel!=null){
-		  addAllInterlisTypes=getMetaValueBoolean(lastModel,ILI2C_ILI23XSD_ADDALLINTERLISTYPESDEFAULT,false);
-		  addAliasTable=getMetaValueBoolean(lastModel,ILI2C_ILI23XSD_ADDALIASTABLEDEFAULT,false);
+		  addAllInterlisTypes=getMetaValueBoolean(lastModel,Ili2cMetaAttrs.ILI2C_ILI23XSD_ADDALLINTERLISTYPESDEFAULT,false);
+		  addAliasTable=getMetaValueBoolean(lastModel,Ili2cMetaAttrs.ILI2C_ILI23XSD_ADDALIASTABLEDEFAULT,false);
 	  }
 		ipw.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
     ipw.println("<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
@@ -165,7 +157,7 @@ public final class XSDGenerator
 						ipw.println("<ili2c:modelVersionExplanation>"+model.getModelVersionExpl()+"</ili2c:modelVersionExplanation>");
 					}
 					ipw.println("<ili2c:modelAt>"+model.getIssuer()+"</ili2c:modelAt>");
-					String textMinimalCharset=model.getMetaValue(ILI2C_TEXTMINIMALCHARSET);
+					String textMinimalCharset=model.getMetaValue(Ili2cMetaAttrs.ILI2C_TEXTMINIMALCHARSET);
 					if(textMinimalCharset!=null){
 						ipw.println("<ili2c:textMinimalCharset>"+textMinimalCharset+"</ili2c:textMinimalCharset>");
 					}else{
@@ -792,10 +784,10 @@ public final class XSDGenerator
   protected void declareTopic (Topic topic)
   {
 
-	boolean supportSourceBasketId=getInheritedMetaValueBoolean(topic,ILI2C_ILI23XML_SUPPORTSOURCEBASKETID,false);
-  	boolean supportIncrementalTransfer=getInheritedMetaValueBoolean(topic,ILI2C_ILI23XML_SUPPORTINCRMENTALTRANSFER,false);
-  	boolean supportInconsistentTransfer=getInheritedMetaValueBoolean(topic,ILI2C_ILI23XML_SUPPORTINCONSISTENTTRANSFER,false);
-    boolean supportPolymorphicRead=getInheritedMetaValueBoolean(topic,ILI2C_ILI23XML_SUPPORTPOLYMORPHICREAD,false);
+	boolean supportSourceBasketId=getInheritedMetaValueBoolean(topic,Ili2cMetaAttrs.ILI2C_ILI23XML_SUPPORTSOURCEBASKETID,false);
+  	boolean supportIncrementalTransfer=getInheritedMetaValueBoolean(topic,Ili2cMetaAttrs.ILI2C_ILI23XML_SUPPORTINCRMENTALTRANSFER,false);
+  	boolean supportInconsistentTransfer=getInheritedMetaValueBoolean(topic,Ili2cMetaAttrs.ILI2C_ILI23XML_SUPPORTINCONSISTENTTRANSFER,false);
+    boolean supportPolymorphicRead=getInheritedMetaValueBoolean(topic,Ili2cMetaAttrs.ILI2C_ILI23XML_SUPPORTPOLYMORPHICREAD,false);
     if(supportIncrementalTransfer){
     	refIncrementalTypes=true;
     }

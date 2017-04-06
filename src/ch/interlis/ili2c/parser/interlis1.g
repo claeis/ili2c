@@ -24,6 +24,7 @@ options
   private Ili1Lexer lexer;
   private antlr.TokenStreamHiddenTokenFilter filter;
   private Map ili1TableRefAttrs;
+  private Ili2cMetaAttrs externalMetaAttrs=new Ili2cMetaAttrs();
   /** helps to remember ordering of reference attributes
   */
   private int ili1AttrCounter=0;
@@ -44,25 +45,27 @@ options
     ,String filename
     ,java.io.Reader stream
     ,int line0Offest
+    ,Ili2cMetaAttrs metaAttrs
     )
   {
-  	return parseIliFile(td,filename,new Ili1Lexer(stream),line0Offest);
+  	return parseIliFile(td,filename,new Ili1Lexer(stream),line0Offest,metaAttrs);
   }
   static public boolean parseIliFile (TransferDescription td
     ,String filename
     ,java.io.InputStream stream
     ,int line0Offest
+    ,Ili2cMetaAttrs metaAttrs
     )
   {
-  	return parseIliFile(td,filename,new Ili1Lexer(stream),line0Offest);
+  	return parseIliFile(td,filename,new Ili1Lexer(stream),line0Offest,metaAttrs);
   }
   static public boolean parseIliFile (TransferDescription td
     ,String filename
     ,Ili1Lexer lexer
     ,int line0Offest
+    ,Ili2cMetaAttrs metaAttrs
     )
   {
-
     try {
 	if ((filename != null) && "".equals (td.getName())){
 		td.setName(filename);
@@ -85,6 +88,9 @@ options
 
       // connect parser to filter (instead of lexer)
       Ili1Parser parser = new Ili1Parser (filter);
+      if(metaAttrs!=null){
+	parser.externalMetaAttrs=metaAttrs;
+      }
       
       parser.lexer=lexer;
       parser.filter=filter;
@@ -516,6 +522,15 @@ protected interlis1Def
         model.setName (modelName.getText ());
         model.setSourceLine (modelName.getLine());
         model.setFileName(getFilename());
+        String translationOfName=externalMetaAttrs.getMetaAttrValue(model.getName(),Ili2cMetaAttrs.ILI2C_TRANSLATION_OF);
+        if(translationOfName!=null){
+        	Model translationOf=(Model)td.getElement(Model.class,translationOfName);
+		if(translationOf==null){
+	        	reportError(formatMessage("err_noSuchModel", translationOfName), modelName.getLine());
+		}else{
+			model.setTranslationOf(translationOf.getName(),translationOf.getModelVersion());
+		}
+        }
       } catch (Exception ex) {
         reportError (ex, transferName.getLine ());
       }
@@ -530,7 +545,7 @@ protected interlis1Def
     ( ili1_domainDefs [model] )?
     ( ili1_topic [model] )+
 
-    "END" modelName2:NAME DOT
+    "END" modelName2:NAME endDot:DOT
     {
       if (!model.getName().equals (modelName2.getText()))
       {
@@ -543,6 +558,13 @@ protected interlis1Def
                                     modelName2.getText()),
                      modelName2.getLine ());
       }
+	       try {
+	         model.checkIntegrity ();
+	       } catch (Ili2cSemanticException ex) {
+	         reportError (ex);
+	       } catch (Exception ex) {
+	         reportError (ex, endDot.getLine());
+	       }
     }
 
     ( ili1_derivatives [model] )?

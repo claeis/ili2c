@@ -26,6 +26,7 @@ import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.config.GenerateOutputKind;
 import ch.interlis.ili2c.generator.NotSupportedByIliRelational;
 import ch.interlis.ili2c.gui.UserSettings;
+import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
 import ch.interlis.ili2c.metamodel.Model;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.modelscan.IliFile;
@@ -129,7 +130,10 @@ public class Main {
 	String ilidirs = DEFAULT_ILIDIRS;
 	String httpProxyHost = null;
 	String httpProxyPort = null;
-
+	String translationDef=null;
+    String translatedModelName=null;
+    String originLanguageModelName=null;
+	
 	if (args.length == 0) {
 	    ch.interlis.ili2c.gui.Main.main(args);
 	    return;
@@ -162,6 +166,7 @@ public class Main {
 	    System.err.println("-oUML                 Generate Model as UML2/XMI-Transfer (eclipse flavour).");
 	    System.err.println("-oIOM                 (deprecated) Generate Model as INTERLIS-Transfer (XTF).");
 	    System.err.println("--check-repo-ilis uri   check all ili files in the given repository.");
+	    System.err.println("--translation translatedModel=originModel assigns a translated model to its orginal language equivalent.");
 	    System.err.println("--out file/dir        file or folder for output (folder must exist).");
 	    System.err.println("--ilidirs " + ilidirs + " list of directories with ili-files.");
 	    System.err.println("--proxy host          proxy server to access model repositories.");
@@ -215,6 +220,13 @@ public class Main {
 		if (args[i].equals("--out")) {
 		    i++;
 		    outfile = args[i];
+		    continue;
+		}
+		if (args[i].equals("--translation")) {
+		    i++;
+		    String modelNames[]=args[i].split("=");
+		    translatedModelName=modelNames[0];
+		    originLanguageModelName=modelNames[1];
 		    continue;
 		}
 		if (args[i].equals("--proxy")) {
@@ -292,6 +304,10 @@ public class Main {
 	    settings.setHttpProxyHost(httpProxyHost);
 	    settings.setHttpProxyPort(httpProxyPort);
 	    settings.setIlidirs(ilidirs);
+	    Ili2cMetaAttrs ili2cMetaAttrs=new Ili2cMetaAttrs();
+	    if(translatedModelName!=null && originLanguageModelName!=null){
+	    	ili2cMetaAttrs.setMetaAttrValue(translatedModelName, Ili2cMetaAttrs.ILI2C_TRANSLATION_OF, originLanguageModelName);
+	    }
 	    Configuration config = new Configuration();
 	    Iterator ilifilei = ilifilev.iterator();
 	    while (ilifilei.hasNext()) {
@@ -323,7 +339,7 @@ public class Main {
 				}
 			} else {
 				// compile models
-				TransferDescription td = runCompiler(config, settings);
+				TransferDescription td = runCompiler(config, settings,ili2cMetaAttrs);
 				if (td == null) {
 					EhiLogger.logError("compiler failed");
 					System.exit(1);
@@ -392,6 +408,9 @@ public class Main {
 
 
     static public TransferDescription runCompiler(Configuration config, ch.ehi.basics.settings.Settings settings) {
+    	return runCompiler(config,settings,null);
+    }
+    static public TransferDescription runCompiler(Configuration config, ch.ehi.basics.settings.Settings settings,Ili2cMetaAttrs metaAttrs) {
 	ArrayList<FileEntry> filev = new ArrayList<FileEntry>();
 	boolean doAutoCompleteModelList = config.isAutoCompleteModelList();
 
@@ -526,22 +545,22 @@ public class Main {
 		    EhiLogger.getInstance().addListener(tracker);
 					if (version == 2.2) {
 						if (!Ili22Parser.parseIliFile(desc, streamName, stream,
-								checkMetaObjs, 0)) {
+								checkMetaObjs, 0,metaAttrs)) {
 							return null;
 						}
 					}else if(version==2.4){
 						if (!Ili24Parser.parseIliFile(desc, streamName, stream,
-								checkMetaObjs, 0)) {
+								checkMetaObjs, 0,metaAttrs)) {
 							return null;
 						}
 					} else if (version == 1.0) {
 						if (!Ili1Parser.parseIliFile(desc, streamName, stream,
-								0)) {
+								0,metaAttrs)) {
 							return null;
 						}
 					} else {
 						if (!Ili23Parser.parseIliFile(desc, streamName, stream,
-								checkMetaObjs, 0)) {
+								checkMetaObjs, 0,metaAttrs)) {
 							return null;
 						}
 					}

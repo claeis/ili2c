@@ -16,6 +16,7 @@ import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.config.GenerateOutputKind;
 import ch.interlis.ili2c.gui.UserSettings;
+import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.modelscan.IliFile;
 import ch.interlis.ili2c.modelscan.IliModel;
@@ -43,13 +44,6 @@ import ch.ehi.iox.ilisite.ILIREPOSITORY09;
  * @author ceis
  */
 public class MakeIliModelsXml {
-	public static final String META_ORIGINAL = "Original";
-	public static final String META_FURTHER_METADATA = "furtherMetadata";
-	public static final String META_PRECURSOR_VERSION = "precursorVersion";
-	public static final String META_TAGS = "tags";
-	public static final String META_FURTHER_INFORMATION = "furtherInformation";
-	public static final String META_ID_GEO_IV = "IDGeoIV";
-	public static final String META_TECHNICAL_CONTACT = "technicalContact";
 	public static final String DEFAULT_ILIDIRS="http://models.interlis.ch/;"+ch.interlis.ili2c.Main.JAR_DIR;
 	/** name of application as shown to user.
 	 */
@@ -238,24 +232,24 @@ public class MakeIliModelsXml {
 										model.setTitle(title);
 									}
 								}
-								String technicalContact=modelDef.getMetaValue(META_TECHNICAL_CONTACT);
+								String technicalContact=modelDef.getMetaValue(Ili2cMetaAttrs.ILIMODELSXML_TECHNICAL_CONTACT);
 								if(technicalContact!=null){
 									model.settechnicalContact(technicalContact);
 								}
-								String precursorVersion=modelDef.getMetaValue(META_PRECURSOR_VERSION);
+								String precursorVersion=modelDef.getMetaValue(Ili2cMetaAttrs.ILIMODELSXML_PRECURSOR_VERSION);
 								if(precursorVersion!=null){
 									model.setprecursorVersion(precursorVersion);
 								}
-								String furtherInfo=modelDef.getMetaValue(META_FURTHER_INFORMATION);
+								String furtherInfo=modelDef.getMetaValue(Ili2cMetaAttrs.ILIMODELSXML_FURTHER_INFORMATION);
 								if(furtherInfo!=null){
 									model.setfurtherInformation(furtherInfo);
 								}
-								String furtherMetadata=modelDef.getMetaValue(META_FURTHER_METADATA);
+								String furtherMetadata=modelDef.getMetaValue(Ili2cMetaAttrs.ILIMODELSXML_FURTHER_METADATA);
 								if(furtherMetadata!=null){
 									model.setfurtherMetadata(furtherMetadata);
 								}
-								String idGeoIV=modelDef.getMetaValue(META_ID_GEO_IV);
-								String tags=modelDef.getMetaValue(META_TAGS);
+								String idGeoIV=modelDef.getMetaValue(Ili2cMetaAttrs.ILIMODELSXML_ID_GEO_IV);
+								String tags=modelDef.getMetaValue(Ili2cMetaAttrs.ILIMODELSXML_TAGS);
 								if(tags==null){
 									tags=idGeoIV;
 								}else if(idGeoIV!=null){
@@ -264,7 +258,7 @@ public class MakeIliModelsXml {
 								if(tags!=null){
 									model.setTags(tags);
 								}
-								String original=modelDef.getMetaValue(META_ORIGINAL);
+								String original=modelDef.getMetaValue(Ili2cMetaAttrs.ILIMODELSXML_ORIGINAL);
 								if(original!=null){
 									model.setOriginal(original);
 								}

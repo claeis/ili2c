@@ -79,7 +79,7 @@ public abstract class Constraint extends AbstractLeafElement
 	@Override
 	public String getName() {
 		if(name==null){
-			String nameFromMetaValue=getMetaValue("name");
+			String nameFromMetaValue=getMetaValue(Ili2cMetaAttrs.ILI2C_CONSTRAINT_NAME);
 			if(nameFromMetaValue==null){
 				return "Constraint"+constraintIdx;
 			}

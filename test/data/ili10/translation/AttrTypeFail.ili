@@ -1,0 +1,21 @@
+TRANSFER AttrTypeFail;
+
+MODEL AttrTypeFail 
+
+	TOPIC TopicB =
+
+		TABLE ClassB =
+			attrB : OPTIONAL [10.0 .. 100.0];
+			NO IDENT
+		END ClassB;
+
+	END TopicB.
+
+END AttrTypeFail.
+
+
+FORMAT FREE;
+CODE BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+TID = ANY;
+END.
+

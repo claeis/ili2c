@@ -1,0 +1,20 @@
+TRANSFER ModelA;
+
+MODEL ModelA
+
+	TOPIC TopicA =
+
+		TABLE ClassA =
+			attrA : OPTIONAL TEXT*10;
+			NO IDENT
+		END ClassA;
+
+	END TopicA.
+
+END ModelA.
+
+FORMAT FREE;
+CODE BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+TID = ANY;
+END.
+

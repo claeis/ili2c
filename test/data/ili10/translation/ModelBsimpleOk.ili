@@ -1,0 +1,21 @@
+TRANSFER ModelB;
+
+MODEL ModelB 
+
+	TOPIC TopicB =
+
+		TABLE ClassB =
+			attrB : OPTIONAL TEXT*10;
+			NO IDENT
+		END ClassB;
+
+	END TopicB.
+
+END ModelB.
+
+
+FORMAT FREE;
+CODE BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+TID = ANY;
+END.
+
