@@ -1,0 +1,19 @@
+INTERLIS 2.3;
+
+MODEL UniquePreCondition 
+	AT "http://www.interlis.ch/ili2c/tests/" 
+	VERSION "2017-04-06" =
+
+	TOPIC TopicA =
+
+		CLASS ClassF =
+			  attrw1 : 0 .. 10;
+			  attrw2 : 0 .. 10;
+			  attrw3 : 0 .. 10;
+			  UNIQUE WHERE attrw1 > attrw2 : attrw3;
+		END ClassF;
+
+	END TopicA;
+
+END UniquePreCondition.
+

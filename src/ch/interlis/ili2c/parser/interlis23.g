@@ -4108,17 +4108,18 @@ protected uniquenessConstraint[Viewable v,Container context]
 	returns [UniquenessConstraint constr]
   	{
 	Evaluable preCond=null;
-		constr=new UniquenessConstraint();
+		constr=null;
 	}
 	: u:"UNIQUE"
   	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,v] COLON
-		{ constr.setPreCondition(preCond);
-		}
 	)?
 	( constr=globalUniqueness[v,context]
 	| constr=localUniqueness[v]
 	)
 	{
+		if(preCond!=null){ 
+			constr.setPreCondition(preCond);
+		}
 		// check that all attrPaths do not point to a struct
 		UniqueEl elements=constr.getElements();
 		Iterator attri=elements.iteratorAttribute();
