@@ -4,6 +4,7 @@ Known Issues:
 ili2c 4.7.1 (2017-04-10)
 ---------------------------
 - fixed NPE with ViewDef (ReseauFerre_V1)
+- improved lookup of dependent model (if ili1 translation)
 
 ili2c 4.7.0 (2017-04-06)
 ---------------------------

@@ -484,7 +484,7 @@ public class Main {
 
 		// get complete list of required ili-files
 		try {
-		    Configuration fileconfig = manager.getConfigWithFiles(ilifilev);
+		    Configuration fileconfig = manager.getConfigWithFiles(ilifilev,metaAttrs);
 		    ch.interlis.ili2c.Ili2c.logIliFiles(fileconfig);
 		    Iterator filei = fileconfig.iteratorFileEntry();
 		    while (filei.hasNext()) {

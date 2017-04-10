@@ -38,6 +38,7 @@ import ch.ehi.basics.tools.TopoSort;
 import ch.ehi.basics.view.GenericFileFilter;
 import ch.interlis.ili2c.Ili2cException;
 import ch.interlis.ili2c.config.Configuration;
+import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
 import ch.interlis.ili2c.modelscan.IliFile;
 import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ili2c.ModelScan;
@@ -46,7 +47,6 @@ import ch.interlis.ilirepository.impl.RepositoryAccessException;
 import ch.interlis.ilirepository.impl.RepositoryCrawler;
 import ch.interlis.iom_j.xtf.XtfReader;
 import ch.interlis.iox.IoxException;
-
 import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage;
 import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata;
 
@@ -111,6 +111,11 @@ public class IliManager {
 	public Configuration getConfigWithFiles(ArrayList<String> requiredIliFileNames)
 	throws Ili2cException
 	{
+		return getConfigWithFiles(requiredIliFileNames,null);
+	}
+	public Configuration getConfigWithFiles(ArrayList<String> requiredIliFileNames,Ili2cMetaAttrs metaAttrs)
+	throws Ili2cException
+	{
 		if(requiredIliFileNames.isEmpty()){
 			throw new Ili2cException("no ili files given");
 		}
@@ -151,6 +156,12 @@ public class IliManager {
 							EhiLogger.logAdaption("duplicate model; file ignored "+iliFile.getFilename());
 							break;
 						}
+						if(metaAttrs!=null){
+							String translationOf=metaAttrs.getMetaAttrValue(model.getName(), Ili2cMetaAttrs.ILI2C_TRANSLATION_OF);
+							if(translationOf!=null){
+								model.addDepenedency(translationOf);
+							}
+						}
 					}
 					if(!skipThisFile){
 						//requiredFiles.add(file);
@@ -182,6 +193,12 @@ public class IliManager {
 									IliModel modelEle=modeli2.next();
 									availablemodels.add(modelEle.getName());
 								}
+								if(metaAttrs!=null){
+									String translationOf=metaAttrs.getMetaAttrValue(model.getName(), Ili2cMetaAttrs.ILI2C_TRANSLATION_OF);
+									if(translationOf!=null){
+										model.addDepenedency(translationOf);
+									}
+								}
 								break;
 							}
 						}
@@ -210,6 +227,12 @@ public class IliManager {
 									for(Iterator<IliModel> modeli2=ilifile.iteratorModel();modeli2.hasNext();){
 										IliModel modelEle=modeli2.next();
 										availablemodels.add(modelEle.getName());
+									}
+									if(metaAttrs!=null){
+										String translationOf=metaAttrs.getMetaAttrValue(model.getName(), Ili2cMetaAttrs.ILI2C_TRANSLATION_OF);
+										if(translationOf!=null){
+											model.addDepenedency(translationOf);
+										}
 									}
 									break;
 								}
