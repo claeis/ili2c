@@ -719,6 +719,9 @@ public abstract class AttributeDef
   	{
 	    super.linkTranslationOf(baseElement);
 		Type type=getDomain();
+		if(type==null){
+			return; // FIXME type should not be null; fix in parser/viewAttributes() (near attrib.setTypeProxy(true))
+		}
 		Type baseType=((AttributeDef) baseElement).getDomain();
 		if(type.getClass()!=baseType.getClass()){
 	        throw new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName()));

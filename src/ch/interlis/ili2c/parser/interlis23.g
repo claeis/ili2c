@@ -5626,14 +5626,18 @@ protected viewAttributes[Viewable view]
 				attrib.setTransient((mods & ch.interlis.ili2c.metamodel.Properties.eTRANSIENT) != 0);
 				// always final, but don't set, so that ili-export is the same as import
 				// attrib.setFinal(true);
-				// TODO attrib.setDomain(type);
-				// type derived from the follwoing constructs
-				// Factor = ( ObjectOrAttributePath
-				// | ( Inspection | 'INSPECTION' Inspection-ViewableRef )
-				// [ 'OF' ObjectOrAttributePath ]
-				// | FunctionCall
-				// | 'PARAMETER' [ Model-Name '.' ] RunTimeParameter-Name
-				// | Constant ).				
+				if(overridingDomain!=null){
+					attrib.setDomain((Type)overridingDomain.clone());
+					attrib.setTypeProxy(true);
+				}else{
+					// type derived from the follwoing constructs
+					// Factor = ( ObjectOrAttributePath
+					// | ( Inspection | 'INSPECTION' Inspection-ViewableRef )
+					// [ 'OF' ObjectOrAttributePath ]
+					// | FunctionCall
+					// | 'PARAMETER' [ Model-Name '.' ] RunTimeParameter-Name
+					// | Constant ).				
+				}
 				attrib.setBasePaths (new Evaluable[] { f });
 			} catch (Exception ex) {
 				reportError(ex, n.getLine());

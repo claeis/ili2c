@@ -23,6 +23,7 @@ public class LocalAttribute extends AttributeDef
 	private boolean subdivision=false;
 	private boolean continuous=false;
 	private boolean generatedByAllOf=false;
+	private boolean typeProxy=false;
   public LocalAttribute()
   {
   }
@@ -144,6 +145,18 @@ public class LocalAttribute extends AttributeDef
 
 	public void setGeneratedByAllOf(boolean generatedByAllOf) {
 		this.generatedByAllOf = generatedByAllOf;
+	}
+
+
+
+	public boolean isTypeProxy() {
+		return typeProxy;
+	}
+
+
+
+	public void setTypeProxy(boolean typeProxy) {
+		this.typeProxy = typeProxy;
 	}
 
 }
