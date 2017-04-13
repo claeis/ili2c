@@ -1410,6 +1410,13 @@ protected attrTypeDef[Container  scope,
 	"MANDATORY" (	
 		typ=attrType[scope,allowAliases,extending,line,formalArgs]
 			{
+			     try {
+				if (typ != null){
+				  typ.setMandatory(true);
+				}
+			      } catch (Exception ex) {
+				reportError(ex, line);
+			      }
 			  if(extending!=null && typ instanceof EnumerationType){
 				try {
 				  ((EnumerationType)typ).checkTypeExtension(extending,false);
@@ -1432,17 +1439,15 @@ protected attrTypeDef[Container  scope,
 				reportError (rsrc.getString ("err_type_mandatoryLonely"), line);
 				typ = null;
 		      }
+		      try {
+			if (typ != null){
+			  typ.setMandatory(true);
+			}
+		      } catch (Exception ex) {
+			reportError(ex, line);
+		      }
 		    }
 		)
-	    {
-	      try {
-		if (typ != null){
-		  typ.setMandatory(true);
-                }
-	      } catch (Exception ex) {
-		reportError(ex, line);
-	      }
-	    }
 	|	typ=attrType[scope,allowAliases,extending,line,formalArgs] 
 		{
 			  if(extending!=null && typ instanceof EnumerationType){

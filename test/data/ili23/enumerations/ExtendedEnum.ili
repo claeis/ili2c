@@ -15,11 +15,13 @@ MODEL ExtendedEnum
     CLASS ClassA1 =
     	attr1 : Enum1;
     	attr2 : (Test1, Test2, Test3 (Test3a, Test3b));
+    	attr3 : MANDATORY (Test1, Test2, Test3 (Test3a, Test3b));
     END ClassA1;
     
     CLASS ClassA2 EXTENDS ClassA1 =
     	attr1 (EXTENDED): Enum2;
     	attr2 (EXTENDED): (Test2 (Test2a, Test2b));
+    	attr3 (EXTENDED): MANDATORY (Test2(Test2a, Test2b));
     END ClassA2;
 
     CLASS ClassA3 EXTENDS ClassA1 =
