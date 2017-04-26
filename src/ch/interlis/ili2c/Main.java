@@ -330,8 +330,8 @@ public class Main {
 		}
 	    }
 
+		EhiLogger.logState(APP_NAME+"-"+getVersion());
 			if (doCheckRepoIlis) {
-				EhiLogger.logState(APP_NAME+"-"+getVersion());
 				boolean failed = new CheckReposIlis().checkRepoIlis(config, settings);
 				if (failed) {
 					EhiLogger.logError("check of ili's in repositories failed");

@@ -104,6 +104,7 @@ public class Main {
   private void runCompiler(){
 	  TransferDescription td=null;
 	  try{
+		  EhiLogger.logState(ch.interlis.ili2c.Main.APP_NAME+"-"+ch.interlis.ili2c.Main.getVersion());
 		  td=ch.interlis.ili2c.Main.runCompiler(config,settings);
 	  }catch(Throwable e){
 		  EhiLogger.logError(e);

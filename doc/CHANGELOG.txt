@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.7.3 (2017-04-xx)
+---------------------------
+- cmdline/gui: log ili2c version
+
 ili2c 4.7.2 (2017-04-13)
 ---------------------------
 - fixed extension of MANDATORY enumeration type (RoadsExdm2ien)
