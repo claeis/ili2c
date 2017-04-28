@@ -1,9 +1,12 @@
-!! File Time.ili Release 2005-06-16
+!! File Time.ili Release 2017-04-13
 
 INTERLIS 2.3;
 
+!! 2017-04-13 Mandatory constraint adapted (line 56)
+!!@precursorVersion = 2005-06-16
+
 CONTRACTED REFSYSTEM MODEL Time (en) AT "http://www.interlis.ch/models"
-  VERSION "2005-06-16" =
+  VERSION "2017-04-13" =
 
   IMPORTS Units;
 
@@ -50,7 +53,7 @@ CONTRACTED REFSYSTEM MODEL Time (en) AT "http://www.interlis.ch/models"
     DSStart: MANDATORY DSTransition;
     DSEnd: MANDATORY DSTransition;
   MANDATORY CONSTRAINT
-    DSTOrdered (DSStart, DSEnd);
+    DSTOrdered (DSStart->FirstDate, DSEnd->FirstDate);
   MANDATORY CONSTRAINT
     To >= From;
   END DaylightSavingPeriod;
