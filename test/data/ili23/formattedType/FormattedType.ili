@@ -1,0 +1,19 @@
+INTERLIS 2.3;
+
+MODEL FormattedType
+	AT "http://www.interlis.ch/ili2c/tests/" 
+	VERSION "2017-05-23" =
+
+    
+  TOPIC TopicA =
+    
+    CLASS ClassA1 =
+    	attr1 : FORMAT INTERLIS.XMLDate "2010-1-1" .. "2110-12-31";
+    	attr2 : FORMAT INTERLIS.XMLDate "2010-1-1" .. "2110-1-1";
+    END ClassA1;
+    
+    
+  END TopicA;
+
+END FormattedType.
+

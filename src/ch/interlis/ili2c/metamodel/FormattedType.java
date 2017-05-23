@@ -197,9 +197,43 @@ public class FormattedType extends BaseType {
 		PrecisionDecimal minimum[] = valueOf(getMinimum());
 		PrecisionDecimal maximum[] = valueOf(getMaximum());
 		PrecisionDecimal val[] = valueOf(value);
+		ArrayList<FormattedTypeBaseAttrRef> bases=new ArrayList<FormattedTypeBaseAttrRef>();
+		for(Iterator<FormattedTypeBaseAttrRef> basei=iteratorBaseAttrRef();basei.hasNext();){
+			FormattedTypeBaseAttrRef base=basei.next();
+			bases.add(base);
+		}
+		boolean isMin=true;
+		boolean isMax=true;
 		for(int i=0;i<val.length;i++){
-			if(val[i].compareTo(minimum[i])==-1 || val[i].compareTo(maximum[i])==1){
-				return false;
+			if(!isMin){
+				int minCompare = val[i].compareTo((((NumericType)bases.get(i).getAttr().getDomainResolvingAliases()).getMinimum()));
+				if(minCompare==-1){
+					return false;
+				}
+			}else{
+				int minCompare = val[i].compareTo(minimum[i]);
+				if(minCompare==-1){
+					return false;
+				}else if(minCompare==0){
+					isMin=true;
+				}else{
+					isMin=false;
+				}
+			}
+			if(!isMax){
+				int maxCompare = val[i].compareTo((((NumericType)bases.get(i).getAttr().getDomainResolvingAliases()).getMaximum()));
+				if(maxCompare==1){
+					return false;
+				}
+			}else{
+				int maxCompare = val[i].compareTo(maximum[i]);
+				if(maxCompare==1){
+					return false;
+				}else if(maxCompare==0){
+					isMax=true;
+				}else{
+					isMax=false;
+				}
 			}
 		}
 		return true;
