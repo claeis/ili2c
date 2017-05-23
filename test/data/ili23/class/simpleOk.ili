@@ -1,0 +1,37 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC TopicA =
+
+		CLASS ClassA =
+			attrA : TEXT*10;
+			attrA0 : TEXT*10;
+		END ClassA;
+		CLASS ClassA1 =
+			attrA1 : TEXT*10;
+		END ClassA1;
+
+	END TopicA;
+	TOPIC TopicA2 =
+
+		CLASS ClassA2 =
+			attrA2 : TEXT*10;
+		END ClassA2;
+
+	END TopicA2;
+
+END ModelA.
+
+MODEL ModelB (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC TopicB =
+
+		CLASS ClassB =
+			attrB : TEXT*10;
+		END ClassB;
+
+	END TopicB;
+
+END ModelB.
+

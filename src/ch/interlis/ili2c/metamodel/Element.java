@@ -369,35 +369,54 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   */
   public String getScopedName(Container<?> scope)
   {
-		Model enclosingModel, scopeModel;
-		Topic enclosingTopic, scopeTopic;
 
-		enclosingModel = (Model) getContainer(Model.class);
-		enclosingTopic = (Topic) getContainer(Topic.class);
-
+		Model enclosingModel = (Model) getContainer(Model.class);
 		if (enclosingModel == null){
 			return getName();
 		}
+		Topic enclosingTopic = (Topic) getContainer(Topic.class);
+		Viewable enclosingClass = (Viewable) getContainer(Viewable.class);
 
-		if (scope != null) {
-			scopeModel = (Model) scope.getContainerOrSame(Model.class);
-			scopeTopic = (Topic) scope.getContainerOrSame(Topic.class);
-		} else {
-			scopeModel = null;
-			scopeTopic = null;
+		if(scope==null){
+			return getContainer().getScopedName()+"."+getName();
 		}
 
-		if ((enclosingModel == null)
-				|| ((enclosingTopic == null) && (enclosingModel == scopeModel))
-				|| ((enclosingTopic != null) && (enclosingTopic == scopeTopic))){
-			return getName();
-		}
+		Model scopeModel = (Model) scope.getContainerOrSame(Model.class);
+		Topic scopeTopic = (Topic) scope.getContainerOrSame(Topic.class);
+		Viewable scopeClass= (Viewable) scope.getContainerOrSame(Viewable.class);
 
-		if (enclosingTopic != null){
-			return enclosingTopic.getScopedName(null) + "." + getName();
-		}else{
-			return enclosingModel.getName() + "." + getName();
+		// is scope a class?
+		if(scopeClass!=null){
+			// same class?
+			if(scopeClass==enclosingClass){
+				// attribute in same class
+				return getName();
+			}
 		}
+		// is scope a topic?
+		if(scopeTopic!=null){
+			// same topic?
+			if(scopeTopic==enclosingTopic){
+				// is this a class?
+				if(enclosingClass==null){
+					// class in same topic
+					return getName();
+				}
+				// if this is an attribute and scope not a class?
+				if(scopeClass==null){
+					return enclosingClass.getName()+"."+getName();
+				}
+			}
+		}
+		// is scope a topic?
+		if(scopeModel!=null){
+			// same model and a topic?
+			if(scopeModel==enclosingModel && enclosingTopic==null){
+				// topic in same model
+				return getName();
+			}
+		}
+		return getContainer().getScopedName()+"."+getName();
   }
   
   public String getScopedName ()
