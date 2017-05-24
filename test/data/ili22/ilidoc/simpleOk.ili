@@ -1,0 +1,10 @@
+INTERLIS 2.2;
+
+/** Dies ist eine Doku.
+ */
+!!@Version=2017-05-23
+!!@Author=ceis
+MODEL simpleOk (de) =
+
+
+END simpleOk.

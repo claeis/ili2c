@@ -5,6 +5,7 @@ header
 	import ch.interlis.ili2c.CompilerLogEvent;
 	import java.util.*;
 	import ch.ehi.basics.logging.EhiLogger;
+	import ch.ehi.basics.settings.Settings;
 }
 
 class Ili22Parser extends Parser;
@@ -22,6 +23,7 @@ options
   protected Table predefinedCoordSystemClass;
   protected TransferDescription td;
   private Ili22Lexer lexer;
+  private antlr.TokenStreamHiddenTokenFilter filter;
   private Map ili1TableRefAttrs;
   private boolean checkMetaObjs;
   private Ili2cMetaAttrs externalMetaAttrs=new Ili2cMetaAttrs();
@@ -72,10 +74,22 @@ options
 	if ((filename != null) && "".equals (td.getName())){
 		td.setName(filename);
 	}
+      // create token objects augmented with links to hidden tokens. 
+      lexer.setTokenObjectClass("antlr.CommonHiddenStreamToken");
 
-      Ili22Parser parser = new Ili22Parser (lexer);
+      // create filter that pulls tokens from the lexer
+      antlr.TokenStreamHiddenTokenFilter filter = new antlr.TokenStreamHiddenTokenFilter(lexer);
+
+      // tell the filter which tokens to hide, and which to discard
+      filter.hide(ILI_DOC);
+      filter.hide(ILI_METAVALUE);
+
+      // connect parser to filter (instead of lexer)
+
+      Ili22Parser parser = new Ili22Parser (filter);
       parser.checkMetaObjs=checkMetaObjects;
       parser.lexer=lexer;
+      parser.filter=filter;
       parser.setFilename (filename);
       return parser.interlisDescription (td);
     }catch(antlr.RecognitionException ex){
@@ -702,6 +716,82 @@ options
 		}
 		return ((ObjectType)proxyType).getRef();
 	}
+
+	private String getIliDoc()
+	throws antlr.TokenStreamException
+	{ 
+		String ilidoc=null;
+		ArrayList docs=new ArrayList();
+		antlr.CommonHiddenStreamToken cmtToken=((antlr.CommonHiddenStreamToken)LT(1)).getHiddenBefore();
+		while(cmtToken!=null){
+			if(cmtToken.getType()==ILI_DOC){
+				docs.add(0,cmtToken);
+			}
+			cmtToken=cmtToken.getHiddenBefore();
+		}
+		Iterator doci=docs.iterator();
+		StringBuilder buf=new StringBuilder();
+		String sep="";
+		while(doci.hasNext()){
+			cmtToken=(antlr.CommonHiddenStreamToken)doci.next();
+			ilidoc=cmtToken.getText().trim();
+			if(ilidoc.startsWith("/**")){
+				ilidoc=ilidoc.substring(3);
+			}
+			if(ilidoc.endsWith("*/")){
+				ilidoc=ilidoc.substring(0,ilidoc.length()-2);
+			}
+			java.io.LineNumberReader lines=new java.io.LineNumberReader(new java.io.StringReader(ilidoc.trim()));
+			String line;
+			try{
+				while((line=lines.readLine())!=null){
+					line=line.trim();
+					if(line.startsWith("*")){
+						line=line.substring(1).trim();
+					}
+					buf.append(sep);
+					buf.append(line);
+					sep="\n";
+				}
+			}catch(java.io.IOException ex){
+				EhiLogger.logError(ex);
+			}
+		}
+			ilidoc=buf.toString();
+			if(ilidoc.length()==0){
+				ilidoc=null;
+			}
+		return ilidoc;
+	}
+	private ch.ehi.basics.settings.Settings getMetaValues()
+	throws antlr.TokenStreamException
+	{ 
+		ArrayList docs=new ArrayList();
+		antlr.CommonHiddenStreamToken cmtToken=((antlr.CommonHiddenStreamToken)LT(1)).getHiddenBefore();
+		while(cmtToken!=null){
+			if(cmtToken.getType()==ILI_METAVALUE){
+				docs.add(0,cmtToken);
+			}
+			cmtToken=cmtToken.getHiddenBefore();
+		}
+		Iterator doci=docs.iterator();
+		StringBuilder metaValuesText=new StringBuilder();
+		String sep="";
+		while(doci.hasNext()){
+			cmtToken=(antlr.CommonHiddenStreamToken)doci.next();
+			String valueText=cmtToken.getText().trim();
+			metaValuesText.append(sep+valueText);
+			sep=";";
+		}
+		ch.ehi.basics.settings.Settings metaValues=null;
+		try{
+			metaValues=MetaValue.parseMetaValues(metaValuesText.toString());
+		}catch(antlr.ANTLRException ex){
+			reportError("failed to parse Metavalue <"+metaValuesText.toString()+">",LT(1).getLine());
+		}
+		return metaValues;
+	}
+
 }
 
 //
@@ -752,10 +842,14 @@ protected modelDef
 	  String[] importedNames = null;
 	  Table tabDef;
 	  int mods = 0;
-	  Contract contract=null;
 	  boolean unqualified=false;
+	  Contract contract=null;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 	}
-	:	(	"REFSYSTEM" "MODEL" { md = new RefSystemModel(); }
+	:	{ ilidoc=getIliDoc(); metaValues=getMetaValues();
+		}
+		(	"REFSYSTEM" "MODEL" { md = new RefSystemModel(); }
 		|	"SYMBOLOGY" "MODEL" { md = new SymbologyModel(); }
 		|	"TYPE" "MODEL" { md = new TypeModel(); }
 		|	"MODEL" { md = new DataModel(); }
@@ -765,6 +859,8 @@ protected modelDef
 				try {
 				 md.setName(n1.getText());
                                   md.setFileName(getFilename());
+				  md.setDocumentation(ilidoc);
+				  md.setMetaValues(metaValues);
 				  md.setIliVersion(Model.ILI2_2);
 				 td.add(md);
 				} catch (Exception ex) {
@@ -863,8 +959,11 @@ protected topicDef[Container container]
 	  int mods;
 	  boolean viewTopic=false;
 	  Domain topicOid=null;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 	}
-	:	(	"VIEW" {viewTopic=true;}
+	:	{ ilidoc=getIliDoc();metaValues=getMetaValues();}
+		(	"VIEW" {viewTopic=true;}
 		|
 		)
 		"TOPIC" n1:NAME
@@ -873,6 +972,8 @@ protected topicDef[Container container]
 		        topic = new Topic();
 			topic.setViewTopic(viewTopic);
 		        topic.setName(n1.getText());
+			topic.setDocumentation(ilidoc);
+			topic.setMetaValues(metaValues);
 		      } catch (Exception ex) {
 		        reportError(ex, n1.getLine());
 		      }
@@ -1004,8 +1105,11 @@ protected classDef[Container container]
 	  boolean identifiable = true;
 	  Constraint constr = null;
 	  int mods;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 	}
-	:	(	"CLASS"
+	:	{ ilidoc=getIliDoc();metaValues=getMetaValues();}
+		(	"CLASS"
 		|	("STRUCTURE" { identifiable = false; } )
 		)
 		n1:NAME
@@ -1013,6 +1117,8 @@ protected classDef[Container container]
 	      try {
 	        table = new Table();
 	        table.setName (n1.getText());
+		table.setDocumentation(ilidoc);
+		table.setMetaValues(metaValues);
 	        table.setIdentifiable (identifiable);
 	        table.setAbstract (true);
 	      } catch (Exception ex) {
@@ -1208,8 +1314,11 @@ protected attributeDef[Viewable container]
 	  Cardinality overridingCardinality = new Cardinality(0,Cardinality.UNBOUND);
 	  Type type = null;
 	  boolean mandatory = false;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 	}
-	:	n:NAME
+	:	{ ilidoc=getIliDoc();metaValues=getMetaValues();}
+		n:NAME
 	mods=properties[ch.interlis.ili2c.metamodel.Properties.eABSTRACT
 		|ch.interlis.ili2c.metamodel.Properties.eEXTENDED
 		|ch.interlis.ili2c.metamodel.Properties.eFINAL
@@ -1224,6 +1333,8 @@ protected attributeDef[Viewable container]
  	attrib = new LocalAttribute();
         try {
           attrib.setName(n.getText());
+	  attrib.setDocumentation(ilidoc);
+	  attrib.setMetaValues(metaValues);
           attrib.setAbstract((mods & ch.interlis.ili2c.metamodel.Properties.eABSTRACT) != 0);
           attrib.setFinal((mods & ch.interlis.ili2c.metamodel.Properties.eFINAL) != 0);
         } catch (Exception ex) {
@@ -1510,12 +1621,17 @@ protected associationDef[Container scope]
 	AssociationDef extending = null;
 	ViewableAlias derivedFrom;
 	Constraint constr;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 	}
-	:	a:"ASSOCIATION"
+	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
+		a:"ASSOCIATION"
 		( n:NAME
 			{
 				try{
 					def.setName(n.getText());
+					def.setDocumentation(ilidoc);
+					def.setMetaValues(metaValues);
 				} catch (Exception ex) {
 					reportError(ex, n.getLine());
 				}
@@ -1656,8 +1772,10 @@ protected roleDef[AssociationDef container]
 		Evaluable obj=null;
 		RoleDef def=new RoleDef(false);
 		int kind=0;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 	}
-	:
+	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
 	n:NAME
 	mods=properties[ch.interlis.ili2c.metamodel.Properties.eABSTRACT
 		|ch.interlis.ili2c.metamodel.Properties.eEXTENDED
@@ -1688,6 +1806,8 @@ protected roleDef[AssociationDef container]
 			}
 			ref.setExternal(external);
 		  def.setName(n.getText());
+		  def.setDocumentation(ilidoc);
+		  def.setMetaValues(metaValues);
 		  def.setExtended((mods & ch.interlis.ili2c.metamodel.Properties.eEXTENDED) != 0);
 		  def.setAbstract((mods & ch.interlis.ili2c.metamodel.Properties.eABSTRACT) != 0);
 		  def.setFinal((mods & ch.interlis.ili2c.metamodel.Properties.eFINAL) != 0);
@@ -1753,8 +1873,11 @@ protected domainDef[Container container]
 	  Type       extendingType = null;
 	  Type       declared = null;
 	  int        mods = 0;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 	}
-	:	n:NAME
+	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
+		n:NAME
 		mods=properties[ch.interlis.ili2c.metamodel.Properties.eABSTRACT|ch.interlis.ili2c.metamodel.Properties.eFINAL]
 		(	"EXTENDS" extending=domainRef[container]
 		      {
@@ -1772,6 +1895,8 @@ protected domainDef[Container container]
 
 		try {
 		dd.setName (n.getText());
+		dd.setDocumentation(ilidoc);
+		dd.setMetaValues(metaValues);
 
 		try {
 		  if ((mods & ch.interlis.ili2c.metamodel.Properties.eABSTRACT) != 0)
@@ -2011,8 +2136,11 @@ protected enumElement [Type extending]
   int lineNumber = 0;
   List elt = new LinkedList();
   int siz = 0;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 }
-  : lineNumber = enumNameList [elt]
+  :  { ilidoc=getIliDoc();metaValues=getMetaValues();}
+  lineNumber = enumNameList [elt]
     ( subEnum = enumeration[extending] )?
 
     {
@@ -2027,6 +2155,8 @@ protected enumElement [Type extending]
 	    // new leaf
             ee = new ch.interlis.ili2c.metamodel.Enumeration.Element (
                (String) elt.get(i));
+		    ee.setDocumentation(ilidoc);
+		    ee.setMetaValues(metaValues);
           }
           else
           {
@@ -2034,6 +2164,8 @@ protected enumElement [Type extending]
             ee = new ch.interlis.ili2c.metamodel.Enumeration.Element (
                (String) elt.get(i),
                subEnum);
+		    ee.setDocumentation(ilidoc);
+		    ee.setMetaValues(metaValues);
           }
         }
         else
@@ -2044,6 +2176,8 @@ protected enumElement [Type extending]
                (String) elt.get(i),
                new ch.interlis.ili2c.metamodel.Enumeration (subEe)
           );
+		    ee.setDocumentation(ilidoc);
+		    ee.setMetaValues(metaValues);
         }
       }
 
@@ -2685,9 +2819,11 @@ protected lineFormType [Container scope]
 protected lineFormTypeDef[Model model]
 {
   String explString = null;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 }
   : linform:"LINE" "FORM"
-    (
+    ( { ilidoc=getIliDoc();metaValues=getMetaValues();}
       nam:NAME
       COLON lineStructure:NAME
       SEMI
@@ -2696,6 +2832,8 @@ protected lineFormTypeDef[Model model]
         LineForm lf = new LineForm ();
         try {
           lf.setName (nam.getText ());
+	  lf.setDocumentation(ilidoc);
+	  lf.setMetaValues(metaValues);
 	  Table seg=(Table)model.getImportedElement(Table.class,lineStructure.getText());
 	  if(seg==null){
 	          reportError (formatMessage ("err_noSuchTable", lineStructure.getText(),
@@ -2723,8 +2861,11 @@ protected unitDef[Container scope]
   boolean _abstract = false;
 
   String docName = null, idName = null;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 }
-	:	n:NAME { docName = idName = n.getText(); }
+	:	{ ilidoc=getIliDoc();metaValues=getMetaValues();}
+		n:NAME { docName = idName = n.getText(); }
 			(	LBRACE idn:NAME RBRACE  {idName = idn.getText ();}
 			|	LPAREN "ABSTRACT" RPAREN {_abstract=true;}
 			|
@@ -2766,6 +2907,8 @@ protected unitDef[Container scope]
 
     {
       try {
+      	u.setDocumentation(ilidoc);
+	u.setMetaValues(metaValues);
         scope.add(u);
 	if(extending!=null){
         	u.setExtending(extending);
@@ -3175,13 +3318,18 @@ protected metaDataUseDef[Container scope]
     boolean sign=false;
     MetaDataUseDef def=null;
     MetaDataUseDef base=null;
+	  String ilidoc=null;
+	  Settings metaValues=null;
     }
-	:	(	"SIGN" {sign=true;}
+	:	{ ilidoc=getIliDoc();metaValues=getMetaValues();}
+		(	"SIGN" {sign=true;}
 		|	"REFSYSTEM" {sign=false;}
 		)
 		"BASKET" n:NAME mods=properties[ch.interlis.ili2c.metamodel.Properties.eFINAL]
 		{
 			def=new MetaDataUseDef();
+			def.setDocumentation(ilidoc);
+			def.setMetaValues(metaValues);
 			def.setSignData(sign);
 			def.setName(n.getText());
 			try{
@@ -3401,8 +3549,11 @@ protected parameterDef[Table container]
 	Parameter overriding = null;
 	Type overridingDomain = null;
 	Table referred = null;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 	}
-	: n:NAME
+	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
+	  n:NAME
 		mods=properties[ch.interlis.ili2c.metamodel.Properties.eABSTRACT
 			|ch.interlis.ili2c.metamodel.Properties.eEXTENDED
 			|ch.interlis.ili2c.metamodel.Properties.eFINAL]
@@ -3464,6 +3615,8 @@ protected parameterDef[Table container]
 
       try {
         p.setName (n.getText());
+	p.setDocumentation(ilidoc);
+	p.setMetaValues(metaValues);
         container.add(p);
         p.setType (type);
         p.setExtending (overriding);
@@ -3480,13 +3633,18 @@ protected runTimeParameterDef[Container scope]
 	{
 		Type domain;
 		GraphicParameterDef def=null;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 	}
 	: "PARAMETER"
-        ( n:NAME COLON
+        ( { ilidoc=getIliDoc();metaValues=getMetaValues();}
+         n:NAME COLON
                 {
 			def=new GraphicParameterDef();
 			def.setSourceLine(n.getLine());
 			def.setName(n.getText());
+			def.setDocumentation(ilidoc);
+			def.setMetaValues(metaValues);
                 }
             domain=attrTypeDef[scope,true,null,n.getLine()]
                 {
@@ -3501,12 +3659,20 @@ protected constraintDef[Viewable constrained]
 	returns [Constraint constr]
 	{
 	constr = null;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 	}
 
-	: constr=mandatoryConstraint[constrained]
+	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
+	(
+	 constr=mandatoryConstraint[constrained]
 	| constr=plausibilityConstraint[constrained]
 	| constr=existenceConstraint[constrained]
 	| constr=uniquenessConstraint[constrained]
+	)
+	{constr.setDocumentation(ilidoc);
+	constr.setMetaValues(metaValues);
+	}
 	;
 
 protected mandatoryConstraint [Viewable v]
@@ -4249,14 +4415,19 @@ protected functionDef[Container container]
   FormalArgument arg=null;
   Function f = null;
   List     args = null;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 }
-  : "FUNCTION"
+  : { ilidoc=getIliDoc();metaValues=getMetaValues();}
+   "FUNCTION"
     fn:NAME
     {
       f = new Function ();
       args = new LinkedList ();
       try {
         f.setName(fn.getText());
+	f.setDocumentation(ilidoc);
+	f.setMetaValues(metaValues);
       } catch (Exception ex) {
         reportError(ex, fn.getLine());
       }
@@ -4365,8 +4536,11 @@ protected viewDef[Container container]
 	int selLine=0;
 	LinkedList cols=null;
 	int props=0;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 	}
-	:	viewToken:"VIEW"
+	:	{ ilidoc=getIliDoc();metaValues=getMetaValues();}
+		viewToken:"VIEW"
 	n:NAME
 		props=properties[ch.interlis.ili2c.metamodel.Properties.eABSTRACT
 			|ch.interlis.ili2c.metamodel.Properties.eEXTENDED
@@ -4438,6 +4612,10 @@ protected viewDef[Container container]
       }
     )*
 	EQUALS
+	{
+	view.setDocumentation(ilidoc);
+	view.setMetaValues(metaValues);
+	}
 	viewAttributes[view] 
 
     ( constr=constraintDef[view]
@@ -4947,8 +5125,11 @@ protected graphicDef[Container cont]
   Graphic extending = null;
   Selection sel = null;
   int selLine=0;
+	  String ilidoc=null;
+	  Settings metaValues=null;
 }
-	:	"GRAPHIC" n:NAME
+	:	{ ilidoc=getIliDoc();metaValues=getMetaValues();}
+		"GRAPHIC" n:NAME
 		mods=properties[ch.interlis.ili2c.metamodel.Properties.eABSTRACT
 			|ch.interlis.ili2c.metamodel.Properties.eFINAL]
 		( "EXTENDS" extending=graphicRef[cont] )?
@@ -4958,6 +5139,8 @@ protected graphicDef[Container cont]
       graph = new Graphic ();
       try {
         graph.setName (n.getText());
+	graph.setDocumentation(ilidoc);
+	graph.setMetaValues(metaValues);
       } catch (Exception ex) {
         reportError (ex, n.getLine());
       }
@@ -6915,6 +7098,12 @@ WS
     { $setType(Token.SKIP); }
   ;
 
+ILI_METAVALUE
+  : "!!@"!
+    ( ~('\n'|'\r') )*
+    ( '\n' | '\r' ( '\n' )? )
+    { newline(); }
+  ;
 
 // Single Line comment -- ignored
 SL_COMMENT
@@ -6924,6 +7113,28 @@ SL_COMMENT
     { $setType(Token.SKIP); newline(); }
   ;
 
+ILI_DOC
+  : "/**"
+    ( /* '\r' '\n' can be matched in one alternative or by matching
+         '\r' in one iteration and '\n' in another.  I am trying to
+         handle any flavor of newline that comes in, but the language
+         that allows both "\r\n" and "\r" and "\n" to all be valid
+         newline is ambiguous.  Consequently, the resulting grammar
+         must be ambiguous.  I'm shutting this warning off.
+      */
+      options {
+        generateAmbigWarnings=false;
+      }
+      :
+      { LA(2) != '/' }? '*'
+      | ILI_DOC
+      | '\r' '\n'  {newline();}
+      | '\r'       {newline();}
+      | '\n'       {newline();}
+      | ~('*'|'\n'|'\r')
+    )*
+    "*/"
+  ;
 
 /* multiple line comments
  are ignored.
@@ -6931,7 +7142,10 @@ SL_COMMENT
    the Java syntax.
 */
 ML_COMMENT
-  : "/*"
+  : "/*" ('\r' '\n'  {newline();}
+      | '\r'       {newline();}
+      | '\n'       {newline();}
+      | ~('*'|'\n'|'\r'))
     ( /* '\r' '\n' can be matched in one alternative or by matching
          '\r' in one iteration and '\n' in another.  I am trying to
          handle any flavor of newline that comes in, but the language

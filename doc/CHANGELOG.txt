@@ -6,6 +6,7 @@ ili2c 4.7.3 (2017-04-xx)
 - cmdline/gui: log ili2c version
 - fixed FormattedType isValueInRange() with max=2110-1-1
 - fixed attr.getScopedName()
+- ili22: read ilidoc+metaattrs
 
 ili2c 4.7.2 (2017-04-13)
 ---------------------------
