@@ -1,12 +1,14 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
-ili2c 4.7.3 (2017-04-xx)
+ili2c 4.7.3 (2017-05-24)
 ---------------------------
 - cmdline/gui: log ili2c version
-- fixed FormattedType isValueInRange() with max=2110-1-1
+- fixed FormattedType isValueInRange() if maxValue=2110-1-1
 - fixed attr.getScopedName()
 - ili22: read ilidoc+metaattrs
+- imd07: fixed NPE
+- iligml20: fixed export of assoc with more than two roles (CoordSys)
 
 ili2c 4.7.2 (2017-04-13)
 ---------------------------

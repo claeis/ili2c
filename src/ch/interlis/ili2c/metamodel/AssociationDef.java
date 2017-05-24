@@ -154,6 +154,10 @@ public class AssociationDef extends AbstractClassDef<Element>
 	public Iterator<RoleDef> getRolesIterator(){
 		return roles.iterator();
 	}
+	public List<RoleDef> getRoles(){
+		List<RoleDef> ret=new ArrayList<RoleDef>(roles);
+		return ret;
+	}
 
   /** Returns a string that consists of either <code>CLASS</code>
       or <code>STRUCTURE</code> followed by a space and the fully

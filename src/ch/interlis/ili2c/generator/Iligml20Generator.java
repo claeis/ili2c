@@ -629,6 +629,8 @@ private void declareAbstractClassDef(Viewable v)
 
   }
 
+/** returns the references of ASSOCIATIONs that are embedded according to the ILIGML spec
+ */
 public static ArrayList<RoleDef> getDefinedLightweightAssociations(Viewable v) {
 	Iterator iter;
 	ArrayList<RoleDef> embeddedRoles=new ArrayList<RoleDef>();
@@ -638,15 +640,18 @@ public static ArrayList<RoleDef> getDefinedLightweightAssociations(Viewable v) {
 			RoleDef thisEnd = (RoleDef)iter.next();
 
 			AssociationDef roleOwner = (AssociationDef) thisEnd.getContainer();
-			// not a derived association?
-			if(roleOwner.getDerivedFrom()==null){
-				// association targets this class (not a base class and not a derived role)?
-				if(thisEnd.getExtending()==null && thisEnd.getDestination()==v){
-					if(thisEnd.isExternal()){
-						// otherEnd can not point to this, because thisEnd might be external to others end basket
-					}else{
-						// keep it
-						embeddedRoles.add(thisEnd.getOppEnd());
+			int rolec=roleOwner.getRoles().size();
+			if(rolec==2){
+				// not a derived association?
+				if(roleOwner.getDerivedFrom()==null){
+					// association targets this class (not a base class and not a derived role)?
+					if(thisEnd.getExtending()==null && thisEnd.getDestination()==v){
+						if(thisEnd.isExternal()){
+							// otherEnd can not point to this, because thisEnd might be external to others end basket
+						}else{
+							// keep it
+							embeddedRoles.add(thisEnd.getOppEnd());
+						}
 					}
 				}
 			}
