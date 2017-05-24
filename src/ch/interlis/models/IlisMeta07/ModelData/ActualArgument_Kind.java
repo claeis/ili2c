@@ -13,5 +13,7 @@ public class ActualArgument_Kind{
      return (ActualArgument_Kind)valuev.get(value);
   }
   static public ActualArgument_Kind Expression=new ActualArgument_Kind("Expression");
+  public final static String tag_Expression="Expression";
   static public ActualArgument_Kind AllOf=new ActualArgument_Kind("AllOf");
+  public final static String tag_AllOf="AllOf";
 }

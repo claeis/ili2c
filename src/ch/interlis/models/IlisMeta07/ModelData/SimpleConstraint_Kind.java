@@ -13,6 +13,9 @@ public class SimpleConstraint_Kind{
      return (SimpleConstraint_Kind)valuev.get(value);
   }
   static public SimpleConstraint_Kind MandC=new SimpleConstraint_Kind("MandC");
+  public final static String tag_MandC="MandC";
   static public SimpleConstraint_Kind LowPercC=new SimpleConstraint_Kind("LowPercC");
+  public final static String tag_LowPercC="LowPercC";
   static public SimpleConstraint_Kind HighPercC=new SimpleConstraint_Kind("HighPercC");
+  public final static String tag_HighPercC="HighPercC";
 }

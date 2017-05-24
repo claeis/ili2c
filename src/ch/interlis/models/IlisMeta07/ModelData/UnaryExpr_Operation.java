@@ -13,5 +13,7 @@ public class UnaryExpr_Operation{
      return (UnaryExpr_Operation)valuev.get(value);
   }
   static public UnaryExpr_Operation Not=new UnaryExpr_Operation("Not");
+  public final static String tag_Not="Not";
   static public UnaryExpr_Operation Defined=new UnaryExpr_Operation("Defined");
+  public final static String tag_Defined="Defined";
 }

@@ -1,13 +1,14 @@
 package ch.interlis.models.IlisMeta07.ModelData;
 public class ExistenceDef extends ch.interlis.models.IlisMeta07.ModelData.PathOrInspFactor
 {
-  private final static String tag= "IlisMeta07.ModelData.ExistenceDef";
+  public final static String tag= "IlisMeta07.ModelData.ExistenceDef";
   public ExistenceDef() {
     super();
   }
   public String getobjecttag() {
     return tag;
   }
+  public final static String tag_Viewable="Viewable";
   public String getViewable() {
     ch.interlis.iom.IomObject value=getattrobj("Viewable",0);
     if(value==null)throw new IllegalStateException();

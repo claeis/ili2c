@@ -1,16 +1,17 @@
 package ch.interlis.models.IlisMeta07.ModelData;
 public class PathOrInspFactor extends ch.interlis.models.IlisMeta07.ModelData.Factor
 {
-  private final static String tag= "IlisMeta07.ModelData.PathOrInspFactor";
+  public final static String tag= "IlisMeta07.ModelData.PathOrInspFactor";
   public PathOrInspFactor() {
     super();
   }
   public String getobjecttag() {
     return tag;
   }
+  public final static String tag_PathEls="PathEls";
+  public int sizePathEls() {return getattrvaluecount("PathEls");}
   public ch.interlis.models.IlisMeta07.ModelData.PathEl[] getPathEls() {
     int size=getattrvaluecount("PathEls");
-    if(size==0)throw new IllegalStateException();
     ch.interlis.models.IlisMeta07.ModelData.PathEl value[]=new ch.interlis.models.IlisMeta07.ModelData.PathEl[size];
     for(int i=0;i<size;i++){
       value[i]=(ch.interlis.models.IlisMeta07.ModelData.PathEl)getattrobj("PathEls",i);
@@ -20,6 +21,7 @@ public class PathOrInspFactor extends ch.interlis.models.IlisMeta07.ModelData.Fa
   public void addPathEls(ch.interlis.models.IlisMeta07.ModelData.PathEl value) {
     addattrobj("PathEls", value);
   }
+  public final static String tag_Inspection="Inspection";
   public String getInspection() {
     ch.interlis.iom.IomObject value=getattrobj("Inspection",0);
     if(value==null)throw new IllegalStateException();

@@ -1,29 +1,30 @@
 package ch.interlis.models.IlisMeta07.ModelData;
 public class LineType extends ch.interlis.models.IlisMeta07.ModelData.DomainType
 {
-  private final static String tag= "IlisMeta07.ModelData.LineType";
+  public final static String tag= "IlisMeta07.ModelData.LineType";
   public LineType(String oid) {
     super(oid);
   }
   public String getobjecttag() {
     return tag;
   }
+  public final static String tag_Kind="Kind";
   public LineType_Kind getKind() {
     String value=getattrvalue("Kind");
-    if(value==null)throw new IllegalStateException();
     return LineType_Kind.parseXmlCode(value);
   }
   public void setKind(LineType_Kind value) {
     setattrvalue("Kind", LineType_Kind.toXmlCode(value));
   }
+  public final static String tag_MaxOverlap="MaxOverlap";
   public String getMaxOverlap() {
     String value=getattrvalue("MaxOverlap");
-    if(value==null)throw new IllegalStateException();
     return value;
   }
   public void setMaxOverlap(String value) {
     setattrvalue("MaxOverlap", value);
   }
+  public final static String tag_CoordType="CoordType";
   public String getCoordType() {
     ch.interlis.iom.IomObject value=getattrobj("CoordType",0);
     if(value==null)throw new IllegalStateException();
@@ -35,6 +36,7 @@ public class LineType extends ch.interlis.models.IlisMeta07.ModelData.DomainType
     ch.interlis.iom.IomObject structvalue=addattrobj("CoordType","REF");
     structvalue.setobjectrefoid(oid);
   }
+  public final static String tag_LAStructure="LAStructure";
   public String getLAStructure() {
     ch.interlis.iom.IomObject value=getattrobj("LAStructure",0);
     if(value==null)throw new IllegalStateException();

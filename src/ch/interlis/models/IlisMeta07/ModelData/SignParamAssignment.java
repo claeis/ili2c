@@ -1,13 +1,14 @@
 package ch.interlis.models.IlisMeta07.ModelData;
 public class SignParamAssignment extends ch.interlis.iom_j.Iom_jObject
 {
-  private final static String tag= "IlisMeta07.ModelData.SignParamAssignment";
+  public final static String tag= "IlisMeta07.ModelData.SignParamAssignment";
   public SignParamAssignment() {
     super(tag,null);
   }
   public String getobjecttag() {
     return tag;
   }
+  public final static String tag_Param="Param";
   public String getParam() {
     ch.interlis.iom.IomObject value=getattrobj("Param",0);
     if(value==null)throw new IllegalStateException();
@@ -19,9 +20,9 @@ public class SignParamAssignment extends ch.interlis.iom_j.Iom_jObject
     ch.interlis.iom.IomObject structvalue=addattrobj("Param","REF");
     structvalue.setobjectrefoid(oid);
   }
+  public final static String tag_Assignment="Assignment";
   public ch.interlis.models.IlisMeta07.ModelData.Expression getAssignment() {
     ch.interlis.models.IlisMeta07.ModelData.Expression value=(ch.interlis.models.IlisMeta07.ModelData.Expression)getattrobj("Assignment",0);
-    if(value==null)throw new IllegalStateException();
     return value;
   }
   public void setAssignment(ch.interlis.models.IlisMeta07.ModelData.Expression value) {

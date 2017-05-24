@@ -13,5 +13,7 @@ public class MetaBasketDef_Kind{
      return (MetaBasketDef_Kind)valuev.get(value);
   }
   static public MetaBasketDef_Kind SignB=new MetaBasketDef_Kind("SignB");
+  public final static String tag_SignB="SignB";
   static public MetaBasketDef_Kind RefSystemB=new MetaBasketDef_Kind("RefSystemB");
+  public final static String tag_RefSystemB="RefSystemB";
 }

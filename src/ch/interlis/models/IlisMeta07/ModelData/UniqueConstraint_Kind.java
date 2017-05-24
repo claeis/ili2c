@@ -13,5 +13,7 @@ public class UniqueConstraint_Kind{
      return (UniqueConstraint_Kind)valuev.get(value);
   }
   static public UniqueConstraint_Kind GlobalU=new UniqueConstraint_Kind("GlobalU");
+  public final static String tag_GlobalU="GlobalU";
   static public UniqueConstraint_Kind LocalU=new UniqueConstraint_Kind("LocalU");
+  public final static String tag_LocalU="LocalU";
 }

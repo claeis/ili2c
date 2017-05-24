@@ -13,5 +13,7 @@ public class PathEl_SpecIndex{
      return (PathEl_SpecIndex)valuev.get(value);
   }
   static public PathEl_SpecIndex First=new PathEl_SpecIndex("First");
+  public final static String tag_First="First";
   static public PathEl_SpecIndex Last=new PathEl_SpecIndex("Last");
+  public final static String tag_Last="Last";
 }

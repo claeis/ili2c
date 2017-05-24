@@ -13,7 +13,11 @@ public class LineType_Kind{
      return (LineType_Kind)valuev.get(value);
   }
   static public LineType_Kind Polyline=new LineType_Kind("Polyline");
+  public final static String tag_Polyline="Polyline";
   static public LineType_Kind DirectedPolyline=new LineType_Kind("DirectedPolyline");
+  public final static String tag_DirectedPolyline="DirectedPolyline";
   static public LineType_Kind Surface=new LineType_Kind("Surface");
+  public final static String tag_Surface="Surface";
   static public LineType_Kind Area=new LineType_Kind("Area");
+  public final static String tag_Area="Area";
 }

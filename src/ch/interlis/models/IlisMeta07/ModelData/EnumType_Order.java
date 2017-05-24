@@ -13,6 +13,9 @@ public class EnumType_Order{
      return (EnumType_Order)valuev.get(value);
   }
   static public EnumType_Order Unordered=new EnumType_Order("Unordered");
+  public final static String tag_Unordered="Unordered";
   static public EnumType_Order Ordered=new EnumType_Order("Ordered");
+  public final static String tag_Ordered="Ordered";
   static public EnumType_Order Circular=new EnumType_Order("Circular");
+  public final static String tag_Circular="Circular";
 }

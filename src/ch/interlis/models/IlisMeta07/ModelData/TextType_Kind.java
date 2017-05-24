@@ -13,7 +13,11 @@ public class TextType_Kind{
      return (TextType_Kind)valuev.get(value);
   }
   static public TextType_Kind MText=new TextType_Kind("MText");
+  public final static String tag_MText="MText";
   static public TextType_Kind Text=new TextType_Kind("Text");
+  public final static String tag_Text="Text";
   static public TextType_Kind Name=new TextType_Kind("Name");
+  public final static String tag_Name="Name";
   static public TextType_Kind Uri=new TextType_Kind("Uri");
+  public final static String tag_Uri="Uri";
 }

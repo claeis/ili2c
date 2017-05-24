@@ -13,6 +13,9 @@ public class Role_Strongness{
      return (Role_Strongness)valuev.get(value);
   }
   static public Role_Strongness Assoc=new Role_Strongness("Assoc");
+  public final static String tag_Assoc="Assoc";
   static public Role_Strongness Aggr=new Role_Strongness("Aggr");
+  public final static String tag_Aggr="Aggr";
   static public Role_Strongness Comp=new Role_Strongness("Comp");
+  public final static String tag_Comp="Comp";
 }

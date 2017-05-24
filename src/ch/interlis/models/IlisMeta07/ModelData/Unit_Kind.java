@@ -13,6 +13,9 @@ public class Unit_Kind{
      return (Unit_Kind)valuev.get(value);
   }
   static public Unit_Kind BaseU=new Unit_Kind("BaseU");
+  public final static String tag_BaseU="BaseU";
   static public Unit_Kind DerivedU=new Unit_Kind("DerivedU");
+  public final static String tag_DerivedU="DerivedU";
   static public Unit_Kind ComposedU=new Unit_Kind("ComposedU");
+  public final static String tag_ComposedU="ComposedU";
 }

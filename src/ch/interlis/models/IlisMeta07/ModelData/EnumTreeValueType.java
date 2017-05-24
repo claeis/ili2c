@@ -1,13 +1,14 @@
 package ch.interlis.models.IlisMeta07.ModelData;
 public class EnumTreeValueType extends ch.interlis.models.IlisMeta07.ModelData.DomainType
 {
-  private final static String tag= "IlisMeta07.ModelData.EnumTreeValueType";
+  public final static String tag= "IlisMeta07.ModelData.EnumTreeValueType";
   public EnumTreeValueType(String oid) {
     super(oid);
   }
   public String getobjecttag() {
     return tag;
   }
+  public final static String tag_ET="ET";
   public String getET() {
     ch.interlis.iom.IomObject value=getattrobj("ET",0);
     if(value==null)throw new IllegalStateException();

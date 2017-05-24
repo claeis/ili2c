@@ -1,13 +1,14 @@
 package ch.interlis.models.IlisMeta07.ModelData;
 public class AttributeRefType extends ch.interlis.models.IlisMeta07.ModelData.DomainType
 {
-  private final static String tag= "IlisMeta07.ModelData.AttributeRefType";
+  public final static String tag= "IlisMeta07.ModelData.AttributeRefType";
   public AttributeRefType(String oid) {
     super(oid);
   }
   public String getobjecttag() {
     return tag;
   }
+  public final static String tag_Of="Of";
   public String getOf() {
     ch.interlis.iom.IomObject value=getattrobj("Of",0);
     if(value==null)throw new IllegalStateException();

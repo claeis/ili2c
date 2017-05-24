@@ -1,13 +1,14 @@
 package ch.interlis.models.IlisMeta07.ModelData;
 public class TypeRestriction extends ch.interlis.iom_j.Iom_jObject
 {
-  private final static String tag= "IlisMeta07.ModelData.TypeRestriction";
+  public final static String tag= "IlisMeta07.ModelData.TypeRestriction";
   public TypeRestriction(String oid) {
     super(tag,oid);
   }
   public String getobjecttag() {
     return tag;
   }
+  public final static String tag_TRTR="TRTR";
   public String getTRTR() {
     ch.interlis.iom.IomObject value=getattrobj("TRTR",0);
     if(value==null)throw new IllegalStateException();
@@ -19,6 +20,7 @@ public class TypeRestriction extends ch.interlis.iom_j.Iom_jObject
     ch.interlis.iom.IomObject structvalue=addattrobj("TRTR","REF");
     structvalue.setobjectrefoid(oid);
   }
+  public final static String tag_TypeRestriction="TypeRestriction";
   public String getTypeRestriction() {
     ch.interlis.iom.IomObject value=getattrobj("TypeRestriction",0);
     if(value==null)throw new IllegalStateException();

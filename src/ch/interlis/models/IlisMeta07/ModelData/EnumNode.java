@@ -1,13 +1,14 @@
 package ch.interlis.models.IlisMeta07.ModelData;
 public class EnumNode extends ch.interlis.models.IlisMeta07.ModelData.ExtendableME
 {
-  private final static String tag= "IlisMeta07.ModelData.EnumNode";
+  public final static String tag= "IlisMeta07.ModelData.EnumNode";
   public EnumNode(String oid) {
     super(oid);
   }
   public String getobjecttag() {
     return tag;
   }
+  public final static String tag_EnumType="EnumType";
   public String getEnumType() {
     ch.interlis.iom.IomObject value=getattrobj("EnumType",0);
     if(value==null)throw new IllegalStateException();
@@ -20,6 +21,7 @@ public class EnumNode extends ch.interlis.models.IlisMeta07.ModelData.Extendable
     structvalue.setobjectrefoid(oid);
     structvalue.setobjectreforderpos(orderPos);
   }
+  public final static String tag_ParentNode="ParentNode";
   public String getParentNode() {
     ch.interlis.iom.IomObject value=getattrobj("ParentNode",0);
     if(value==null)throw new IllegalStateException();

@@ -13,5 +13,7 @@ public class BlackboxType_Kind{
      return (BlackboxType_Kind)valuev.get(value);
   }
   static public BlackboxType_Kind Binary=new BlackboxType_Kind("Binary");
+  public final static String tag_Binary="Binary";
   static public BlackboxType_Kind Xml=new BlackboxType_Kind("Xml");
+  public final static String tag_Xml="Xml";
 }

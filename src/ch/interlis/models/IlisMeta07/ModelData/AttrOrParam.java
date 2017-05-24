@@ -1,32 +1,33 @@
 package ch.interlis.models.IlisMeta07.ModelData;
 public class AttrOrParam extends ch.interlis.models.IlisMeta07.ModelData.ExtendableME
 {
-  private final static String tag= "IlisMeta07.ModelData.AttrOrParam";
+  public final static String tag= "IlisMeta07.ModelData.AttrOrParam";
   public AttrOrParam(String oid) {
     super(oid);
   }
   public String getobjecttag() {
     return tag;
   }
+  public final static String tag_SubdivisionKind="SubdivisionKind";
   public AttrOrParam_SubdivisionKind getSubdivisionKind() {
     String value=getattrvalue("SubdivisionKind");
-    if(value==null)throw new IllegalStateException();
     return AttrOrParam_SubdivisionKind.parseXmlCode(value);
   }
   public void setSubdivisionKind(AttrOrParam_SubdivisionKind value) {
     setattrvalue("SubdivisionKind", AttrOrParam_SubdivisionKind.toXmlCode(value));
   }
+  public final static String tag_Transient="Transient";
   public boolean getTransient() {
     String value=getattrvalue("Transient");
-    if(value==null)throw new IllegalStateException();
-    return value.equals("true");
+    return value!=null && value.equals("true");
   }
   public void setTransient(boolean value) {
     setattrvalue("Transient", value?"true":"false");
   }
+  public final static String tag_Derivates="Derivates";
+  public int sizeDerivates() {return getattrvaluecount("Derivates");}
   public ch.interlis.models.IlisMeta07.ModelData.Expression[] getDerivates() {
     int size=getattrvaluecount("Derivates");
-    if(size==0)throw new IllegalStateException();
     ch.interlis.models.IlisMeta07.ModelData.Expression value[]=new ch.interlis.models.IlisMeta07.ModelData.Expression[size];
     for(int i=0;i<size;i++){
       value[i]=(ch.interlis.models.IlisMeta07.ModelData.Expression)getattrobj("Derivates",i);
@@ -36,6 +37,7 @@ public class AttrOrParam extends ch.interlis.models.IlisMeta07.ModelData.Extenda
   public void addDerivates(ch.interlis.models.IlisMeta07.ModelData.Expression value) {
     addattrobj("Derivates", value);
   }
+  public final static String tag_AttrParent="AttrParent";
   public String getAttrParent() {
     ch.interlis.iom.IomObject value=getattrobj("AttrParent",0);
     if(value==null)throw new IllegalStateException();
@@ -48,6 +50,7 @@ public class AttrOrParam extends ch.interlis.models.IlisMeta07.ModelData.Extenda
     structvalue.setobjectrefoid(oid);
     structvalue.setobjectreforderpos(orderPos);
   }
+  public final static String tag_ParamParent="ParamParent";
   public String getParamParent() {
     ch.interlis.iom.IomObject value=getattrobj("ParamParent",0);
     if(value==null)throw new IllegalStateException();
@@ -60,6 +63,7 @@ public class AttrOrParam extends ch.interlis.models.IlisMeta07.ModelData.Extenda
     structvalue.setobjectrefoid(oid);
     structvalue.setobjectreforderpos(orderPos);
   }
+  public final static String tag_Type="Type";
   public String getType() {
     ch.interlis.iom.IomObject value=getattrobj("Type",0);
     if(value==null)throw new IllegalStateException();

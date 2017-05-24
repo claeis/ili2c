@@ -1,13 +1,14 @@
 package ch.interlis.models.IlisMeta07.ModelData;
 public class AxisSpec extends ch.interlis.iom_j.Iom_jObject
 {
-  private final static String tag= "IlisMeta07.ModelData.AxisSpec";
+  public final static String tag= "IlisMeta07.ModelData.AxisSpec";
   public AxisSpec(String oid) {
     super(tag,oid);
   }
   public String getobjecttag() {
     return tag;
   }
+  public final static String tag_CoordType="CoordType";
   public String getCoordType() {
     ch.interlis.iom.IomObject value=getattrobj("CoordType",0);
     if(value==null)throw new IllegalStateException();
@@ -19,6 +20,7 @@ public class AxisSpec extends ch.interlis.iom_j.Iom_jObject
     ch.interlis.iom.IomObject structvalue=addattrobj("CoordType","REF");
     structvalue.setobjectrefoid(oid);
   }
+  public final static String tag_Axis="Axis";
   public String getAxis() {
     ch.interlis.iom.IomObject value=getattrobj("Axis",0);
     if(value==null)throw new IllegalStateException();

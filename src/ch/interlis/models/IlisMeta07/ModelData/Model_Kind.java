@@ -13,7 +13,11 @@ public class Model_Kind{
      return (Model_Kind)valuev.get(value);
   }
   static public Model_Kind NormalM=new Model_Kind("NormalM");
+  public final static String tag_NormalM="NormalM";
   static public Model_Kind TypeM=new Model_Kind("TypeM");
+  public final static String tag_TypeM="TypeM";
   static public Model_Kind RefSystemM=new Model_Kind("RefSystemM");
+  public final static String tag_RefSystemM="RefSystemM";
   static public Model_Kind SymbologyM=new Model_Kind("SymbologyM");
+  public final static String tag_SymbologyM="SymbologyM";
 }

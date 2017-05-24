@@ -13,6 +13,9 @@ public class AttrOrParam_SubdivisionKind{
      return (AttrOrParam_SubdivisionKind)valuev.get(value);
   }
   static public AttrOrParam_SubdivisionKind NoSubDiv=new AttrOrParam_SubdivisionKind("NoSubDiv");
+  public final static String tag_NoSubDiv="NoSubDiv";
   static public AttrOrParam_SubdivisionKind SubDiv=new AttrOrParam_SubdivisionKind("SubDiv");
+  public final static String tag_SubDiv="SubDiv";
   static public AttrOrParam_SubdivisionKind ContSubDiv=new AttrOrParam_SubdivisionKind("ContSubDiv");
+  public final static String tag_ContSubDiv="ContSubDiv";
 }

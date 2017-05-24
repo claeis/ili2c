@@ -1,16 +1,16 @@
 package ch.interlis.models.IlisMeta07.ModelData;
 public class Graphic extends ch.interlis.models.IlisMeta07.ModelData.ExtendableME
 {
-  private final static String tag= "IlisMeta07.ModelData.Graphic";
+  public final static String tag= "IlisMeta07.ModelData.Graphic";
   public Graphic(String oid) {
     super(oid);
   }
   public String getobjecttag() {
     return tag;
   }
+  public final static String tag_Where="Where";
   public ch.interlis.models.IlisMeta07.ModelData.Expression getWhere() {
     ch.interlis.models.IlisMeta07.ModelData.Expression value=(ch.interlis.models.IlisMeta07.ModelData.Expression)getattrobj("Where",0);
-    if(value==null)throw new IllegalStateException();
     return value;
   }
   public void setWhere(ch.interlis.models.IlisMeta07.ModelData.Expression value) {
@@ -20,6 +20,7 @@ public class Graphic extends ch.interlis.models.IlisMeta07.ModelData.ExtendableM
       addattrobj("Where", value);
     }
   }
+  public final static String tag_Base="Base";
   public String getBase() {
     ch.interlis.iom.IomObject value=getattrobj("Base",0);
     if(value==null)throw new IllegalStateException();

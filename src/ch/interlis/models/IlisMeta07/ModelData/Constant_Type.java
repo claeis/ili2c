@@ -13,7 +13,11 @@ public class Constant_Type{
      return (Constant_Type)valuev.get(value);
   }
   static public Constant_Type Undefined=new Constant_Type("Undefined");
+  public final static String tag_Undefined="Undefined";
   static public Constant_Type Numeric=new Constant_Type("Numeric");
+  public final static String tag_Numeric="Numeric";
   static public Constant_Type Text=new Constant_Type("Text");
+  public final static String tag_Text="Text";
   static public Constant_Type Enumeration=new Constant_Type("Enumeration");
+  public final static String tag_Enumeration="Enumeration";
 }

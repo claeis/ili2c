@@ -1,16 +1,16 @@
 package ch.interlis.models.IlisMeta07.ModelData;
 public class SetConstraint extends ch.interlis.models.IlisMeta07.ModelData.Constraint
 {
-  private final static String tag= "IlisMeta07.ModelData.SetConstraint";
+  public final static String tag= "IlisMeta07.ModelData.SetConstraint";
   public SetConstraint() {
     super();
   }
   public String getobjecttag() {
     return tag;
   }
+  public final static String tag_Where="Where";
   public ch.interlis.models.IlisMeta07.ModelData.Expression getWhere() {
     ch.interlis.models.IlisMeta07.ModelData.Expression value=(ch.interlis.models.IlisMeta07.ModelData.Expression)getattrobj("Where",0);
-    if(value==null)throw new IllegalStateException();
     return value;
   }
   public void setWhere(ch.interlis.models.IlisMeta07.ModelData.Expression value) {
@@ -20,9 +20,9 @@ public class SetConstraint extends ch.interlis.models.IlisMeta07.ModelData.Const
       addattrobj("Where", value);
     }
   }
+  public final static String tag_Constraint="Constraint";
   public ch.interlis.models.IlisMeta07.ModelData.Expression getConstraint() {
     ch.interlis.models.IlisMeta07.ModelData.Expression value=(ch.interlis.models.IlisMeta07.ModelData.Expression)getattrobj("Constraint",0);
-    if(value==null)throw new IllegalStateException();
     return value;
   }
   public void setConstraint(ch.interlis.models.IlisMeta07.ModelData.Expression value) {
