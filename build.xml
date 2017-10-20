@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="bindist" name="ili2c">
+<project basedir="." default="bindist" name="ili2c" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 
   <!-- set global properties for this build -->
   <property name="src" value="${basedir}/src"/>
   <property name="build" value="${basedir}/build"/>
   <property name="dist" value="${basedir}/dist"/>
+  <property file="user.properties" prefix="user."/>
+  <property name="groupId" value="ch.interlis"/>
+  <property name="release" value=""/>
 
   <target name="init">
     <!-- Create the time stamp -->
@@ -16,13 +19,69 @@
     <mkdir dir="${build}/jar"/>
     <mkdir dir="${dist}"/>
   </target>
+  <target depends="init,buildnr" name="pom">
+		<artifact:pom id="pomE-core" groupId="${groupId}" artifactId="ili2c-core" version="${buildnr}" name="ili2c-core">
+			<artifact:dependency groupId="ch.ehi" artifactId="ehibasics" version="1.1.0"/>
+		</artifact:pom>
+		  <artifact:writepom pomRefId="pomE-core" file="build/pom-core.xml"/>
+		<artifact:pom id="pom-core" file="build/pom-core.xml" />
+		<artifact:pom id="pomE-tool" groupId="${groupId}" artifactId="ili2c-tool" version="${buildnr}" name="ili2c-tool">
+			<artifact:dependency groupId="ch.interlis" artifactId="ili2c-core" version="${buildnr}"/>
+			<artifact:dependency groupId="ch.interlis" artifactId="iox-api" version="1.0.3"/>
+			<artifact:dependency groupId="ch.interlis" artifactId="iox-ili" version="1.19.8"/>
+			<artifact:dependency groupId="antlr" artifactId="antlr" version="2.7.6"/>
+		</artifact:pom>
+		  <artifact:writepom pomRefId="pomE-tool" file="build/pom-tool.xml"/>
+		<artifact:pom id="pom-tool" file="build/pom-tool.xml" />
+  </target>  
+  <target depends="init,pom" name="install">
+	  <artifact:install file="build/jar/ili2c-core.jar">
+		<artifact:pom refid="pom-core"/>
+	  </artifact:install>
+	  <artifact:install file="build/jar/ili2c-tool.jar">
+		<artifact:pom refid="pom-tool"/>
+	  </artifact:install>
+  </target>
+  <target depends="init,pom" name="deploy">
+	  <artifact:install-provider artifactId="wagon-ftp" version="3.0.0"/>
+	  <artifact:deploy file="build/jar/ili2c-tool.jar">
+		<remoteRepository url="ftp://ftp.interlis.ch">
+			<authentication username="${user.repos_usr}" password="${user.repos_pwd}"/>
+		</remoteRepository>
+		<pom refid="pom-tool"/>
+	  </artifact:deploy>    
+	  <artifact:deploy file="build/jar/ili2c-core.jar">
+		<remoteRepository url="ftp://ftp.interlis.ch">
+			<authentication username="${user.repos_usr}" password="${user.repos_pwd}"/>
+		</remoteRepository>
+		<pom refid="pom-core"/>
+	  </artifact:deploy>    
+  </target>
+  <target depends="init" name="deploy-iox">
+		<artifact:pom id="pomE-iox" groupId="ch.interlis" artifactId="iox-ili" version="1.13.6" name="iox-ili">
+			<artifact:dependency groupId="ch.interlis" artifactId="ili2c-core" version="4.7.3"/>
+			<artifact:dependency groupId="ch.interlis" artifactId="iox-api" version="1.0.3"/>
+		</artifact:pom>
+		  <artifact:writepom pomRefId="pomE-iox" file="build/pom-iox-ili.xml"/>
+		<artifact:pom id="pom-iox" file="build/pom-iox-ili.xml" />
+	  <artifact:install-provider artifactId="wagon-ftp" version="3.0.0"/>
+	  <artifact:deploy file="lib/iox-ili.jar">
+		<remoteRepository url="ftp://ftp.interlis.ch">
+			<authentication username="${user.repos_usr}" password="${user.repos_pwd}"/>
+		</remoteRepository>
+		<pom refid="pom-iox"/>
+	  </artifact:deploy>    
+  </target>
   
   <target depends="init" name="buildnr">
     <property file="${versionfile}" prefix="buildnr."/>
     <condition property="branch" value=".${buildnr.versionBranch}" else="">
        <length string="${buildnr.versionBranch}" trim="true" when="greater" length="0"/>
     </condition>
-    <property name="buildnr" value="${buildnr.versionMajor}.${buildnr.versionMinor}.${buildnr.versionMicro}${branch}"/>
+    <condition property="SNAPSHOT" value="" else="-SNAPSHOT">
+       <length string="${release}" trim="true" when="greater" length="0"/>
+    </condition>
+    <property name="buildnr" value="${buildnr.versionMajor}.${buildnr.versionMinor}.${buildnr.versionMicro}${branch}${SNAPSHOT}"/>
     <!-- <property name="buildnr" value="${DSTAMP}"/> -->
   </target>
 
