@@ -5,6 +5,7 @@
   <property name="src" value="${basedir}/src"/>
   <property name="build" value="${basedir}/build"/>
   <property name="dist" value="${basedir}/dist"/>
+  <property name="antlr" value="${basedir}/lib/antlr.jar"/>
   <property file="user.properties" prefix="user."/>
   <property name="groupId" value="ch.interlis"/>
   <property name="release" value=""/>
@@ -74,7 +75,7 @@
   <target depends="init" name="genparser24">
     <mkdir dir="${build}/src/ch/interlis/ili2c/parser"/>
     <!-- <antlr      target="${src}/ch/interlis/parser/interlis21.g"      outputdirectory="${build}/src/ch/interlis/parser"     /> -->
-    <java classname="antlr.Tool" classpath="${java.class.path}" fork="yes">
+    <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
     	<!-- <arg value="-diagnostic"/> -->
@@ -85,7 +86,7 @@
   <target depends="init" name="genparser23">
     <mkdir dir="${build}/src/ch/interlis/ili2c/parser"/>
     <!-- <antlr      target="${src}/ch/interlis/parser/interlis21.g"      outputdirectory="${build}/src/ch/interlis/parser"     /> -->
-    <java classname="antlr.Tool" classpath="${java.class.path}" fork="yes">
+    <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
     	<!-- <arg value="-diagnostic"/> -->
@@ -95,7 +96,7 @@
   
   <target depends="init" name="genparser22">
     <mkdir dir="${build}/src/ch/interlis/ili2c/parser"/>
-    <java classname="antlr.Tool" classpath="${java.class.path}" fork="yes">
+    <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
     	<arg value="${src}/ch/interlis/ili2c/parser/interlis22.g"/>
@@ -104,7 +105,7 @@
   
   <target depends="init" name="genmetavalue">
     <mkdir dir="${build}/src/ch/interlis/ili2c/parser"/>
-    <java classname="antlr.Tool" classpath="${java.class.path}" fork="yes">
+    <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
     	<arg value="${src}/ch/interlis/ili2c/parser/metavalue.g"/>
@@ -113,7 +114,7 @@
   
   <target depends="init" name="genparser1">
     <mkdir dir="${build}/src/ch/interlis/ili2c/parser"/>
-    <java classname="antlr.Tool" classpath="${java.class.path}" fork="yes">
+    <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
     	<arg value="${src}/ch/interlis/ili2c/parser/interlis1.g"/>
@@ -123,7 +124,7 @@
   <target depends="init" name="genmodelscan">
     <mkdir dir="${build}/src/ch/interlis/ili2c/parser"/>
     <!-- <antlr      target="${src}/ch/interlis/parser/interlis21.g"      outputdirectory="${build}/src/ch/interlis/parser"     /> -->
-    <java classname="antlr.Tool" classpath="${java.class.path}" fork="yes">
+    <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
     	<!--  <arg value="-diagnostic"/> -->
@@ -133,7 +134,7 @@
   
   <target depends="init" name="ili1undef">
     <mkdir dir="${build}/src/ch/interlis/ili2c/parser"/>
-    <java classname="antlr.Tool" classpath="${java.class.path}" fork="yes">
+    <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
     	<arg value="${src}/ch/interlis/ili2c/parser/ili1undef.g"/>
