@@ -27,23 +27,23 @@ public class Uml21Generator
 	public static String iliNs="http://www.interlis.ch/INTERLIS2.3/UML2" ;
 	public static String ecoreIliProfileLocation="INTERLIS.profile.uml#ch.interlis.ili23.ecore.uml2";
 	public static String idTextType="C16095C6-1D80-49ab-9A0B-5847A355489B"; // Verschiedene Arten von Text
-	public static String idEnumerationType="279A049B-2BCC-4fb5-9C8F-3B22EF3EE0ED"; // Verschiedene Arten von Aufzählungen
-	public static String idEnumTreeValueType="064231DE-6F7D-43bb-A0B9-B4C37906E012"; // Weitere Art von Aufzählung
-	public static String idAlignmentType="B5F4B6BC-41B7-400b-84DF-64474E7B3F07"; // Vordefinierte Aufzählung (für ili1-Kompatibilität)
-	public static String idBooleanType="D2A6D48C-97F0-44d0-910A-7C55943BECA7"; // Vordefinierte Aufzählung (True/False)
-	public static String idNumericType="39FDCDA0-DAE3-4c14-B2DC-C4F0F4DAAAF8"; // Ganze Zahlen, Fließkommazahlen, Festkommazahlen (inkl. min/max, Maßeinheit)
+	public static String idEnumerationType="279A049B-2BCC-4fb5-9C8F-3B22EF3EE0ED"; // Verschiedene Arten von Aufzaehlungen
+	public static String idEnumTreeValueType="064231DE-6F7D-43bb-A0B9-B4C37906E012"; // Weitere Art von Aufzaehlung
+	public static String idAlignmentType="B5F4B6BC-41B7-400b-84DF-64474E7B3F07"; // Vordefinierte Aufzaehlung (fuer ili1-Kompatibilitaet)
+	public static String idBooleanType="D2A6D48C-97F0-44d0-910A-7C55943BECA7"; // Vordefinierte Aufzaehlung (True/False)
+	public static String idNumericType="39FDCDA0-DAE3-4c14-B2DC-C4F0F4DAAAF8"; // Ganze Zahlen, Fliesskommazahlen, Festkommazahlen (inkl. min/max, Masseinheit)
 	public static String idFormattedType="36B2DF93-856E-4997-B610-61C456A6BD1B"; // Anwenderdefinierbare serialisierte Datentypen
 	public static String idTimeType="FBAA3B46-D164-4ecf-96C5-31D69315FDDF"; // Zeit inkl. min/max
 	public static String idDateType="259523F4-AAC6-4fe2-8B34-B9113604AB8C"; // Datum inkl. min/max
 	public static String idDateTimeType="5904195D-E562-4262-9F6B-7104FA1AB70D"; // Datum + Zeit inkl. min/max
 	public static String idOIDType="19ACF3BB-5A8B-4b73-9C38-D37C3DC8B207"; // Anwenderdefinierbare Arten von Objekt-Identifikatoren
-	public static String idBlackboxType="93ADB54A-B82F-421c-8C50-8881FFD61F42"; // Beliebige XML-Fragmente oder binäre Objekte
-	public static String idClassType="F1B17749-EACA-4ed1-A9EC-40B63C2A94B0"; // Klassenname (primär für Metamodelle relevant)
-	public static String idAttributePathType="5AD53796-0781-4f5d-AEFA-B11FD46DD5AB"; // Attributname (primär für Metamodelle relevant)
+	public static String idBlackboxType="93ADB54A-B82F-421c-8C50-8881FFD61F42"; // Beliebige XML-Fragmente oder binaere Objekte
+	public static String idClassType="F1B17749-EACA-4ed1-A9EC-40B63C2A94B0"; // Klassenname (primaer fuer Metamodelle relevant)
+	public static String idAttributePathType="5AD53796-0781-4f5d-AEFA-B11FD46DD5AB"; // Attributname (primaer fuer Metamodelle relevant)
 	public static String idCoordinateType="45397FCA-66E2-4ac8-A8A7-89D3A573E44B"; // Koordinate (mit verschiedenen Konsistenzbedingungen)
 	public static String idPolylineType="F466480C-C0A2-47de-A0FC-D9D3932DB96E"; // Linie (mit verschiedenen Konsistenzbedingungen)
-	public static String idSurfaceType="D874C9DB-F082-4bd4-B4F1-DACD75BBFDD6"; // Einzelfläche (mit verschiedenen Konsistenzbedingungen)
-	public static String idAreaType="E06837E3-F58C-49bb-8F82-22F666FB4CCF"; // Flächennetz (= Einzelfläche + vordefinierte Konsistenzbedingung)
+	public static String idSurfaceType="D874C9DB-F082-4bd4-B4F1-DACD75BBFDD6"; // Einzelflaeche (mit verschiedenen Konsistenzbedingungen)
+	public static String idAreaType="E06837E3-F58C-49bb-8F82-22F666FB4CCF"; // Flaechennetz (= Einzelflaeche + vordefinierte Konsistenzbedingung)
 
 	private javax.xml.stream.XMLStreamWriter xout=null;
 	private TransferDescription td=null;
