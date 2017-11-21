@@ -10,6 +10,7 @@ public class Ili2cMetaAttrs {
 	public static final String PARAMETER = "PARAMETER";
 	public static final String ILI2C_TRANSLATION_OF="ili2c.translationOf"; 
 	public static final String ILI2C_CONSTRAINT_NAME = "name";
+	public static final String ILI2C_CRS = "CRS";
 	public static final String ILI2C_ILI23XSD_ADDALLINTERLISTYPESDEFAULT="ili2c.ili23xsd.addAllInterlisTypesDefault";
 	public static final String ILI2C_ILI23XSD_ADDALIASTABLEDEFAULT="ili2c.ili23xsd.addAliasTableDefault";
 	public static final String ILI2C_ILI23XML_SUPPORTPOLYMORPHICREAD="ili2c.ili23xml.supportPolymorphicRead";

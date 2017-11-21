@@ -2909,6 +2909,7 @@ protected coordinateType [Container scope, Type extending,boolean isGeneric]
   NumericalType ext_nt1 = null;
   NumericalType ext_nt2 = null;
   NumericalType ext_nt3 = null;
+  String refsys=null;
 
   if (extending instanceof CoordType)
   {
@@ -2933,7 +2934,7 @@ protected coordinateType [Container scope, Type extending,boolean isGeneric]
 		| (nt3=numericType [scope, ext_nt3,true] (COMMA rots=rotationDef)?)
 		)
 	      )?
-	     ("REFSYS" STRING)? 
+	     ("REFSYS" refsysT:STRING {refsys=refsysT.getText();})? 
 	    )?
 	 )
     {
@@ -2961,6 +2962,7 @@ protected coordinateType [Container scope, Type extending,boolean isGeneric]
           }
         }
         ct.setGeneric(isGeneric);
+        ct.setCrs(refsys);
       } catch (Exception ex) {
         reportError (ex, coord.getLine());
       }

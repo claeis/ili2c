@@ -10,6 +10,7 @@ public abstract class AbstractCoordType extends BaseType
   protected int nullAxis;
   protected int piHalfAxis;
   protected NumericalType[] dimensions;
+  protected String crs=null;
   protected AbstractCoordType()
   {
 	  
@@ -143,6 +144,19 @@ public abstract class AbstractCoordType extends BaseType
 	}
 	public void setGeneric(boolean generic) {
 		this._generic = generic;
+	}
+	public String getCrs() {
+		return crs;
+	}
+	public String getCrs(Element domainOrAttrDef) {
+		String crs=getCrs();
+		if(crs==null) {
+			crs=domainOrAttrDef.getMetaValue(Ili2cMetaAttrs.ILI2C_CRS);
+		}
+		return crs;
+	}
+	public void setCrs(String crs) {
+		this.crs = crs;
 	}
 
 }
