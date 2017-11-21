@@ -345,7 +345,7 @@ einer Unterklasse des zweiten Ar-gumentes entspricht.
 
 /*FUNCTION isOfClass (Object: OBJECT OF ANYSTRUCTURE; Class: STRUCTURE): BOOLEAN;
 Liefert true, wenn das Objekt des ersten Argumentes zur Klasse
-oder zu einer Unterklasse des zweiten Argumentes gehört.
+oder zu einer Unterklasse des zweiten Argumentes gehoert.
 */
       isOfClass.setName("isOfClass");
       clt=new ClassType();
@@ -360,7 +360,7 @@ oder zu einer Unterklasse des zweiten Argumentes gehört.
       add(isOfClass);
 
 /* FUNCTION elementCount (bag: BAG OF ANYSTRUCTURE): NUMERIC;
-Liefert die Anzahl Elemente, die der Bag (oder die Liste) enthält.
+Liefert die Anzahl Elemente, die der Bag (oder die Liste) enthaelt.
 */
       elementCount.setName("elementCount");
       CompositionType ct = new CompositionType ();
@@ -373,7 +373,7 @@ Liefert die Anzahl Elemente, die der Bag (oder die Liste) enthält.
       add(elementCount);
 
 /* FUNCTION objectCount (Objects: OBJECTS OF ANYCLASS): NUMERIC;
-Liefert die Anzahl Objekte, welche die gegebene Objektmentmenge enthält
+Liefert die Anzahl Objekte, welche die gegebene Objektmentmenge enthaelt
 */
       objectCount.setName("objectCount");
       objectCount.setArguments(new FormalArgument[]{
@@ -384,7 +384,7 @@ Liefert die Anzahl Objekte, welche die gegebene Objektmentmenge enthält
 
       /* FUNCTION len (TextVal: TEXT): NUMERIC;
          FUNCTION lenM (TextVal: MTEXT): NUMERIC;
-         Liefert die Länge des Textes als Anzahl Zeichen.
+         Liefert die Laenge des Textes als Anzahl Zeichen.
       */
       len.setName("len");
       len.setArguments(new FormalArgument[]{
@@ -433,8 +433,8 @@ Liefert die Anzahl Objekte, welche die gegebene Objektmentmenge enthält
 
 
       /* FUNCTION inEnumRange (Enum: ENUMVAL; MinVal: ENUMTREEVAL; MaxVal: ENUMTREEVAL): BOOLEAN;
-         Liefert true, wenn die Aufzählung zu der Enum gehört, geordnet ist und im Bereich von MinVal und Max-
-         Val liegt. Unterelemente von MinVal oder MaxVal gelten als dazu gehörig.
+         Liefert true, wenn die Aufzaehlung zu der Enum gehoert, geordnet ist und im Bereich von MinVal und Max-
+         Val liegt. Unterelemente von MinVal oder MaxVal gelten als dazu gehoerig.
       */
       inEnumRange.setName("inEnumRange");
       inEnumRange.setArguments(new FormalArgument[]{
@@ -449,11 +449,11 @@ Liefert die Anzahl Objekte, welche die gegebene Objektmentmenge enthält
 
 /* FUNCTION convertUnit (from: NUMERIC): NUMERIC;
 Rechnet den numerischen Wert des Parameters "from" in den numerischen
-Rückgabewert um und be-rücksichtigt dabei die Einheiten, die mit dem
+Rueckgabewert um und beruecksichtigt dabei die Einheiten, die mit dem
 Parameter und mit der Verwendung des Resultatwertes (typischerweise mit
 dem Attribut, dem das Resultat zugewiesen wird) verbunden sind. Diese
 Funktion darf nur angewendet werden, wenn die Argumente von "from" und
-vom Rückgabeparameter verträglich sind, d.h. wenn ihre Einheiten von
+vom Rueckgabeparameter vertraeglich sind, d.h. wenn ihre Einheiten von
 einer gemeinsamen Einheit abgeleitet werden.
 */
       convertUnit.setName("convertUnit");
@@ -463,9 +463,9 @@ einer gemeinsamen Einheit abgeleitet werden.
       convertUnit.setDomain(new NumericType());
       add(convertUnit);
       /* FUNCTION areAreas (Objects: OBJECTS OF ANYCLASS; SurfaceBag: ATTRIBUTE OF @ Objects RESTRICTION (BAG OF ANYSTRUCTURE); SurfaceAttr: ATTRIBUTE OF @ SurfaceBag RESTRICTION (SURFACE)): BOOLEAN;
-         Prüft, ob die Flächen gemäss Objektmenge (erster Parameter) und Attribut (dritter Parameter) eine Gebietseinteilung
-         bilden. Sind die Flächen direkt Teil der Objektklasse, soll für SurfaceBag UNDEFINED,
-         sonst der Pfad zum Strukturattribut mit der Struktur, welche das Flächenattribut enthält, angegeben werden.
+         Prueft, ob die Flaechen gemaess Objektmenge (erster Parameter) und Attribut (dritter Parameter) eine Gebietseinteilung
+         bilden. Sind die Flaechen direkt Teil der Objektklasse, soll fuer SurfaceBag UNDEFINED,
+         sonst der Pfad zum Strukturattribut mit der Struktur, welche das Flaechenattribut enthaelt, angegeben werden.
       */
       areAreas.setName("areAreas");
       FormalArgument arg1=new FormalArgument("Objects",new ObjectType (ANYCLASS,true));

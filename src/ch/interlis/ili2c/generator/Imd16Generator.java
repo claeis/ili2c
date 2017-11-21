@@ -1497,7 +1497,7 @@ public class Imd16Generator {
 					
 				} else if ( derivedUnit instanceof ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit ) {
 					ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit functionallyDerivedUnit = (ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit)derivedUnit;
-					// Bsp für Explanation: " 10**(dB/20) * 0.00002 "
+					// Bsp fuer Explanation: " 10**(dB/20) * 0.00002 "
 					functionallyDerivedUnit.getExplanation(); // OPEN: Wie getExplanation mappen? 
 					
 				} else {

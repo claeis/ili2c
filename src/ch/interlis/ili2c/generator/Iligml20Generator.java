@@ -482,7 +482,7 @@ public final class Iligml20Generator
 		  if(roles.size()>2){
 			  return false;
 		  }
-		  //Eine Rolle ist EXTERNAL und die gegenüberliegende Rolle ist ORDERED
+		  //Eine Rolle ist EXTERNAL und die gegenueberliegende Rolle ist ORDERED
 		  if(roles.get(0).isExternal() && roles.get(1).isOrdered()){
 			  return false;
 		  }

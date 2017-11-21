@@ -157,7 +157,7 @@
   <target depends="init,genparser24,genparser1,genparser22,genparser23,genmetavalue,genmodelscan,ili1undef" name="compile">
     <!-- Compile the java code from ${src} into ${build}/classes -->
     <mkdir dir="${build}/classes"/>
-    <javac destdir="${build}/classes" includes="**/*.java" debug="on"  source="1.6" target="1.6">
+    <javac destdir="${build}/classes" includes="**/*.java" debug="on"  source="1.6" target="1.6" encoding="US-ASCII" includeantruntime="false">
       <classpath>
         <!-- <pathelement location="src-hd53/classes"/> -->
         <pathelement location="lib/antlr.jar"/>
