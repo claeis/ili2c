@@ -49,27 +49,13 @@
 			<authentication username="${user.repos_usr}" password="${user.repos_pwd}"/>
 		</remoteRepository>
 		<pom refid="pom-tool"/>
+		<attach file="${dist}/${ant.project.name}-${buildnr}.zip" type="zip" classifier="bindist"/>
 	  </artifact:deploy>    
 	  <artifact:deploy file="build/jar/ili2c-core.jar">
 		<remoteRepository url="ftp://ftp.interlis.ch">
 			<authentication username="${user.repos_usr}" password="${user.repos_pwd}"/>
 		</remoteRepository>
 		<pom refid="pom-core"/>
-	  </artifact:deploy>    
-  </target>
-  <target depends="init" name="deploy-iox">
-		<artifact:pom id="pomE-iox" groupId="ch.interlis" artifactId="iox-ili" version="1.13.6" name="iox-ili">
-			<artifact:dependency groupId="ch.interlis" artifactId="ili2c-core" version="4.7.3"/>
-			<artifact:dependency groupId="ch.interlis" artifactId="iox-api" version="1.0.3"/>
-		</artifact:pom>
-		  <artifact:writepom pomRefId="pomE-iox" file="build/pom-iox-ili.xml"/>
-		<artifact:pom id="pom-iox" file="build/pom-iox-ili.xml" />
-	  <artifact:install-provider artifactId="wagon-ftp" version="3.0.0"/>
-	  <artifact:deploy file="lib/iox-ili.jar">
-		<remoteRepository url="ftp://ftp.interlis.ch">
-			<authentication username="${user.repos_usr}" password="${user.repos_pwd}"/>
-		</remoteRepository>
-		<pom refid="pom-iox"/>
 	  </artifact:deploy>    
   </target>
   

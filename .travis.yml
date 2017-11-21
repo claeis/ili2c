@@ -1,0 +1,32 @@
+language: java
+  
+branches:
+  only:
+    - master
+    - stable
+
+addons:
+  apt:
+    packages:
+    - libmaven-ant-tasks-java
+    
+install: true
+
+script: 
+  - ant -f build.xml jar 
+
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: ant -Duser.repos_pwd=${repos_pwd} -Duser.repos_usr=jql_jars-INTE -f build.xml  bindist deploy
+    on:
+      branch: master
+  - provider: script
+    skip_cleanup: true
+    script: ant -Duser.repos_pwd=${repos_pwd} -Duser.repos_usr=jql_jars-INTE -Drelease=final -f build.xml bindist deploy
+    on:
+      branch: stable
+notifications:
+  email:
+    on_success: change # default: change
+    on_failure: always # default: always
