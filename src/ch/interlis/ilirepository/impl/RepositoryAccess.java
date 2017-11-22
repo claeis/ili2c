@@ -539,31 +539,8 @@ public class RepositoryAccess {
 	}
 	if(resolver!=null && resolver.resolvesUri(uri)){
 		// translate uri to location in cache
-		StringBuffer localFileName=new StringBuffer();
-		{
-			// escape characters
-			// win < > : " / \ | ? * %
-			for(int i=0;i<uri.length();i++){
-				char c=uri.charAt(i);
-				if(c=='<'
-						|| c=='>'
-						|| c==':'
-						|| c=='"'
-						|| c=='\\'
-						|| c=='|'
-						|| c=='?'
-						|| c=='*'
-						|| c=='%'
-						|| c=='&'){
-					localFileName.append('&');
-					String str=Integer.toHexString(c);
-					localFileName.append("0000".substring(str.length())+str);
-				}else{
-					localFileName.append(c);
-				}
-			}
-		}
-		File ret=new File(localCache,localFileName.toString());
+		String localFileName = escapeUri(uri);
+		File ret=new File(localCache,localFileName);
 		if(filename!=null){
 			ret=new File(ret,filename);
 		}
@@ -648,7 +625,7 @@ public class RepositoryAccess {
 	boolean isHttp=urilc.startsWith("http:");
 	if(isHttp || isHttps){
 		// translate uri to location in cache
-		StringBuffer localFileName=new StringBuffer();
+		String localFileName=null;
 		{
 			String urib=null;
 			if(isHttps){
@@ -656,29 +633,9 @@ public class RepositoryAccess {
 			}else{
 				urib=uri.substring("http:".length()); 
 			}
-			// escape characters
-			// win < > : " / \ | ? * %
-			for(int i=0;i<urib.length();i++){
-				char c=urib.charAt(i);
-				if(c=='<'
-						|| c=='>'
-						|| c==':'
-						|| c=='"'
-						|| c=='\\'
-						|| c=='|'
-						|| c=='?'
-						|| c=='*'
-						|| c=='%'
-						|| c=='&'){
-					localFileName.append('&');
-					String str=Integer.toHexString(c);
-					localFileName.append("0000".substring(str.length())+str);
-				}else{
-					localFileName.append(c);
-				}
-			}
+			localFileName=escapeUri(urib);
 		}
-		File ret=new File(localCache,localFileName.toString());
+		File ret=new File(localCache,localFileName);
 		if(filename!=null){
 			ret=new File(ret,filename);
 		}
@@ -811,6 +768,33 @@ public class RepositoryAccess {
 	}
 	return ret;
 }
+	public static String escapeUri(String uri) {
+		StringBuffer localFileName=new StringBuffer();
+		{
+			// escape characters
+			// win < > : " / \ | ? * %
+			for(int i=0;i<uri.length();i++){
+				char c=uri.charAt(i);
+				if(c=='<'
+						|| c=='>'
+						|| c==':'
+						|| c=='"'
+						|| c=='\\'
+						|| c=='|'
+						|| c=='?'
+						|| c=='*'
+						|| c=='%'
+						|| c=='&'){
+					localFileName.append('&');
+					String str=Integer.toHexString(c);
+					localFileName.append("0000".substring(str.length())+str);
+				}else{
+					localFileName.append(c);
+				}
+			}
+		}
+		return localFileName.toString();
+	}
 	/** Calculates the digest of a local file.
 	 * @param file local file
 	 * @return md5 digest of local file content.
@@ -850,5 +834,56 @@ public class RepositoryAccess {
 			}
 		}
 		return signature;
+	}
+	public static void copyFile(File target,File src) {
+		java.io.BufferedInputStream in=null;
+		java.io.OutputStream fos=null;
+		try{
+			try {
+				in=new java.io.BufferedInputStream(new FileInputStream(src));
+			} catch (FileNotFoundException e) {
+				throw new IllegalArgumentException("failed to open file",e);
+			}
+			// create directory
+			java.io.File dir=target.getParentFile();
+			if(!dir.exists()){
+				boolean created=dir.mkdirs();
+				if(!created){
+					throw new IllegalArgumentException("failed to create folder "+dir);
+				}
+			}
+			try {
+				fos = new java.io.BufferedOutputStream(new java.io.FileOutputStream(target));
+			} catch (FileNotFoundException e) {
+				throw new IllegalArgumentException("failed to open file",e);
+			}
+		    try {
+				byte[] buf = new byte[1024];
+				int i = 0;
+				while ((i = in.read(buf)) != -1) {
+				    fos.write(buf, 0, i);
+				}
+			} catch (IOException e) {
+				throw new IllegalArgumentException("failed to copy file",e);
+			}
+		}finally{
+			if(in!=null){
+				try {
+					in.close();
+				} catch (IOException e) {
+					EhiLogger.logError(e);
+				}
+				in=null;
+			}
+			if(fos!=null){
+				try {
+					fos.close();
+				} catch (IOException e) {
+					EhiLogger.logError(e);
+				}
+				fos=null;
+			}
+		}
+		
 	}
 }

@@ -124,6 +124,7 @@ public class Main {
 	boolean doAuto = true;
 	boolean checkMetaObjs = false;
 	boolean doCheckRepoIlis = false;
+	boolean doCloneRepos = false;
 	boolean withWarnings = true;
 	int numErrorsWhileGenerating = 0;
 	String notifyOnError = "compiler@interlis.ch";
@@ -166,6 +167,7 @@ public class Main {
 	    System.err.println("-oUML                 Generate Model as UML2/XMI-Transfer (eclipse flavour).");
 	    System.err.println("-oIOM                 (deprecated) Generate Model as INTERLIS-Transfer (XTF).");
 	    System.err.println("--check-repo-ilis uri   check all ili files in the given repository.");
+	    System.err.println("--clone-repos         clones the given repositories to the --out folder.");
 	    System.err.println("--translation translatedModel=originModel assigns a translated model to its orginal language equivalent.");
 	    System.err.println("--out file/dir        file or folder for output (folder must exist).");
 	    System.err.println("--ilidirs " + ilidirs + " list of directories with ili-files.");
@@ -215,6 +217,10 @@ public class Main {
 		}
 		if (args[i].equals("--check-repo-ilis")) {
 		    doCheckRepoIlis = true;
+		    continue;
+		}
+		if (args[i].equals("--clone-repos")) {
+		    doCloneRepos = true;
 		    continue;
 		}
 		if (args[i].equals("--out")) {
@@ -290,7 +296,7 @@ public class Main {
 		    continue;
 		} else {
 			String filename = args[i];
-			if (doCheckRepoIlis  || new File(filename).isFile()) {
+			if (doCheckRepoIlis  || doCloneRepos || new File(filename).isFile()) {
 				ilifilev.add(filename);
 			} else {
 				EhiLogger.logError(args[i] + ": There is no such file.");
@@ -316,18 +322,18 @@ public class Main {
 		config.addFileEntry(file);
 	    }
 	    if (doAuto) {
-		config.setAutoCompleteModelList(true);
+	    	config.setAutoCompleteModelList(true);
 	    } else {
-		config.setAutoCompleteModelList(false);
+	    	config.setAutoCompleteModelList(false);
 	    }
 	    config.setGenerateWarnings(withWarnings);
 	    config.setOutputKind(outputKind);
-	    if (outputKind != GenerateOutputKind.NOOUTPUT) {
-		if (outfile != null) {
-		    config.setOutputFile(outfile);
-		} else {
-		    config.setOutputFile("-");
-		}
+	    if (doCloneRepos || outputKind != GenerateOutputKind.NOOUTPUT) {
+			if (outfile != null) {
+			    config.setOutputFile(outfile);
+			} else {
+			    config.setOutputFile("-");
+			}
 	    }
 
 		EhiLogger.logState(APP_NAME+"-"+getVersion());
@@ -337,6 +343,12 @@ public class Main {
 					EhiLogger.logError("check of ili's in repositories failed");
 					System.exit(1);
 				}
+			}else if (doCloneRepos) {
+					boolean failed = new CloneRepos().cloneRepos(config, settings);
+					if (failed) {
+						EhiLogger.logError("clone of repositories failed");
+						System.exit(1);
+					}
 			} else {
 				// compile models
 				TransferDescription td = runCompiler(config, settings,ili2cMetaAttrs);
