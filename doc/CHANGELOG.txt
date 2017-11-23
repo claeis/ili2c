@@ -1,10 +1,11 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
-ili2c 4.7.5 (2017-11-21)
+ili2c 4.7.5 (2017-11-23)
 ---------------------------
 - support REFSYS/metaaattr CRS
 - new function --clone-repos to clone repositories
+- iox-ili 1.20.0
 
 ili2c 4.7.4 (2017-10-20)
 ---------------------------
