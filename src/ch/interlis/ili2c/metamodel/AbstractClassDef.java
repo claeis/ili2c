@@ -197,6 +197,26 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
 
     return result.iterator();
   }
+  public Iterator<RoleDef> getOpposideForNonNavigableRoles()
+  {
+    List<RoleDef> result = new ArrayList<RoleDef>();
+    Iterator<RoleDef> rolei = getTargetForNonNavigableRoles();
+    while(rolei.hasNext()){
+      RoleDef role = rolei.next();
+      AssociationDef assoc=(AssociationDef)role.getContainer();
+      Iterator<Element> iter = assoc.getAttributesAndRoles();
+      while (iter.hasNext()){
+          Element oppRole = iter.next();
+        if(oppRole instanceof RoleDef){
+          if (oppRole != role) {
+            result.add((RoleDef) oppRole);
+          }
+        }
+      }
+    }
+
+    return result.iterator();
+  }
 
   /** find the opposide role with the given Name. 
    * Will also check associations that are only visible from the given context.
