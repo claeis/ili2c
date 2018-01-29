@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.7.7 (2017-12-xx)
+---------------------------
+- MakeIliModelsXml: show ili2c version as program version (instead of iox-ili)
+
 ili2c 4.7.6 (2017-12-29)
 ---------------------------
 - added getOpposideForNonNavigableRoles()
