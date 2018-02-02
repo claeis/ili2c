@@ -5,6 +5,7 @@ ili2c 4.7.7 (2017-12-xx)
 ---------------------------
 - MakeIliModelsXml: show ili2c version as program version (instead of iox-ili)
 - API: new function TransferDescription.getElement(scopedName) to simplify access to model elements
+- fixed https: repository access
 
 ili2c 4.7.6 (2017-12-29)
 ---------------------------

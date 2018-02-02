@@ -191,7 +191,7 @@ public class RepositoryAccess {
 	private boolean isLegacyDir(String uri)
 	{
 		String urilc=uri.toLowerCase();
-		if(urilc.startsWith("http:")){
+		if(urilc.startsWith("http:") || urilc.startsWith("https:")){
 			return false;
 		}
 		File file=new File(uri,IliManager.ILIMODELS_XML);
