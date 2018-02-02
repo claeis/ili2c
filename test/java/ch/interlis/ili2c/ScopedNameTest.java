@@ -77,6 +77,8 @@ public class ScopedNameTest {
 		
 		assertEquals("ClassA", classA.getScopedName(classA1));
 		assertEquals("ModelA.TopicA.ClassA.attrA", attrA.getScopedName(classA1));
+        assertEquals(attrA,td.getElement("ModelA.TopicA.ClassA.attrA"));
+        assertEquals(null,td.getElement("ModelA.TopicA.ClassA._attrA"));
 		
 	}
 

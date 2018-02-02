@@ -20,12 +20,15 @@
 package ch.interlis.ili2c.metamodel;
 import java.util.*;
 
+import ch.ehi.basics.settings.Settings;
+
 
 /** The basic container that holds all the models encountered during a parse;
 */
 public class TransferDescription extends Container<Model>
 {
   protected String   name = "";
+  private Map<String,Element> name2ele=null;
 
 
   /** The models in this transfer description. */
@@ -155,5 +158,28 @@ public class TransferDescription extends Container<Model>
 	}
 	return mainModel;
   }
-
+  public Element getElement(String scopedName) {
+      if(name2ele==null) {
+          name2ele=new HashMap<String,Element>();
+          Iterator transIter = iterator();
+          while(transIter.hasNext()){
+              Element transElem=(Element)transIter.next();
+              visitElement(transElem);
+          }
+      }
+      return name2ele.get(scopedName);
+  }
+  private void visitElement(Element el)
+  {
+      String scopedName=el.getScopedName();
+      name2ele.put(scopedName, el);
+      if(el instanceof Container){
+          Container c = (Container) el;
+          Iterator it = c.iterator();
+          while(it.hasNext()){
+              visitElement((Element)it.next());
+          }
+      }
+  }
+  
 }
