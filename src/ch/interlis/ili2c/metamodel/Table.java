@@ -368,7 +368,8 @@ public class Table extends AbstractClassDef<AbstractLeafElement>
       @exception java.lang.IllegalStateException if the integrity
                  is not given.
   */
-  public void checkIntegrity ()
+  @Override
+  public void checkIntegrity (List<Ili2cSemanticException> errs)
     throws java.lang.IllegalStateException
   {
 	if (getExtending() != null) {
@@ -482,10 +483,10 @@ public class Table extends AbstractClassDef<AbstractLeafElement>
 
 
   	if(isAlias()){
-  		((Table)getReal()).checkIntegrity();
+  		((Table)getReal()).checkIntegrity(errs);
   		return;
   	}else{
-	    super.checkIntegrity ();
+	    super.checkIntegrity (errs);
 
 
 

@@ -246,7 +246,25 @@ public abstract class Type
 	          "err_compositionType_cardExtMismatch",
 	          this.cardinality.toString(), general.cardinality.toString()));
   }
+  @Override
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+  {
+      super.checkTranslationOf(errs);
+      Type   origin=(Type)getTranslationOf();
 
+      if (origin == null){
+          return;
+      }
+      if(isAbstract()!=origin.isAbstract()) {
+          throw new Ili2cSemanticException();
+      }
+      if(!getCardinality().equals(origin.getCardinality())) {
+          throw new Ili2cSemanticException();
+      }
+      if(isOrdered()!=origin.isOrdered()) {
+          throw new Ili2cSemanticException();
+      }
+  } 
 
 
   /** If this type is a TypeAlias, resolve the chain of aliases

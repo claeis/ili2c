@@ -131,7 +131,7 @@ public class Translation23Test {
 			
 		}
 		assertNull(td);
-		assertEquals(1,errs.getErrs().size());
+		assertEquals(10,errs.getErrs().size());
 	}
 	@Test
 	public void attrDomainRefFail() throws Exception {

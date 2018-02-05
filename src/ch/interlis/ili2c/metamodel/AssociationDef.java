@@ -318,10 +318,11 @@ public class AssociationDef extends AbstractClassDef<Element>
       @exception java.lang.IllegalStateException if the integrity
                  is not given.
   */
-  public void checkIntegrity ()
+  @Override
+  public void checkIntegrity (List<Ili2cSemanticException> errs)
     throws java.lang.IllegalStateException
   {
-    super.checkIntegrity ();
+    super.checkIntegrity (errs);
 
 
     if (extending!=null && isExtended())

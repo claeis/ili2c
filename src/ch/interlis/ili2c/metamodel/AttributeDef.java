@@ -723,15 +723,36 @@ public abstract class AttributeDef
 			return; // FIXME type should not be null; fix in parser/viewAttributes() (near attrib.setTypeProxy(true))
 		}
 		Type baseType=((AttributeDef) baseElement).getDomain();
-		if(type.getClass()!=baseType.getClass()){
-	        throw new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName()));
-		}
-		if (type instanceof TypeAlias){
-			if(((TypeAlias)type).getAliasing().getTranslationOfOrSame()!=((TypeAlias)baseType).getAliasing().getTranslationOfOrSame()){
-		        throw new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName()));
-			}
-		}
 		type.linkTranslationOf(baseType);
 	    
   	}
+    @Override
+    protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+    {
+        super.checkTranslationOf(errs);
+        Type type=getDomain();
+        if(type==null){
+            return; // FIXME type should not be null; fix in parser/viewAttributes() (near attrib.setTypeProxy(true))
+        }
+        AttributeDef baseElement=(AttributeDef)getTranslationOf();
+        if(baseElement==null) {
+            return;
+        }
+        Type baseType=((AttributeDef) baseElement).getDomain();
+        if(type.getClass()!=baseType.getClass()){
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName())));
+            return;
+        }
+        if (type instanceof TypeAlias){
+            if(((TypeAlias)type).getAliasing().getTranslationOfOrSame()!=((TypeAlias)baseType).getAliasing().getTranslationOfOrSame()){
+                errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName())));
+                return;
+            }
+        }
+        try {
+            type.checkTranslationOf(errs);
+        }catch(Ili2cSemanticException ex) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName())));
+        }
+    }
 }

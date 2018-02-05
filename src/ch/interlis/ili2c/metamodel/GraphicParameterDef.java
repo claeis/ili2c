@@ -1,10 +1,14 @@
 package ch.interlis.ili2c.metamodel;
 
 import java.util.Collection;
+import java.util.List;
 
 public class GraphicParameterDef extends AbstractLeafElement {
 
-  public void checkIntegrity(){
+  @Override
+  public void checkIntegrity (List<Ili2cSemanticException> errs)
+          throws java.lang.IllegalStateException
+  {
   }
 
     private String name=null;

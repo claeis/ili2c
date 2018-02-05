@@ -9,6 +9,8 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
+
 /** An abstract class that groups the INTERLIS line types such as
     AreaType, PolylineType and SurfaceType.
 */
@@ -205,6 +207,43 @@ public abstract class LineType extends Type
     }
   }
 
+  @Override
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+  {
+      super.checkTranslationOf(errs);
+      LineType origin=(LineType)getTranslationOf();
+      if(origin==null) {
+          return;
+      }
+      if(!PrecisionDecimal.equals(maxOverlap,origin.maxOverlap)) {
+          throw new Ili2cSemanticException();
+      }
+      if(lineForms==null && origin.lineForms==null) {
+          
+      }else{
+          if(lineForms==null || origin.lineForms==null) {
+              throw new Ili2cSemanticException();
+          }
+          if(lineForms.length!=origin.lineForms.length) {
+              throw new Ili2cSemanticException();
+          }
+          for(int i=0;i<lineForms.length;i++) {
+              if(lineForms[i]!=origin.lineForms[i]) {
+                  throw new Ili2cSemanticException();
+              }
+          }
+      }
+      if(this.controlPointDomain == origin.controlPointDomain) {
+          // ok
+      }else {
+          if(this.controlPointDomain==null || origin.controlPointDomain==null) {
+              throw new Ili2cSemanticException();
+          }
+          if(controlPointDomain.getTranslationOfOrSame()!=origin.controlPointDomain.getTranslationOfOrSame()) {
+              throw new Ili2cSemanticException();
+          }
+      }
+  }
 
   public LineType clone() {
       return (LineType) super.clone();

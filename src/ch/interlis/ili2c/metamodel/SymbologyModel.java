@@ -11,6 +11,7 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
 
 /** An Interlis Model which is used for modelling symbologies.
 
@@ -41,10 +42,11 @@ public class SymbologyModel extends Model
       @exception java.lang.IllegalStateException if the integrity
                  is not given.
   */
-  public void checkIntegrity ()
+  @Override
+  public void checkIntegrity (List<Ili2cSemanticException> errs)
     throws java.lang.IllegalStateException
   {
-    super.checkIntegrity ();
+    super.checkIntegrity (errs);
     
     if (isIli23() && !isContracted())
     {

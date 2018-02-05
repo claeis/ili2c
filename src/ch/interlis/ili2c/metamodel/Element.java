@@ -539,7 +539,7 @@ public abstract class Element implements BeanContextChild,ElementAlias {
       @exception java.lang.IllegalStateException if the integrity
                  is not given.
   */
-  public void checkIntegrity ()
+  public void checkIntegrity (List<Ili2cSemanticException> errs)
     throws java.lang.IllegalStateException
   {
   }
@@ -937,5 +937,8 @@ public void setDocumentation(String string) {
   	{
   		this.baseLanguageElement=baseElement;
   	}
+    protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+    {
+    }
 
 }

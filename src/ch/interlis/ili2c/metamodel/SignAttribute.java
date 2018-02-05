@@ -25,7 +25,8 @@ public class SignAttribute extends ExtendableContainer<Element>
   protected Collection<Element> createElements(){
     return null;
   }
-  public void checkIntegrity(){
+  @Override
+  public void checkIntegrity(List<Ili2cSemanticException> errs){
   }
   /** Sets the value of the <code>name</code> property.
       Sign attributes are identified and used by specifying

@@ -383,6 +383,13 @@ options
       String filename=getFilename();
       CompilerLogEvent.logError(filename,ex.getSourceLine(),ex.getLocalizedMessage());
   }
+  protected void reportError (List<Ili2cSemanticException> errs)
+  {
+      String filename=getFilename();
+  	for(Ili2cSemanticException ex:errs){
+      CompilerLogEvent.logError(filename,ex.getSourceLine(),ex.getLocalizedMessage());
+  	}
+  }
   public void reportError (antlr.RecognitionException ex)
   {
       String filename=getFilename();
@@ -920,7 +927,9 @@ protected modelDef
 		end[md] endDot:DOT
 	     {
 	       try {
-	         md.checkIntegrity ();
+			 List<Ili2cSemanticException> errs=new java.util.ArrayList<Ili2cSemanticException>();	       		
+	         md.checkIntegrity (errs);
+	         reportError(errs);
 	       } catch (Ili2cSemanticException ex) {
 	         reportError (ex);
 	       } catch (Exception ex) {

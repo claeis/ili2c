@@ -561,8 +561,8 @@ public void setXmlns(String xmlns) {
 		// link in checkIntegrity()
 	}
 	@Override
-	public void checkIntegrity() throws java.lang.IllegalStateException {
-		super.checkIntegrity();
+	public void checkIntegrity(List<Ili2cSemanticException> errs) throws java.lang.IllegalStateException {
+		super.checkIntegrity(errs);
 		if(translationOf!=null){
 			Element baseModel=getContainer().getElement(Model.class,translationOf);
 			if(baseModel==null){
@@ -570,6 +570,7 @@ public void setXmlns(String xmlns) {
 		  	          "err_noSuchModel",translationOf));
 			}
 			linkTranslationOf(baseModel);
+			checkTranslationOf(errs);
 		}
 		
 	}
