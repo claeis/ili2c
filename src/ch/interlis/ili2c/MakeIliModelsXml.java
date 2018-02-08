@@ -451,16 +451,7 @@ public class MakeIliModelsXml {
 	 */
 	public String getVersion() {
 		  if(version==null){
-		java.util.ResourceBundle resVersion = java.util.ResourceBundle.getBundle("ch.interlis.iox_j.Version");
-			StringBuffer ret=new StringBuffer(20);
-		ret.append(resVersion.getString("versionMajor"));
-			ret.append('.');
-		ret.append(resVersion.getString("versionMinor"));
-			ret.append('.');
-		ret.append(resVersion.getString("versionMicro"));
-			ret.append('-');
-		ret.append(resVersion.getString("versionDate"));
-			version=ret.toString();
+		      version=Main.getVersion();
 		  }
 		  return version;
 	}

@@ -18,6 +18,7 @@ import java.net.URL;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -508,14 +509,15 @@ public abstract class Container<E extends Element>
       @exception java.lang.IllegalStateException if the integrity
                  is not given.
   */
-  public void checkIntegrity ()
+  @Override
+  public void checkIntegrity (List<Ili2cSemanticException> errs)
     throws java.lang.IllegalStateException
   {
   	if(isAlias()){
-  		((Container)getReal()).checkIntegrity();
+  		((Container)getReal()).checkIntegrity(errs);
   		return;
   	}else{
-	    super.checkIntegrity ();
+	    super.checkIntegrity (errs);
 
 
 	    Iterator iter = iterator();
@@ -523,7 +525,7 @@ public abstract class Container<E extends Element>
 	    {
 	      Object obj = iter.next();
 	      if (obj instanceof ch.interlis.ili2c.metamodel.Element) {
-            ((ch.interlis.ili2c.metamodel.Element) obj).checkIntegrity ();
+            ((ch.interlis.ili2c.metamodel.Element) obj).checkIntegrity (errs);
         }
 	    }
   	}
@@ -558,6 +560,31 @@ public abstract class Container<E extends Element>
 	        throw new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_unequalNumberOfElts",getScopedName(),((Element) baseElement).getScopedName()));
     	}
   	}
+	  @Override
+	  public void checkTranslationOf(List<Ili2cSemanticException> errs)
+	    throws java.lang.IllegalStateException
+	  {
+	        Container baseElement=(Container)getTranslationOf();
+	        if(baseElement==null) {
+	            return;
+	        }
+	    if(isAlias()){
+	        ((Container)getReal()).checkTranslationOf(errs);
+	        return;
+	    }else{
+	        super.checkTranslationOf(errs);
+
+
+	        Iterator iter = iterator();
+	        while (iter.hasNext ())
+	        {
+	          Object obj = iter.next();
+	          if (obj instanceof ch.interlis.ili2c.metamodel.Element) {
+	            ((ch.interlis.ili2c.metamodel.Element) obj).checkTranslationOf(errs);
+	        }
+	        }
+	    }
+	  }
 
 
 

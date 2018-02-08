@@ -498,14 +498,15 @@ END B;<br></pre></code>
       @exception java.lang.IllegalStateException if the integrity
                  is not given.
   */
-  public void checkIntegrity()
+  @Override
+  public void checkIntegrity(List<Ili2cSemanticException> errs)
     throws java.lang.IllegalStateException
   {
    	if(isAlias()){
-  		((Viewable)getReal()).checkIntegrity();
+  		((Viewable)getReal()).checkIntegrity(errs);
   		return;
   	}else{
-	    super.checkIntegrity ();
+	    super.checkIntegrity (errs);
 
 
 	    boolean myAbstractness = this.isAbstract ();

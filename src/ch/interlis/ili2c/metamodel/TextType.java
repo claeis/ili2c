@@ -11,6 +11,8 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
+
 /** TextType holds the information associated with an Interlis
     TextType.
 
@@ -127,6 +129,23 @@ public void setNormalized(boolean b) {
 
     public TextType clone() {
         return (TextType) super.clone();
+    }
+    @Override
+    protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+    {
+        super.checkTranslationOf(errs);
+        TextType   originDef= (TextType) getTranslationOf();
+        if(originDef==null) {
+            return;
+        }
+        if (originDef.maxLength != this.maxLength)
+        {
+            throw new Ili2cSemanticException();
+        }
+        if(originDef.normalized != this.normalized){
+            throw new Ili2cSemanticException();
+        }
+        
     }
 
 }

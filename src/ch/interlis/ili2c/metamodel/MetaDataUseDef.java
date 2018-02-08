@@ -7,7 +7,8 @@ public class MetaDataUseDef extends ExtendableContainer<MetaObject>
   protected Collection<MetaObject> createElements(){
     return new ArrayList<MetaObject>();
   }
-  public void checkIntegrity(){
+  @Override
+  public void checkIntegrity(List<Ili2cSemanticException> errs){
   }
 	/** concrete basket available by this MetaDataUseDef
 	*/

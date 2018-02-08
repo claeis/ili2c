@@ -10,6 +10,7 @@
 package ch.interlis.ili2c.metamodel;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 
 /** A numeric type with a minimum and maximum value,
@@ -290,7 +291,38 @@ public class NumericType extends NumericalType
       throw new Ili2cSemanticException (rsrc.getString (errorString));
     checkCardinalityExtension(wantToExtend);
   }
+  @Override
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+  {
+      super.checkTranslationOf(errs);
+      NumericType   origin=(NumericType)getTranslationOf();
 
+      if (origin == null){
+          return;
+      }
+
+      if (!PrecisionDecimal.equals(minimum,origin.minimum)) {
+          throw new Ili2cSemanticException();
+      }
+      if (!PrecisionDecimal.equals(maximum,origin.maximum)) {
+          throw new Ili2cSemanticException();
+      }
+
+      if(this.unit == origin.unit) {
+          // ok
+      }else {
+          if(this.unit==null || origin.unit==null) {
+              throw new Ili2cSemanticException();
+          }
+          if(unit.getTranslationOfOrSame()!=origin.unit.getTranslationOfOrSame()) {
+              throw new Ili2cSemanticException();
+          }
+      }
+
+      if(getRotation()!=origin.getRotation()){
+          throw new Ili2cSemanticException();
+      }
+  }
 
     public NumericType clone() {
         return (NumericType) super.clone();

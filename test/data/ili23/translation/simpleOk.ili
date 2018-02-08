@@ -1,11 +1,21 @@
 INTERLIS 2.3;
 
 MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	DOMAIN
+		DomainA1 = COORD 1.0 .. 10.0,1.0 .. 10.0 ;
 
+	STRUCTURE StructA1 =
+	END StructA1;
+	
 	TOPIC TopicA =
 
 		CLASS ClassA =
 			attrA : TEXT*10;
+			attrA2 : MANDATORY 1 .. 10;
+			attrA3 : COORD 1 .. 10,1..10;
+			attrA4 : SURFACE WITH (STRAIGHTS, ARCS) VERTEX DomainA1 WITHOUT OVERLAPS > 0.1 ;
+			attrA5 : DomainA1;
+			attrA6 : StructA1;
 		END ClassA;
 
 	END TopicA;
@@ -15,11 +25,21 @@ END ModelA.
 MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
 TRANSLATION OF ModelA [ "1"]
 =
+	DOMAIN
+		DomainB1 = COORD 1.0 .. 10.0,1.0 .. 10.0;
 
+	STRUCTURE StructB1 =
+	END StructB1;
+		
 	TOPIC TopicB =
 
 		CLASS ClassB =
 			attrB : TEXT*10;
+			attrB2 : MANDATORY 1..10;
+			attrB3 : COORD 1 .. 10,1..10;
+			attrB4 : SURFACE WITH (STRAIGHTS, ARCS) VERTEX DomainB1 WITHOUT OVERLAPS > 0.1 ;
+			attrB5 : DomainB1;
+			attrB6 : StructB1;
 		END ClassB;
 
 	END TopicB;

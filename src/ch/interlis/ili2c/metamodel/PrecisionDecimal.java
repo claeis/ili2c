@@ -181,7 +181,29 @@ public class PrecisionDecimal
           return i <= 0 ? -1 : 1;
 	  return Double.compare(doubleValue(), other.doubleValue());
   }
-  static public void main(String args[]){
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof PrecisionDecimal)) {
+            return false;
+        }
+        return equals(this, (PrecisionDecimal) obj);
+    }
+
+    public static boolean equals(PrecisionDecimal a, PrecisionDecimal b) {
+        if (a == null && b == null) {
+            return true;
+        }
+        if (a == null || b == null) {
+            return false;
+        }
+        if (a.compareTo(b) == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    static public void main(String args[]){
 	 test("1");
 	 test("1.0");
 	 test("1e1");

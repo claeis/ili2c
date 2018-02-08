@@ -1,0 +1,24 @@
+INTERLIS 2.3;
+
+MODEL LineType
+	AT "http://www.interlis.ch/ili2c/tests/" 
+	VERSION "2018-02-08" =
+
+    
+  TOPIC TopicA =
+    
+		DOMAIN
+		Point2D = COORD 
+			0.000 .. 200.000,
+			0.000 .. 200.000,
+			ROTATION 2 -> 1;
+
+		CLASS ClassA1 =
+			Geometry: MANDATORY SURFACE WITH (STRAIGHTS) 
+				VERTEX Point2D WITHOUT OVERLAPS > 0.001;
+		END ClassA1; 
+        
+  END TopicA;
+
+END LineType.
+

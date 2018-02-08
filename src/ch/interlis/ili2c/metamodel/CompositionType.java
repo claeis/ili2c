@@ -124,6 +124,25 @@ public class CompositionType extends Type
 
     checkCardinalityExtension(general);
   }
+  @Override
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+  {
+      super.checkTranslationOf(errs);
+      CompositionType origin=(CompositionType)getTranslationOf();
+      if(origin==null) {
+          return;
+      }
+      if(this.componentType == origin.componentType) {
+          // ok
+      }else {
+          if(this.componentType==null || origin.componentType==null) {
+              throw new Ili2cSemanticException();
+          }
+          if(componentType.getTranslationOfOrSame()!=origin.componentType.getTranslationOfOrSame()) {
+              throw new Ili2cSemanticException();
+          }
+      }
+  }
   public void addRestrictedTo(Table structure)
   {
 	  restrictedTo.add(structure);

@@ -142,6 +142,13 @@ options
       lineNumber);
   }
 
+  protected void reportError (List<Ili2cSemanticException> errs)
+  {
+      String filename=getFilename();
+  	for(Ili2cSemanticException ex:errs){
+      CompilerLogEvent.logError(filename,ex.getSourceLine(),ex.getLocalizedMessage());
+  	}
+  }
   
   public void reportError (antlr.ParserException ex)
   {
@@ -705,7 +712,9 @@ protected modelDef [TransferDescription transfer]
      
      {
        try {
-         md.checkIntegrity ();
+		 List<Ili2cSemanticException> errs=new java.util.ArrayList<Ili2cSemanticException>();	       		
+         md.checkIntegrity (errs);
+	         reportError(errs);
        } catch (Exception ex) {
          reportError (ex, endDot.getLine());
        }

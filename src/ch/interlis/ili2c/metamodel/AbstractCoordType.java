@@ -1,6 +1,8 @@
 
 package ch.interlis.ili2c.metamodel;
-import ch.ehi.basics.logging.EhiLogger;
+import java.util.List;
+
+import ch.ehi.basics.logging.EhiLogger;
 
 
 /** A coordinate type. */
@@ -133,6 +135,33 @@ public abstract class AbstractCoordType extends BaseType
     fine &= checkStructuralEquivalenceOfArrays (with, this.getDimensions(), other.getDimensions(),
                                "err_diff_coordType_numDimensions");
     return fine;
+  }
+  @Override
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+  {
+      super.checkTranslationOf(errs);
+      AbstractCoordType origin=(AbstractCoordType)getTranslationOf();
+      if(origin==null) {
+          return;
+      }
+      if(nullAxis!=origin.nullAxis) {
+          throw new Ili2cSemanticException();
+      }
+      if(piHalfAxis!=origin.piHalfAxis) {
+          throw new Ili2cSemanticException();
+      }
+      if(crs!=origin.crs) {
+          throw new Ili2cSemanticException();
+      }
+      if(_generic!=origin._generic) {
+          throw new Ili2cSemanticException();
+      }
+      if(dimensions.length!=origin.dimensions.length) {
+          throw new Ili2cSemanticException();
+      }
+      for(NumericalType dim:dimensions) {
+          dim.checkTranslationOf(errs);
+      }
   }
 
 
