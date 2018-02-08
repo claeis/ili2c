@@ -3159,6 +3159,11 @@ protected lineType [Container scope, Type extending]
 
       try {
         if(theMaxOverlap!=null){
+          Domain coord=lt.getControlPointDomain();
+          int coordAccuracy=((NumericType)((CoordType)coord.getType()).getDimensions()[0]).getMinimum().getAccuracy();
+          if(theMaxOverlap.getAccuracy()>coordAccuracy){
+          	reportError(rsrc.getString("err_lineType_overlapTooSmall"),line);
+          }
           lt.setMaxOverlap (theMaxOverlap);
         }
       } catch (Exception ex) {
