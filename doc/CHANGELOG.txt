@@ -7,7 +7,7 @@ ili2c 4.7.7 (2017-12-xx)
 - API: new function TransferDescription.getElement(scopedName) to simplify access to model elements
 - fixed https: repository access
 - TRANSLATION OF: fixed domain/type consistency check 
- 
+- iox-ili 1.20.2 
 
 ili2c 4.7.6 (2017-12-29)
 ---------------------------
