@@ -1,0 +1,1 @@
+This test checks the generation of an INTERLIS-1 schema with IDENT definitions

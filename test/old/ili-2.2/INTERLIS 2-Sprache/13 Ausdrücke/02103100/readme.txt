@@ -1,0 +1,1 @@
+This test checks if the compiler accepts a role name path element from an association.

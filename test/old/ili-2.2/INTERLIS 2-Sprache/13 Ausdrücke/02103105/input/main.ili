@@ -1,0 +1,24 @@
+INTERLIS 2.2;
+
+
+MODEL Test =
+
+
+  TOPIC Base = 
+
+
+    CLASS B =
+      Attr1: TEXT*20;
+      Attr2: TEXT*10;
+    END B;
+
+    VIEW VB 
+      PROJECTION OF Test.Base.B;
+      =
+      ATTRIBUTE
+        a : TEXT*20 := B->Attr1;
+    END VB;
+
+  END Base;
+
+END Test.

@@ -1,0 +1,1 @@
+This test checks the use of INTERLIS.objectCount().

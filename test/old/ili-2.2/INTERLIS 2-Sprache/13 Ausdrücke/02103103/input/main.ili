@@ -1,0 +1,20 @@
+INTERLIS 2.2;
+
+
+MODEL Model =
+
+
+  TOPIC Topic = 
+
+    CLASS A =
+      attr : TEXT*10;
+      MANDATORY CONSTRAINT THIS->attr=="Hello World";
+    END A;
+
+
+
+  END Topic;
+
+
+
+END Model.

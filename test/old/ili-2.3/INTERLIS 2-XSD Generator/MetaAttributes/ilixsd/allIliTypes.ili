@@ -1,0 +1,5 @@
+INTERLIS 2.3;
+
+!!@ ili2c.ili23xsd.addAllInterlisTypesDefault=true
+MODEL ModelA AT "mailto:ce@local" VERSION "2009-08-19"=
+END ModelA.

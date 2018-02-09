@@ -1,0 +1,1 @@
+This test checks if the compiler detects an abstract attribute in an concret view definition.

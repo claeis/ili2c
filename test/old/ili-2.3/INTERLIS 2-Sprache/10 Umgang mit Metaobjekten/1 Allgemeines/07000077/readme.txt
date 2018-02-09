@@ -1,0 +1,1 @@
+This test checks if the compiler detects if a undefined meta object is referenced.

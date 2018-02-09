@@ -1,0 +1,1 @@
+This test checks if the compiler detects a THISAREA path element in a non area inspection view.

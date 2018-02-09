@@ -1,0 +1,1 @@
+This test checks if the compiler detects a role that points to a structure.

@@ -1,0 +1,16 @@
+INTERLIS 2.2;
+
+MODEL model =
+	TOPIC topic =
+
+		CLASS aclass =
+			attr : TEXT*10;
+		END aclass;
+		
+		CONSTRAINTS OF aclass =
+			UNIQUE attr;
+		END;
+
+	END topic;
+
+END model.

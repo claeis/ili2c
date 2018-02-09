@@ -1,0 +1,1 @@
+This test checks a use of a extended MetaDataUseDef

@@ -1,0 +1,1 @@
+main.ili:10:TEXT can not extend MTEXT. The kind of text (multiline/singleline) should not be changed.

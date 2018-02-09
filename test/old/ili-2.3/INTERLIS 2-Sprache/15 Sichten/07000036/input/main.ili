@@ -1,0 +1,34 @@
+INTERLIS 2.3;
+
+MODEL Test AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC Base = 
+
+    CLASS B =
+      Attr1: TEXT*20;
+      Attr2: TEXT*10;
+    END B;
+
+    CLASS C =
+      Attr1: TEXT*30;
+    UNIQUE
+      Attr1;
+    END C;
+
+  END Base;
+
+  TOPIC SelectionView =
+
+    DEPENDS ON Test.Base;
+     
+    VIEW VB
+      PROJECTION OF Test.Base.B;
+      BASE B EXTENDED BY Test.Base.C !! illegal; because class B is not a base of class C
+	=
+      ATTRIBUTE
+        ALL OF B;
+    END VB;
+
+  END SelectionView;
+
+END Test.

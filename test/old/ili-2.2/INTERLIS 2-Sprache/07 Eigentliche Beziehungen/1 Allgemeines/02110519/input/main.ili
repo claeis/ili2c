@@ -1,0 +1,24 @@
+INTERLIS 2.2;
+
+MODEL model =
+
+	TOPIC topic =
+
+		CLASS a =
+		END a;
+
+		CLASS b =
+		END b;
+
+		CLASS c =
+		END c;
+
+		ASSOCIATION a2b  =
+			a (ABSTRACT)--a; !! illegal; association should be abstract as well
+			b --b;
+		END a2b;
+
+
+	END topic;
+
+END model.

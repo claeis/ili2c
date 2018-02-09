@@ -1,0 +1,1 @@
+tests if the compiler detects a qualified unit reference without import

@@ -1,0 +1,20 @@
+INTERLIS 2.3;
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC Bodenprofile =
+		DOMAIN
+			Prozent100 = 0 .. 100;
+		STRUCTURE Koernung =
+			Ton : Prozent100;
+			Schluff : Prozent100;
+			Sand : Prozent100;
+		END Koernung;
+		CLASS Profil =
+			Lage : COORD 480000.00 .. 850000.00,
+				60000.00 .. 320000.00;
+			KoernungsklasseOberboden : Koernung;
+			KoernungsklasseUnterboden : Koernung;
+			Bodenpunktzahl : 0 .. 100;
+		END Profil;
+	END Bodenprofile;
+END ModelA.
+	

@@ -1,0 +1,1 @@
+This test checks the conversion of INTERLIS 1 domains DEGREES and GRADS to INTERLIS 2

@@ -1,0 +1,16 @@
+INTERLIS 2.3;
+
+TYPE MODEL Localization (en)
+  AT "http://www.interlis.ch/" VERSION "2011-01-03" =
+
+  DOMAIN
+    d1 = 10 .. 20;
+    d11 EXTENDS d1 = 10 .. 20;
+    d2 EXTENDS d1 = 10.00 .. 19.99;
+    d3 EXTENDS d1 = 10.00 .. 20.00;
+    d4 EXTENDS d1 = 0.1e2 .. 0.2e2;
+    e1            = 0.1e2 .. 0.2e2;
+    e2 EXTENDS e1 = 0.1000e2 .. 0.1999e2;
+
+    
+END Localization.

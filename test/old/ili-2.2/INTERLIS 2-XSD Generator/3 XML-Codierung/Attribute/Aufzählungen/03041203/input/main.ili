@@ -1,0 +1,15 @@
+INTERLIS 2.2;
+
+MODEL model =
+
+  TOPIC topic =
+
+  DOMAIN
+  
+    CLASS Class =
+    	attrib : (one,two,three, more (four, five) );
+    END Class; 
+
+  END topic;
+
+END model.

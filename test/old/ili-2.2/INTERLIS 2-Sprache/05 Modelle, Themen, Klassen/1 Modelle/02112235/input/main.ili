@@ -1,0 +1,10 @@
+INTERLIS 2.2;
+	MODEL model =
+		DOMAIN 
+			topic = TEXT*10;
+
+		!! illegal; same name
+		TOPIC topic =
+		END topic;
+
+	END model.

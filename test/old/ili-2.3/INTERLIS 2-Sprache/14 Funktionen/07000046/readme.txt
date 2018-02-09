@@ -1,0 +1,1 @@
+This test checks if the compiler detects a function definition at topic level in an uncontracted model.

@@ -1,0 +1,1 @@
+This test checks if the compiler accepts a basic function definition with an argument of typ OBJECT OF.

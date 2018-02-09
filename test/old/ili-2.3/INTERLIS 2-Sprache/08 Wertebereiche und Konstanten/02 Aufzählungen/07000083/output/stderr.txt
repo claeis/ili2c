@@ -1,0 +1,2 @@
+main.ili:13:Can not add horizontal extension "mittel" because of FINAL in base definition..
+main.ili:30:Can not add horizontal extension "hell" because of FINAL in base definition..

@@ -1,0 +1,1 @@
+main.ili:16:There can only be one role with kind aggregation or kind composition in a association.

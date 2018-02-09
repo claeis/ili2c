@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://www.interlis.ch/xtf/2.4/ModelB"
+  targetNamespace="http://www.interlis.ch/xtf/2.4/ModelB"
+  xmlns:geom="http://www.interlis.ch/geometry/1.0"
+  xmlns:ili="http://www.interlis.ch/xtf/2.4/INTERLIS"
+  xmlns:ili2c="http://www.interlis.ch/ili2c"
+  xmlns:ModelA="http://www.interlis.ch/xtf/2.4/ModelA"
+  elementFormDefault="qualified" attributeFormDefault="qualified">
+<xsd:annotation>
+  <xsd:appinfo source="http://www.interlis.ch/ili2c/ili2cversion">4.5.3-20140404</xsd:appinfo>
+  <xsd:appinfo source="http://www.interlis.ch/ili2c">
+    <ili2c:model>ModelB</ili2c:model>
+    <ili2c:modelVersion>1</ili2c:modelVersion>
+    <ili2c:modelAt>http://www.interlis.ch/ili2c/tests/</ili2c:modelAt>
+  </xsd:appinfo>
+</xsd:annotation>
+<xsd:import namespace="http://www.interlis.ch/geometry/1.0"/>
+<xsd:import namespace="http://www.interlis.ch/xtf/2.4/INTERLIS"/>
+<xsd:import namespace="http://www.interlis.ch/xtf/2.4/ModelA"/>
+<xsd:element name="Liegenschaft" type="LiegenschaftType" substitutionGroup="ModelA:Grundbuch.Grundstueck"/>
+<xsd:complexType  name="LiegenschaftType">
+  <xsd:complexContent>
+    <xsd:extension base="ModelA:Grundbuch.GrundstueckType">
+      <xsd:sequence>
+        <xsd:element name="Eigentuemer">
+          <xsd:complexType>
+            <xsd:attribute name="ref" type="ili:refType"/>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:element name="Person" type="PersonType"/>
+<xsd:complexType  name="PersonType">
+  <xsd:sequence>
+  </xsd:sequence>
+  <xsd:attribute name="tid" type="ili:tidType"/>
+</xsd:complexType>
+<xsd:element name="Eigentum" type="EigentumType"/>
+<xsd:complexType  name="EigentumType">
+  <xsd:sequence>
+  </xsd:sequence>
+</xsd:complexType>
+<xsd:element name="Verein" type="VereinType"/>
+<xsd:complexType  name="VereinType">
+  <xsd:sequence>
+  </xsd:sequence>
+  <xsd:attribute name="tid" type="ili:tidType"/>
+</xsd:complexType>
+<xsd:element name="DauerhafteVereinigungMitglied" type="DauerhafteVereinigungMitgliedType"/>
+<xsd:complexType  name="DauerhafteVereinigungMitgliedType">
+  <xsd:sequence>
+    <xsd:element name="DauerhafteVereinigung">
+      <xsd:complexType>
+        <xsd:attribute name="ref" type="ili:refType"/>
+      </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Mitglied">
+      <xsd:complexType>
+        <xsd:attribute name="ref" type="ili:refType"/>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:sequence>
+</xsd:complexType>
+<xsd:element name="Grundbuch" type="GrundbuchType" substitutionGroup="ModelA:Grundbuch"/>
+<xsd:complexType name="GrundbuchType">
+  <xsd:complexContent>
+    <xsd:extension base="ModelA:GrundbuchType">
+      <xsd:sequence>
+        <xsd:element ref="Person" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element ref="Verein" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element ref="DauerhafteVereinigungMitglied" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+<xsd:simpleType name="Farbe">
+  <xsd:restriction base="xsd:normalizedString">
+    <xsd:enumeration value="rot"/>
+    <xsd:enumeration value="gelb"/>
+    <xsd:enumeration value="gruen"/>
+  </xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="FarbePlus">
+  <xsd:restriction base="xsd:normalizedString">
+    <xsd:enumeration value="rot.dunkelrot"/>
+    <xsd:enumeration value="rot.orange"/>
+    <xsd:enumeration value="rot.karmin"/>
+    <xsd:enumeration value="gelb"/>
+    <xsd:enumeration value="gruen.hellgruen"/>
+    <xsd:enumeration value="gruen.dunkelgruen"/>
+    <xsd:enumeration value="blau"/>
+  </xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="FarbePlus2">
+  <xsd:restriction base="xsd:normalizedString">
+    <xsd:enumeration value="rot"/>
+    <xsd:enumeration value="gelb"/>
+    <xsd:enumeration value="gruen"/>
+  </xsd:restriction>
+</xsd:simpleType>
+<xsd:simpleType name="FarbePlus3">
+  <xsd:restriction base="xsd:normalizedString">
+    <xsd:enumeration value="rot"/>
+    <xsd:enumeration value="gruen"/>
+  </xsd:restriction>
+</xsd:simpleType>
+</xsd:schema>

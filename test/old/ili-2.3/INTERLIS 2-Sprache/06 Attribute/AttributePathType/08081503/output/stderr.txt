@@ -1,0 +1,2 @@
+C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\08081503\main.ili:17:"objClass" ist not a path to a ClassType attribute.
+compiler failed

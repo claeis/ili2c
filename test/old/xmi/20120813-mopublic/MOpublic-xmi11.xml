@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XMI xmi.version="1.1" xmlns:UML="omg.org/UML1.3" timestamp="2012-08-16 14:47:42">
+	<XMI.header>
+		<XMI.documentation>
+			<XMI.exporter>ili2c</XMI.exporter>
+			<XMI.exporterVersion>4.4.7-20120814</XMI.exporterVersion>
+		</XMI.documentation>
+	</XMI.header>
+	<XMI.content>
+		<UML:Model name="INTERLIS_Model" visibility="public">
+			<UML:Namespace.ownedElement>
+				<UML:Package xmi.id="1" name="import" visibility="public">
+					<UML:Namespace.ownedElement>
+						<UML:Package xmi.id="INTERLIS" name="INTERLIS" visibility="public">
+							<UML:Namespace.ownedElement>
+								<UML:Package xmi.id="INTERLIS.TIMESYSTEMS" name="TIMESYSTEMS" visibility="public">
+									<UML:Namespace.ownedElement>
+										<UML:DataType xmi.id="p1" name="iliNumeric" visibility="public"></UML:DataType>
+									</UML:Namespace.ownedElement>
+								</UML:Package>
+							</UML:Namespace.ownedElement>
+						</UML:Package>
+						<UML:Package xmi.id="MOpublic" name="MOpublic" visibility="public">
+							<UML:Namespace.ownedElement>
+								<UML:Package xmi.id="MOpublic.Control_points" name="Control_points" visibility="public">
+								  <UML:ModelElement.stereotype>
+										<UML:Stereotype xmi.idref="s1"/>
+								 </UML:ModelElement.stereotype>
+									<UML:Namespace.ownedElement>
+										<UML:Class xmi.id="MOpublic.Control_points.UnitA" name="UnitA" visibility="public">
+											<UML:ModelElement.stereotype>
+												<UML:Stereotype xmi.idref="s2"/>
+											</UML:ModelElement.stereotype>
+										</UML:Class>
+										<UML:Class xmi.id="MOpublic.Control_points.Control_point" name="Control_point" visibility="public">
+											<UML:Classifier.feature>
+												<UML:Attribute name="attrEnum" visibility="public" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+												   <UML:ModelElement.taggedValue>
+												     <UML:TaggedValue tag="ilitype" value="gugus"/>
+												   </UML:ModelElement.taggedValue>
+													<UML:StructuralFeature.type>
+														<UML:Classifier xmi.idref="p1"/>
+													</UML:StructuralFeature.type>
+												</UML:Attribute>
+											</UML:Classifier.feature>
+										</UML:Class>
+									</UML:Namespace.ownedElement>
+								</UML:Package>
+							</UML:Namespace.ownedElement>
+						</UML:Package>
+					</UML:Namespace.ownedElement>
+				</UML:Package>
+				<UML:Stereotype xmi.id="s1" name="TopicDef">
+					<UML:Stereotype.baseClass>Package</UML:Stereotype.baseClass>
+				</UML:Stereotype>
+				<UML:Stereotype xmi.id="s2" name="UnitDef">
+					<UML:Stereotype.baseClass>Class</UML:Stereotype.baseClass>
+				</UML:Stereotype>
+			</UML:Namespace.ownedElement>
+		</UML:Model>
+	</XMI.content>
+</XMI>

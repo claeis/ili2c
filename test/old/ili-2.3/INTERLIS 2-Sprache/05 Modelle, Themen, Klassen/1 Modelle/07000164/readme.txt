@@ -1,0 +1,1 @@
+This test checks if the compiler accepts a basic model definition.

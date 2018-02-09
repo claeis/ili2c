@@ -1,0 +1,3 @@
+Info: C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\02112228\main.ili 2.0
+C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\02112228\main.ili:1:Only INTERLIS version 1 and 2.3 can be read by this version of the compiler.
+compiler failed

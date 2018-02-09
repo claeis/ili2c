@@ -1,0 +1,1 @@
+This test checks a basic enumeration type

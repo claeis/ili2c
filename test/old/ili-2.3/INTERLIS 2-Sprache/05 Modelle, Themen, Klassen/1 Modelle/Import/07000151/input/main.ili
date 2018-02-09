@@ -1,0 +1,18 @@
+INTERLIS 2.3;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	CLASS B (ABSTRACT) EXTENDS INTERLIS.METAOBJECT =
+	END B;
+END ModelA.
+
+MODEL ModelB AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	IMPORTS UNQUALIFIED INTERLIS;
+	CLASS B (ABSTRACT) EXTENDS METAOBJECT =
+	END B;
+END ModelB.
+
+MODEL ModelC AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	CLASS B (ABSTRACT) EXTENDS METAOBJECT = !! INTERLIS.METAOBJECT required
+	END B;
+END ModelC.
+

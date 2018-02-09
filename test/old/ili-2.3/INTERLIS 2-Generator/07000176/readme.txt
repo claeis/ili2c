@@ -1,0 +1,1 @@
+This test checks the conversion of a <Domain-Name> RefSys

@@ -1,0 +1,1 @@
+This test checks the help text of the compiler

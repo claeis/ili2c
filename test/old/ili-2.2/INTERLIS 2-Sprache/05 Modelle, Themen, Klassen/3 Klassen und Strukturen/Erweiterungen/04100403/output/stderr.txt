@@ -1,0 +1,1 @@
+main.ili:25:CLASS Model.Topic.Base can not extend CLASS Model.BaseTopic.Base without changing its name. There must not exist any other extensions of CLASS Model.BaseTopic.Base in TOPIC Model.BaseTopic. However, CLASS Model.BaseTopic.Extends extends CLASS Model.BaseTopic.Base.

@@ -1,0 +1,1 @@
+This test checks if the compiler accepts unqualified class references in a extended topic to classes in a base topic.

@@ -1,0 +1,1 @@
+This test checks if the compiler accepts an abstract TEXT attribute.

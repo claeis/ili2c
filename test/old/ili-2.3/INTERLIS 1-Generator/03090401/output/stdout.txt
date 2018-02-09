@@ -1,0 +1,58 @@
+TRANSFER TransferName;
+
+MODEL Model
+  TOPIC Topic =
+    TABLE Class =
+      text: OPTIONAL TEXT*10;
+      aufzaehlung: OPTIONAL (
+        null,
+        eins,
+        zwei,
+        drei,
+        mehr (
+          vier,
+          fuenf,
+          sechs,
+          sieben,
+          acht,
+          neun,
+          zehn));
+      horizAlignment: OPTIONAL HALIGNMENT;
+      vertAlignment: OPTIONAL VALIGNMENT;
+      boolean: OPTIONAL BOOLEAN;
+      numeric: OPTIONAL [0.0 .. 10.0];
+      structured: OPTIONAL TEXT*7;
+      coord: OPTIONAL COORD2
+        1.00 100.0
+        9.99 999.9;
+      oid: OPTIONAL TEXT*30;
+      basket: OPTIONAL <<ERROR>>;  !! Not expressible in INTERLIS-1
+      class: OPTIONAL TEXT*767;
+      linientyp: OPTIONAL POLYLINE WITH (STRAIGHTS)
+        VERTEX COORD2
+          1.00 100.0
+          9.99 999.9;
+      surface: OPTIONAL SURFACE WITH (STRAIGHTS, ARCS)
+        VERTEX COORD2
+          1.00 100.0
+          9.99 999.9;
+      area: OPTIONAL AREA WITH (STRAIGHTS, ARCS)
+        VERTEX COORD2
+          1.00 100.0
+          9.99 999.9
+        WITHOUT OVERLAPS > 0.0
+        LINEATTR =
+          attr: OPTIONAL TEXT*30;
+        END;
+    NO IDENT
+    END Class;
+  END Topic.
+END Model.
+
+FORMAT
+  FREE;
+
+CODE
+  BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+  TID = ANY;
+END.

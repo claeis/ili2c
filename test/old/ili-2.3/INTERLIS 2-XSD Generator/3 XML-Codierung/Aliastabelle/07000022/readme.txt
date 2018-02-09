@@ -1,0 +1,1 @@
+This test checks the generation of delete attribute entries in an alias table.

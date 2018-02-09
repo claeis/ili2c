@@ -1,0 +1,1 @@
+This test checks a basic local uniqueness constraint.

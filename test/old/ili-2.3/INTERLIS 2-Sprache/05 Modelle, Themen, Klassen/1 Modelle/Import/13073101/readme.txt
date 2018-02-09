@@ -1,0 +1,1 @@
+tests if the compiler finds model Units in %JAR_DIR

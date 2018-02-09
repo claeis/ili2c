@@ -1,0 +1,1 @@
+This test checks if the compiler accepts a class with an explicit OID definition.

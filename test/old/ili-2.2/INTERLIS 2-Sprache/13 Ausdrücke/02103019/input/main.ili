@@ -1,0 +1,29 @@
+INTERLIS 2.2;
+
+
+MODEL Model =
+
+
+  TOPIC Topic = 
+
+    CLASS A =
+      attr : TEXT*10;
+    END A;
+
+    CLASS B =
+    END B;
+
+    ASSOCIATION  =
+      a -- {1} A;
+      b -- B;
+    END;
+
+    CONSTRAINTS OF B =
+      MANDATORY CONSTRAINT a->attr=="Hello World";
+    END;
+
+  END Topic;
+
+
+
+END Model.

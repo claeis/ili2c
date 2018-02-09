@@ -1,0 +1,24 @@
+INTERLIS 2.2;
+
+MODEL model =
+
+TOPIC topic =
+CLASS A =
+END A;
+
+CLASS B=
+END B;
+
+
+CLASS AP EXTENDS A=
+b : TEXT*20;
+END AP;
+
+ASSOCIATION =
+a--A;
+b--B;  !! illegal; conflicts with b of AP
+END;
+
+END topic;
+
+END model.

@@ -1,0 +1,3 @@
+Info: C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\02112225\main.ili 2.2
+C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\02112225\main.ili:4:unexpected char:   (0x20)
+compiler failed

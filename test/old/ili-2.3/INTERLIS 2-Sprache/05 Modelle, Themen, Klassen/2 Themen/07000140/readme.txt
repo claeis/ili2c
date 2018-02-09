@@ -1,0 +1,1 @@
+This test checks if the compiler accepts a topic with an explicit object OID definition.

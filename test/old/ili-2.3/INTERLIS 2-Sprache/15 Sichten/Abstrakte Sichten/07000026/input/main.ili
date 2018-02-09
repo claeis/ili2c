@@ -1,0 +1,32 @@
+INTERLIS 2.3;
+
+MODEL Test AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC Base = 
+
+    CLASS B (ABSTRACT) =
+      Attr1(ABSTRACT): TEXT*20;
+      Attr2: TEXT*10;
+    END B;
+
+    CLASS C =
+      Attr3: TEXT*30;
+    END C;
+
+  END Base;
+
+  TOPIC Join =
+
+    DEPENDS ON Test.Base;
+
+    VIEW BC
+      JOIN OF B ~ Test.Base.B,C ~ Test.Base.C;
+	=
+      ATTRIBUTE
+        ALL OF B; !! illegal; because of abstract B->Attr1
+        ALL OF C;
+    END BC;
+
+  END Join;
+
+END Test.

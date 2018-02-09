@@ -1,0 +1,1 @@
+This test checks if the compiler detects a topic and a domain with the same name.

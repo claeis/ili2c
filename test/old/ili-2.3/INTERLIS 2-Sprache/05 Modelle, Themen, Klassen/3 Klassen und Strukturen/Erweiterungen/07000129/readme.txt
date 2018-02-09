@@ -1,0 +1,1 @@
+This test checks if the compiler accepts a extended class of a base class that is itself specialized.

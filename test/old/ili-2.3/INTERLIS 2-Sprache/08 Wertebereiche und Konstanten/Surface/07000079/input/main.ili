@@ -1,0 +1,23 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic =
+		DOMAIN
+		Point2D = COORD 
+			0.000 .. 200.000,
+			0.000 .. 200.000,
+			ROTATION 2 -> 1;
+
+		STRUCTURE LAttrs =
+			LArt: (
+				welldefined, 
+				fuzzy);
+		END LAttrs;
+
+		CLASS LandCover =
+			Geometry: MANDATORY SURFACE WITH (STRAIGHTS) 
+				VERTEX Point2D WITHOUT OVERLAPS > 0.100 
+				LINE ATTRIBUTES LAttrs;
+		END LandCover; 
+	END topic;
+END model.

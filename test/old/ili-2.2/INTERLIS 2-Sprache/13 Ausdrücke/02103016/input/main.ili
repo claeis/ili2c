@@ -1,0 +1,24 @@
+INTERLIS 2.2;
+
+
+MODEL Test =
+
+
+  TOPIC Base = 
+
+
+
+    CLASS B =
+      attr: TEXT*20;
+    END B;
+
+    STRUCTURE Struct =
+      refToB : REFERENCE TO B;
+      MANDATORY CONSTRAINT refToB->attr=="hello world";
+    END Struct;
+
+  END Base;
+
+
+
+END Test.

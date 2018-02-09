@@ -1,0 +1,1 @@
+This test checks the ordering of reference attributes in a generated FMT file

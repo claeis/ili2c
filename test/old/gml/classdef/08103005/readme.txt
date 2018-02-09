@@ -1,0 +1,1 @@
+This test checks gml output of a classdef.

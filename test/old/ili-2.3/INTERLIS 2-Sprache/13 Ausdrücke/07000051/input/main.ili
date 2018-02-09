@@ -1,0 +1,32 @@
+INTERLIS 2.3;
+
+MODEL Test AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC Test =
+
+    DOMAIN
+      LKoord = COORD 480000.000 .. 840000.000 [INTERLIS.m], 
+                   70000.000 .. 300000.000 [INTERLIS.m] ,
+                   ROTATION 2 -> 1;
+
+    CLASS BoFlaeche =
+      ATTRIBUTE
+        Geometrie: MANDATORY AREA WITH (STRAIGHTS, ARCS) VERTEX LKoord
+          WITHOUT OVERLAPS > 0.050;
+        Art: MANDATORY (Gebaeude, befestigt (Strasse_Weg));
+        Name: MANDATORY TEXT*30;
+    END BoFlaeche;
+
+    VIEW BoFlaecheBoundaryView
+      AREA INSPECTION OF BoFlaeche_Geometrie_Line ~ BoFlaeche->Geometrie;
+    =
+    ATTRIBUTE
+      ALL OF BoFlaeche_Geometrie_Line;
+      Art1 := THISAREA->Art;  !! one side of the boundary
+      Art2 := THATAREA->Art;  !! the other side
+    END BoFlaecheBoundaryView;
+    
+  END Test;
+  
+END Test.
+

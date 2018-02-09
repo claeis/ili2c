@@ -1,0 +1,1 @@
+This test checks the generation of an XML-Schema with a basic INTERLIS model

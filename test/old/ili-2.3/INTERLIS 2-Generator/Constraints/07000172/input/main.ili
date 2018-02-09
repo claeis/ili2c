@@ -1,0 +1,15 @@
+INTERLIS 2.3;
+
+MODEL ModelDef3 AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC TopicDef4 =
+
+    
+    CLASS ClassDef6 =
+      attr : TEXT*30;
+      MANDATORY CONSTRAINT NOT (DEFINED(attr));
+    END ClassDef6;
+
+  END TopicDef4;
+
+END ModelDef3.

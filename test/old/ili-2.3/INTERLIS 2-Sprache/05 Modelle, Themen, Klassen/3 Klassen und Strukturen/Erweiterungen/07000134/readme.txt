@@ -1,0 +1,1 @@
+This test checks if a class may extend a class with the same name in another topic, withot beeing in a extended topic.

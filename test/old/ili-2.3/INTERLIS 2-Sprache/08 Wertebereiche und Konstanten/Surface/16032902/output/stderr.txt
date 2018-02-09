@@ -1,0 +1,2 @@
+C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\08082501\main.ili:9:TRANSIENT mode of attribute "attr" requires to be the same as of base attribute.
+compiler failed

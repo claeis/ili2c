@@ -1,0 +1,1 @@
+This test checks if the compiler detects a class specialization of a extended base class.

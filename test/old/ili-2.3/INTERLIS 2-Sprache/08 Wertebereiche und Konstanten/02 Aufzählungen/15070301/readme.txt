@@ -1,0 +1,1 @@
+This test checks uniqueness of elements in a basic enumeration type

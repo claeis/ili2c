@@ -1,0 +1,29 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic =
+		DOMAIN
+		Point2D = COORD 
+			0.000 .. 200.000,
+			0.000 .. 200.000,
+			ROTATION 2 -> 1;
+
+		SurfaceAbstract (ABSTRACT) = SURFACE WITH (STRAIGHTS) 
+				VERTEX Point2D ;
+		Surface EXTENDS SurfaceAbstract = SURFACE WITHOUT OVERLAPS > 0.100;
+		SurfaceErr= SURFACE WITH (STRAIGHTS) VERTEX Point2D ; !! should report an error
+
+		CLASS ClassA (ABSTRACT)=
+		Surface (ABSTRACT) : SURFACE WITH (STRAIGHTS) 
+				VERTEX Point2D ;
+		END ClassA;
+		
+		CLASS ClassA1 EXTENDS ClassA =
+		Surface (EXTENDED) : SURFACE WITHOUT OVERLAPS > 0.100;
+		END ClassA1;
+		CLASS ClassA2  EXTENDS ClassA =
+		Surface (EXTENDED): SURFACE WITH (STRAIGHTS) VERTEX Point2D ; !! should report an error
+		END ClassA2;
+		
+	END topic;
+END model.

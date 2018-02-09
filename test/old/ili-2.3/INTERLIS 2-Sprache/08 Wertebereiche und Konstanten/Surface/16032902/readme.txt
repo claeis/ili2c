@@ -1,0 +1,1 @@
+This test checks if the compiler detects an SURFACE with an illegal OVERLAP extension.

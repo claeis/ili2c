@@ -1,0 +1,1 @@
+This test checks if the compiler accepts the same role name in different extended topics.

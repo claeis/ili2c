@@ -1,0 +1,13 @@
+INTERLIS 2.3;
+	MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+		TOPIC topic1 =
+			CLASS c1 =
+			END c1;
+		END topic1;
+		TOPIC topic2 =
+			VIEW c2 
+				PROJECTION OF model.topic1.c1; !! illegal; requires topic dependency
+				=
+			END c2;
+		END topic2;
+	END model.

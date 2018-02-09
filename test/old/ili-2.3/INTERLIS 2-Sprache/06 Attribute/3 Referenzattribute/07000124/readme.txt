@@ -1,0 +1,1 @@
+This test checks if the compiler detects a reference attribute inside a class.

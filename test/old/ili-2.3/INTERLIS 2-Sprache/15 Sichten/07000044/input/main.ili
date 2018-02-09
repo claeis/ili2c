@@ -1,0 +1,27 @@
+INTERLIS 2.3;
+
+MODEL Test  AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"=
+
+  TOPIC Base = 
+
+    CLASS B =
+      Attr1: TEXT*20;
+      Attr2: TEXT*10;
+    END B;
+
+  END Base;
+
+  TOPIC View =
+
+    DEPENDS ON Test.Base;
+     
+    VIEW VB 
+      PROJECTION OF B ~ Test.Base.B;
+      =
+      ATTRIBUTE
+        ALL OF B;
+    END VB;
+
+  END View;
+
+END Test.

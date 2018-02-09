@@ -1,0 +1,24 @@
+INTERLIS 2.3;
+
+MODEL Test AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC Base = 
+
+    STRUCTURE A =
+      Attr1: TEXT*20;
+    END A;
+
+    CLASS B =
+      Attr2: BAG OF A;
+    END B;
+
+    VIEW VB 
+      INSPECTION OF C~Test.Base.B->Attr2;
+	=
+      ATTRIBUTE
+      Attr1: TEXT*20 := C->Attr1;
+    END VB;
+
+  END Base;
+
+END Test.

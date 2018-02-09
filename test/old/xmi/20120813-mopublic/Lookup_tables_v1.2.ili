@@ -1,0 +1,224 @@
+INTERLIS 2.3;
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!
+!! Look-up tables for MOPublic Model
+!! Datamodel of cadastral surveying, Federal level
+!! written in INTERLIS version 2 (SN 612031).
+!! 
+!! Swiss Federal Office of Topography swisstopo
+!! Federal Directorate of Cadastral Surveying
+!! CH-3084 Wabern
+!! www.cadastre.ch and www.interlis.ch
+!!
+!! Version: 1.2 english
+!! File name: Lookup_tables_v1.2.ili
+!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+MODEL LookUp (en) AT "http://www.cadastre.ch"
+  VERSION "2010-04-01" =
+      
+      DOMAIN
+      
+        UUIDOID = OID TEXT*36;  !! selon ISO 11578
+   
+    TOPIC Lookup_tables =  	
+    	BASKET OID AS UUIDOID;
+    	OID AS UUIDOID;
+
+      CLASS Mark_type =
+        Code : MANDATORY 0 .. 8;
+        Designation_d : MANDATORY TEXT*26;
+        Designation_f : MANDATORY TEXT*26;
+        Designation_i : MANDATORY TEXT*26;
+        Designation_e : MANDATORY TEXT*26;
+      UNIQUE Code;
+      END Mark_type;
+
+      CLASS Reliability_type =
+        Code : MANDATORY 0 .. 1;
+        Designation_d : MANDATORY TEXT*4;
+        Designation_f : MANDATORY TEXT*4;
+        Designation_i : MANDATORY TEXT*4;
+        Designation_e : MANDATORY TEXT*4;
+      UNIQUE Code;
+      END Reliability_type;
+
+      CLASS QualityStandard_type =
+        Code : MANDATORY 0 .. 4;
+        Designation_d : MANDATORY TEXT*7;
+        Designation_f : MANDATORY TEXT*7;
+        Designation_i : MANDATORY TEXT*7;
+        Designation_e : MANDATORY TEXT*7;
+      UNIQUE Code;
+      END QualityStandard_type;
+      
+      CLASS Validity_type =
+        Code : MANDATORY 0 .. 1;
+        Designation_d : MANDATORY TEXT*15;
+        Designation_f : MANDATORY TEXT*15;
+        Designation_i : MANDATORY TEXT*15;
+        Designation_e : MANDATORY TEXT*15;
+      UNIQUE Code;
+      END Validity_type;
+      
+      CLASS Text_type =
+        Code : MANDATORY 0 .. 1;
+        Designation_d : MANDATORY TEXT*6;
+        Designation_f : MANDATORY TEXT*6;
+        Designation_i : MANDATORY TEXT*6;
+        Designation_e : MANDATORY TEXT*6;
+      UNIQUE Code;
+      END Text_type;
+      
+      CLASS Boolean_type =
+        Code : MANDATORY 0 .. 1;
+        Designation_d : MANDATORY TEXT*4;
+        Designation_f : MANDATORY TEXT*4;
+        Designation_i : MANDATORY TEXT*4;
+        Designation_e : MANDATORY TEXT*4;
+      UNIQUE Code;
+      END Boolean_type;
+
+      CLASS Control_point_Category =
+        Code : MANDATORY 0 .. 5;
+        Designation_d : MANDATORY TEXT*4;
+        Designation_f : MANDATORY TEXT*4;
+        Designation_i : MANDATORY TEXT*4;
+        Designation_e : MANDATORY TEXT*4;
+      UNIQUE Code;
+      END Control_point_Category;
+
+      CLASS LCS_type =
+        Code : MANDATORY 0 .. 25;
+        Designation_d : MANDATORY TEXT*30;
+        Designation_f : MANDATORY TEXT*30;
+        Designation_i : MANDATORY TEXT*30;
+        Designation_e : MANDATORY TEXT*30;
+      UNIQUE Code;
+      END LCS_type;
+
+      CLASS SO_type =
+        Code : MANDATORY 0 .. 41;
+        Designation_d : MANDATORY TEXT*35;
+        Designation_f : MANDATORY TEXT*35;
+        Designation_i : MANDATORY TEXT*35;
+        Designation_e : MANDATORY TEXT*35;
+      UNIQUE Code;
+      END SO_type;
+
+      CLASS RealEstate_type =
+        Code : MANDATORY 0 .. 4;
+        Designation_d : MANDATORY TEXT*35;
+        Designation_f : MANDATORY TEXT*35;
+        Designation_i : MANDATORY TEXT*35;
+        Designation_e : MANDATORY TEXT*35;
+      UNIQUE Code;
+      END RealEstate_type;
+
+      CLASS Completeness_type =
+        Code : MANDATORY 0 .. 1;
+        Designation_d : MANDATORY TEXT*15;
+        Designation_f : MANDATORY TEXT*15;
+        Designation_i : MANDATORY TEXT*15;
+        Designation_e : MANDATORY TEXT*15;
+      UNIQUE Code;
+      END Completeness_type;
+
+      CLASS Fluid_type =
+        Code : MANDATORY 0 .. 2;
+        Designation_d : MANDATORY TEXT*10;
+        Designation_f : MANDATORY TEXT*10;
+        Designation_i : MANDATORY TEXT*10;
+        Designation_e : MANDATORY TEXT*10;
+      UNIQUE Code;
+      END Fluid_type;
+
+      CLASS Bound_validity_type =
+        Code : MANDATORY 0 .. 3;
+        Designation_d : MANDATORY TEXT*15;
+        Designation_f : MANDATORY TEXT*15;
+        Designation_i : MANDATORY TEXT*15;
+        Designation_e : MANDATORY TEXT*15;
+      UNIQUE Code;
+      END Bound_validity_type;
+      
+      CLASS Terrain_edge_type =
+        Code : MANDATORY 0 .. 2;
+        Designation_d : MANDATORY TEXT*20;
+        Designation_f : MANDATORY TEXT*20;
+        Designation_i : MANDATORY TEXT*20;
+        Designation_e : MANDATORY TEXT*20;
+      UNIQUE Code;
+      END Terrain_edge_type;
+      
+      CLASS Cut_out_surface_type =
+        Code : MANDATORY 0 .. 1;
+        Designation_d : MANDATORY TEXT*20;
+        Designation_f : MANDATORY TEXT*20;
+        Designation_i : MANDATORY TEXT*20;
+        Designation_e : MANDATORY TEXT*20;
+      UNIQUE Code;
+      END Cut_out_surface_type;
+      
+      CLASS Local_names_type =
+        Code : MANDATORY 0 .. 2;
+        Designation_d : MANDATORY TEXT*25;
+        Designation_f : MANDATORY TEXT*25;
+        Designation_i : MANDATORY TEXT*25;
+        Designation_e : MANDATORY TEXT*25;
+      UNIQUE Code;
+      END Local_names_type;
+      
+      CLASS Territorial_bound_Line_type =
+        Code : MANDATORY 0 .. 3;
+        Designation_d : MANDATORY TEXT*15;
+        Designation_f : MANDATORY TEXT*15;
+        Designation_i : MANDATORY TEXT*15;
+        Designation_e : MANDATORY TEXT*15;
+      END Territorial_bound_Line_type;
+      
+      CLASS Other_territorial_bound_type =
+        Code : MANDATORY 0 .. 2;
+        Designation_d : MANDATORY TEXT*25;
+        Designation_f : MANDATORY TEXT*25;
+        Designation_i : MANDATORY TEXT*25;
+        Designation_e : MANDATORY TEXT*25;
+      UNIQUE Code;
+      END Other_territorial_bound_type;
+      
+      CLASS Topic_name =
+      	id_topic : MANDATORY 0 .. 9;
+        Designation_d : MANDATORY TEXT*30;
+        Designation_f : MANDATORY TEXT*30;
+        Designation_i : MANDATORY TEXT*30;
+        Designation_e : MANDATORY TEXT*30;
+       UNIQUE id_topic;
+      END Topic_name;
+      
+      CLASS Classe_name =
+      	id_classe : MANDATORY 0 .. 39;
+      	id_topic : MANDATORY 0 .. 9;
+        Designation_d : MANDATORY TEXT*35;
+        Designation_f : MANDATORY TEXT*35;
+        Designation_i : MANDATORY TEXT*35;
+        Designation_e : MANDATORY TEXT*35;
+      UNIQUE id_classe;
+      END Classe_name; 
+      
+      CLASS Attribute_name =
+      	id_attribute : MANDATORY 0 .. 204;
+      	id_topic : MANDATORY 0 .. 9;
+      	id_classe : MANDATORY 0 .. 39;
+        Designation_d : MANDATORY TEXT*30;
+        Designation_f : MANDATORY TEXT*30;
+        Designation_i : MANDATORY TEXT*30;
+        Designation_e : MANDATORY TEXT*30;
+      UNIQUE id_attribute;
+      END Attribute_name;
+
+    END Lookup_tables;
+
+  END LookUp.

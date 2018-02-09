@@ -1,0 +1,1 @@
+main.ili:9:This reference attribute requires a topic dependency between topic2 and topic1

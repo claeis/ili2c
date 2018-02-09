@@ -1,0 +1,32 @@
+
+INTERLIS 2.2;
+
+MODEL DomainsA =
+
+
+  DOMAIN
+    Colour = (red, yellow, green);
+
+END DomainsA.
+
+MODEL ModelA =
+
+  IMPORTS DomainsA;
+
+
+  CLASS ClassA (ABSTRACT) =
+    attr: DomainsA.Colour;
+  END ClassA;
+
+END ModelA.
+
+MODEL ModelB =
+
+  IMPORTS UNQUALIFIED DomainsA;
+
+
+  CLASS ClassA (ABSTRACT) =
+    attr: Colour;
+  END ClassA;
+
+END ModelB.

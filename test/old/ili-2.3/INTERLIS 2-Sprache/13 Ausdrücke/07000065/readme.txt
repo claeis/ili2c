@@ -1,0 +1,1 @@
+This test checks if the compiler detects an association path that may point to multiple objects.

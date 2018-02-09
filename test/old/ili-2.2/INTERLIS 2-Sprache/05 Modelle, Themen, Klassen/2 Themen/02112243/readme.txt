@@ -1,0 +1,1 @@
+This test checks if the compiler ensures class name uniqueness inside a topic.

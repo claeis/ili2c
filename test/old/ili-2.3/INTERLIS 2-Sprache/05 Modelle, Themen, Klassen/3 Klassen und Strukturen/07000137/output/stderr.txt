@@ -1,0 +1,1 @@
+main.ili:6:CLASS model.topic.class should end with "END class", but "END classx" was found.

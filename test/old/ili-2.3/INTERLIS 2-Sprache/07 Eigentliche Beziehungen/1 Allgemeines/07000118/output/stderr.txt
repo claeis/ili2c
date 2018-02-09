@@ -1,0 +1,3 @@
+main.ili:14:unexpected token: --
+main.ili:15:expecting ':', found '--'
+main.ili:15:expecting ':', found ';'

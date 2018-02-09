@@ -1,0 +1,27 @@
+INTERLIS 2.3;
+
+MODEL ModelDef3 AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC TopicDef4 =
+
+    CLASS ClassDef5 =
+      attr1 : BOOLEAN;
+      attr2 : 1 .. 9999;
+    END ClassDef5;
+    
+    CLASS ClassDef6 =
+      attr3 : BOOLEAN;
+      attr4 : 1 .. 9999;
+    END ClassDef6;
+
+    VIEW ViewDef1
+      JOIN OF ClassDef5, ClassDef6; =
+      ALL OF ClassDef5;
+      ALL OF ClassDef6;
+      a := ClassDef5->attr1;
+      b : BOOLEAN := ClassDef6->attr4;
+    END ViewDef1;
+    
+  END TopicDef4;
+
+END ModelDef3.

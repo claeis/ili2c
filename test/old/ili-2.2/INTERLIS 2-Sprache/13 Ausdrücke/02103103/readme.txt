@@ -1,0 +1,1 @@
+This test checks if the compiler accepts a THIS path element.

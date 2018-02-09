@@ -1,0 +1,22 @@
+INTERLIS 2.3;
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC Grundbuch =
+		CLASS Liegenschaft =
+		END Liegenschaft;
+		CLASS Person =
+		END Person;
+		ASSOCIATION Eigentum =
+			Grundsteuck -- {0..*} Liegenschaft;
+			Eigentuemer -- {1} Person;
+		END Eigentum;
+
+		CLASS Verein =
+		END Verein;
+		ASSOCIATION DauerhafteVereinigungMitglied =
+			DauerhafteVereinigung -- {0..*} Verein;
+			Mitglied -- {1..*} Person;
+		END DauerhafteVereinigungMitglied;
+
+	END Grundbuch;
+END ModelA.
+	

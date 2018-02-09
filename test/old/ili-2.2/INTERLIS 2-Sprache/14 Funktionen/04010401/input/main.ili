@@ -1,0 +1,32 @@
+INTERLIS 2.2;
+
+MODEL modelA =
+	IMPORTS UNQUALIFIED INTERLIS;
+
+	TOPIC t =
+
+	   CLASS cl0 (ABSTRACT) =
+	   END cl0;
+	   
+	   CLASS cl1 EXTENDS cl0   =
+	      !! Standard Funktion
+	      at1 : BOOLEAN := isSubClass(THIS,cl0);
+	   END cl1;
+   
+   	END t;
+END modelA.
+
+MODEL modelB =
+
+	TOPIC t =
+
+	   CLASS cl0 (ABSTRACT) =
+	   END cl0;
+	   
+	   CLASS cl1 EXTENDS cl0   =
+	      !! Standard Funktion
+	      at1 : BOOLEAN := INTERLIS.isSubClass(THIS,cl0);
+	   END cl1;
+   
+   	END t;
+END modelB.

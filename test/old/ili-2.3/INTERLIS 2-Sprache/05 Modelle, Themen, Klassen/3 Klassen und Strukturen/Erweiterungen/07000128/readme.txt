@@ -1,0 +1,1 @@
+This test checks if the compiler accepts a extended structure of a base structure that is defined in the model of the base topic.

@@ -1,0 +1,1 @@
+This test checks the conversion of INTERLIS-1 datatypes to INTERLIS-2

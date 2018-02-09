@@ -1,0 +1,1 @@
+Appendix K (Symbology) from the INTERLIS reference manual

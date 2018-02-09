@@ -1,0 +1,1 @@
+This test checks if the compiler dectets a name conflict with an inherited type from a base topic.

@@ -1,0 +1,12 @@
+INTERLIS 2.2;
+
+MODEL model =
+	IMPORTS Meta;
+	REFSYSTEM BASKET Basket ~ Meta.Refsystem;
+
+    DOMAIN
+    
+    LKoord = COORD 480000.00 .. 850000.00 [INTERLIS.m] {CHLV03[1]},
+                      60000.00 .. 320000.00 [INTERLIS.m] {CHLV03[2]};
+
+END model.

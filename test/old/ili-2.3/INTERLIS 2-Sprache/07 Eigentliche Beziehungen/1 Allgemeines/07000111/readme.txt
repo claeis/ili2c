@@ -1,0 +1,1 @@
+This test checks if the compiler detects abstract role in a concrete association.

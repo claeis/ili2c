@@ -1,0 +1,5 @@
+INTERLIS 2.3;
+
+!!@ ili2c.textMinimalCharset=windows-1252
+MODEL Charset AT "mailto:ce@local" VERSION "2009-08-19"=
+END Charset.

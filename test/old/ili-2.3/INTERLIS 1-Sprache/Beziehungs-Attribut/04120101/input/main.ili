@@ -1,0 +1,32 @@
+TRANSFER INTERLIS1;
+
+MODEL Model
+
+
+TOPIC Topic =
+
+	TABLE TableA =
+		attr : TEXT*3;
+	NO IDENT
+	END TableA;
+
+	TABLE TableB =
+		attr : TEXT*3;
+	NO IDENT
+	END TableB;
+
+	TABLE TableA2B =
+		refA : -> TableA;
+		refB : -> TableB;
+	IDENT refA,refB;
+	END TableA2B;
+END Topic.
+
+END Model.
+
+FORMAT FREE;
+
+CODE
+BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+TID = ANY;
+END.

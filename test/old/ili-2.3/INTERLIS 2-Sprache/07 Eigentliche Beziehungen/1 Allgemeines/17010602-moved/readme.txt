@@ -1,0 +1,1 @@
+This test checks if the compiler accepts a role with more than one target class.

@@ -1,0 +1,1 @@
+This test checks if the compiler detects an extended role with a wider cardinality than its base.

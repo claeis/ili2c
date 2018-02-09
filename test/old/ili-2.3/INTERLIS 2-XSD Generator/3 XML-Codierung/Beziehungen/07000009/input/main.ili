@@ -1,0 +1,27 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC topic =
+
+  DOMAIN
+  
+    CLASS AbstractNode (ABSTRACT) =
+    END AbstractNode; 
+
+    ASSOCIATION AbstractEdge (ABSTRACT) =
+	from -- {1} AbstractNode;
+	to -- {1} AbstractNode;
+    END AbstractEdge; 
+
+    CLASS Node EXTENDS AbstractNode =
+    END Node; 
+
+    ASSOCIATION Edge  EXTENDS AbstractEdge =
+	from (EXTENDED) -- {1} Node;
+	to (EXTENDED) -- {1} Node;
+    END Edge; 
+
+	END topic;
+
+END model.

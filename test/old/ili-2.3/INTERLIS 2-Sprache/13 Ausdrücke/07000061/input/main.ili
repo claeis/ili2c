@@ -1,0 +1,20 @@
+INTERLIS 2.3;
+
+
+MODEL Model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+
+  TOPIC Topic = 
+
+    CLASS A =
+      attr : TEXT*10;
+      MANDATORY CONSTRAINT THIS->attr=="Hello World";
+    END A;
+
+
+
+  END Topic;
+
+
+
+END Model.

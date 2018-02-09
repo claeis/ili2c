@@ -1,0 +1,27 @@
+INTERLIS 2.2;
+
+
+MODEL Test =
+
+
+  TOPIC Base = 
+
+
+    STRUCTURE A =
+    END A;
+
+    CLASS B =
+      a: BAG OF A;
+      attr: TEXT*20;
+    END B;
+
+    VIEW VB 
+      PROJECTION OF Test.Base.B;
+      =
+      ATTRIBUTE
+        Attr2 : TEXT*10 := PARENT->attr; !! illegal; because PARENT can only be use in an inspection
+    END VB;
+
+  END Base;
+
+END Test.

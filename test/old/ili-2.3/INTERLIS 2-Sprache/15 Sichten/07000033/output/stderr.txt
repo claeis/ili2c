@@ -1,0 +1,1 @@
+main.ili:27:VIEW Test.Join.BC can not declare several attributes bearing the same name. There is already an attribute "Attr1".

@@ -1,0 +1,1 @@
+This test checks the conversion of a ViewDef with ALL OF

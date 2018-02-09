@@ -1,0 +1,1 @@
+This test checks if the compiler accepts an association with an association as target end.

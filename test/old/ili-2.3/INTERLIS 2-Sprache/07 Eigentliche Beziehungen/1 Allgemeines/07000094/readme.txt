@@ -1,0 +1,1 @@
+This test checks if the compiler accepts a association between a class in a topic and a class at model level.

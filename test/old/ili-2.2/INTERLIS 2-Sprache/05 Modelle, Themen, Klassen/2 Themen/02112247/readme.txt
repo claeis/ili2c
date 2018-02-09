@@ -1,0 +1,1 @@
+This test checks if the compiler checks topic dependencies of reference attributes.

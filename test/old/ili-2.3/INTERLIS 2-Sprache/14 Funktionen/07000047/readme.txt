@@ -1,0 +1,1 @@
+This test checks if the compiler accepts a function definition at topic level.

@@ -1,0 +1,5 @@
+INTERLIS 2.2;
+	MODEL model =
+		DOMAIN
+			B = 0.00S1 .. 1.00S1; !! 'S' should be 'e' or 'E' in ILI 2.1
+	END model.

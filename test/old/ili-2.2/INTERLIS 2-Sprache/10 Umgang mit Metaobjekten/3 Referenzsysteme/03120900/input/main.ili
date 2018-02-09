@@ -1,0 +1,9 @@
+INTERLIS 2.2;
+
+MODEL RefSys =
+
+	TOPIC Refsystem =
+		CLASS Point EXTENDS INTERLIS.REFSYSTEM =
+		END Point; 
+	END Refsystem;
+END RefSys.

@@ -1,0 +1,1 @@
+main.ili:18:The constraint for attribute "Flaeche" is being ignored. Please try to use the constraint specification language of INTERLIS-2 to declare the constraint in a formal way.

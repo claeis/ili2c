@@ -1,0 +1,11 @@
+INTERLIS 2.2;
+
+REFSYSTEM MODEL Meta =
+
+	TOPIC Refsystem =
+		CLASS Point EXTENDS INTERLIS.SCALSYSTEM =
+			PARAMETER
+				Unit (EXTENDED) : NUMERIC [INTERLIS.m] ;
+		END Point; 
+	END Refsystem;
+END Meta.

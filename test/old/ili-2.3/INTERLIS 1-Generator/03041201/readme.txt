@@ -1,0 +1,1 @@
+This test checks the generation of INTERLIS-1 datatypes

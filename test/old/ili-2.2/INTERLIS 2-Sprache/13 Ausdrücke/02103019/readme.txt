@@ -1,0 +1,1 @@
+This test checks if the compiler accepts a basic object path with a role name element from a class.

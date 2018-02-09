@@ -1,0 +1,1 @@
+main.ili:17:ASSOCIATION model.topic.a2b is not ABSTRACT; therefore, it can not have abstract roles.

@@ -1,0 +1,2 @@
+ili2c:While generating output, errors have occured.
+ili2c:Those places, 1 in number, have been marked with <<ERROR>>.

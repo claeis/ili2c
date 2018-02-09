@@ -1,0 +1,1 @@
+main.ili:26:VIEW Test.Join.BC must be declared as ABSTRACT. One of its attributes (Attr1) is abstract.

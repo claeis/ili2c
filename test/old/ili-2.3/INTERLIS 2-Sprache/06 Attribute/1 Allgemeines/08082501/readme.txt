@@ -1,0 +1,1 @@
+This test checks if the compiler detects an extended attribute with a different TRANSIENT mode.

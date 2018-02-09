@@ -1,0 +1,21 @@
+INTERLIS 2.2;
+
+MODEL Model =
+
+	TOPIC TopicA =
+
+		CLASS a =
+		END a;
+
+		CLASS c =
+		END c;
+
+		ASSOCIATION a2c=
+			a --a; 
+			c -- ANYCLASS RESTRICTED TO c; 
+		END a2c;
+
+	END TopicA;
+
+
+END Model.

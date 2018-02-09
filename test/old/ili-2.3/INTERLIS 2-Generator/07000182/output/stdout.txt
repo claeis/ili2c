@@ -1,0 +1,46 @@
+INTERLIS 2.2;
+
+
+MODEL Beispiel =
+
+  DOMAIN
+    LKoord = COORD 480000.00 .. 850000.00, 60000.00 .. 320000.00,
+      ROTATION 2 -> 1;
+
+
+  TOPIC Bodenbedeckung =
+
+    CLASS BoFlaechen =
+      ATTRIBUTE
+        Art: MANDATORY (
+          Gebaeude,
+          befestigt,
+          humusiert,
+          Gewaesser,
+          bestockt,
+          vegetationslos);
+        Form: MANDATORY AREA WITH (STRAIGHTS, ARCS) VERTEX LKoord
+          WITHOUT OVERLAPS > 0.10;
+    END BoFlaechen;
+
+    CLASS Gebaeude =
+      ATTRIBUTE
+        AssNr: MANDATORY TEXT*6;
+        HAli: MANDATORY HALIGNMENT;
+
+      UNIQUE AssNr;
+    END Gebaeude;
+
+    ASSOCIATION GebaeudeFlaeche =
+        Gebaeude -- {*} Gebaeude;
+        Flaeche -- {1} BoFlaechen;
+    END GebaeudeFlaeche;
+
+    CONSTRAINTS OF Gebaeude=
+      UNIQUE Flaeche;
+    END;
+
+  END Bodenbedeckung;
+
+END Beispiel.
+

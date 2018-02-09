@@ -1,0 +1,1 @@
+This test checks if the compiler detects a attribute name in an extended class, that is in conflict with the name of a target role in the base class.

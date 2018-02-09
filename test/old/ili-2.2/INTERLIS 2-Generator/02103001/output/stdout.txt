@@ -1,0 +1,15 @@
+INTERLIS 2.2;
+
+
+MODEL model =
+
+
+
+  TOPIC topic =
+    DOMAIN
+      Datum = INTERLIS.INTERLIS_1_DATE;
+
+  END topic;
+
+END model.
+

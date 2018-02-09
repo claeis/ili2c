@@ -1,0 +1,8 @@
+INTERLIS 2.3;
+
+CONTRACTED MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	FUNCTION func(Objects: OBJECTS OF ANYCLASS;
+		attrPath: ATTRIBUTE OF @ Objects
+		): BOOLEAN;
+
+END model.

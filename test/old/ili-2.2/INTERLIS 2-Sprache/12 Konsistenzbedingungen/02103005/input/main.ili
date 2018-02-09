@@ -1,0 +1,19 @@
+INTERLIS 2.2;
+
+MODEL model =
+	TOPIC topic =
+
+
+		CLASS Other =
+			otherAttr : TEXT*10;
+		END Other;
+
+		CLASS aclass =
+			attr : TEXT*10;
+			EXISTENCE CONSTRAINT attr REQUIRED IN Other:otherAttr;
+		END aclass;
+		
+
+	END topic;
+
+END model.

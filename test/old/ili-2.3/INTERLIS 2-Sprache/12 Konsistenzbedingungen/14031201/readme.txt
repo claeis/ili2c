@@ -1,0 +1,1 @@
+This test checks a existence constraint that requires a DEPENDS ON.

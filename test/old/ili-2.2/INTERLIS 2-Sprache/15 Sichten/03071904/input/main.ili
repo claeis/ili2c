@@ -1,0 +1,26 @@
+INTERLIS 2.2;
+
+MODEL Test =
+
+  TOPIC Base = 
+
+    CLASS B =
+      a: TEXT*20;
+    END B;
+
+  END Base;
+
+  TOPIC View =
+
+    DEPENDS ON Test.Base;
+     
+    VIEW VB 
+      PROJECTION OF a ~ Test.Base.B;
+      =
+      ATTRIBUTE
+        ALL OF a; !! Attribute a of class Base conflicts with view particle a
+    END VB;
+
+  END View;
+
+END Test.

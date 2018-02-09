@@ -1,0 +1,1 @@
+This test checks if the compiler accepts an abstract base in an abstract join definition.

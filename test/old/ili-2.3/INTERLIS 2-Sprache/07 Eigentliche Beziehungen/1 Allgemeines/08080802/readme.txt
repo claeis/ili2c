@@ -1,0 +1,1 @@
+This test checks if the compiler detects if base of an association is not an association

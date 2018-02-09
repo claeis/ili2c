@@ -1,0 +1,1 @@
+main.ili:23:Role a may point to multiple objects.

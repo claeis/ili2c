@@ -1,0 +1,1 @@
+This test checks if the compiler detects a Dec number with a trailing '.'.

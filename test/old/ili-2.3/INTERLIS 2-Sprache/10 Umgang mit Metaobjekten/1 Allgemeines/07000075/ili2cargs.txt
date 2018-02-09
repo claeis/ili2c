@@ -1,0 +1,1 @@
+--quiet --check-metaobj meta.ili -m meta.xml -boid model.Basket=ch.ehi.1 main.ili

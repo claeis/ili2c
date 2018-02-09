@@ -1,0 +1,67 @@
+TRANSFER TransferName;
+
+MODEL Model
+  TOPIC Topic =
+    TABLE Table =
+      koord2: COORD2
+        1.00 100.0
+        9.99 999.9;
+      koord3: COORD3
+        1.00 100.0 1000
+        9.99 999.9 9999;
+      dim1: DIM1 1.0 9.9;  !! METER [m]
+      dim2: DIM2 1.0 9.9;  !! SquareMeters [m2]
+      radians: RADIANS 0.0 6.2;
+      grads: [0.0 .. 399.9];  !! [Grads]
+      degrees: [0.0 .. 359.9];  !! Degrees [dgr]
+      bereich: [0.0 .. 9.9];
+      text: TEXT*10;
+      datum: DATE;
+      aufzaehlung: (
+        null,
+        eins,
+        zwei,
+        drei,
+        mehr (
+          vier,
+          fuenf,
+          sechs,
+          sieben,
+          acht,
+          neun,
+          zehn));
+      horizAlignment: HALIGNMENT;
+      vertAlignment: VALIGNMENT;
+      linientyp: POLYLINE WITH (STRAIGHTS)
+        VERTEX COORD2
+          1.00 100.0
+          9.99 999.9;
+      surface: SURFACE WITH (STRAIGHTS, ARCS)
+        VERTEX COORD2
+          1.00 100.0
+          9.99 999.9;
+      area: AREA WITH (STRAIGHTS, ARCS)
+        VERTEX COORD2
+          1.00 100.0
+          9.99 999.9
+        WITHOUT OVERLAPS > 0.0
+        LINEATTR =
+          attr: TEXT*20;
+        END;
+    NO IDENT
+    END Table;
+
+    TABLE OtherTable =
+      main : ->Table;
+    NO IDENT
+    END OtherTable;
+  END Topic.
+END Model.
+
+FORMAT
+  FREE;
+
+CODE
+  BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+  TID = ANY;
+END.

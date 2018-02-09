@@ -1,0 +1,1 @@
+This test checks if the compiler detects a recursive reference attribute.

@@ -1,0 +1,2 @@
+C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\09082401\main.ili:20:Referenced element "model.topic.LAttrs" should be a STRUCTURE.
+compiler failed

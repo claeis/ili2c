@@ -1,0 +1,176 @@
+INTERLIS 2.3;
+	MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	DOMAIN
+		LKoord = COORD 480000.00 .. 850000.00 [INTERLIS.m], !! {CHLV03[1]},
+			60000.00 .. 320000.00 [INTERLIS.m], !! {CHLV03[2]},
+			ROTATION 2 -> 1;
+		Horizontbezeichung = TEXT*20;
+
+		TestText = TEXT;
+		TestTextLen = TEXT*10;
+		TestMText = MTEXT;
+		TestMTextLen = MTEXT*10;
+		TestURI = URI;
+		TestName = NAME;
+
+	    TestInt = 1 .. 10;
+	    TestDec = 1.0 .. 10.0;
+	    TestDecPlus = 1.00 .. 10.04;
+	    TestDecPlusPlus = 0.000001 .. 1.040000;
+	    TestDouble = 0.123e1 .. 0.234e1;
+		
+	    FarbeFinal (FINAL) = (rot, gelb, gruen);
+	    Farbe = (rot, gelb, gruen);
+	    FarbePlus EXTENDS Farbe = (rot (dunkelrot, orange, karmin),
+                           gruen (hellgruen, dunkelgruen: FINAL),
+                           blau);
+            !!FarbePlus2 EXTENDS Farbe = (gelb:FINAL);
+            !!FarbePlus3 EXTENDS Farbe = (gelb(FINAL));
+            
+            FarbeAll = ALL OF FarbePlus;
+            FarbeAllFinal (FINAL) = ALL OF FarbePlus;
+	    
+	    TOPIC DomainTests =
+		  CLASS Fahrzeug =
+		    CarrosserieFarbe : Farbe;
+		    Preis : TestDec;
+		    NewScale: 0.000001 .. 1000000.000000;
+		  END Fahrzeug;
+		
+		  CLASS Auto EXTENDS Fahrzeug =
+		    CarrosserieFarbe (EXTENDED) : FarbePlus;
+		    Preis (EXTENDED) : TestDecPlus;
+		  END Auto;
+	    END DomainTests;
+	    
+
+	    STRUCTURE GregorianDate =
+	      Year: 1582 .. 2999;
+	      SUBDIVISION Month: 1 .. 12;
+	      SUBDIVISION Day: 1 .. 31;
+	    END GregorianDate;	
+
+	DOMAIN  
+	    BuchungsDatum = FORMAT INTERLIS.XMLDate 
+			    "2002-01-01" .. 
+			    "2007-12-31";
+	    StartZeit = FORMAT INTERLIS.XMLTime 
+			    "00:00:00.000" ..
+			    "23:59:59.999";
+	    MessZeitpunkt = FORMAT INTERLIS.XMLDateTime 
+			    "2002-01-01T00:00:00.000" ..
+			    "2007-12-31T23:59:59.999";
+	    EigenesDatum = FORMAT BASED ON GregorianDate 
+			     ( Year "Y" Month "M" Day "D");
+
+			     
+		BlackboxXml = BLACKBOX XML;
+		BlackboxBinary = BLACKBOX BINARY;
+
+		InterlisClassRef = CLASS;
+		InterlisAttributeRef = ATTRIBUTE;
+
+		Strassenachse = POLYLINE WITH (ARCS,STRAIGHTS) VERTEX  
+			LKoord WITHOUT OVERLAPS>0.10;
+
+
+		GebaeudeFlaeche = SURFACE WITH (ARCS,STRAIGHTS) VERTEX  
+		     LKoord WITHOUT OVERLAPS>0.10;
+		STRUCTURE GrenzlinieEigenschaften =
+			streitig : BOOLEAN;
+		END GrenzlinieEigenschaften;
+
+		TOPIC SurfaceDef =
+		CLASS Sonderzone =
+			Grenze : MANDATORY SURFACE WITH (ARCS,STRAIGHTS) VERTEX  
+		     LKoord WITHOUT OVERLAPS>0.10;
+		END Sonderzone;
+		CLASS Gebaeude =
+			Grenze : MANDATORY GebaeudeFlaeche;
+		END Gebaeude;
+		END SurfaceDef;
+		
+		TOPIC AreaDef =
+		CLASS Grundstueck =
+			Grenze : MANDATORY AREA WITH (ARCS,STRAIGHTS) 
+				VERTEX LKoord 
+				WITHOUT OVERLAPS>0.10
+				LINE ATTRIBUTES GrenzlinieEigenschaften;
+		END Grundstueck;
+		END AreaDef;
+
+		DOMAIN
+		BFS_EGID = OID 1 .. 999999999;
+		UUID = OID TEXT*36;
+	TOPIC Grundbuch =
+		CLASS Grundstueck =
+		END Grundstueck;
+	END Grundbuch;
+	
+	TOPIC AssocTest =
+		CLASS Class1 =
+		END Class1;
+		CLASS Class2 =
+		END Class2;
+		CLASS Class3 =
+		END Class3;
+		ASSOCIATION AssocA =
+			class1 -- {1} Class1;
+			class2 -- {1} Class2;
+			class3 -- {1} Class3;
+		END AssocA;
+		CLASS Class4 =
+		END Class4;
+		CLASS Class5 =
+		END Class5;
+		ASSOCIATION AssocB =
+			class4 (ORDERED) -- {0..*} Class4;
+			class5 -- {1} Class5;
+		END AssocB;
+		ASSOCIATION AssocBplus EXTENDS AssocB =
+			attr : TEXT*20;
+		END AssocBplus;
+		CLASS Class6 =
+		END Class6;
+		CLASS Class7 =
+		END Class7;
+		ASSOCIATION AssocC =
+			class6 (ORDERED) -- {0..*} Class6;
+			class7 (ORDERED) -- {0..*} Class7;
+		END AssocC;
+		ASSOCIATION AssocCplus EXTENDS AssocC =
+			attr : TEXT*20;
+		END AssocCplus;
+		
+	END AssocTest;
+	
+	END ModelA.
+	
+MODEL ModelB AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	IMPORTS ModelA;
+		
+	TOPIC Grundbuch EXTENDS ModelA.Grundbuch =
+		CLASS Liegenschaft EXTENDS Grundstueck=
+		END Liegenschaft;
+		CLASS Person =
+		END Person;
+		ASSOCIATION Eigentum =
+			Grundsteuck -- {0..*} Liegenschaft;
+			Eigentuemer -- {1} Person;
+		END Eigentum;
+
+		CLASS Verein =
+		END Verein;
+		ASSOCIATION DauerhafteVereinigungMitglied =
+			DauerhafteVereinigung -- {0..*} Verein;
+			Mitglied -- {1..*} Person;
+		END DauerhafteVereinigungMitglied;
+
+	END Grundbuch;
+
+	
+	
+
+	
+END ModelB.
+

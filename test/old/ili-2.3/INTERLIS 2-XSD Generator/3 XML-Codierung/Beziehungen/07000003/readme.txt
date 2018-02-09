@@ -1,0 +1,1 @@
+This test checks the generation of an XML-Schema for an 1:n association that is not embedded in a class of another topic 

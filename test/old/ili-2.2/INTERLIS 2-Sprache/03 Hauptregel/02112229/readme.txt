@@ -1,0 +1,1 @@
+This test checks if the compiler ensures model name uniqueness.

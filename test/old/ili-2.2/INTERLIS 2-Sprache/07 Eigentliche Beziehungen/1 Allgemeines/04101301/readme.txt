@@ -1,0 +1,1 @@
+This test checks if the compiler checks that a role doesn't conflict with a attribute of an extended class.

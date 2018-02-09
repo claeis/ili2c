@@ -1,0 +1,24 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC topic =
+
+		CLASS A =
+		END A;
+
+		CLASS B =
+		END B;
+
+		ASSOCIATION a2b =
+			a --A;
+			b --B; 
+		END a2b;
+
+		CLASS APlus EXTENDS A=
+			b : TEXT*10; !! illegal; because class A has already a target with rolename b
+		END APlus;
+
+	END topic;
+
+END model.

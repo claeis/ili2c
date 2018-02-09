@@ -1,0 +1,1 @@
+main.ili:33:A cross topic reference requires property EXTERNAL.

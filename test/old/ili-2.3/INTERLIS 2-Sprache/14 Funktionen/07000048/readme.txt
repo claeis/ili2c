@@ -1,0 +1,1 @@
+This test checks if the compiler accepts a use of function INTERLIS.isSubClass().

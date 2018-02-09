@@ -1,0 +1,30 @@
+SCNT
+Beschreibung der Transferdatei
+////
+MTID model.ili
+MODL Model
+!!!!
+TOPI Topic
+!!!!
+TABL OtherTable
+OBJE 1 2222222222
+!!!!
+!!!! 1: Objektidentifikation
+!!!! 2: text
+!!!!
+ETAB
+!!!!
+TABL Table
+OBJE 1 2222222222 3 4444444444 5 6666666666
+!!!!
+!!!! 1: Objektidentifikation
+!!!! 2: attr2
+!!!! 3: attr3 ->OtherTable
+!!!! 4: attr4
+!!!! 5: attr5 ->OtherTable
+!!!! 6: attr6
+!!!!
+ETAB
+ETOP
+EMOD
+ENDE

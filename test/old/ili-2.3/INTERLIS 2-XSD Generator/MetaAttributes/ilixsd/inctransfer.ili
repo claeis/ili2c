@@ -1,0 +1,15 @@
+INTERLIS 2.3;
+
+!!@ ili2c.ili23xml.supportIncrementalTransfer=true
+MODEL ModelA AT "mailto:ce@local" VERSION "2009-08-19"=
+TOPIC TopicWithIncr =
+	CLASS ClassA =
+	END ClassA;
+END TopicWithIncr;
+!!@ ili2c.ili23xml.supportIncrementalTransfer=false
+TOPIC TopicNoIncr =
+	CLASS ClassB =
+	END ClassB;
+END TopicNoIncr;
+
+END ModelA.

@@ -1,0 +1,13 @@
+INTERLIS 2.3;
+
+MODEL Test (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"  =
+
+  STRUCTURE MultiLine =
+    Name : MANDATORY MTEXT;
+  END MultiLine;
+
+  STRUCTURE SingleLine EXTENDS MultiLine =
+    Name (EXTENDED) : MANDATORY TEXT; !! illegal; not allowd to change kind of text
+  END SingleLine;
+
+END Test.

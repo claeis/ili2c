@@ -1,0 +1,1 @@
+This test checks if the compiler detects a attribute name that conflicts with a base view name.

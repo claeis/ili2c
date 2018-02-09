@@ -1,0 +1,28 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC topic =
+		DOMAIN
+		Farbe = (rot,gelb,gruen);
+		
+		FarbePlus EXTENDS Farbe = (rot (hellrot, orange, karmin), gelb(hellgelb, orange));
+		
+		FarbePlusPlus EXTENDS FarbePlus = (
+			rot.orange (dunkel,hell), 
+			rot.karmin (dunkel,hell), !! ok, not a duplicate element definition 
+			gelb.orange (dunkel,hell));
+		/*
+		      <xsd:enumeration value="rot.hellrot"/>
+		      <xsd:enumeration value="rot.orange.dunkel"/>
+		      <xsd:enumeration value="rot.orange.hell"/>
+		      <xsd:enumeration value="rot.karmin.dunkel"/>
+		      <xsd:enumeration value="rot.karmin.hell"/>
+		      <xsd:enumeration value="gelb.hellgelb"/>
+		      <xsd:enumeration value="gelb.orange.dunkel"/>
+		      <xsd:enumeration value="gelb.orange.hell"/>
+		      <xsd:enumeration value="gruen"/>
+		*/	
+
+	END topic;
+END model.

@@ -1,0 +1,30 @@
+INTERLIS 2.2;
+
+
+MODEL Test =
+
+
+  TOPIC Base = 
+
+    CLASS A =
+    END A;
+
+
+    CLASS B =
+    END B;
+
+    ASSOCIATION  =
+      a -- {1..*} A;
+      b -- B;
+      attr : TEXT*10;
+    END;
+
+    CONSTRAINTS OF B =
+      MANDATORY CONSTRAINT \a->attr=="Hello World";  !! illegal, because multiple objects reachable
+    END;
+
+  END Base;
+
+
+
+END Test.

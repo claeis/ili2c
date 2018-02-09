@@ -1,0 +1,34 @@
+INTERLIS 2.3;
+
+MODEL Model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC Topic1 =
+    DOMAIN
+    Farbe = (rot,
+           gelb,
+           gruen);
+    FarbePlus EXTENDS Farbe = (rot (dunkel, karmin, orange)
+                             ,gruen (hell, dunkel: FINAL)
+                             ,blau);
+    FarbePlusPlus EXTENDS FarbePlus = (rot (FINAL)
+                             ,gruen (mittel) !! illegal
+                             ,blau (hell, dunkel));
+
+  END Topic1;
+
+  TOPIC Topic2 =
+    DOMAIN
+    Farbe = (rot,
+           gelb,
+           gruen);
+    FarbePlus EXTENDS Farbe = (rot (dunkel, karmin, orange),
+                             gruen (hell, dunkel: FINAL),
+                             blau);
+    FarbePlusPlus EXTENDS FarbePlus = (rot (FINAL),
+                                     blau (hell, dunkel));
+
+    FarbePlusPlusPlus EXTENDS FarbePlusPlus = (rot (hell) !! illegal
+                                     );
+  END Topic2;
+
+END Model.

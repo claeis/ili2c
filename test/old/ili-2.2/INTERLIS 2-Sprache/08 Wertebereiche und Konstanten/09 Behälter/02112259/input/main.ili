@@ -1,0 +1,10 @@
+INTERLIS 2.2;
+
+MODEL Test  =
+TOPIC topic =
+  CLASS aclass  =
+    attr : BASKET (DATA,VIEW);
+  END aclass;
+END topic;
+
+END Test.

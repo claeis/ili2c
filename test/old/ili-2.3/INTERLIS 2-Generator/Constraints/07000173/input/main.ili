@@ -1,0 +1,19 @@
+INTERLIS 2.3;
+
+MODEL ModelDef3 AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC TopicDef4 =
+
+    CLASS OtherEle =
+      attr1 : TEXT*30;
+      attr2 : BOOLEAN;
+    END OtherEle;
+    
+    CLASS ClassDef6 =
+      attr : TEXT*30;
+      EXISTENCE CONSTRAINT attr REQUIRED IN OtherEle:attr1;
+    END ClassDef6;
+
+  END TopicDef4;
+
+END ModelDef3.

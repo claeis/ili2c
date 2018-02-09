@@ -1,0 +1,14 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+  DOMAIN
+    Farbe = (rot,blau,gruen);
+	TOPIC topic =
+		CLASS ClassA  =
+			attr  : Farbe;
+		END ClassA;
+		CLASS ClassB EXTENDS ClassA =
+			attr (EXTENDED) : Farbe;
+		END ClassB;
+	END topic;
+END model.

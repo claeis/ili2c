@@ -1,0 +1,1 @@
+main.ili:10:TEXT can not extend TEXT*20. The maximal length must not exceed the inherited length.

@@ -1,0 +1,1 @@
+main.ili:8:An association requires at least two role definitions.

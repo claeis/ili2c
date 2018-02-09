@@ -1,0 +1,1 @@
+This test checks if the compiler detects a PARENT path element in a non inspection view.

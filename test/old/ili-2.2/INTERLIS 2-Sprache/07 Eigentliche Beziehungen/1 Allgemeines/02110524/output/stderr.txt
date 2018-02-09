@@ -1,0 +1,1 @@
+main.ili:21:There can not be a role "other", because there is already an attribute or role with the same name in role a's target (ClassA).

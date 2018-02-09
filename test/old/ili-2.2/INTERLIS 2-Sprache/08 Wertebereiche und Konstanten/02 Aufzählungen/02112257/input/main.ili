@@ -1,0 +1,16 @@
+INTERLIS 2.2;
+
+MODEL model =
+
+	TOPIC topic =
+		DOMAIN
+			Farbe = (
+				rot
+				,blau
+				);
+			FarbePlus EXTENDS Farbe = (
+				rot  !! illgeal; element names must be unique
+				);
+
+	END topic;
+END model.

@@ -1,0 +1,12 @@
+INTERLIS 2.2;
+	MODEL model =
+		TOPIC topic1 =
+			CLASS c1 =
+			END c1;
+		END topic1;
+		TOPIC topic2 =
+			GRAPHIC c2 
+				BASED ON model.topic1.c1 = !! illegal; requires topic dependency
+			END c2;
+		END topic2;
+	END model.
