@@ -1,1 +1,0 @@
-This test checks the main syntax rule of INTERLIS 2.1.

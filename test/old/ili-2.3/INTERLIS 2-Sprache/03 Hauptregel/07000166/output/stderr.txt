@@ -1,2 +1,0 @@
-main.ili:1:Only INTERLIS version 1 and 2.2 can be read by this version of the compiler.
-main.ili:The compiler feels that it would not make much sense to continue its analysis. You might want to have a look at the mentioned errors first.
