@@ -1,1 +1,0 @@
-This test checks if the compiler accepts a Dec number with ILI2.3 scaling (e).
