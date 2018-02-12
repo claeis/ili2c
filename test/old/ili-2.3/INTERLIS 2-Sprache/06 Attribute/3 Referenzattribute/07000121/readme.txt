@@ -1,1 +1,0 @@
-This test checks if the compiler detects a reference attribute to a structure.

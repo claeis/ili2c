@@ -1,1 +1,0 @@
-main.ili:8:A reference attribute (attr) is only allowed to reference a class.

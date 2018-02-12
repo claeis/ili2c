@@ -1,1 +1,0 @@
-This test checks if the compiler accepts an extended attribute with the same enumeration domain.

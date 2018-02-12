@@ -1,1 +1,0 @@
-This test checks if the compiler accepts an AttriutePathType with a ClassType restriction

@@ -1,1 +1,0 @@
-This test checks if the compiler detects an AttriutePathType with a non-ClassType AttributePath restriction

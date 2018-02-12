@@ -1,2 +1,0 @@
-C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\08080801\main.ili:6:TRANSIENT attribute "attr" requires an assignment of a factor.
-compiler failed
