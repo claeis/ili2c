@@ -1,1 +1,0 @@
-This test checks if the compiler accepts a runtime parameter and a domain with the same name.

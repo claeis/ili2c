@@ -1,1 +1,0 @@
---quiet --ilidirs %ILI_DIR;%JAR_DIR main.ili

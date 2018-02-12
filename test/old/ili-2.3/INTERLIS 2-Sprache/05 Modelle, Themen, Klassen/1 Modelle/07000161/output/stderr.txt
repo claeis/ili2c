@@ -1,1 +1,0 @@
-main.ili:8:MODEL model should import MODEL Meta for the reference to be valid.

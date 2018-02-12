@@ -1,1 +1,0 @@
-This test checks if the compiler detects an non-matching name at the end of the model.

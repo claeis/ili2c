@@ -1,1 +1,0 @@
-main.ili:There can not be a RuntimeParameterDef "param" in MODEL model because there is already a model element with the same name. Use a different name.

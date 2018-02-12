@@ -1,1 +1,0 @@
-main.ili:15:There is no class or structure "METAOBJECT" in MODEL ModelC.
