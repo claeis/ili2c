@@ -1,1 +1,0 @@
-main.ili:12:There can not be a DOMAIN "domain" in TOPIC model.topic because there is already a model element with the same name. Use a different name.
