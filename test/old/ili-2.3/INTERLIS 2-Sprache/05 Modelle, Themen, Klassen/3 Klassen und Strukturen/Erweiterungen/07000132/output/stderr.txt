@@ -1,1 +1,0 @@
-main.ili:21:CLASS Model.Topic.Base can not extend CLASS Model.BaseTopic.Base without changing its name.  TOPIC Model.Topic extends TOPIC Model.BaseTopic.
