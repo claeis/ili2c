@@ -1,2 +1,0 @@
-C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\08080802\main.ili:16:Reference to ASSOCIATION required. model.topic.c is not an ASSOCIATION.
-compiler failed

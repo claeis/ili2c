@@ -1,1 +1,0 @@
-This test checks if the compiler detects an additional role in a extendeted association definition.

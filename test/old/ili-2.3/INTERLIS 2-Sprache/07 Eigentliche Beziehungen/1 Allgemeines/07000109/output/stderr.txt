@@ -1,3 +1,0 @@
-C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\07000109\main.ili:15:There can not be an RoleDef "a" in ASSOCIATION model.topic.a because there is already one with the same name. Use a different name.
-C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\07000109\main.ili:13:An association requires at least two role definitions.
-compiler failed

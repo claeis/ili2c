@@ -1,1 +1,0 @@
-This test checks if the compiler accepts the property EXTENDED in a AssociationDef.

@@ -1,1 +1,0 @@
-main.ili:22:A role with cardinality {1..20} can not extend one whose cardinality is {1..10}. The cardinality must be more restrictive.

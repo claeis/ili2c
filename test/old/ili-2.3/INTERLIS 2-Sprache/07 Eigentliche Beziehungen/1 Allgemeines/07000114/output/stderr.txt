@@ -1,1 +1,0 @@
-main.ili:22:A role with a weaker aggregation kind can not extend a stronger one.

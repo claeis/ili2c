@@ -1,1 +1,0 @@
-main.ili:14:The maximum cardinality of role a should not exceed 1, because its a composition.
