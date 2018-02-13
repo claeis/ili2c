@@ -1,1 +1,0 @@
-This test checks if the compiler accepts a restricted unlimited length TEXT attribute.

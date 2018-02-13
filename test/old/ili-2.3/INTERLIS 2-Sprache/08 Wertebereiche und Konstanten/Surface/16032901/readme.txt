@@ -1,1 +1,0 @@
-This test checks if the compiler detects a class as a line attribute

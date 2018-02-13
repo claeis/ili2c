@@ -1,1 +1,0 @@
-This test checks if the compiler detects a multiline TEXT attribute that is extended to kind of single line.

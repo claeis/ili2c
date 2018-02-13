@@ -1,2 +1,0 @@
-main.ili:8:Both minimum and maximum value must have the same precision.
-main.ili:7:DOMAIN LKoord must be declared ABSTRACT. It specifies an abstract type.

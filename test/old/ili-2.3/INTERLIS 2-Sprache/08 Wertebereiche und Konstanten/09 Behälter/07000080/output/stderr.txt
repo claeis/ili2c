@@ -1,1 +1,0 @@
-main.ili:6:Invlaid kind for domain BASKET. Only DATA, VIEW, BASE, GRAPHIC or undefined.
