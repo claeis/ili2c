@@ -1,1 +1,0 @@
-This test checks that a ConstraintsDef references a viewable in the same topic.

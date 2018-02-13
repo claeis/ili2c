@@ -1,1 +1,0 @@
-This test checks the detcection of struct attr in a uniqueness constraint.

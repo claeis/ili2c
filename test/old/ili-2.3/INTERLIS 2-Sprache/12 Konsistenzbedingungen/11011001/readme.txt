@@ -1,1 +1,0 @@
-This test checks a local unique constraint defined in a structure.
