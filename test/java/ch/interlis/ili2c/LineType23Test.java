@@ -42,6 +42,7 @@ public class LineType23Test {
 		PrecisionDecimal maxOverlaps=type.getMaxOverlap();
 		assertEquals(new PrecisionDecimal("0.001"),maxOverlaps);
 	}
+	
     @Test
     public void overlapTooSmallFail() throws Exception {
         Settings settings=new Settings();

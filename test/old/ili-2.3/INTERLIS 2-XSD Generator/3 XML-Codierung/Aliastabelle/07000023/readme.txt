@@ -1,1 +1,0 @@
-This test checks the generation of an alias table.

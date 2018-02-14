@@ -1,1 +1,0 @@
-This test checks the generation of an XML-Schema for TEXT and MTEXT attributes

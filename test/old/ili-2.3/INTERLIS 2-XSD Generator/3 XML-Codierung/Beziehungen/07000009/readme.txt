@@ -1,1 +1,0 @@
-This test checks the generation of an XML-Schema with a EXTENDED roles.
