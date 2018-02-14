@@ -1,1 +1,0 @@
-This test checks if the compiler accepts an association path threw a composition role without a cardinality.

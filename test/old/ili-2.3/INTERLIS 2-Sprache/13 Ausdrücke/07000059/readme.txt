@@ -1,1 +1,0 @@
-This test checks if the compiler accepts a base name path element to a unrenamed viewable.

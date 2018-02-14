@@ -1,1 +1,0 @@
-This test checks if the compiler detects a role name element from a class that may point to multiple objects.
