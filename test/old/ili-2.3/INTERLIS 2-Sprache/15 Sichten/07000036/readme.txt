@@ -1,1 +1,0 @@
-This test checks if the compiler detects an illegal base extention in a view definition.

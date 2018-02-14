@@ -1,1 +1,0 @@
-This test checks if the compiler accepts a basename of an renamed inspection definition.

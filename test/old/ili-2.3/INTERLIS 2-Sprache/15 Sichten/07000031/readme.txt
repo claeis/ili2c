@@ -1,1 +1,0 @@
-This test checks if the compiler accepts a simple base extention in a view definition.

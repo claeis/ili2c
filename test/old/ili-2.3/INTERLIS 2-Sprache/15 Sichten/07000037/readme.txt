@@ -1,1 +1,0 @@
-This test checks if the compiler accepts a join definition without the use of base-names.
