@@ -1,1 +1,0 @@
-Appendix C (Roads example) from the INTERLIS reference manual

@@ -1,3 +1,0 @@
-Info: C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\07000165\main.ili 2.3
-C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\07000165\main.ili:6:The name of the model conflicts with MODEL model. Model names must be unique; please use a different name.
-compiler failed

@@ -1,1 +1,0 @@
-This test checks the generation of an INTERLIS-1 FMT for all INTERLIS-1 datatypes

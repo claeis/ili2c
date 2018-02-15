@@ -1,1 +1,0 @@
-This test checks gml output of domaindefs.

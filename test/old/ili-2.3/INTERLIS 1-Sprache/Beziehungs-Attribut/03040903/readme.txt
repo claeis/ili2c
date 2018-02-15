@@ -1,1 +1,0 @@
-This test checks if the compiler generates non-conflicting role names for reference attributes.

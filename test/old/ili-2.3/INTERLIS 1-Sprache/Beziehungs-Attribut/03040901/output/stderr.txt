@@ -1,1 +1,0 @@
-main.ili:9:Attribute ref cant reference the containing table Table.
