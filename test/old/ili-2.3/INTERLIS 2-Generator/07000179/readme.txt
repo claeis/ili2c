@@ -1,1 +1,0 @@
-This test checks if the Ili-2 STRUCTURE for the Ili-1 line attributes is issued before the referencing class.

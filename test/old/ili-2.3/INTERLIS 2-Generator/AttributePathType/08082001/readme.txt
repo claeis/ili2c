@@ -1,1 +1,0 @@
-This test checks the ili2 generation of an AttriutePathType

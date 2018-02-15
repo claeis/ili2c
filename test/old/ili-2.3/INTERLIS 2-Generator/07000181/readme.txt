@@ -1,1 +1,0 @@
-This test checks the generation of the predefined base INTERLIS schema in INTERLIS 2
