@@ -1,1 +1,0 @@
-Appendix J (CoordSys) from the INTERLIS reference manual

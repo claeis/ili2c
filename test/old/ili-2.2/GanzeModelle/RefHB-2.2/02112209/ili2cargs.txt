@@ -1,1 +1,0 @@
---quiet AbstractSymbology.ili StandardSymbology.ili

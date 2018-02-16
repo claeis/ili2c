@@ -1,1 +1,0 @@
-Appendix G (Units) from the INTERLIS reference manual
