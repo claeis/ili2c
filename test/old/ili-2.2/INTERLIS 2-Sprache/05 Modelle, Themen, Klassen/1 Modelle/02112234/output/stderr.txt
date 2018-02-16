@@ -1,1 +1,0 @@
-main.ili:7:There can not be a TopicDef "topic" in MODEL model because there is already a model element with the same name. Use a different name.

@@ -1,1 +1,0 @@
-This test checks if the compiler ensures topic name uniqueness inside a model.

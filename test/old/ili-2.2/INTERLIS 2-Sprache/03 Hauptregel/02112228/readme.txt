@@ -1,1 +1,0 @@
-This test check if the compiler detects an illegal INTERLIS version.

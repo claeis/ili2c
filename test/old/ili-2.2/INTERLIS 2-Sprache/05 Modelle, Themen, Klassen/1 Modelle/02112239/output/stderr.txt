@@ -1,3 +1,0 @@
-Info: C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\02112239\main.ili 2.2
-C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\02112239\main.ili:6:There can not be a RuntimeParameterDef "param" in MODEL model because there is already a model element with the same name. Use a different name.
-compiler failed

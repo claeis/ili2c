@@ -1,2 +1,0 @@
-main.ili:7:CLASS model.topic.class can not declare several attributes bearing the same name. There is already an attribute "attr".
-main.ili:7:Text types can only extend other text types.

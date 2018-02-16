@@ -1,2 +1,0 @@
-main.ili:8:There can not be a ClassDef "class" in TOPIC model.topic because there is already a model element with the same name. Use a different name.
-main.ili:The compiler feels that it would not make much sense to continue its analysis. You might want to have a look at the mentioned errors first.

@@ -1,1 +1,0 @@
-This test checks if the compiler detects a DATA MODEL.

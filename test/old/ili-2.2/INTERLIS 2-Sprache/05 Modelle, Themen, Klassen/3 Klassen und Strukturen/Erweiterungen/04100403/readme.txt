@@ -1,1 +1,0 @@
-This test checks if the compiler detects a extended class of a already specialised base class.
