@@ -1,1 +1,0 @@
-This test checks if the compiler detects a role name that is in conflict with an attribute name in the source class.

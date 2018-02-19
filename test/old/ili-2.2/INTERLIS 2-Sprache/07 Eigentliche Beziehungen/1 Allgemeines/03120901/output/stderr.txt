@@ -1,1 +1,0 @@
-main.ili:44:A cross topic role requires property EXTERNAL.

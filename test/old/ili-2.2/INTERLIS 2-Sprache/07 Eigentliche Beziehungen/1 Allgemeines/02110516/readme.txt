@@ -1,1 +1,0 @@
-This test checks if the compiler detects an extended role with a lesser aggregation kind than its base.

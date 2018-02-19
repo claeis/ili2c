@@ -1,1 +1,0 @@
-main.ili:16:There can not be an attribute "a" in ASSOCIATION model.topic.ab because there is already an attribute or a role with the same name. Use a different name.

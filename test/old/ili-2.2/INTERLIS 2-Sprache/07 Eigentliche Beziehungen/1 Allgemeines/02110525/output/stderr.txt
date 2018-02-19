@@ -1,1 +1,0 @@
-main.ili:19:CLASS model.topic.APlus has already a target role with name b.
