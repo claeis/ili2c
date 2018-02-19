@@ -1,2 +1,0 @@
-main.ili:6:CLASS RefSys.Refsystem.Point can not be part of TOPIC RefSys.Refsystem. Extensions of CLASS INTERLIS.REFSYSTEM must be part of a topic in a reference system model, but TOPIC RefSys.Refsystem is part of MODEL RefSys.
-main.ili:The compiler feels that it would not make much sense to continue its analysis. You might want to have a look at the mentioned errors first.

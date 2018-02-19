@@ -1,1 +1,0 @@
-This test checks a basic mandatory constraint.

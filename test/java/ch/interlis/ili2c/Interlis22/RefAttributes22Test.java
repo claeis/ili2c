@@ -1,6 +1,8 @@
 package ch.interlis.ili2c.Interlis22;
 
 import static org.junit.Assert.*;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import ch.ehi.basics.logging.EhiLogger;
 import ch.interlis.ili2c.CompilerLogEvent;
@@ -127,5 +129,34 @@ public class RefAttributes22Test {
 		}
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
+	}
+	
+	// This test checks that a class that extends INTERLIS.REFSYSTEM is defined in a REFSYSTEM MODEL
+	@Ignore
+	public void checkExtIliREFSYSTEMIsDefined_Fail() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"checkExtIliREFSYSTEMIsDefined.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNull(td);
+		assertEquals(1,errs.getErrs().size());
+		{
+			CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+			CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
+			assertEquals(6, compilerLogEvent.getLine());
+			assertEquals("CLASS RefSys.Refsystem.Point can not be part of TOPIC RefSys.Refsystem. Extensions of CLASS INTERLIS.REFSYSTEM must be part of a topic in a reference system model, but TOPIC RefSys.Refsystem is part of MODEL RefSys.", compilerLogEvent.getRawEventMsg());
+		}
+		{
+			CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(1);
+			CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
+			assertEquals(0, compilerLogEvent.getLine());
+			assertEquals("The compiler feels that it would not make much sense to continue its analysis. You might want to have a look at the mentioned errors first.", compilerLogEvent.getRawEventMsg());
+		}
 	}
 }
