@@ -1,1 +1,0 @@
-main.ili:21:VIEW Test.View.VB can not declare several attributes bearing the same name. There is already an attribute "a".

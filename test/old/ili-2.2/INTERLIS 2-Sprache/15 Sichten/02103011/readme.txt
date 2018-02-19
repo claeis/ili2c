@@ -1,1 +1,0 @@
-This test checks if the compiler accepts a basic inspection definition of a geometry type.
