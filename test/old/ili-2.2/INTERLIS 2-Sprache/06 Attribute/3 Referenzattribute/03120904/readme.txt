@@ -1,1 +1,0 @@
-This test checks if the compiler accepts a reference attribute to ANYCLASS.

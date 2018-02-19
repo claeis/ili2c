@@ -1,1 +1,0 @@
-This test checks if the compiler accepts a refattr in a struct at model level.
