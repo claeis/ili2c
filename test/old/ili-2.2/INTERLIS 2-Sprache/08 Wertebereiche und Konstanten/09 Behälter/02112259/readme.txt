@@ -1,1 +1,0 @@
-This test checks if the compiler detects a BASKET domain with multiple basket kinds.

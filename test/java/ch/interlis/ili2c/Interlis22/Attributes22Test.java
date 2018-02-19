@@ -60,4 +60,25 @@ public class Attributes22Test {
 			assertEquals("Text types can only extend other text types.", compilerLogEvent.getRawEventMsg());
 		}
 	}
+	
+	// This test checks if the compiler detects a reference to a non existing DomainDef.
+	@Test
+	public void detectRefToNonExistingDomainRef_Fail() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"detectRefToNonExistingDomainRef.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNull(td);
+		assertEquals(1,errs.getErrs().size());
+		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+		CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
+		assertEquals(6, compilerLogEvent.getLine());
+		assertEquals("There is neither a domain \"x\" in TOPIC model.topic nor in MODEL model.", compilerLogEvent.getRawEventMsg());
+	}
 }

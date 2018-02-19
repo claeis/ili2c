@@ -1,6 +1,8 @@
 package ch.interlis.ili2c.Interlis22;
 
 import static org.junit.Assert.*;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import ch.ehi.basics.logging.EhiLogger;
 import ch.interlis.ili2c.CompilerLogEvent;
@@ -206,5 +208,43 @@ public class Topics22Test {
 			assertEquals(9, compilerLogEvent.getLine());
 			assertEquals("This reference to a viewable requires a topic dependency between topic2 and topic1", compilerLogEvent.getRawEventMsg());
 		}
+	}
+	
+	// This test checks if the compiler accepts a BASKET domain without basket kind.
+	@Test
+	public void acceptBasketDomainWithoutBasketKind() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"acceptBasketDomainWithoutBasketKind.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNotNull(td);
+		assertEquals(0,errs.getErrs().size());
+	}
+	
+	// This test checks if the compiler detects a BASKET domain with multiple basket kinds.
+	@Ignore
+	public void detectBasketDomainWithMultipleBasketKind_Fail() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"detectBasketDomainWithMultipleBasketKind.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNull(td);
+		assertEquals(1,errs.getErrs().size());
+		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+		CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
+		assertEquals(6, compilerLogEvent.getLine());
+		assertEquals("Invlaid kind for domain BASKET. Only DATA, VIEW, BASE, GRAPHIC or undefined.", compilerLogEvent.getRawEventMsg());
 	}
 }

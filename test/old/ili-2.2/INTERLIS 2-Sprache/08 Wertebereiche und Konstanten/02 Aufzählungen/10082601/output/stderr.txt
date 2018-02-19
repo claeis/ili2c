@@ -1,2 +1,0 @@
-C:\usr\ce\projects\KOGIS\ili2c-tests\build\tests\10082601\main.ili:Duplicate EnumElement name "rot".
-compiler failed
