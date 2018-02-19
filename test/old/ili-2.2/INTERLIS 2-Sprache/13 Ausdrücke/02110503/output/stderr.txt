@@ -1,1 +1,0 @@
-main.ili:26:An object path element PARENT must not be used in VIEW Test.Base.VB.

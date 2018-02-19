@@ -145,7 +145,7 @@ public class RefAttributes22Test {
 		}catch(Ili2cFailure ex){
 		}
 		assertNull(td);
-		assertEquals(1,errs.getErrs().size());
+		assertEquals(2,errs.getErrs().size());
 		{
 			CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
 			CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
@@ -158,5 +158,318 @@ public class RefAttributes22Test {
 			assertEquals(0, compilerLogEvent.getLine());
 			assertEquals("The compiler feels that it would not make much sense to continue its analysis. You might want to have a look at the mentioned errors first.", compilerLogEvent.getRawEventMsg());
 		}
+	}
+	
+	// This test checks if the compiler accepts a basic object path with a reference attribute name.
+	@Test
+	public void acceptBasicObjWithRefAttrname() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"acceptBasicObjWithRefAttrname.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNotNull(td);
+		assertEquals(0,errs.getErrs().size());
+	}
+	
+	// This test checks if the compiler accepts a basic object path with an association path element.
+	@Test
+	public void acceptObjPathWithAssocPathElements() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"acceptObjPathWithAssocPathElements.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNotNull(td);
+		assertEquals(0,errs.getErrs().size());
+	}
+	
+	// This test checks if the compiler detects an association path that may point to multiple objects.
+	@Test
+	public void detectAssocPathToMultipleObjs_Fail() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"detectAssocPathToMultipleObjs.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNull(td);
+		assertEquals(1,errs.getErrs().size());
+		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+		CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
+		assertEquals(23, compilerLogEvent.getLine());
+		assertEquals("Role a may point to multiple objects.", compilerLogEvent.getRawEventMsg());
+	}
+	
+	// This test checks if the compiler accepts a basic object path with a role name element from a class.
+	@Test
+	public void acceptBasicObjectpathWithClassRoleEle() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"acceptBasicObjectpathWithClassRoleEle.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNotNull(td);
+		assertEquals(0,errs.getErrs().size());
+	}
+	
+	// This test checks if the compiler detects a role name element from a class that may point to multiple objects.
+	@Test
+	public void detectRolenameEleFromClassToMultiObjs_Fail() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"detectRolenameEleFromClassToMultiObjs.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNull(td);
+		assertEquals(1,errs.getErrs().size());
+		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+		CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
+		assertEquals(22, compilerLogEvent.getLine());
+		assertEquals("Role a may point to multiple objects.", compilerLogEvent.getRawEventMsg());
+	}
+	
+	// This test checks if the compiler accepts a role name path element from an association.
+	@Test
+	public void acceptRolenamePathEleFromAssoc() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"acceptRolenamePathEleFromAssoc.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNotNull(td);
+		assertEquals(0,errs.getErrs().size());
+	}
+	
+	// This test checks if the compiler accepts a THIS path element.
+	@Test
+	public void acceptTHISPathEle() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"acceptTHISPathEle.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNotNull(td);
+		assertEquals(0,errs.getErrs().size());
+	}
+	
+	// This test checks if the compiler accepts a base name path element.
+	@Test
+	public void acceptBasenamePathEle() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"acceptBasenamePathEle.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNotNull(td);
+		assertEquals(0,errs.getErrs().size());
+	}
+	
+	// This test checks if the compiler accepts a base name path element to a unrenamed viewable.
+	@Test
+	public void acceptBaseToUnrenamedViewable() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"acceptBaseToUnrenamedViewable.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNotNull(td);
+		assertEquals(0,errs.getErrs().size());
+	}
+	
+	// This test checks if the compiler accepts a PARENT path element.
+	@Test
+	public void acceptPARENTPathEle() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"acceptPARENTPathEle.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNotNull(td);
+		assertEquals(0,errs.getErrs().size());
+	}
+	
+	// This test checks if the compiler accepts a PARENT path element of an inspection of a sub-substructure.
+	@Ignore
+	public void acceptPARENTEleOfInspectionSubStruct() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"acceptPARENTEleOfInspectionSubStruct.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNotNull(td);
+		assertEquals(0,errs.getErrs().size());
+	}
+	
+	// This test checks if the compiler detects a PARENT path element in a non inspection view.
+	@Ignore
+	public void detectPARENTEleInNonInspectionView_Fail() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"detectPARENTEleInNonInspectionView.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNull(td);
+		assertEquals(1,errs.getErrs().size());
+		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+		CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
+		assertEquals(22, compilerLogEvent.getLine());
+		assertEquals("An object path element PARENT must not be used in VIEW Test.Base.VB.", compilerLogEvent.getRawEventMsg());
+	}
+	
+	// This test checks if the compiler detects a PARENT path element in a area inspection view.
+	@Test
+	public void detectPARENTPathEleInAreaInspectionView_Fail() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"detectPARENTPathEleInAreaInspectionView.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNull(td);
+		assertEquals(1,errs.getErrs().size());
+		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+		CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
+		assertEquals(26, compilerLogEvent.getLine());
+		assertEquals("An object path element PARENT must not be used in VIEW Test.Base.VB.", compilerLogEvent.getRawEventMsg());
+	}
+	
+	// This test checks if the compiler detects a THISAREA path element in a non area inspection view.
+	@Test
+	public void detectTHISAREAInNonAreaInspectView_Fail() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"detectTHISAREAInNonAreaInspectView.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNull(td);
+		assertEquals(1,errs.getErrs().size());
+		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+		CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
+		assertEquals(26, compilerLogEvent.getLine());
+		assertEquals("An object path element THISAREA must not be used in VIEW Test.Base.VB.", compilerLogEvent.getRawEventMsg());
+	}
+	
+	// This test checks if the compiler detects a THATAREA path element in a non area inspection view.
+	@Test
+	public void detectTHATAREAInNonAreaInspectView_Fail() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"detectTHATAREAInNonAreaInspectView.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNull(td);
+		assertEquals(1,errs.getErrs().size());
+		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+		CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
+		assertEquals(26, compilerLogEvent.getLine());
+		assertEquals("An object path element THATAREA must not be used in VIEW Test.Base.VB.", compilerLogEvent.getRawEventMsg());
+	}
+	
+	// This test checks if the compiler accepts an association path threw a composition role without a cardinality.
+	@Test
+	public void acceptCompositionRoleWithoutCard() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"acceptCompositionRoleWithoutCard.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNotNull(td);
+		assertEquals(0,errs.getErrs().size());
+	}
+	
+	// This test checks THISAREA, THATAREA
+	@Test
+	public void checkTHISAREAandTHATAREA() {
+		LogCollector errs=new LogCollector();
+		EhiLogger.getInstance().addListener(errs);
+		Configuration ili2cConfig=new Configuration();
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"checkTHISAREAandTHATAREA.ili", FileEntryKind.ILIMODELFILE);
+		ili2cConfig.addFileEntry(fileEntry);
+		TransferDescription td=null;
+		try{
+			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+		}catch(Ili2cFailure ex){
+		}
+		assertNotNull(td);
+		assertEquals(0,errs.getErrs().size());
 	}
 }
