@@ -935,6 +935,9 @@ public void setDocumentation(String string) {
   	}
   	protected void linkTranslationOf(Element baseElement)
   	{
+  	    if(baseElement==this) {
+  	        throw new IllegalArgumentException("base element must be different from translated element "+this.getScopedName());
+  	    }
   		this.baseLanguageElement=baseElement;
   	}
     protected void checkTranslationOf(List<Ili2cSemanticException> errs)
