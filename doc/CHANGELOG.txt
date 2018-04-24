@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+ili2c 4.7.8 (SNAPSHOT)
+---------------------------
+- fixed StackOverflow if name of translated model is the same as the origin model name
+
 ili2c 4.7.7 (2018-02-08)
 ---------------------------
 - MakeIliModelsXml: show ili2c version as program version (instead of iox-ili)

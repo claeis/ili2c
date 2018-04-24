@@ -569,6 +569,10 @@ public void setXmlns(String xmlns) {
 		        throw new IllegalStateException (formatMessage (
 		  	          "err_noSuchModel",translationOf));
 			}
+			if(baseModel==this) {
+	            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_model_differentName",getScopedName())));
+	            return;
+			}
 			linkTranslationOf(baseModel);
 			checkTranslationOf(errs);
 		}
