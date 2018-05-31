@@ -4,6 +4,7 @@ Known Issues:
 ili2c 4.7.8 (SNAPSHOT)
 ---------------------------
 - fixed StackOverflow if name of translated model is the same as the origin model name
+- fixed NPE if empty subsidiarySite in ilisite.xml
 
 ili2c 4.7.7 (2018-02-08)
 ---------------------------

@@ -42,6 +42,7 @@ import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.iox.ilisite.IliRepository09.ModelName_;
 import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata;
 import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage;
+import ch.ehi.iox.ilisite.IliSite09.RepositoryLocation_;
 import ch.interlis.ili2c.modelscan.IliFile;
 import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ilirepository.IliFiles;
@@ -368,12 +369,22 @@ public class RepositoryAccess {
 						 ch.ehi.iox.ilisite.IliSite09.SiteMetadata.Site site=(ch.ehi.iox.ilisite.IliSite09.SiteMetadata.Site)iomObj;
 						 IliSite ret=new IliSite();
 						 ch.ehi.iox.ilisite.IliSite09.RepositoryLocation_ parents[]=site.getparentSite();
-						 for(int parenti=0;parenti<parents.length;parenti++){
-							 ret.addParentSite(parents[parenti].getvalue());
+						 if(parents!=null) {
+	                         for(int parenti=0;parenti<parents.length;parenti++){
+	                             RepositoryLocation_ parent = parents[parenti];
+	                             if(parent!=null) {
+	                                 ret.addParentSite(parent.getvalue());
+	                             }
+	                         }
 						 }
 						 ch.ehi.iox.ilisite.IliSite09.RepositoryLocation_ subsidiaries[]=site.getsubsidiarySite();
-						 for(int subsidiaryi=0;subsidiaryi<subsidiaries.length;subsidiaryi++){
-							 ret.addSubsidiarySite(subsidiaries[subsidiaryi].getvalue());
+						 if(subsidiaries!=null) {
+	                         for(int subsidiaryi=0;subsidiaryi<subsidiaries.length;subsidiaryi++){
+	                             RepositoryLocation_ subsidiary = subsidiaries[subsidiaryi];
+	                             if(subsidiary!=null) {
+	                                 ret.addSubsidiarySite(subsidiary.getvalue());
+	                             }
+	                         }
 						 }
 						 return ret;
 					 }
