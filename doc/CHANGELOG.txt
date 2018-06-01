@@ -5,6 +5,8 @@ ili2c 4.7.8 (SNAPSHOT)
 ---------------------------
 - fixed StackOverflow if name of translated model is the same as the origin model name
 - fixed NPE if empty subsidiarySite in ilisite.xml
+- new function (--oNLS) to write a translation-xml file
+- new function (--lang --nlsxml) to generate a translated ili-file (merge a original ili and a translation-xml)
 
 ili2c 4.7.7 (2018-02-08)
 ---------------------------

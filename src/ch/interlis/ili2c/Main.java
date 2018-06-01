@@ -117,6 +117,12 @@ public class Main {
 	System.err.println();
 	System.err.println("Generate an XML-Schema:");
 	System.err.println("    java -jar " + progName + " -oXSD file1.ili file2.ili");
+    System.err.println();
+    System.err.println("Generate an Translation-XML file:");
+    System.err.println("    java -jar " + progName + " -oNLS --out translation.xml file.ili");
+    System.err.println();
+    System.err.println("Generate an INTERLIS-2 definition after adding translations to a Translation-XML file:");
+    System.err.println("    java -jar " + progName + " -o2 --out file_it.ili --lang it --nlsxml translation.xml file.ili");
 	System.err.println();
     }
 
