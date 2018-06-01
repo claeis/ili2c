@@ -25,6 +25,8 @@ import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.config.GenerateOutputKind;
 import ch.interlis.ili2c.generator.NotSupportedByIliRelational;
+import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
+import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
 import ch.interlis.ili2c.metamodel.Model;
@@ -164,6 +166,9 @@ public class Main {
 	    System.err.println("-oFMT                 Generate an INTERLIS-1 Format.");
 	    System.err.println("-oIMD                 Generate Model as IlisMeta07 INTERLIS-Transfer (XTF).");
 	    System.err.println("-oIMD16               Generate Model as IlisMeta16 INTERLIS-Transfer (XTF).");
+	    System.err.println("-oNLS                 Generate an Translation-XML file.");
+	    System.err.println("--nlsxml file         Name of the Translation-XML file.");
+	    System.err.println("--lang lang           Language (de,fr,it or en).");
 	    System.err.println("-oUML                 Generate Model as UML2/XMI-Transfer (eclipse flavour).");
 	    System.err.println("-oIOM                 (deprecated) Generate Model as INTERLIS-Transfer (XTF).");
 	    System.err.println("--check-repo-ilis uri   check all ili files in the given repository.");
@@ -194,6 +199,8 @@ public class Main {
 
 	try {
 	    String outfile = null;
+		String language = null;
+		String nlsxmlFilename = null;
 	    int outputKind = GenerateOutputKind.NOOUTPUT;
 
 	    ArrayList ilifilev = new ArrayList();
@@ -245,6 +252,16 @@ public class Main {
 		    httpProxyPort = args[i];
 		    continue;
 		}
+		if (args[i].equals("--lang")) {
+			i++;
+			language = args[i];
+			continue;
+		}
+		if (args[i].equals("--nlsxml")) {
+			i++;
+			nlsxmlFilename = args[i];
+			continue;
+		}
 		if (args[i].equals("--ilidirs")) {
 		    i++;
 		    ilidirs = args[i];
@@ -285,6 +302,9 @@ public class Main {
 		} else if (args[i].equals("-oIOM")) {
 		    outputKind = GenerateOutputKind.IOM;
 		    continue;
+		} else if (args[i].equals("-oNLS")) {
+			outputKind = GenerateOutputKind.XMLNLS;
+			continue;
 		} else if (args[i].equals("--without-warnings")) {
 		    withWarnings = false;
 		    continue;
@@ -328,6 +348,8 @@ public class Main {
 	    }
 	    config.setGenerateWarnings(withWarnings);
 	    config.setOutputKind(outputKind);
+		config.setLanguage(language);
+		config.setNlsxmlFilename(nlsxmlFilename);
 	    if (doCloneRepos || outputKind != GenerateOutputKind.NOOUTPUT) {
 			if (outfile != null) {
 			    config.setOutputFile(outfile);
@@ -629,7 +651,14 @@ public class Main {
 			}
 		    }
 		    ch.interlis.ili2c.generator.Interlis2Generator gen = new ch.interlis.ili2c.generator.Interlis2Generator();
-		    gen.generate(out, desc, emitPredefined);
+			if (config.getLanguage() != null && config.getNlsxmlFilename() != null) {
+				ModelElements modelElements = Ili2TranslationXml
+						.readModelElementsXml(new File(config.getNlsxmlFilename()));
+				FileEntry e = (FileEntry) config.getFileEntry(config.getSizeFileEntry() - 1);
+				gen.generate(out, desc, modelElements, config.getLanguage(), e.getFilename());
+			} else {
+				gen.generate(out, desc, emitPredefined);
+			}
 		    break;
 		case GenerateOutputKind.XMLSCHEMA:
 		{
@@ -686,6 +715,9 @@ public class Main {
 		    ch.interlis.ili2c.generator.ImdGenerator.generate(new java.io.File(config.getOutputFile()), desc, APP_NAME +
 			    "-" + getVersion());
 		    break;
+		case GenerateOutputKind.XMLNLS:
+			generateXML(config, desc);
+			break;
 		case GenerateOutputKind.IMD16:
 		    ch.interlis.ili2c.generator.Imd16Generator.generate(new java.io.File(config.getOutputFile()), desc, APP_NAME +
 			    "-" + getVersion());
@@ -728,6 +760,12 @@ public class Main {
 	return desc;
     }
 
+	private static void generateXML(Configuration config, TransferDescription desc) throws Exception{
+		FileEntry e = (FileEntry) config.getFileEntry(config.getSizeFileEntry() - 1);
+		Ili2TranslationXml xml = new Ili2TranslationXml();
+		ModelElements eles=xml.convertTransferDescription2ModelElements(desc,new File(e.getFilename()));
+		Ili2TranslationXml.writeModelElementsAsXML(eles,new File(config.getOutputFile()));
+	}
 
 	private static ArrayList getModelRepos(
 			ch.ehi.basics.settings.Settings settings,

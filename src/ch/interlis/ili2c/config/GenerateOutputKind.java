@@ -54,6 +54,7 @@ public class GenerateOutputKind
 
   public static final int ILIGML2 = 11;
   public static final int IMD16 = 12;
+  public static final int XMLNLS = 13;
   
   private static final String kindTexts[] = {
           "Generate no output"
@@ -68,6 +69,7 @@ public class GenerateOutputKind
   	  , "Generate Model as UML/XMI Transfer"
   	  , "Generate a GML/eCH-118-2.0 XML-Schema"
   	  , "Generate Model as IlisMeta16-Transfer"
+  	  , "Generate Model as XML-Translationfile"
         };
   public static String getDescription(int kind){
 	  return kindTexts[kind-1];

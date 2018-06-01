@@ -161,8 +161,27 @@ public class Configuration implements Cloneable
   }
 
   private int outputKind = GenerateOutputKind.NOOUTPUT;
+  
+  private String language;
+  private String nlsxmlFilename;
 
-  /** get current value of outputKind
+  public String getLanguage() {
+	return language;
+}
+
+public void setLanguage(String language) {
+	this.language = language;
+}
+
+public String getNlsxmlFilename() {
+	return nlsxmlFilename;
+}
+
+public void setNlsxmlFilename(String xmlFolderName) {
+	this.nlsxmlFilename = xmlFolderName;
+}
+
+/** get current value of outputKind
    *  @see #setOutputKind
    */
   public  int getOutputKind()
