@@ -7,6 +7,7 @@ ili2c 4.7.8 (SNAPSHOT)
 - fixed NPE if empty subsidiarySite in ilisite.xml
 - new function (--oNLS) to write a translation-xml file
 - new function (--lang --nlsxml) to generate a translated ili-file (merge a original ili and a translation-xml)
+- new function (--listModels) to generate a list of models in the repositories
 
 ili2c 4.7.7 (2018-02-08)
 ---------------------------

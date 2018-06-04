@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
@@ -149,7 +150,7 @@ public class CheckReposIlis {
 				}
 				// read file
 				IliFiles files=null;
-				ArrayList<ModelMetadata> modelMetadatav = null;
+				List<ModelMetadata> modelMetadatav = null;
 				try {
 					modelMetadatav = RepositoryAccess.readIliModelsXml(ilimodelsFile);
 					modelMetadatav = RepositoryAccess.getLatestVersions(modelMetadatav);
@@ -160,7 +161,7 @@ public class CheckReposIlis {
 				}
 				for(Iterator<IliFile> filei=files.iteratorFile();filei.hasNext();){
 					IliFile file=filei.next();
-					ArrayList<String> ilimodels=new ArrayList<String>();
+					List<String> ilimodels=new ArrayList<String>();
 					for(Iterator modeli=file.iteratorModel();modeli.hasNext();){
 						IliModel model=(IliModel)modeli.next();
 						ilimodels.add(model.getName());
@@ -201,7 +202,7 @@ public class CheckReposIlis {
 										}else{
 											throw new IllegalStateException("unexpected ili version");
 										}
-										ModelMetadata modelMetadata=getModelMetadata(modelMetadatav,model.getName(),csl);
+										ModelMetadata modelMetadata=RepositoryAccess.findModelMetadata(modelMetadatav,model.getName(),csl);
 										if(modelMetadata==null){
 											inconsistentMetaEntry.add(new MetaEntryProblem(null,model.getName(),"entry missing or wrong model name in ilimodels.xml for "+file.getPath()));
 										}else{
@@ -293,17 +294,6 @@ public class CheckReposIlis {
 			}
 		}
 		return failedFiles.size()!=0;
-	}
-
-	private static ModelMetadata getModelMetadata(
-			ArrayList<ModelMetadata> modelMetadatav, String name,
-			ModelMetadata_SchemaLanguage csl) {
-		for(ModelMetadata modelMetadata :  modelMetadatav){
-			if(modelMetadata.getName().equals(name) && modelMetadata.getSchemaLanguage().equals(csl)){
-				return modelMetadata;
-			}
-		}
-		return null;
 	}
 
 }
