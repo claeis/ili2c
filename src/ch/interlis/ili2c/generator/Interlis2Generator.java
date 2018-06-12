@@ -38,6 +38,9 @@ public class Interlis2Generator
   public Interlis2Generator()
   {
   }
+  public static Interlis2Generator generateElements(Writer out, TransferDescription td) {
+	  return generateElements(out, td, null);
+  }
   public static Interlis2Generator generateElements (
 	Writer out, TransferDescription td, ModelElements modelElements)
   {
@@ -407,12 +410,19 @@ private void setup(
     ipw.println (';');
   }
 
-
+  public void printView (View view) {
+	  printView (view,null);
+  }
 
   public void printView (View view,String language)
   {
 	  printView (view,false,language);
   }
+  
+  public void printView (View view,boolean suppressDoc) {
+	  printView(view, suppressDoc, null);
+  }
+  
   public void printView (View view,boolean suppressDoc, String language)
   {
 	  if(!suppressDoc){
@@ -475,10 +485,18 @@ private void setup(
 	printElements(view, language, null);
 	printEnd(view, language);
   }
-
+  
+  public void printGraphic (Graphic graph) {
+	  printGraphic(graph,null);
+  }
+  
   public void printGraphic (Graphic graph,String language)
   {
 	  printGraphic (graph,false,language);
+  }
+  
+  public void printGraphic (Graphic graph,boolean suppressDoc) {
+	  printGraphic(graph,suppressDoc, null);
   }
   public void printGraphic (Graphic graph,boolean suppressDoc, String language)
   {
@@ -918,11 +936,20 @@ private void setup(
     ipw.println (';');
     */
   }
-
+  
+  public void printConstraint(Constraint elt) {
+	  printConstraint(elt,null);
+  }
+  
   public void printConstraint(Constraint elt,String language)
   {
 	  printConstraint(elt,false,language);  
   }
+  
+  public void printConstraint(Constraint elt,boolean suppressDoc) {
+	  printConstraint(elt,suppressDoc,null);
+  }
+  
   public void printConstraint(Constraint elt,boolean suppressDoc,String language)
   {
 	  if(suppressDoc){
@@ -967,9 +994,16 @@ private void setup(
         printSetConstraint((Viewable) container, (SetConstraint) elt,language);
       }
   }
+  public void printGraphicParameterDef(GraphicParameterDef gfxp) {
+	  printGraphicParameterDef(gfxp,null);  
+  }
+
   public void printGraphicParameterDef(GraphicParameterDef gfxp,String language)
   {
 	  printGraphicParameterDef(gfxp,false,language);
+  }
+  public void printGraphicParameterDef(GraphicParameterDef gfxp,boolean suppressDoc) {
+	  printGraphicParameterDef(gfxp,suppressDoc,null);
   }
   public void printGraphicParameterDef(GraphicParameterDef gfxp,boolean suppressDoc,String language)
   {
@@ -983,9 +1017,15 @@ private void setup(
     printType(gfxp.getContainer(),gfxp.getDomain(), language, scopedNamePrefix);
     ipw.println(";");
   }
+  public void printMetaDataUseDef(MetaDataUseDef mu) {
+	  printMetaDataUseDef(mu,null);
+  }
   public void printMetaDataUseDef(MetaDataUseDef mu,String language)
   {
 	  printMetaDataUseDef(mu,false, language);
+  }
+  public void printMetaDataUseDef(MetaDataUseDef mu,boolean suppressDoc) {
+	  printMetaDataUseDef(mu,suppressDoc,null);
   }
   public void printMetaDataUseDef(MetaDataUseDef mu,boolean suppressDoc,String language)
   {
@@ -1046,12 +1086,20 @@ private void setup(
     ipw.unindent();
 
   }
-
+  
+  public void printUnit (Container scope, Unit u) {
+	  printUnit (scope, u, null);
+  }
 
   public void printUnit (Container scope, Unit u, String language)
   {
 	  printUnit (scope, u,false, language);
   }
+  
+  public void printUnit (Container scope, Unit u,boolean suppressDoc) {
+	  printUnit(scope, u,suppressDoc,null);
+  }
+  
   public void printUnit (Container scope, Unit u,boolean suppressDoc,String language)
   {
     if (u == null)
@@ -1200,12 +1248,19 @@ private void setup(
     }
   }
 
-
+  public void printParameter (Container scope, Parameter par) {
+	  printParameter(scope, par,null);
+  }
 
   public void printParameter (Container scope, Parameter par,String language)
   {
 	  printParameter (scope, par,false,language);
   }
+  
+  public void printParameter (Container scope, Parameter par,boolean suppressDoc) {
+	  printParameter(scope, par,suppressDoc,null);
+  }
+  
   public void printParameter (Container scope, Parameter par,boolean suppressDoc,String language)
   {
 	String scopedNamePrefix = "";
@@ -1394,6 +1449,11 @@ private void setup(
         ipw.println(';');
     }
   }
+  
+  public void printAttributeBasePath(Container scope, AttributeDef attrib) {
+	  printAttributeBasePath(scope, attrib,null);
+  }
+  
 public void printAttributeBasePath(Container scope, AttributeDef attrib,String language) {
 	Evaluable[] paths = ((LocalAttribute) attrib).getBasePaths ();
       if ((paths == null) || (paths.length == 0)){
@@ -1505,7 +1565,10 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     ipw.print (" := ");
     printExpression (basedOn, parass.getValue(), language);
   }
-
+  
+  public void printMetaValues(ch.ehi.basics.settings.Settings values) {
+	  printMetaValues(values, null, null);
+  }
 
   public void printMetaValues(ch.ehi.basics.settings.Settings values, String language, String scopedNamePrefix)
   {
@@ -1776,6 +1839,10 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 
 
 
+  public void printReferenceSysRef (Container scope, RefSystemRef rsr)
+  {
+	  printReferenceSysRef(scope, rsr, null);
+  }
   public void printReferenceSysRef (Container scope, RefSystemRef rsr,String language)
   {
     if (rsr == null)
@@ -1825,7 +1892,9 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     }
   }
 
-
+  public void printType (Container scope, Type dd) {
+	  printType(scope, dd, null, null);
+  }
 
   public void printType (Container scope, Type dd, String language, String scopedNamePrefix)
   {
@@ -2369,7 +2438,11 @@ private void printFormatedTypeMinMax(FormattedType ft) {
 		}
 		return "";
 	}
-
+  
+	public void printLineFormTypeDef (Container scope, LineForm lf) {
+		printLineFormTypeDef(scope, lf, null);
+	}
+  
   public void printLineFormTypeDef (Container scope, LineForm lf, String language)
   {
     if (lf == null)
@@ -2395,11 +2468,16 @@ private void printFormatedTypeMinMax(FormattedType ft) {
     ipw.println (';');
   }
 
-
+  public void printFunctionDeclaration(Container scope, Function f) {
+	  printFunctionDeclaration(scope, f, null);
+  }
 
   public void printFunctionDeclaration(Container scope, Function f, String language)
   {
 	  printFunctionDeclaration(scope,f,false,language);
+  }
+  public void printFunctionDeclaration(Container scope, Function f,boolean suppressDoc) {
+	  printFunctionDeclaration(scope, f,suppressDoc, null);
   }
   public void printFunctionDeclaration(Container scope, Function f,boolean suppressDoc, String language)
   {
