@@ -8,6 +8,7 @@ ili2c 4.7.8 (SNAPSHOT)
 - new function (--oNLS) to write a translation-xml file
 - new function (--lang --nlsxml) to generate a translated ili-file (merge a original ili and a translation-xml)
 - new function (--listModels) to generate a list of models in the repositories
+- ehibasics-1.2.0
 
 ili2c 4.7.7 (2018-02-08)
 ---------------------------

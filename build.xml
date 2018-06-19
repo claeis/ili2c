@@ -22,7 +22,7 @@
   </target>
   <target depends="init,buildnr" name="pom">
 		<artifact:pom id="pomE-core" groupId="${groupId}" artifactId="ili2c-core" version="${buildnr}" name="ili2c-core">
-			<artifact:dependency groupId="ch.ehi" artifactId="ehibasics" version="1.1.0"/>
+			<artifact:dependency groupId="ch.ehi" artifactId="ehibasics" version="1.2.0"/>
 		</artifact:pom>
 		  <artifact:writepom pomRefId="pomE-core" file="build/pom-core.xml"/>
 		<artifact:pom id="pom-core" file="build/pom-core.xml" />
