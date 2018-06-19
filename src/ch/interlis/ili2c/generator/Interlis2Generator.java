@@ -1340,23 +1340,27 @@ private void setup(
         ipw.print ("ANYSTRUCTURE");
     }else{
 		if (language == null) {
-      		ModelTransformation[] importModels = params.getImportModels();
-      		for(ModelTransformation importModel : importModels) {
-      			if (elt.getScopedName(scope).contains(importModel.getFromModel())) {
-      				String newScopeName = "";
-      				String[] scopeName = elt.getScopedName(scope).split("\\.");
-      				for (String scopeN : scopeName) {
-      					if (scopeN.equals(importModel.getFromModel())) {
-      						newScopeName = importModel.getToModel();
-      					} else {
-      						newScopeName = newScopeName + "."  + scopeN;
-      					}
-      				}
-      				ipw.print(newScopeName);
-      			} else {
-      				ipw.print(elt.getScopedName(scope));
-      			}
-      		}
+			if (params != null) {
+	      		ModelTransformation[] importModels = params.getImportModels();
+	      		for(ModelTransformation importModel : importModels) {
+	      			if (elt.getScopedName(scope).contains(importModel.getFromModel())) {
+	      				String newScopeName = "";
+	      				String[] scopeName = elt.getScopedName(scope).split("\\.");
+	      				for (String scopeN : scopeName) {
+	      					if (scopeN.equals(importModel.getFromModel())) {
+	      						newScopeName = importModel.getToModel();
+	      					} else {
+	      						newScopeName = newScopeName + "."  + scopeN;
+	      					}
+	      				}
+	      				ipw.print(newScopeName);
+	      			} else {
+	      				ipw.print(elt.getScopedName(scope));
+	      			}
+	      		}
+			} else {
+				ipw.print(elt.getScopedName(scope));
+			}
 		} else {
 			ipw.print(getNameInLanguage(elt, language));
 		}
