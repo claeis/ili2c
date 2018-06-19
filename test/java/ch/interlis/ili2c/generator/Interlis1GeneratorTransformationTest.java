@@ -6,9 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.junit.Test;
 
+import ch.ehi.basics.settings.Settings;
 import ch.interlis.ili2c.generator.TransformationParameter;
 import ch.interlis.ili2c.generator.nls.Ili2TranslationXmlTest;
 import ch.interlis.ili2c.metamodel.AbstractCoordType;
@@ -51,15 +53,19 @@ public class Interlis1GeneratorTransformationTest {
 		// Read generated ili file
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(OUTPUT_ILI_FILE));
 		assertNotNull(newTd);
-		
-		//Model Name Control
+
+		// Model Name Control
 		Element modelEle = newTd.getElement(NEW_MODEL_NAME);
 		assertEquals(NEW_MODEL_NAME, modelEle.getName());
-		
-		//Control of the TopicA -> Point2D
+
+		// Control of the TopicA -> Point2D
 		modelEle = newTd.getElement(NEW_MODEL_NAME + ".TopicA.Point2D");
 		Domain dd = (Domain) modelEle;
 		Type type = dd.getType();
+		
+		// Does it has the right meta-values?
+		assertEquals("test", getMetaValue("gugus",  dd.getMetaValues()));
+		assertEquals("200", getMetaValue("CRS",  dd.getMetaValues()));
 
 		NumericalType[] numericalType = ((AbstractCoordType) type).getDimensions();
 
@@ -70,39 +76,58 @@ public class Interlis1GeneratorTransformationTest {
 		ntyp = (NumericType) numericalType[1];
 		assertEquals("10.000", ntyp.getMinimum().toString());
 		assertEquals("620.000", ntyp.getMaximum().toString());
-		
-		//Control of the ClassA1->point Control
+
+		// Control of the ClassA1->point Control
 		modelEle = newTd.getElement(NEW_MODEL_NAME + ".TopicA.ClassA1.point");
 		AttributeDef attrDef = (AttributeDef) modelEle;
 		Type attrType = attrDef.getDomain();
-		
+
+		// Does it has the right meta-values?
+		assertEquals("test2", getMetaValue("gugus2", attrDef.getMetaValues()));
+		assertEquals("200", getMetaValue("CRS", attrDef.getMetaValues()));
+
 		NumericalType[] absNumType = ((AbstractCoordType) attrType).getDimensions();
-		
+
 		ntyp = (NumericType) absNumType[0];
 		assertEquals("10.000", ntyp.getMinimum().toString());
 		assertEquals("620.000", ntyp.getMaximum().toString());
-		
+
 		ntyp = (NumericType) absNumType[1];
 		assertEquals("10.000", ntyp.getMinimum().toString());
 		assertEquals("620.000", ntyp.getMaximum().toString());
-		
-		//Control of the Control Point Domain 
+
+		// Control of the Control Point Domain
 		modelEle = newTd.getElement(NEW_MODEL_NAME + ".TopicA.ClassA1.Geometry");
-		LocalAttribute lclAttribute = (LocalAttribute)modelEle;
+		LocalAttribute lclAttribute = (LocalAttribute) modelEle;
 		type = lclAttribute.getDomain();
 		LineType lineType = (LineType) type;
 		Domain controlPointDomain = lineType.getControlPointDomain();
 		Type controlPointType = controlPointDomain.getType();
-		
+
 		numericalType = ((CoordType) controlPointType).getDimensions();
-		
+
 		ntyp = (NumericType) absNumType[0];
 		assertEquals("10.000", ntyp.getMinimum().toString());
 		assertEquals("620.000", ntyp.getMaximum().toString());
-		
+
 		ntyp = (NumericType) absNumType[1];
 		assertEquals("10.000", ntyp.getMinimum().toString());
 		assertEquals("620.000", ntyp.getMaximum().toString());
+	}
+
+	private String getMetaValue(String meta, Settings metaValues) {
+		Iterator<String> metaValuesI = metaValues.getValuesIterator();
+		while (metaValuesI.hasNext()) {
+			String name = (String) metaValuesI.next();
+			if (name.equals(meta)) {
+				return metaValues.getValue(name);
+			} else if (name.equals(meta)) {
+				String metaValue = metaValues.getValue(name);
+				String[] values = metaValue.split(":");
+				return values[1].toString();
+			}
+		}
+		return null;
 	}
 
 }

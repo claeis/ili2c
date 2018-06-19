@@ -3,8 +3,8 @@ TRANSFER TransferName;
 MODEL LineType
   TOPIC TopicA =
     DOMAIN
-	!!@gugus=test
-	!!@CRS = EPSG:21781
+    !!@gugus=test
+    !!@CRS = EPSG:21781
       Point2D = COORD2
         0.000 0.000
         200.000 200.000;
@@ -17,8 +17,8 @@ MODEL LineType
           0.000 0.000
         200.000 200.000
         WITHOUT OVERLAPS > 0.001;
-	!!@gugus2=test2
-	!!@CRS = EPSG:21781
+      !!@gugus2=test2
+      !!@CRS = EPSG:21781
       point : OPTIONAL COORD2
         0.000 0.000
         200.000 200.000;
