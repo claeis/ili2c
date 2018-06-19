@@ -5,6 +5,7 @@ header
 	import ch.interlis.ili2c.CompilerLogEvent;
 	import java.util.*;
 	import ch.ehi.basics.logging.EhiLogger;
+	import ch.ehi.basics.settings.Settings;
 }
 
 class Ili1Parser extends Parser;
@@ -85,6 +86,7 @@ options
 
       // tell the filter which tokens to hide, and which to discard
       filter.hide(ILI_DOC);
+      filter.hide(ILI_METAVALUE);
 
       // connect parser to filter (instead of lexer)
       Ili1Parser parser = new Ili1Parser (filter);
@@ -371,6 +373,35 @@ options
 		return ilidoc;
 	}
 
+	private ch.ehi.basics.settings.Settings getMetaValues()
+	throws antlr.TokenStreamException
+	{ 
+		ArrayList docs=new ArrayList();
+		antlr.CommonHiddenStreamToken cmtToken=((antlr.CommonHiddenStreamToken)LT(1)).getHiddenBefore();
+		while(cmtToken!=null){
+			if(cmtToken.getType()==ILI_METAVALUE){
+				docs.add(0,cmtToken);
+			}
+			cmtToken=cmtToken.getHiddenBefore();
+		}
+		Iterator doci=docs.iterator();
+		StringBuilder metaValuesText=new StringBuilder();
+		String sep="";
+		while(doci.hasNext()){
+			cmtToken=(antlr.CommonHiddenStreamToken)doci.next();
+			String valueText=cmtToken.getText().trim();
+			metaValuesText.append(sep+valueText);
+			sep=";";
+		}
+		ch.ehi.basics.settings.Settings metaValues=null;
+		try{
+			metaValues=MetaValue.parseMetaValues(metaValuesText.toString());
+		}catch(antlr.ANTLRException ex){
+			reportError("failed to parse Metavalue <"+metaValuesText.toString()+">",LT(1).getLine());
+		}
+		return metaValues;
+	}
+
 }
 
 //
@@ -440,8 +471,9 @@ protected enumElement [Type extending]
   ee = null;
   int lineNumber = 0;
   String ilidoc=null;
+  Settings metaValues=null;
 }
-  :  { ilidoc=getIliDoc();}
+  :  { ilidoc=getIliDoc();metaValues=getMetaValues();}
    	en:NAME
     ( subEnum = enumeration[extending] )?
 
@@ -452,6 +484,7 @@ protected enumElement [Type extending]
             ee = new ch.interlis.ili2c.metamodel.Enumeration.Element (
                en.getText());
 	    ee.setDocumentation(ilidoc);
+	    ee.setMetaValues(metaValues);
 	    ee.setSourceLine(en.getLine());
           }
           else
@@ -461,6 +494,7 @@ protected enumElement [Type extending]
                en.getText(),
                subEnum);
 	    ee.setDocumentation(ilidoc);
+	    ee.setMetaValues(metaValues);
 	    ee.setSourceLine(en.getLine());
           }
     }
@@ -508,6 +542,8 @@ protected interlis1Def
 {
   Model   model = null;
   Ili1Format format = new Ili1Format();
+  String ilidoc=null;
+  Settings metaValues=null;
 }
   : "TRANSFER" transferName:NAME SEMI
     {
@@ -523,12 +559,15 @@ protected interlis1Def
 
     ( ili1_domainDefs [model] )?
 
-    "MODEL" modelName:NAME
+    { ilidoc=getIliDoc();metaValues=getMetaValues();}
+	"MODEL" modelName:NAME
     {
       try {
         model.setName (modelName.getText ());
         model.setSourceLine (modelName.getLine());
         model.setFileName(getFilename());
+	    model.setDocumentation(ilidoc);
+	    model.setMetaValues(metaValues);
         String translationOfName=externalMetaAttrs.getMetaAttrValue(model.getName(),Ili2cMetaAttrs.ILI2C_TRANSLATION_OF);
         if(translationOfName!=null){
         	Model translationOf=(Model)td.getElement(Model.class,translationOfName);
@@ -591,9 +630,12 @@ protected ili1_domainDefs [Container container]
   Model model = (Model) container.getContainerOrSame (Model.class);
   Topic topic = (Topic) container.getContainerOrSame (Topic.class);
   Type type = null;
+  String ilidoc=null;
+  Settings metaValues=null;
 }
   : "DOMAIN"
     (
+      { ilidoc=getIliDoc();metaValues=getMetaValues();}
       domainName:NAME
       EQUALS
       type = ili1_attributeType [model, topic,null]
@@ -605,6 +647,8 @@ protected ili1_domainDefs [Container container]
           domain = new Domain ();
           domain.setSourceLine(domainName.getLine ());
           domain.setName (domainName.getText ());
+	      domain.setDocumentation(ilidoc);
+	      domain.setMetaValues(metaValues);
           if (type != null)
             domain.setType (type);
           domain.setAbstract (false);
@@ -636,14 +680,20 @@ protected ili1_domainDefs [Container container]
 protected ili1_topic [Model model]
 {
   Topic topic = null;
+  String ilidoc=null;
+  Settings metaValues=null;
 }
-  : "TOPIC" topicName:NAME EQUALS
+  :
+      { ilidoc=getIliDoc();metaValues=getMetaValues();}
+  "TOPIC" topicName:NAME EQUALS
     {
       ili1assocs=new ArrayList();
       topic = new Topic ();
       try {
         topic.setSourceLine(topicName.getLine());
         topic.setName (topicName.getText ());
+	    topic.setDocumentation(ilidoc);
+	    topic.setMetaValues(metaValues);
         topic.setAbstract (false);
         model.add (topic);
       } catch (Exception ex) {
@@ -700,8 +750,12 @@ protected ili1_table [Topic topic]
   boolean optional = false;
   Table   table = null;
   ili1AttrCounter=0;
+  String ilidoc=null;
+  Settings metaValues=null;
 }
-  : ( "OPTIONAL" { optional = true; } )?
+  : 
+    { ilidoc=getIliDoc();metaValues=getMetaValues();}  
+  ( "OPTIONAL" { optional = true; } )?
     "TABLE"
     tableName:NAME
     EQUALS
@@ -711,6 +765,8 @@ protected ili1_table [Topic topic]
       try {
         table.setName (tableName.getText ());
         table.setSourceLine(tableName.getLine());
+	    table.setDocumentation(ilidoc);
+	    table.setMetaValues(metaValues);
         table.setAbstract (false);
 	table.setIli1Optional(optional);
         topic.add (table);
@@ -752,16 +808,22 @@ protected ili1_attribute [Table table]
   AttributeDef attrib = null;
   Model model = (Model) table.getContainer (Model.class);
   Topic topic = (Topic) table.getContainer (Topic.class);
+  String ilidoc=null;
+  Settings metaValues=null;
   
   String explText=null;
 }
-  : attributeName:NAME
+  : 
+    { ilidoc=getIliDoc();metaValues=getMetaValues();}
+  attributeName:NAME
     col:COLON
     ( "OPTIONAL" { optional = true; } )?
 
     ( type = ili1_localAttributeType [model, topic,table]
       {
         attrib = new LocalAttribute ();
+	    attrib.setDocumentation(ilidoc);
+	    attrib.setMetaValues(metaValues);
       }
 
     | POINTSTO
@@ -1843,6 +1905,12 @@ WS
     { $setType(Token.SKIP); }
   ;
 
+ILI_METAVALUE
+  : "!!@"!
+    ( ~('\n'|'\r') )*
+    ( '\n' | '\r' ( '\n' )? )
+    { newline(); }
+  ;
 
 // Single Line comment -- ignored
 SL_COMMENT
