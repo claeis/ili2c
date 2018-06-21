@@ -23,6 +23,7 @@ import ch.interlis.ili2c.metamodel.*;
 import java.io.Writer;
 import java.util.*;
 import ch.ehi.basics.io.IndentPrintWriter;
+import ch.ehi.basics.settings.Settings;
 import ch.ehi.basics.tools.TopoSort;
 
 /** generates INTERLIS 1 (ili and fmt)
@@ -51,6 +52,7 @@ public final class Interlis1Generator
   private Type                typeOf_VALIGNMENT;
   private int                 numErrors = 0;
 
+  private TransformationParameter params = null;
 
   static private ResourceBundle rsrc = ResourceBundle.getBundle(
     Interlis1Generator.class.getName(),
@@ -84,6 +86,33 @@ public final class Interlis1Generator
     ipw.print (Element.makeErrorName (null));
   }
 
+  private final boolean printErrorOrToString (Object obj, double factor, double diff)
+  {
+    if (obj == null)
+    {
+      printError ();
+      return true;
+    }
+    
+    PrecisionDecimal parameterValue = (PrecisionDecimal)obj;
+    
+	int value = (int) ((int) (factor * parameterValue.doubleValue()) + diff);
+	String newValue = String.valueOf(value);
+	for (int j = 0; j < parameterValue.getAccuracy(); j++) {
+		if (j == 0) {
+			newValue = newValue + ".0"; 
+		} else {
+			newValue += "0";
+		}
+	}
+	ipw.print(newValue);
+//    if(obj instanceof PrecisionDecimal){
+//	    ipw.print(((PrecisionDecimal)obj).toIli1String());
+//    }else{
+//    	ipw.print (obj.toString ());
+//    }
+    return false;
+  }
 
   private final boolean printErrorOrToString (Object obj)
   {
@@ -112,13 +141,15 @@ public final class Interlis1Generator
 
 
   public static int generate (
-    Writer out, TransferDescription td)
+    Writer out, TransferDescription td, TransformationParameter params)
   {
     Interlis1Generator i = new Interlis1Generator(out, td);
+    i.setParams(params);
     i.printTransferDescription (td);
     i.finish();
     return i.numErrors;
   }
+  
   public static int generateFmt(Writer out, TransferDescription td)
   {
     Interlis1Generator i = new Interlis1Generator(out, td);
@@ -127,8 +158,6 @@ public final class Interlis1Generator
     i.finish();
     return i.numErrors;
   }
-
-
 
   private void printTransferDescriptionHeader (TransferDescription td)
   {
@@ -164,43 +193,41 @@ public final class Interlis1Generator
       ipw.println ("END.");
     }
   }
-
-
+  
   private void printTransferDescription (
-    TransferDescription   td)
-  {
-    printTransferDescriptionHeader (td);
-    int numEmittedModels = 0;
-    Iterator iter = td.iterator ();
-    while (iter.hasNext ())
-    {
-      Object obj = iter.next ();
-      if ((obj instanceof Model) && needToPrintModel ((Model) obj))
-      {
-        if (numEmittedModels > 0)
-        {
-          printTransferDescriptionTrailer (td);
-          if(genFmt){
-          }else{
-            ipw.println ();
-            ipw.println ();
-            ipw.println ("!! " + rsrc.getString ("err_multipleModels_line_1"));
-            ipw.println ("!! " + rsrc.getString ("err_multipleModels_line_2"));
-            ipw.println ("!! " + rsrc.getString ("err_multipleModels_line_3"));
-            ipw.println ();
-          }
-          printTransferDescriptionHeader (td);
-        }
-        numEmittedModels = numEmittedModels + 1;
-        printModel ((Model) obj);
-        if(!genFmt){
-          ipw.println ();
-        }
-      }
-    }
-    printTransferDescriptionTrailer (td);
-  }
-
+		    TransferDescription   td)
+		  {
+		    printTransferDescriptionHeader (td);
+		    int numEmittedModels = 0;
+		    Iterator iter = td.iterator ();
+		    while (iter.hasNext ())
+		    {
+		      Object obj = iter.next ();
+		      if ((obj instanceof Model) && needToPrintModel ((Model) obj))
+		      {
+		        if (numEmittedModels > 0)
+		        {
+		          printTransferDescriptionTrailer (td);
+		          if(genFmt){
+		          }else{
+		            ipw.println ();
+		            ipw.println ();
+		            ipw.println ("!! " + rsrc.getString ("err_multipleModels_line_1"));
+		            ipw.println ("!! " + rsrc.getString ("err_multipleModels_line_2"));
+		            ipw.println ("!! " + rsrc.getString ("err_multipleModels_line_3"));
+		            ipw.println ();
+		          }
+		          printTransferDescriptionHeader (td);
+		        }
+		        numEmittedModels = numEmittedModels + 1;
+		        printModel ((Model) obj);
+		        if(!genFmt){
+		          ipw.println ();
+		        }
+		      }
+		    }
+		    printTransferDescriptionTrailer (td);
+		  }
 
   private boolean needToPrintModel (Model model)
   {
@@ -288,7 +315,6 @@ public final class Interlis1Generator
 	  ipw.println(beg+line);
 	}
 
-
   private void printModel (Model model)
   {
     Class lastPrinted = null;
@@ -297,14 +323,20 @@ public final class Interlis1Generator
       ipw.println("MODL "+model.getName ());
     }else{
 		printDocumentation(model.getDocumentation());
+		printMetaValues(model.getMetaValues());
     	if(model.getIssuer()!=null){
 			ipw.println ("!!* @Issuer "+model.getIssuer());
     	}
 		if(model.getModelVersion()!=null){
 			ipw.println ("!!* @Version "+model.getModelVersion());
 		}
-      ipw.print ("MODEL ");
-      ipw.println (model.getName ());
+      ipw.print ("MODEL "); 
+      if (params != null) {
+    	  ipw.println (params.getNewModelName());  
+      } else {
+    	  ipw.println (model.getName ());
+      }
+
       ipw.indent ();
     }
 
@@ -366,12 +398,14 @@ public final class Interlis1Generator
     }else{
       ipw.unindent ();
       ipw.print ("END ");
-      ipw.print (model.getName ());
+      if (params != null) {
+    	  ipw.print(params.getNewModelName());  
+      } else {
+    	  ipw.print(model.getName ());
+      }
       ipw.println ('.');
     }
   }
-
-
 
   private void printTopic (Topic topic)
   {
@@ -380,6 +414,7 @@ public final class Interlis1Generator
       ipw.println("TOPI "+topic.getName());
     }else{
 	  printDocumentation(topic.getDocumentation());
+	  printMetaValues(topic.getMetaValues());
       ipw.print ("TOPIC ");
       ipw.print (topic.getName ());
       ipw.println (" =");
@@ -527,8 +562,9 @@ public final class Interlis1Generator
       ipw.print("OBJE "+genFmtField(1,1));
       fmtAttrIdx=2;
     }else{
-		printDocumentation(table.getDocumentation());
-      ipw.print ("TABLE ");
+	  printDocumentation(table.getDocumentation());
+	  printMetaValues(table.getMetaValues());
+	  ipw.print ("TABLE ");
       ipw.print (table.getName ());
       ipw.println (" =");
       ipw.indent ();
@@ -701,12 +737,36 @@ public final class Interlis1Generator
     }
   }
 
+  private void printMetaValues(Settings values) {
+	 if (values != null) {
+		 for (Iterator valuei = values.getValues().iterator(); valuei.hasNext();) {
+			 String name = (String) valuei.next();
+			 String value = "";
+			 if (name.equals("CRS")) {
+				 value  = String.valueOf(params.getEpsgCode());
+			 } else {
+				 value = values.getValue(name);
+			 }
+			 ipw.print("!!@ ");
+			 ipw.print(name);
+			 ipw.print("=");
+			 if (value.indexOf(' ') != -1 || value.indexOf('=') != -1 || value.indexOf(';') != -1 
+					 || value.indexOf(',') != -1 || value.indexOf('"') != -1 || value.indexOf('\\') != -1) {
+				 ipw.println("\""+value+"\"");
+			 } else {
+				 ipw.println(value);
+			 }
+		 }
+	 }
+  }
 
-  private void printDomain(Domain domain)
+
+private void printDomain(Domain domain)
   {
 	if(genFmt){
 	}else{
-		printDocumentation(domain.getDocumentation());
+	  printDocumentation(domain.getDocumentation());
+	  printMetaValues(domain.getMetaValues());
 	  ipw.print (domain.getName ());
 	  ipw.print (" = ");
 
@@ -719,6 +779,7 @@ public final class Interlis1Generator
 	  }
 	}
   }
+  
   private void printAttribute (AbstractClassDef forTable, AttributeDef attr)
   {
     /* Do not print abstract attributes. */
@@ -730,6 +791,7 @@ public final class Interlis1Generator
       fmtAttrIdx++;
     }else{
 		printDocumentation(attr.getDocumentation());
+	  printMetaValues(attr.getMetaValues());
       ipw.print (attr.getName ());
       ipw.print (" : ");
 
@@ -1258,7 +1320,6 @@ public final class Interlis1Generator
     }
   }
 
-
   private String printCoordType (CoordType coord)
   {
     /* Fix for BUG-1999-00003.
@@ -1359,17 +1420,35 @@ public final class Interlis1Generator
         ipw.print(" "+genFmtField(fmtAttrIdx,minH,maxH));
       }
     }else{
-      error |= printErrorOrToString (minE);
+    	if (params != null) {
+    		error |= printErrorOrToString (minE, params.getFactor_x(), params.getDiff_x());
+    	} else {
+    		error |= printErrorOrToString (minE);
+    	}
       ipw.print (' ');
-      error |= printErrorOrToString (minN);
+      	if (params != null) {
+      		error |= printErrorOrToString (minN, params.getFactor_x(), params.getDiff_x());
+      	} else {
+      		error |= printErrorOrToString (minN);
+      	}
+      
       if (dimensions.length == 3){
         ipw.print (' ');
         error |= printErrorOrToString (minH);
       }
       ipw.println ();
-      error |= printErrorOrToString (maxE);
+      	if (params != null) {
+      		error |= printErrorOrToString (maxE, params.getFactor_y(), params.getDiff_y());
+      	} else {
+      		error |= printErrorOrToString (maxE);
+      	}
       ipw.print (' ');
-      error |= printErrorOrToString (maxN);
+      	if (params != null) {
+      		error |= printErrorOrToString (maxN, params.getFactor_y(), params.getDiff_y());
+      	} else {
+      		error |= printErrorOrToString (maxN);
+      	}
+      
       if (dimensions.length == 3){
         ipw.print (' ');
         error |= printErrorOrToString (maxH);
@@ -1381,8 +1460,7 @@ public final class Interlis1Generator
     else
       return null;
   }
-
-
+  
   private String printLineType (LineType lineType)
   {
     if(genFmt){
@@ -1640,5 +1718,15 @@ public final class Interlis1Generator
     }
     return role1;
   }
+
+
+public TransformationParameter getParams() {
+	return params;
+}
+
+
+public void setParams(TransformationParameter params) {
+	this.params = params;
+}
 
 }

@@ -1,17 +1,110 @@
 package ch.interlis.ili2c.generator;
 
 
-import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
-import ch.interlis.ili2c.generator.nls.ModelElements;
-import ch.interlis.ili2c.generator.nls.TranslationElement;
-import ch.interlis.ili2c.metamodel.*;
-
 import java.io.File;
 import java.io.Writer;
+import java.text.DecimalFormat;
 import java.util.Iterator;
 
 import ch.ehi.basics.io.IndentPrintWriter;
 import ch.ehi.basics.logging.EhiLogger;
+import ch.interlis.ili2c.generator.TransformationParameter.ModelTransformation;
+import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
+import ch.interlis.ili2c.generator.nls.ModelElements;
+import ch.interlis.ili2c.generator.nls.TranslationElement;
+import ch.interlis.ili2c.metamodel.AbstractClassDef;
+import ch.interlis.ili2c.metamodel.AbstractCoordType;
+import ch.interlis.ili2c.metamodel.AreaType;
+import ch.interlis.ili2c.metamodel.AssociationDef;
+import ch.interlis.ili2c.metamodel.AttributeDef;
+import ch.interlis.ili2c.metamodel.AttributePathType;
+import ch.interlis.ili2c.metamodel.AttributeRef;
+import ch.interlis.ili2c.metamodel.BasketType;
+import ch.interlis.ili2c.metamodel.BlackboxType;
+import ch.interlis.ili2c.metamodel.Cardinality;
+import ch.interlis.ili2c.metamodel.ClassType;
+import ch.interlis.ili2c.metamodel.ComposedUnit;
+import ch.interlis.ili2c.metamodel.CompositionType;
+import ch.interlis.ili2c.metamodel.ConditionalExpression;
+import ch.interlis.ili2c.metamodel.Constant;
+import ch.interlis.ili2c.metamodel.Constraint;
+import ch.interlis.ili2c.metamodel.Container;
+import ch.interlis.ili2c.metamodel.DecompositionView;
+import ch.interlis.ili2c.metamodel.DerivedUnit;
+import ch.interlis.ili2c.metamodel.Domain;
+import ch.interlis.ili2c.metamodel.Element;
+import ch.interlis.ili2c.metamodel.EnumTreeValueType;
+import ch.interlis.ili2c.metamodel.EnumValType;
+import ch.interlis.ili2c.metamodel.EnumerationType;
+import ch.interlis.ili2c.metamodel.Evaluable;
+import ch.interlis.ili2c.metamodel.ExistenceConstraint;
+import ch.interlis.ili2c.metamodel.Expression;
+import ch.interlis.ili2c.metamodel.ExpressionSelection;
+import ch.interlis.ili2c.metamodel.ExtendableContainer;
+import ch.interlis.ili2c.metamodel.FormalArgument;
+import ch.interlis.ili2c.metamodel.FormattedType;
+import ch.interlis.ili2c.metamodel.FormattedTypeBaseAttrRef;
+import ch.interlis.ili2c.metamodel.Function;
+import ch.interlis.ili2c.metamodel.FunctionCall;
+import ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit;
+import ch.interlis.ili2c.metamodel.Graphic;
+import ch.interlis.ili2c.metamodel.GraphicParameterDef;
+import ch.interlis.ili2c.metamodel.Importable;
+import ch.interlis.ili2c.metamodel.JoinView;
+import ch.interlis.ili2c.metamodel.LineForm;
+import ch.interlis.ili2c.metamodel.LineType;
+import ch.interlis.ili2c.metamodel.LocalAttribute;
+import ch.interlis.ili2c.metamodel.MandatoryConstraint;
+import ch.interlis.ili2c.metamodel.MetaDataUseDef;
+import ch.interlis.ili2c.metamodel.MetaObject;
+import ch.interlis.ili2c.metamodel.MetaobjectType;
+import ch.interlis.ili2c.metamodel.Model;
+import ch.interlis.ili2c.metamodel.MultiAreaType;
+import ch.interlis.ili2c.metamodel.MultiCoordType;
+import ch.interlis.ili2c.metamodel.MultiPolylineType;
+import ch.interlis.ili2c.metamodel.MultiSurfaceOrAreaType;
+import ch.interlis.ili2c.metamodel.MultiSurfaceType;
+import ch.interlis.ili2c.metamodel.NoOid;
+import ch.interlis.ili2c.metamodel.NumericType;
+import ch.interlis.ili2c.metamodel.NumericalType;
+import ch.interlis.ili2c.metamodel.NumericallyDerivedUnit;
+import ch.interlis.ili2c.metamodel.OIDType;
+import ch.interlis.ili2c.metamodel.ObjectPath;
+import ch.interlis.ili2c.metamodel.ObjectType;
+import ch.interlis.ili2c.metamodel.Parameter;
+import ch.interlis.ili2c.metamodel.ParameterAssignment;
+import ch.interlis.ili2c.metamodel.ParameterValue;
+import ch.interlis.ili2c.metamodel.PathEl;
+import ch.interlis.ili2c.metamodel.PathElAssocRole;
+import ch.interlis.ili2c.metamodel.PlausibilityConstraint;
+import ch.interlis.ili2c.metamodel.PolylineType;
+import ch.interlis.ili2c.metamodel.PrecisionDecimal;
+import ch.interlis.ili2c.metamodel.PredefinedModel;
+import ch.interlis.ili2c.metamodel.Projection;
+import ch.interlis.ili2c.metamodel.Properties;
+import ch.interlis.ili2c.metamodel.RefSystemRef;
+import ch.interlis.ili2c.metamodel.ReferenceType;
+import ch.interlis.ili2c.metamodel.RoleDef;
+import ch.interlis.ili2c.metamodel.SetConstraint;
+import ch.interlis.ili2c.metamodel.SignAttribute;
+import ch.interlis.ili2c.metamodel.SignInstruction;
+import ch.interlis.ili2c.metamodel.StructuredUnit;
+import ch.interlis.ili2c.metamodel.StructuredUnitType;
+import ch.interlis.ili2c.metamodel.SurfaceOrAreaType;
+import ch.interlis.ili2c.metamodel.SurfaceType;
+import ch.interlis.ili2c.metamodel.Table;
+import ch.interlis.ili2c.metamodel.TextType;
+import ch.interlis.ili2c.metamodel.Topic;
+import ch.interlis.ili2c.metamodel.TransferDescription;
+import ch.interlis.ili2c.metamodel.Type;
+import ch.interlis.ili2c.metamodel.TypeAlias;
+import ch.interlis.ili2c.metamodel.UnionView;
+import ch.interlis.ili2c.metamodel.UniqueEl;
+import ch.interlis.ili2c.metamodel.UniquenessConstraint;
+import ch.interlis.ili2c.metamodel.Unit;
+import ch.interlis.ili2c.metamodel.View;
+import ch.interlis.ili2c.metamodel.Viewable;
+import ch.interlis.ili2c.metamodel.ViewableAlias;
 
 /** A class used to generate an INTERLIS model description as INTERLIS-2.
 */
@@ -34,6 +127,7 @@ public class Interlis2Generator
   
   private java.util.ArrayList selfStandingConstraints=null;
   private ModelElements modelElements;
+  private TransformationParameter params = null;
 
   public Interlis2Generator()
   {
@@ -45,7 +139,7 @@ public class Interlis2Generator
 	Writer out, TransferDescription td, ModelElements modelElements)
   {
 	Interlis2Generator i = new Interlis2Generator();
-	i.setup(out, td, false, modelElements);
+	i.setup(out, td, false, modelElements, null);
 	return i;
   }
   static public String debugToString(TransferDescription td,ch.interlis.ili2c.metamodel.Element ele)
@@ -86,8 +180,14 @@ public class Interlis2Generator
               these errors.
   */
 	public int generate(Writer out, TransferDescription rd, boolean withPredefined) {
-		setup(out, rd, withPredefined, null);
+		setup(out, rd, withPredefined, null, null);
 		printTransferDescription(rd, null, null);
+		finish();
+		return numErrors;
+	}
+	public int generate(Writer out, TransferDescription rd, boolean withPredefined, TransformationParameter params, String filename) {
+		setup(out, rd, withPredefined, null, params);
+		printTransferDescription(rd, null, filename);
 		finish();
 		return numErrors;
 	}
@@ -99,7 +199,7 @@ public class Interlis2Generator
   public int generate (
     Writer out, TransferDescription td, boolean withPredefined, ModelElements modelEles,String language, String filename)
   {
-	setup(out, td, withPredefined, modelEles);
+	setup(out, td, withPredefined, modelEles, null);
 	printTransferDescription(td, language, filename);
     finish();
     return numErrors;
@@ -107,13 +207,14 @@ public class Interlis2Generator
 private void setup(
 	Writer out,
 	TransferDescription td,
-	boolean withPredefined, ModelElements modelEles) {
+	boolean withPredefined, ModelElements modelEles, TransformationParameter params) {
 	ipw = new IndentPrintWriter (out);
 	this.td = td;
 	modelInterlis = td.INTERLIS;
 	anyUnit = td.INTERLIS.ANYUNIT;
 	this.withPredefined = withPredefined;
 	this.modelElements = modelEles;
+	this.params = params;
 }
 
   private boolean printModifierHelper(boolean first, boolean flag, String what)
@@ -251,8 +352,6 @@ private void setup(
 	}
     ipw.println(';');
   }
-
-
 
   protected void printAbstractClassDef (AbstractClassDef def, String language)
   {
@@ -1241,13 +1340,33 @@ private void setup(
         ipw.print ("ANYSTRUCTURE");
     }else{
 		if (language == null) {
-			ipw.print(elt.getScopedName(scope));
+			if (params != null) {
+	      		ModelTransformation[] importModels = params.getImportModels();
+	      		for(ModelTransformation importModel : importModels) {
+	      			if (elt.getScopedName(scope).contains(importModel.getFromModel())) {
+	      				String newScopeName = "";
+	      				String[] scopeName = elt.getScopedName(scope).split("\\.");
+	      				for (String scopeN : scopeName) {
+	      					if (scopeN.equals(importModel.getFromModel())) {
+	      						newScopeName = importModel.getToModel();
+	      					} else {
+	      						newScopeName = newScopeName + "."  + scopeN;
+	      					}
+	      				}
+	      				ipw.print(newScopeName);
+	      			} else {
+	      				ipw.print(elt.getScopedName(scope));
+	      			}
+	      		}
+			} else {
+				ipw.print(elt.getScopedName(scope));
+			}
 		} else {
 			ipw.print(getNameInLanguage(elt, language));
 		}
     }
   }
-
+  
   public void printParameter (Container scope, Parameter par) {
 	  printParameter(scope, par,null);
   }
@@ -1381,6 +1500,7 @@ private void setup(
 	ipw.println(';');
 		
   }
+  
   protected void printAttribute(Container scope,
                                 AttributeDef attrib, String language)
   {
@@ -1575,7 +1695,12 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 		if (values != null) {
 			for (Iterator valuei = values.getValues().iterator(); valuei.hasNext();) {
 				String name = (String) valuei.next();
-				String value = values.getValue(name);
+				String value = "";
+				if (name.equals("CRS")) {
+					value  = String.valueOf(params.getEpsgCode());
+				} else {
+					value = values.getValue(name);
+				}
 				ipw.print("!!@ ");
 				ipw.print(name);
 				ipw.print("=");
@@ -1629,6 +1754,8 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 			return;
 		}
 	}
+	
+	ipw.println ();
     
 	if (language == null) {
 		printDocumentation(mdef.getDocumentation());
@@ -1648,7 +1775,11 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 
     // LANGUAGE
 	if (language == null) {
-		ipw.print("MODEL " + mdef.getName());
+		if (params.getNewModelName() != null) {
+			ipw.print("MODEL " + params.getNewModelName());
+		} else {
+			ipw.print("MODEL " + mdef.getName());
+		}
 	} else {
 		String value = getNameInLanguage(mdef, language);
 		ipw.print("MODEL " + value);
@@ -1685,12 +1816,12 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 	  printExplanation (expl);
 	}
 	// TODO Translation
-	Element modelInRootLanguage = Ili2TranslationXml.getElementInRootLanguage(mdef);
-	if (modelInRootLanguage.getScopedName() != null) {
-		String translationText = "TRANSLATION OF " + modelInRootLanguage.getScopedName() + "[\""
-				+ ((Model) modelInRootLanguage).getModelVersion() + "\"]";
-		ipw.println(translationText);
-	}
+//	Element modelInRootLanguage = Ili2TranslationXml.getElementInRootLanguage(mdef);
+//	if (modelInRootLanguage.getScopedName() != null) {
+//		String translationText = "TRANSLATION OF " + modelInRootLanguage.getScopedName() + "[\""
+//				+ ((Model) modelInRootLanguage).getModelVersion() + "\"]";
+//		ipw.println(translationText);
+//	}
 	ipw.println(" =");
     //ipw.println ();
 
@@ -1711,7 +1842,14 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
       		    ipw.indent();
       		    modelsImported=true;
       		}
-          	ipw.print(sep+((Model) curImport).getName());
+      		ModelTransformation[] importModels = params.getImportModels();
+      		for(ModelTransformation importModel : importModels) {
+      			if (importModel.getFromModel().equals(((Model) curImport).getName())) {
+      				ipw.print(sep + importModel.getToModel());
+      			} else {
+      				ipw.print(sep+((Model) curImport).getName());
+      			}
+      		}
           	sep=", ";
       	}
       }else{
@@ -1730,7 +1868,11 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     ipw.println ();
     ipw.print ("END ");
     if (language == null) {
-    	ipw.print (mdef.getName());
+		if (params.getNewModelName() != null) {
+			ipw.print(params.getNewModelName());
+		} else {
+			ipw.print(mdef.getName());
+		}
     } else {
     	ipw.print(getNameInLanguage(mdef, language));
     }
@@ -1795,8 +1937,6 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     ipw.print(explanationText);
     ipw.print("//");
   }
-
-
 
   protected void printDomainDef (Container scope, Domain dd,String language)
   {
@@ -1891,7 +2031,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
       printError ();
     }
   }
-
+  
   public void printType (Container scope, Type dd) {
 	  printType(scope, dd, null, null);
   }
@@ -1910,7 +2050,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 
 
     if (dd instanceof NumericalType)
-      printNumericalType (scope, (NumericalType) dd, language);
+      printNumericalType (scope, (NumericalType) dd, language,0);
     else if (dd instanceof TextType)
     {
       int len = ((TextType) dd).getMaxLength();
@@ -2072,7 +2212,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
       {
         if (i > 0)
           ipw.print (", ");
-        printNumericalType (scope, nts[i], language);
+        printNumericalType (scope, nts[i], language, i);
       }
       if (nullAxis != 0)
       {
@@ -2271,11 +2411,9 @@ private void printFormatedTypeMinMax(FormattedType ft) {
 	ipw.print("\"");
 }
 
-
-
   /** Prints a numerical type (either a NumericType or a StructuredUnitType).
   */
-  protected void printNumericalType (Container scope, NumericalType type, String language)
+  protected void printNumericalType (Container scope, NumericalType type, String language, int i)
   {
     if (type == null)
     {
@@ -2293,9 +2431,64 @@ private void printFormatedTypeMinMax(FormattedType ft) {
         ipw.print("NUMERIC");
       else
       {
-        ipw.print(min.toString());
-        ipw.print(" .. ");
-        ipw.print(max.toString());
+    	if (params != null) {
+        	if ((i % 2) == 0) {
+        		
+    			int value = (int) ((int) (params.getFactor_x() * min.doubleValue()) + params.getDiff_x());
+    			String newValue = String.valueOf(value);
+    			for (int j = 0; j < min.getAccuracy(); j++) {
+    				if (j == 0) {
+    					newValue = newValue + ".0"; 
+    				} else {
+    					newValue += "0";
+    				}
+    			}
+    			ipw.print(newValue);
+    		
+    		ipw.print(" .. ");
+
+    			value = (int) ((int) (params.getFactor_x() * max.doubleValue()) + params.getDiff_x());
+    			newValue = String.valueOf(value);
+    			for (int j = 0; j < min.getAccuracy(); j++) {
+    				if (j == 0) {
+    					newValue = newValue + ".0"; 
+    				} else {
+    					newValue += "0";
+    				}
+    			}
+    			ipw.print(newValue);
+
+    	} else {
+    			int value = (int) ((int) (params.getFactor_y() * min.doubleValue()) + params.getDiff_y());
+    			String newValue = String.valueOf(value);
+    			for (int j = 0; j < min.getAccuracy(); j++) {
+    				if (j == 0) {
+    					newValue = newValue + ".0"; 
+    				} else {
+    					newValue += "0";
+    				}
+    			}
+    			ipw.print(newValue);
+
+    		ipw.print(" .. ");
+
+    			value = (int) ((int) (params.getFactor_y() * max.doubleValue()) + params.getDiff_y());
+    			newValue = String.valueOf(value);
+    			for (int j = 0; j < min.getAccuracy(); j++) {
+    				if (j == 0) {
+    					newValue = newValue + ".0"; 
+    				} else {
+    					newValue += "0";
+    				}
+    			}
+    			ipw.print(newValue);
+    	}
+    	} else {
+            ipw.print(min.toString());
+            ipw.print(" .. ");
+            ipw.print(max.toString());    		
+    	}
+
       }
     }
     else if (type instanceof StructuredUnitType)
@@ -2578,8 +2771,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
 	
     }
   }
-
-
+  
   protected void printElements (Container container,String language, String filename)
   {
     Class lastClass = null;
@@ -2673,7 +2865,7 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
 
 
           */
-          ipw.println ();
+          //ipw.println ();
           printModel((Model) elt, language, filename);
           lastClass = Model.class;
         }
