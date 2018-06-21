@@ -11,6 +11,7 @@ ili2c 4.7.8 (SNAPSHOT)
 - new function to generate a CRS transformed model (see new --trafo... arguments)
 - ehibasics-1.2.0
 - ili1: read meta attributes
+- fixed: getAttributesAndRoles2() returned the root of embedded roles instead of the most specific one
 
 ili2c 4.7.7 (2018-02-08)
 ---------------------------
