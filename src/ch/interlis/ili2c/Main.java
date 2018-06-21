@@ -9,38 +9,30 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.view.GenericFileFilter;
-import ch.ehi.iox.ilisite.IliRepository09.ModelName_;
-import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata;
-import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage;
 import ch.interlis.ili2c.config.BoidEntry;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.config.GenerateOutputKind;
-import ch.interlis.ili2c.generator.NotSupportedByIliRelational;
+import ch.interlis.ili2c.generator.Interlis2Generator;
+import ch.interlis.ili2c.generator.TransformationParameter;
+import ch.interlis.ili2c.generator.TransformationParameter.ModelTransformation;
 import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
 import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
-import ch.interlis.ili2c.metamodel.Model;
 import ch.interlis.ili2c.metamodel.TransferDescription;
-import ch.interlis.ili2c.modelscan.IliFile;
-import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ili2c.parser.Ili1Parser;
 import ch.interlis.ili2c.parser.Ili22Parser;
 import ch.interlis.ili2c.parser.Ili23Parser;
 import ch.interlis.ili2c.parser.Ili24Parser;
-import ch.interlis.ilirepository.IliFiles;
-import ch.interlis.ilirepository.IliManager;
-import ch.interlis.ilirepository.impl.RepositoryAccess;
-import ch.interlis.ilirepository.impl.RepositoryAccessException;
+import sun.security.provider.certpath.DistributionPointFetcher;
 
 
 public class Main {
@@ -147,7 +139,9 @@ public class Main {
 	String translationDef=null;
     String translatedModelName=null;
     String originLanguageModelName=null;
-	
+    
+    TransformationParameter params = new TransformationParameter();
+    
 	if (args.length == 0) {
 	    ch.interlis.ili2c.gui.Main.main(args);
 	    return;
@@ -180,6 +174,11 @@ public class Main {
 	    System.err.println("-oNLS                 Generate an Translation-XML file.");
 	    System.err.println("--nlsxml file         Name of the Translation-XML file.");
 	    System.err.println("--lang lang           Language (de,fr,it or en).");
+	    System.err.println("--trafoDiff			  Value of the New Calculation Formula (value of the Sum)");
+	    System.err.println("--trafoFactor		  Value of the New Calculation Formula (value of the Multiply)");
+	    System.err.println("--trafoEpsg			  Generate a new EPSG Code in INTERLIS-2 output.");
+	    System.err.println("--trafoImports		  Change the name of the Model with another new Model name.");
+	    System.err.println("--trafoNewModel		  Generate a new Trafo Model name in INTERLIS-2 output.");
 	    System.err.println("-oUML                 Generate Model as UML2/XMI-Transfer (eclipse flavour).");
 	    System.err.println("-oIOM                 (deprecated) Generate Model as INTERLIS-Transfer (XTF).");
 	    System.err.println("--check-repo-ilis uri   check all ili files in the given repository.");
@@ -278,6 +277,38 @@ public class Main {
 			language = args[i];
 			continue;
 		}
+		if (args[i].equals("--trafoDiff")) {
+			i++;
+			String[] diffs = args[i].split("\\,");
+			params.setDiff_x(Double.parseDouble(diffs[0]));
+			params.setDiff_y(Double.parseDouble(diffs[1]));
+		    continue;
+		}
+		if (args[i].equals("--trafoFactor")) {
+			i++;
+			String[] factor = args[i].split("\\,");
+			params.setFactor_x(Double.parseDouble(factor[0]));
+			params.setFactor_y(Double.parseDouble(factor[1]));
+		    continue;
+		}
+		if (args[i].equals("--trafoEpsg")) {
+			i++;
+			params.setEpsgCode(Integer.parseInt(args[i]));
+		    continue;
+		}
+		if (args[i].equals("--trafoImports")) {
+			i++;
+			String[] imports = args[i].split("\\=");
+			params.setImportModels(new TransformationParameter.ModelTransformation[] {
+					new TransformationParameter.ModelTransformation(imports[0], imports[1])
+			});
+		    continue;
+		}
+		if (args[i].equals("--trafoNewModel")) {
+			i++;
+			params.setNewModelName(args[i]);
+		    continue;
+		}
 		if (args[i].equals("--nlsxml")) {
 			i++;
 			nlsxmlFilename = args[i];
@@ -371,6 +402,7 @@ public class Main {
 	    config.setOutputKind(outputKind);
 		config.setLanguage(language);
 		config.setNlsxmlFilename(nlsxmlFilename);
+		config.setParams(params);
 	    if (doCloneRepos || doListModels || doListAllModels || outputKind != GenerateOutputKind.NOOUTPUT) {
 			if (outfile != null) {
 			    config.setOutputFile(outfile);
@@ -663,7 +695,11 @@ public class Main {
 			    return desc;
 			}
 		    }
-		    ch.interlis.ili2c.generator.Interlis1Generator.generate(out, desc);
+		    if (config.getParams() != null) {
+		    	ch.interlis.ili2c.generator.Interlis1Generator.generate(out, desc, config.getParams());
+		    } else {
+		    	ch.interlis.ili2c.generator.Interlis1Generator.generate(out, desc, null);
+		    }
 		    break;
 		case GenerateOutputKind.ILI2:
 		    if ("-".equals(config.getOutputFile())) {
@@ -683,7 +719,10 @@ public class Main {
 						.readModelElementsXml(new File(config.getNlsxmlFilename()));
 				FileEntry e = (FileEntry) config.getFileEntry(config.getSizeFileEntry() - 1);
 				gen.generate(out, desc, modelElements, config.getLanguage(), e.getFilename());
-			} else {
+			} else if (config.getParams() != null) { 
+				FileEntry sourceFile = config.getFileEntry(0);
+				gen.generate(out, desc, false, config.getParams(), sourceFile.getFilename());
+			}else {
 				gen.generate(out, desc, emitPredefined);
 			}
 		    break;

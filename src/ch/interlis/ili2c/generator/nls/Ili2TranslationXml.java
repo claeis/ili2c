@@ -67,7 +67,7 @@ public class Ili2TranslationXml {
 	 * @param fileName Destination of XML File 
 	 * @throws Exception
 	 */
-	public static void writeModelElementsAsXML(ModelElements eles,File fileName) throws Exception {
+	public static void writeModelElementsAsXML(ModelElements eles, File fileName) throws Exception {
 		Class jaxbContextPath[] = { ModelElements.class };
 		JAXBContext jaxbContext = JAXBContext.newInstance(jaxbContextPath);
 		Marshaller ms = jaxbContext.createMarshaller();
@@ -80,7 +80,7 @@ public class Ili2TranslationXml {
 	 * @param td all ili models
 	 * @param file read only models from this file
 	 */
-	private void readAllModelsFromTransferDesc(TransferDescription td,String file) {
+	private void readAllModelsFromTransferDesc(TransferDescription td, String file) {
 		Iterator<Model> modeli = td.iterator();
 
 		List<Model> list = new ArrayList<Model>();
