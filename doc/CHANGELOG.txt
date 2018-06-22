@@ -10,7 +10,7 @@ ili2c 4.7.8 (2018-06-22)
 - new function (--listModels) to generate a list of models in the repositories
 - new function to generate a CRS transformed model (see new --trafo... arguments)
 - ehibasics-1.2.0
-- iox-ili-1.20.5
+- iox-ili-1.20.6
 - ili1: read meta attributes
 - fixed: getAttributesAndRoles2() returned the root of embedded roles instead of the most specific one
 
