@@ -9,36 +9,30 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.view.GenericFileFilter;
-import ch.ehi.iox.ilisite.IliRepository09.ModelName_;
-import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata;
-import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage;
 import ch.interlis.ili2c.config.BoidEntry;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.config.GenerateOutputKind;
-import ch.interlis.ili2c.generator.NotSupportedByIliRelational;
+import ch.interlis.ili2c.generator.Interlis2Generator;
+import ch.interlis.ili2c.generator.TransformationParameter;
+import ch.interlis.ili2c.generator.TransformationParameter.ModelTransformation;
+import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
+import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
-import ch.interlis.ili2c.metamodel.Model;
 import ch.interlis.ili2c.metamodel.TransferDescription;
-import ch.interlis.ili2c.modelscan.IliFile;
-import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ili2c.parser.Ili1Parser;
 import ch.interlis.ili2c.parser.Ili22Parser;
 import ch.interlis.ili2c.parser.Ili23Parser;
 import ch.interlis.ili2c.parser.Ili24Parser;
-import ch.interlis.ilirepository.IliFiles;
-import ch.interlis.ilirepository.IliManager;
-import ch.interlis.ilirepository.impl.RepositoryAccess;
-import ch.interlis.ilirepository.impl.RepositoryAccessException;
+import sun.security.provider.certpath.DistributionPointFetcher;
 
 
 public class Main {
@@ -115,7 +109,19 @@ public class Main {
 	System.err.println();
 	System.err.println("Generate an XML-Schema:");
 	System.err.println("    java -jar " + progName + " -oXSD file1.ili file2.ili");
+    System.err.println();
+    System.err.println("Generate a Translation-XML file:");
+    System.err.println("    java -jar " + progName + " -oNLS --out translation.xml file.ili");
+    System.err.println();
+    System.err.println("Generate a translated INTERLIS-2 definition with help of a Translation-XML file:");
+    System.err.println("    java -jar " + progName + " -o2 --out file_it.ili --lang it --nlsxml translation.xml file.ili");
 	System.err.println();
+    System.err.println("Generate a CRS transformed INTERLIS-2 definition:");
+    System.err.println("    java -jar " + progName + " -o2 --out file_LV95.ili --trafoNewModel model_LV95 --trafoDiff 2000000,1000000 --trafoFactor 1,1 --trafoEpsg 2056 --trafoImports  GeometryCHLV95_V1=GeometryCHLV03_V1 file.ili");
+    System.err.println();
+    System.err.println("List all models starting in the given repository:");
+    System.err.println("    java -jar " + progName + " --listModels "+ILI_REPOSITORY);
+    System.err.println();
     }
 
 
@@ -125,6 +131,8 @@ public class Main {
 	boolean checkMetaObjs = false;
 	boolean doCheckRepoIlis = false;
 	boolean doCloneRepos = false;
+    boolean doListModels = false;
+    boolean doListAllModels = false;
 	boolean withWarnings = true;
 	int numErrorsWhileGenerating = 0;
 	String notifyOnError = "compiler@interlis.ch";
@@ -134,7 +142,9 @@ public class Main {
 	String translationDef=null;
     String translatedModelName=null;
     String originLanguageModelName=null;
-	
+    
+    TransformationParameter params = new TransformationParameter();
+    
 	if (args.length == 0) {
 	    ch.interlis.ili2c.gui.Main.main(args);
 	    return;
@@ -164,10 +174,20 @@ public class Main {
 	    System.err.println("-oFMT                 Generate an INTERLIS-1 Format.");
 	    System.err.println("-oIMD                 Generate Model as IlisMeta07 INTERLIS-Transfer (XTF).");
 	    System.err.println("-oIMD16               Generate Model as IlisMeta16 INTERLIS-Transfer (XTF).");
+	    System.err.println("-oNLS                 Generate an Translation-XML file.");
+	    System.err.println("--nlsxml file         Name of the Translation-XML file.");
+	    System.err.println("--lang lang           Language (de,fr,it or en).");
+	    System.err.println("--trafoDiff d_x,d_y   offset to calculate new coord domains");
+	    System.err.println("--trafoFactor f_x,f_y factor to calculate new coord domains");
+	    System.err.println("--trafoEpsg code      new EPSG code (e.g. 2056)");
+	    System.err.println("--trafoImports  newImport=oldImport change the name of an imported model (e.g. GeometryCHLV95_V1=GeometryCHLV03_V1)");
+	    System.err.println("--trafoNewModel newName name of the new model.");
 	    System.err.println("-oUML                 Generate Model as UML2/XMI-Transfer (eclipse flavour).");
 	    System.err.println("-oIOM                 (deprecated) Generate Model as INTERLIS-Transfer (XTF).");
 	    System.err.println("--check-repo-ilis uri   check all ili files in the given repository.");
 	    System.err.println("--clone-repos         clones the given repositories to the --out folder.");
+        System.err.println("--listModels uri      list all models starting in the given repository.");
+        System.err.println("--listAllModels uri   list all models (without removing old entries) starting in the given repository.");
 	    System.err.println("--translation translatedModel=originModel assigns a translated model to its orginal language equivalent.");
 	    System.err.println("--out file/dir        file or folder for output (folder must exist).");
 	    System.err.println("--ilidirs " + ilidirs + " list of directories with ili-files.");
@@ -194,6 +214,8 @@ public class Main {
 
 	try {
 	    String outfile = null;
+		String language = null;
+		String nlsxmlFilename = null;
 	    int outputKind = GenerateOutputKind.NOOUTPUT;
 
 	    ArrayList ilifilev = new ArrayList();
@@ -223,6 +245,14 @@ public class Main {
 		    doCloneRepos = true;
 		    continue;
 		}
+        if (args[i].equals("--listModels")) {
+            doListModels = true;
+            continue;
+        }
+        if (args[i].equals("--listAllModels")) {
+            doListAllModels = true;
+            continue;
+        }
 		if (args[i].equals("--out")) {
 		    i++;
 		    outfile = args[i];
@@ -244,6 +274,48 @@ public class Main {
 		    i++;
 		    httpProxyPort = args[i];
 		    continue;
+		}
+		if (args[i].equals("--lang")) {
+			i++;
+			language = args[i];
+			continue;
+		}
+		if (args[i].equals("--trafoDiff")) {
+			i++;
+			String[] diffs = args[i].split("\\,");
+			params.setDiff_x(Double.parseDouble(diffs[0]));
+			params.setDiff_y(Double.parseDouble(diffs[1]));
+		    continue;
+		}
+		if (args[i].equals("--trafoFactor")) {
+			i++;
+			String[] factor = args[i].split("\\,");
+			params.setFactor_x(Double.parseDouble(factor[0]));
+			params.setFactor_y(Double.parseDouble(factor[1]));
+		    continue;
+		}
+		if (args[i].equals("--trafoEpsg")) {
+			i++;
+			params.setEpsgCode(Integer.parseInt(args[i]));
+		    continue;
+		}
+		if (args[i].equals("--trafoImports")) {
+			i++;
+			String[] imports = args[i].split("\\=");
+			params.setImportModels(new TransformationParameter.ModelTransformation[] {
+					new TransformationParameter.ModelTransformation(imports[0], imports[1])
+			});
+		    continue;
+		}
+		if (args[i].equals("--trafoNewModel")) {
+			i++;
+			params.setNewModelName(args[i]);
+		    continue;
+		}
+		if (args[i].equals("--nlsxml")) {
+			i++;
+			nlsxmlFilename = args[i];
+			continue;
 		}
 		if (args[i].equals("--ilidirs")) {
 		    i++;
@@ -285,6 +357,9 @@ public class Main {
 		} else if (args[i].equals("-oIOM")) {
 		    outputKind = GenerateOutputKind.IOM;
 		    continue;
+		} else if (args[i].equals("-oNLS")) {
+			outputKind = GenerateOutputKind.XMLNLS;
+			continue;
 		} else if (args[i].equals("--without-warnings")) {
 		    withWarnings = false;
 		    continue;
@@ -296,7 +371,7 @@ public class Main {
 		    continue;
 		} else {
 			String filename = args[i];
-			if (doCheckRepoIlis  || doCloneRepos || new File(filename).isFile()) {
+			if (doCheckRepoIlis  || doCloneRepos || doListModels || doListAllModels || new File(filename).isFile()) {
 				ilifilev.add(filename);
 			} else {
 				EhiLogger.logError(args[i] + ": There is no such file.");
@@ -328,7 +403,10 @@ public class Main {
 	    }
 	    config.setGenerateWarnings(withWarnings);
 	    config.setOutputKind(outputKind);
-	    if (doCloneRepos || outputKind != GenerateOutputKind.NOOUTPUT) {
+		config.setLanguage(language);
+		config.setNlsxmlFilename(nlsxmlFilename);
+		config.setParams(params);
+	    if (doCloneRepos || doListModels || doListAllModels || outputKind != GenerateOutputKind.NOOUTPUT) {
 			if (outfile != null) {
 			    config.setOutputFile(outfile);
 			} else {
@@ -349,6 +427,12 @@ public class Main {
 						EhiLogger.logError("clone of repositories failed");
 						System.exit(1);
 					}
+            }else if (doListModels || doListAllModels) {
+                boolean failed = new ListModels().listModels(config, settings,doListModels==true);
+                if (failed) {
+                    EhiLogger.logError("list of models failed");
+                    System.exit(1);
+                }
 			} else {
 				// compile models
 				TransferDescription td = runCompiler(config, settings,ili2cMetaAttrs);
@@ -614,7 +698,11 @@ public class Main {
 			    return desc;
 			}
 		    }
-		    ch.interlis.ili2c.generator.Interlis1Generator.generate(out, desc);
+		    if (config.getParams() != null) {
+		    	ch.interlis.ili2c.generator.Interlis1Generator.generate(out, desc, config.getParams());
+		    } else {
+		    	ch.interlis.ili2c.generator.Interlis1Generator.generate(out, desc, null);
+		    }
 		    break;
 		case GenerateOutputKind.ILI2:
 		    if ("-".equals(config.getOutputFile())) {
@@ -629,7 +717,17 @@ public class Main {
 			}
 		    }
 		    ch.interlis.ili2c.generator.Interlis2Generator gen = new ch.interlis.ili2c.generator.Interlis2Generator();
-		    gen.generate(out, desc, emitPredefined);
+			if (config.getLanguage() != null && config.getNlsxmlFilename() != null) {
+				ModelElements modelElements = Ili2TranslationXml
+						.readModelElementsXml(new File(config.getNlsxmlFilename()));
+				FileEntry e = (FileEntry) config.getFileEntry(config.getSizeFileEntry() - 1);
+				gen.generate(out, desc, modelElements, config.getLanguage(), e.getFilename());
+			} else if (config.getParams() != null) { 
+				FileEntry sourceFile = config.getFileEntry(0);
+				gen.generate(out, desc, false, config.getParams(), sourceFile.getFilename());
+			}else {
+				gen.generate(out, desc, emitPredefined);
+			}
 		    break;
 		case GenerateOutputKind.XMLSCHEMA:
 		{
@@ -686,6 +784,9 @@ public class Main {
 		    ch.interlis.ili2c.generator.ImdGenerator.generate(new java.io.File(config.getOutputFile()), desc, APP_NAME +
 			    "-" + getVersion());
 		    break;
+		case GenerateOutputKind.XMLNLS:
+			generateXML(config, desc);
+			break;
 		case GenerateOutputKind.IMD16:
 		    ch.interlis.ili2c.generator.Imd16Generator.generate(new java.io.File(config.getOutputFile()), desc, APP_NAME +
 			    "-" + getVersion());
@@ -728,6 +829,12 @@ public class Main {
 	return desc;
     }
 
+	private static void generateXML(Configuration config, TransferDescription desc) throws Exception{
+		FileEntry e = (FileEntry) config.getFileEntry(config.getSizeFileEntry() - 1);
+		Ili2TranslationXml xml = new Ili2TranslationXml();
+		ModelElements eles=xml.convertTransferDescription2ModelElements(desc,new File(e.getFilename()));
+		Ili2TranslationXml.writeModelElementsAsXML(eles,new File(config.getOutputFile()));
+	}
 
 	private static ArrayList getModelRepos(
 			ch.ehi.basics.settings.Settings settings,

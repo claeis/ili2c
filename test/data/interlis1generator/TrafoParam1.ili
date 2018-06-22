@@ -1,0 +1,36 @@
+TRANSFER TransferName;
+
+MODEL LineType
+  TOPIC TopicA =
+    DOMAIN
+    !!@gugus=test
+    !!@CRS = EPSG:21781
+      Point2D = COORD2
+        0.000 0.000
+        200.000 200.000;
+    
+    TABLE ClassA1 =
+	!!@gugus3=test3
+	!!@CRS = EPSG:21781
+      Geometry : SURFACE WITH (STRAIGHTS)
+        VERTEX COORD2
+          0.000 0.000
+        200.000 200.000
+        WITHOUT OVERLAPS > 0.001;
+      !!@gugus2=test2
+      !!@CRS = EPSG:21781
+      point : OPTIONAL COORD2
+        0.000 0.000
+        200.000 200.000;
+    NO IDENT
+    END ClassA1;
+  END TopicA.
+END LineType.
+
+FORMAT
+  FREE;
+
+CODE
+  BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+  TID = ANY;
+END.

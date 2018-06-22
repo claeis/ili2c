@@ -2,6 +2,7 @@ package ch.interlis.ili2c.config;
 
 import ch.interlis.ili2c.Main;
 import ch.interlis.ili2c.config.FileEntry;
+import ch.interlis.ili2c.generator.TransformationParameter;
 import ch.interlis.ili2c.config.BoidEntry;
 
 
@@ -161,8 +162,29 @@ public class Configuration implements Cloneable
   }
 
   private int outputKind = GenerateOutputKind.NOOUTPUT;
+  
+  private TransformationParameter params = null;
+  
+  private String language;
+  private String nlsxmlFilename;
 
-  /** get current value of outputKind
+  public String getLanguage() {
+	return language;
+}
+
+public void setLanguage(String language) {
+	this.language = language;
+}
+
+public String getNlsxmlFilename() {
+	return nlsxmlFilename;
+}
+
+public void setNlsxmlFilename(String xmlFolderName) {
+	this.nlsxmlFilename = xmlFolderName;
+}
+
+/** get current value of outputKind
    *  @see #setOutputKind
    */
   public  int getOutputKind()
@@ -265,6 +287,14 @@ public boolean isAutoCompleteModelList() {
 
 public void setAutoCompleteModelList(boolean autoCompleteModelList) {
 	this.autoCompleteModelList = autoCompleteModelList;
+}
+
+public TransformationParameter getParams() {
+	return params;
+}
+
+public void setParams(TransformationParameter params) {
+	this.params = params;
 }
 }
 

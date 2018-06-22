@@ -37,11 +37,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.iox.ilisite.IliRepository09.ModelName_;
 import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata;
 import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage;
+import ch.ehi.iox.ilisite.IliSite09.RepositoryLocation_;
 import ch.interlis.ili2c.modelscan.IliFile;
 import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ilirepository.IliFiles;
@@ -106,7 +108,7 @@ public class RepositoryAccess {
 				IliFiles iliFiles;
 				try {
 					EhiLogger.traceState("read "+IliManager.ILIMODELS_XML+" from <"+uri+">...");
-					iliFiles = readIliModelsXml(uri);
+					iliFiles = readIlimodelsXmlAsIliFiles(uri);
 				} catch (RepositoryAccessException e) {
 					handleRepositoryAccessException(e,uri);
 					iliFiles=null;
@@ -117,6 +119,38 @@ public class RepositoryAccess {
 		IliFiles iliFiles=reposIliFiles.get(uri);
 		return iliFiles;
 	}
+    public IliFiles getModelMetadata(String uri)
+    {
+        if(!reposIliFiles.containsKey(uri)){
+            if(isLegacyDir(uri)){
+                // scan directory
+                try {
+                    EhiLogger.traceState("scan ili-files in folder <"+uri+">...");
+                    HashSet<IliFile> files=ch.interlis.ili2c.ModelScan.scanIliFileDir(new File(uri), null);
+                    Iterator<IliFile> filei=files.iterator();
+                    IliFiles iliFiles=new IliFiles();
+                    while(filei.hasNext()){
+                        iliFiles.addFile((IliFile)filei.next());
+                    }
+                    reposIliFiles.put(uri, iliFiles);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }else{
+                IliFiles iliFiles;
+                try {
+                    EhiLogger.traceState("read "+IliManager.ILIMODELS_XML+" from <"+uri+">...");
+                    iliFiles = readIlimodelsXmlAsIliFiles(uri);
+                } catch (RepositoryAccessException e) {
+                    handleRepositoryAccessException(e,uri);
+                    iliFiles=null;
+                }
+                reposIliFiles.put(uri, iliFiles);
+            }
+        }
+        IliFiles iliFiles=reposIliFiles.get(uri);
+        return iliFiles;
+    }
 	/** Gets the site metadata for a given repository.
 	 * @param uri local or remote repository
 	 * @return site metadata or null if no such repository or offline.
@@ -272,20 +306,27 @@ public class RepositoryAccess {
 	 * @param uri uri of the repository without ilimodels.xml
 	 * @return null if the repository doesn't exist
 	 */
-	private IliFiles readIliModelsXml(String uri)
+	private IliFiles readIlimodelsXmlAsIliFiles(String uri)
 	throws RepositoryAccessException
 	{
-		File file=getLocalFileLocation(uri,IliManager.ILIMODELS_XML,metaMaxTTL,null);
+		List<ModelMetadata> modelv =  readIlimodelsXml(uri);
+		if(modelv==null) {
+		    return null;
+		}
+		modelv=getLatestVersions(modelv);
+		return createIliFiles(uri, modelv);
+	}
+    public List<ModelMetadata> readIlimodelsXml(String uri) throws RepositoryAccessException {
+        File file=getLocalFileLocation(uri,IliManager.ILIMODELS_XML,metaMaxTTL,null);
 		if(file==null){
 			return null;
 		}
 		// read file
-		ArrayList<ModelMetadata> modelv = readIliModelsXml(file);
-		modelv=getLatestVersions(modelv);
-		return createIliFiles(uri, modelv);
-	}
+		List<ModelMetadata> modelv = readIliModelsXml(file);
+        return modelv;
+    }
 	static private final String REGEX_ILI_NAME="[a-zA-Z]([a-zA-Z0-9_]*)";
-	static public ArrayList<ModelMetadata> readIliModelsXml(File file) 
+	static public List<ModelMetadata> readIliModelsXml(File file) 
 	throws RepositoryAccessException
 	{
 		ArrayList<ModelMetadata> modelv=new ArrayList<ModelMetadata>();
@@ -368,12 +409,22 @@ public class RepositoryAccess {
 						 ch.ehi.iox.ilisite.IliSite09.SiteMetadata.Site site=(ch.ehi.iox.ilisite.IliSite09.SiteMetadata.Site)iomObj;
 						 IliSite ret=new IliSite();
 						 ch.ehi.iox.ilisite.IliSite09.RepositoryLocation_ parents[]=site.getparentSite();
-						 for(int parenti=0;parenti<parents.length;parenti++){
-							 ret.addParentSite(parents[parenti].getvalue());
+						 if(parents!=null) {
+	                         for(int parenti=0;parenti<parents.length;parenti++){
+	                             RepositoryLocation_ parent = parents[parenti];
+	                             if(parent!=null) {
+	                                 ret.addParentSite(parent.getvalue());
+	                             }
+	                         }
 						 }
 						 ch.ehi.iox.ilisite.IliSite09.RepositoryLocation_ subsidiaries[]=site.getsubsidiarySite();
-						 for(int subsidiaryi=0;subsidiaryi<subsidiaries.length;subsidiaryi++){
-							 ret.addSubsidiarySite(subsidiaries[subsidiaryi].getvalue());
+						 if(subsidiaries!=null) {
+	                         for(int subsidiaryi=0;subsidiaryi<subsidiaries.length;subsidiaryi++){
+	                             RepositoryLocation_ subsidiary = subsidiaries[subsidiaryi];
+	                             if(subsidiary!=null) {
+	                                 ret.addSubsidiarySite(subsidiary.getvalue());
+	                             }
+	                         }
 						 }
 						 return ret;
 					 }
@@ -393,7 +444,7 @@ public class RepositoryAccess {
 		}
 		return null;
 	}
-	public static ArrayList<ModelMetadata> getLatestVersions(ArrayList<ModelMetadata> modelVersions1)
+	public static List<ModelMetadata> getLatestVersions(List<ModelMetadata> modelVersions1)
 	{
 		HashMap<String,ArrayList<ModelMetadata>> models=new HashMap<String,ArrayList<ModelMetadata>>(); // map<String modelName,array<ModelMetadata>>
 		for(ModelMetadata model:modelVersions1){
@@ -424,7 +475,7 @@ public class RepositoryAccess {
 		
 	}
 	
-	private static ModelMetadata getCslVersion(ArrayList<ModelMetadata> modelVersions1,ModelMetadata_SchemaLanguage csl)
+	private static ModelMetadata getCslVersion(List<ModelMetadata> modelVersions1,ModelMetadata_SchemaLanguage csl)
 	{
 		ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelVersions=new ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata>();
 		ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata model=null;
@@ -446,7 +497,7 @@ public class RepositoryAccess {
 		}
 		return modelVersions.get(0);
 	}
-	private static ModelMetadata getLatestVersion(ArrayList<ModelMetadata> modelVersions1,ModelMetadata_SchemaLanguage csl)
+	private static ModelMetadata getLatestVersion(List<ModelMetadata> modelVersions1,ModelMetadata_SchemaLanguage csl)
 	{
 		ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelVersions=new ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata>();
 		ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata model=null;
@@ -768,7 +819,27 @@ public class RepositoryAccess {
 	}
 	return ret;
 }
-	public static String escapeUri(String uri) {
+	public static ModelMetadata findModelMetadata(
+    		List<ModelMetadata> modelMetadatav, String name,
+    		ModelMetadata_SchemaLanguage csl) {
+    	for(ModelMetadata modelMetadata :  modelMetadatav){
+    		if(modelMetadata.getName().equals(name) && modelMetadata.getSchemaLanguage().equals(csl)){
+    			return modelMetadata;
+    		}
+    	}
+    	return null;
+    }
+    public static ModelMetadata findModelMetadata(
+            List<ModelMetadata> modelMetadatav, String name,
+            ModelMetadata_SchemaLanguage csl,String version) {
+        for(ModelMetadata modelMetadata :  modelMetadatav){
+            if(modelMetadata.getName().equals(name) && modelMetadata.getSchemaLanguage().equals(csl) && modelMetadata.getVersion().equals(version)){
+                return modelMetadata;
+            }
+        }
+        return null;
+    }
+    public static String escapeUri(String uri) {
 		StringBuffer localFileName=new StringBuffer();
 		{
 			// escape characters

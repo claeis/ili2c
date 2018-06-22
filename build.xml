@@ -22,14 +22,14 @@
   </target>
   <target depends="init,buildnr" name="pom">
 		<artifact:pom id="pomE-core" groupId="${groupId}" artifactId="ili2c-core" version="${buildnr}" name="ili2c-core">
-			<artifact:dependency groupId="ch.ehi" artifactId="ehibasics" version="1.1.0"/>
+			<artifact:dependency groupId="ch.ehi" artifactId="ehibasics" version="1.2.0"/>
 		</artifact:pom>
 		  <artifact:writepom pomRefId="pomE-core" file="build/pom-core.xml"/>
 		<artifact:pom id="pom-core" file="build/pom-core.xml" />
 		<artifact:pom id="pomE-tool" groupId="${groupId}" artifactId="ili2c-tool" version="${buildnr}" name="ili2c-tool">
 			<artifact:dependency groupId="ch.interlis" artifactId="ili2c-core" version="${buildnr}"/>
 			<artifact:dependency groupId="ch.interlis" artifactId="iox-api" version="1.0.3"/>
-			<artifact:dependency groupId="ch.interlis" artifactId="iox-ili" version="1.20.2"/>
+			<artifact:dependency groupId="ch.interlis" artifactId="iox-ili" version="1.20.6"/>
 			<artifact:dependency groupId="antlr" artifactId="antlr" version="2.7.6"/>
 		</artifact:pom>
 		  <artifact:writepom pomRefId="pomE-tool" file="build/pom-tool.xml"/>

@@ -1,0 +1,28 @@
+INTERLIS 2.3;
+
+MODEL EnumOkA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	!!@ dispName="Topic A"
+	TOPIC TopicA =
+	
+		/** Das ist Dokumentation in DE */
+		CLASS ClassA =
+			/** Das ist Dokumentation in DE */
+			attrA : (a1,
+				/** enum docu zu a2 */
+				!!@ dispName="a 2"
+				a2(a21,a22));
+			MANDATORY CONSTRAINT DEFINED(attrA);
+			!!@ name=UniqueConstraintA
+			UNIQUE attrA;
+		END ClassA;
+		
+		ASSOCIATION roleA1roleA2 =
+			roleA1 -- ClassA;
+			roleA2 -- ClassA;
+			MANDATORY CONSTRAINT DEFINED(roleA1->attrA);
+		END roleA1roleA2;
+
+	END TopicA;
+
+END EnumOkA.
