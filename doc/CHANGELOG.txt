@@ -1,6 +1,10 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+LATEST
+---------------------------
+- fixed: getAttributesAndRoles2() returned the extended embedded roles twice
+
 ili2c 4.7.8 (2018-06-22)
 ---------------------------
 - fixed StackOverflow if name of translated model is the same as the origin model name

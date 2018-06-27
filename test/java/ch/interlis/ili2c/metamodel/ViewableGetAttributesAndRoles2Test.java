@@ -16,14 +16,15 @@ public class ViewableGetAttributesAndRoles2Test {
         // ili lesen
         TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(ILI_FILE));
         assertNotNull(td);
-        Viewable topicBclassB=(Viewable) td.getElement("ViewableGetAttributesAndRoles2.topicA.ClassB");
-        Iterator propIt=topicBclassB.getAttributesAndRoles2();
+        Viewable topicAclassB=(Viewable) td.getElement("ViewableGetAttributesAndRoles2.topicA.ClassB");
+        Iterator propIt=topicAclassB.getAttributesAndRoles2();
         ViewableTransferElement prop=(ViewableTransferElement) propIt.next();
         assertEquals("ViewableGetAttributesAndRoles2.topicA.ClassB.attr_b1",((Element) prop.obj).getScopedName());
         prop=(ViewableTransferElement) propIt.next();
         assertEquals("ViewableGetAttributesAndRoles2.topicA.ClassB.attr_b2",((Element) prop.obj).getScopedName());
         prop=(ViewableTransferElement) propIt.next();
-        assertEquals("ViewableGetAttributesAndRoles2.topicA.b2c.c",((Element) prop.obj).getScopedName());            
+        assertEquals("ViewableGetAttributesAndRoles2.topicA.b2c.c",((Element) prop.obj).getScopedName());     
+        assertFalse(propIt.hasNext());
     }
     @Test
     public void extendedClass() throws Exception {
@@ -40,5 +41,23 @@ public class ViewableGetAttributesAndRoles2Test {
         assertEquals("ViewableGetAttributesAndRoles2.topicB.b2c.c", ((Element) prop.obj).getScopedName());
         prop = (ViewableTransferElement) propIt.next();
         assertEquals("ViewableGetAttributesAndRoles2.topicB.ClassB.attr_b3", ((Element) prop.obj).getScopedName());
+        assertFalse(propIt.hasNext());
+    }
+    @Test
+    public void extendsClass() throws Exception {
+        // ili lesen
+        TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(ILI_FILE));
+        assertNotNull(td);
+        Viewable topicBclassB=(Viewable) td.getElement("ViewableGetAttributesAndRoles2.topicC.ClassBp");
+        Iterator propIt=topicBclassB.getAttributesAndRoles2();
+        ViewableTransferElement prop=(ViewableTransferElement) propIt.next();
+        assertEquals("ViewableGetAttributesAndRoles2.topicC.ClassB.attr_b1",((Element) prop.obj).getScopedName());
+        prop=(ViewableTransferElement) propIt.next();
+        assertEquals("ViewableGetAttributesAndRoles2.topicC.ClassBp.attr_b2",((Element) prop.obj).getScopedName());
+        prop = (ViewableTransferElement) propIt.next();
+        assertEquals("ViewableGetAttributesAndRoles2.topicC.b2cp.c", ((Element) prop.obj).getScopedName());
+        prop = (ViewableTransferElement) propIt.next();
+        assertEquals("ViewableGetAttributesAndRoles2.topicC.ClassBp.attr_b3", ((Element) prop.obj).getScopedName());
+        assertFalse(propIt.hasNext());
     }
 }
