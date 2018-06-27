@@ -42,6 +42,8 @@ public class ViewableGetAttributesAndRoles2Test {
         prop = (ViewableTransferElement) propIt.next();
         assertEquals("ViewableGetAttributesAndRoles2.topicB.ClassB.attr_b3", ((Element) prop.obj).getScopedName());
         assertFalse(propIt.hasNext());
+        AssociationDef topicBb2c=(AssociationDef) td.getElement("ViewableGetAttributesAndRoles2.topicB.b2c");
+        assertTrue(topicBb2c.isLightweight());
     }
     @Test
     public void extendsClass() throws Exception {

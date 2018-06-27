@@ -20,6 +20,7 @@ MODEL ViewableGetAttributesAndRoles2 AT "http://www.interlis.ch/ili2c/tests/" VE
 	END topicA;
 
 	TOPIC topicB EXTENDS topicA =
+    OID AS INTERLIS.UUIDOID;
 		CLASS ClassB (EXTENDED)=
                   attr_b2 (EXTENDED) : TEXT*10;
                   attr_b3 : TEXT*10;
