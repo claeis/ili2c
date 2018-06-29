@@ -1,6 +1,9 @@
 package ch.interlis.ili2c.generator.nls;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * Structure of the XML Document
@@ -18,16 +21,25 @@ import javax.xml.bind.annotation.XmlType;
 "documentation_it",
 "documentation_en"
 })
+@XmlAccessorType(XmlAccessType.FIELD)
 public class TranslationElement {
 	private String scopedName;
 	private String elementType;
+	@XmlJavaTypeAdapter(StringAdapter.class)
 	private String name_de;
+    @XmlJavaTypeAdapter(StringAdapter.class)
 	private String name_fr;
+    @XmlJavaTypeAdapter(StringAdapter.class)
 	private String name_it;
+    @XmlJavaTypeAdapter(StringAdapter.class)
 	private String name_en;
+    @XmlJavaTypeAdapter(StringAdapter.class)
 	private String documentation_de;
+    @XmlJavaTypeAdapter(StringAdapter.class)
 	private String documentation_fr;
+    @XmlJavaTypeAdapter(StringAdapter.class)
 	private String documentation_it;
+    @XmlJavaTypeAdapter(StringAdapter.class)
 	private String documentation_en;
 	
 	/**
