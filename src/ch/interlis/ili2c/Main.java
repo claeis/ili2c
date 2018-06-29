@@ -832,7 +832,7 @@ public class Main {
 	private static void generateXML(Configuration config, TransferDescription desc) throws Exception{
 		FileEntry e = (FileEntry) config.getFileEntry(config.getSizeFileEntry() - 1);
 		Ili2TranslationXml xml = new Ili2TranslationXml();
-		ModelElements eles=xml.convertTransferDescription2ModelElements(desc,new File(e.getFilename()));
+		ModelElements eles=xml.convertTransferDescription2ModelElements(desc);
 		Ili2TranslationXml.writeModelElementsAsXML(eles,new File(config.getOutputFile()));
 	}
 

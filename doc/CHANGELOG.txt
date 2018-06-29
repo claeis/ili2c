@@ -5,6 +5,7 @@ LATEST
 ---------------------------
 - fixed: getAttributesAndRoles2() returned the extended embedded roles twice
 - translation-xml: read/write empty elements with "-" to force column existence in Excel
+- translation-xml: fixed ordering of exported models
 
 ili2c 4.7.8 (2018-06-22)
 ---------------------------

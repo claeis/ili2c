@@ -413,7 +413,7 @@ public class Ili2TranslationXmlTest {
 			return null;
 		}
 
-		return new Ili2TranslationXml().convertTransferDescription2ModelElements(td, iliFile);
+		return new Ili2TranslationXml().convertTransferDescription2ModelElements(td);
 	}
 	/**
 	 * with TransferDescription we can get ili data from the source file.
