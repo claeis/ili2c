@@ -20,6 +20,7 @@ import ch.interlis.ili2c.metamodel.Element;
 import ch.interlis.ili2c.metamodel.Enumeration;
 import ch.interlis.ili2c.metamodel.EnumerationType;
 import ch.interlis.ili2c.metamodel.ExpressionSelection;
+import ch.interlis.ili2c.metamodel.FormalArgument;
 import ch.interlis.ili2c.metamodel.Function;
 import ch.interlis.ili2c.metamodel.Graphic;
 import ch.interlis.ili2c.metamodel.LineForm;
@@ -428,6 +429,30 @@ public class Ili2TranslationXml {
 					String text = getElementInRootLanguage(ele).getScopedName();
 					prepareAllEnumaration((EnumerationType) domain.getType(), text, domain);
 				}
+			} else if (ele instanceof Function) {
+			    TranslationElement traslationElement = new TranslationElement();
+			    Function function = (Function) ele;
+			    FormalArgument[] arguments = function.getArguments();
+			    for (int i = 0; i < arguments.length; i++) {
+			        convertModelElement(traslationElement, arguments[i], getLanguage(function));
+			        
+			        Function function2 = arguments[i].getFunction();
+			        Element baseLanguageElement = function2.getTranslationOf();
+			        while (baseLanguageElement != null) {
+			            if (baseLanguageElement instanceof Function) {
+			                Function fnc = (Function) baseLanguageElement;
+			                FormalArgument[] argumentsSubElement = fnc.getArguments();
+			                for (int j = 0; j < argumentsSubElement.length; j++) {
+			                    convertModelElement(traslationElement, argumentsSubElement[j], getLanguage(baseLanguageElement));
+			                    traslationElement.setScopedName(getElementInRootLanguage(function).getScopedName() + "." + argumentsSubElement[j].getName());
+			                    
+			                    function2 = argumentsSubElement[i].getFunction();
+			                    baseLanguageElement = function2.getTranslationOf();
+			                }
+			            }
+			        }
+			        printModelElement(traslationElement);
+			    }
 			}
 		}
 
@@ -479,8 +504,7 @@ public class Ili2TranslationXml {
 	}
 
 	/**
-	 * it gets all Enumeration and SubEnumeration data and insert into Structure
-	 * with language
+	 * it gets all Enumeration and SubEnumeration data and insert into Structure with language
 	 * 
 	 * @param enumeration Related Enumeration Elements
 	 * @param scopedNamePrefix Scope Name
