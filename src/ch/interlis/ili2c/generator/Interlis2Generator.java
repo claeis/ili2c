@@ -117,6 +117,7 @@ public class Interlis2Generator
   PredefinedModel               modelInterlis;
   Unit                anyUnit;
   boolean             withPredefined;
+  private boolean onlyLastFile;
   int                 numErrors = 0;
   
   private static final String FR = Ili2TranslationXml.FR;
@@ -125,7 +126,7 @@ public class Interlis2Generator
   private static final String DE = Ili2TranslationXml.DE;
   
   private java.util.ArrayList selfStandingConstraints=null;
-  private ModelElements modelElements;
+  private ModelElements translationConfig;
   private TransformationParameter params = null;
 
   public Interlis2Generator()
@@ -138,14 +139,14 @@ public class Interlis2Generator
 	Writer out, TransferDescription td, ModelElements modelElements)
   {
 	Interlis2Generator i = new Interlis2Generator();
-	i.setup(out, td, false, modelElements, null);
+	i.setup(out, td, false, false,modelElements, null);
 	return i;
   }
   static public String debugToString(TransferDescription td,ch.interlis.ili2c.metamodel.Element ele)
   {
 	java.io.StringWriter syntaxBuffer=new java.io.StringWriter();
 	Interlis2Generator makeSyntax = Interlis2Generator.generateElements(syntaxBuffer, td, null);
-	makeSyntax.printElement(ele.getContainer(), null, ele, null, null);
+	makeSyntax.printElement(ele.getContainer(), null, ele, null);
 	makeSyntax.ipw.flush();
     return syntaxBuffer.toString();
   }
@@ -179,41 +180,37 @@ public class Interlis2Generator
               these errors.
   */
 	public int generate(Writer out, TransferDescription rd, boolean withPredefined) {
-		setup(out, rd, withPredefined, null, null);
-		printTransferDescription(rd, null, null);
+		setup(out, rd, withPredefined, false,null, null);
+		printTransferDescription(rd, null);
 		finish();
 		return numErrors;
 	}
-	public int generate(Writer out, TransferDescription rd, boolean withPredefined, TransformationParameter params, String filename) {
-		setup(out, rd, withPredefined, null, params);
-		printTransferDescription(rd, null, filename);
+	public int generateWithNewCrs(Writer out, TransferDescription rd, TransformationParameter params) {
+		setup(out, rd, false, true,null, params);
+		printTransferDescription(rd, null);
 		finish();
 		return numErrors;
 	}
-  public int generate (
-	Writer out, TransferDescription td,ModelElements modelEles, String language, String filename)
+  public int generateWithNewLanguage (
+	Writer out, TransferDescription td,ModelElements modelEles, String language)
 	{
-	  return generate(out, td, false, modelEles, language, filename);
+      setup(out, td, false, true,modelEles, null);
+      printTransferDescription(td, language);
+      finish();
+      return numErrors;
 	}
-  public int generate (
-    Writer out, TransferDescription td, boolean withPredefined, ModelElements modelEles,String language, String filename)
-  {
-	setup(out, td, withPredefined, modelEles, null);
-	printTransferDescription(td, language, filename);
-    finish();
-    return numErrors;
-  }
 private void setup(
 	Writer out,
 	TransferDescription td,
-	boolean withPredefined, ModelElements modelEles, TransformationParameter params) {
+	boolean withPredefined, boolean onlyLastFile, ModelElements modelEles, TransformationParameter params) {
 	ipw = new IndentPrintWriter (out);
 	this.td = td;
 	modelInterlis = td.INTERLIS;
 	anyUnit = td.INTERLIS.ANYUNIT;
 	this.withPredefined = withPredefined;
-	this.modelElements = modelEles;
+	this.translationConfig = modelEles;
 	this.params = params;
+	this.onlyLastFile=onlyLastFile;
 }
 
   private boolean printModifierHelper(boolean first, boolean flag, String what)
@@ -365,7 +362,7 @@ private void setup(
     }
 
 
-    printElements(topic, language, null);
+    printElements(topic, language);
     Iterator csi=selfStandingConstraints.iterator();
     Viewable view=null;
 	Viewable lastView=null;
@@ -463,7 +460,7 @@ private void setup(
     	    ipw.println (";");
     	}
     }
-	printElements(def, language, null);
+	printElements(def, language);
 	printEnd(def, language);
   }
 
@@ -700,7 +697,7 @@ private void setup(
     ipw.println ("; =");
 
 
-	printElements(view, language, null);
+	printElements(view, language);
 	printEnd(view, language);
   }
   
@@ -728,7 +725,7 @@ private void setup(
    printStart ("GRAPHIC", graph, /* basedOn */ graph.getBasedOn(),language);
    ipw.println (" =");
    ipw.indent ();
-    printElements (graph,language, null);
+    printElements (graph,language);
     printEnd (graph, language);
   }
 
@@ -2057,16 +2054,9 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 	  ipw.println(" */");
 	}
 
-  protected void printModel (Model mdef,String language, String filename)
+  protected void printModel (Model mdef,String language)
   {
 
-	if (filename != null) {
-		File fileNameFromMdef = new File(mdef.getFileName());
-		File fileNameFromIli = new File(filename);
-		if (!fileNameFromMdef.getName().equals(fileNameFromIli.getName())) {
-			return;
-		}
-	}
 	
 	ipw.println ();
     
@@ -2136,12 +2126,12 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 	  ipw.print (' ');
 	  printExplanation (expl);
 	}
-	// TODO Translation
-	Element modelInRootLanguage = Ili2TranslationXml.getElementInRootLanguage(mdef);
-	if (modelInRootLanguage.getScopedName() != null) {
-		String translationText = "TRANSLATION OF " + modelInRootLanguage.getScopedName() + "[\""
-				+ ((Model) modelInRootLanguage).getModelVersion() + "\"]";
-		ipw.println(translationText);
+	if (translationConfig!=null) {
+        String translationText = "TRANSLATION OF " + mdef.getName() + "[\""
+                + mdef.getModelVersion() + "\"]";
+        ipw.println(translationText);
+	}else {
+	    // TODO Translation
 	}
 	ipw.println(" =");
 
@@ -2186,7 +2176,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 	    ipw.println();
 	}
 
-    printElements (mdef, language, filename);
+    printElements (mdef, language);
 
     ipw.unindent();
     ipw.println ();
@@ -2212,7 +2202,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 
 	private String getDocumentationInLanguage(Element ele, String language) {
 		String modelName = "";
-		Iterator<TranslationElement> iteratorModelElement = modelElements.iterator();
+		Iterator<TranslationElement> iteratorModelElement = translationConfig.iterator();
 
 		while (iteratorModelElement.hasNext()) {
 			TranslationElement element = iteratorModelElement.next();
@@ -2237,7 +2227,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 
 	private String getNameInLanguage(Element ele, String language) {
 		String modelName = "";
-		Iterator<TranslationElement> iteratorModelElement = modelElements.iterator();
+		Iterator<TranslationElement> iteratorModelElement = translationConfig.iterator();
 
 		while (iteratorModelElement.hasNext()) {
 			TranslationElement element = iteratorModelElement.next();
@@ -2975,7 +2965,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
 
 	private String getEnumerationElementNameInLanguage(String scopedNamePrefix, String language) {
 		String modelName = "";
-		Iterator<TranslationElement> iteratorModelElement = modelElements.iterator();
+		Iterator<TranslationElement> iteratorModelElement = translationConfig.iterator();
 
 		while (iteratorModelElement.hasNext()) {
 			TranslationElement element = iteratorModelElement.next();
@@ -3000,7 +2990,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
   
 	private String getEnumerationElementDocumentationInLanguage(String scopedNamePrefix, String language) {
 		String modelName = "";
-		Iterator<TranslationElement> iteratorModelElement = modelElements.iterator();
+		Iterator<TranslationElement> iteratorModelElement = translationConfig.iterator();
 
 		while (iteratorModelElement.hasNext()) {
 			TranslationElement element = iteratorModelElement.next();
@@ -3234,22 +3224,29 @@ private void printFormatedTypeMinMax(FormattedType ft) {
     }
   }
   
-  protected void printElements (Container container,String language, String filename)
+  protected void printElements (Container container,String language)
   {
     Class lastClass = null;
 
 
-    Iterator it = container.iterator();
-    while (it.hasNext()) {
-      ch.interlis.ili2c.metamodel.Element elt = (ch.interlis.ili2c.metamodel.Element) it.next();
+    if(onlyLastFile && container instanceof TransferDescription) {
+        for(Model model:((TransferDescription)container).getModelsFromLastFile()) {
+            lastClass = printElement(container, lastClass, model,language);
+        }
+    }else {
+        Iterator it = container.iterator();
+        while (it.hasNext()) {
+          ch.interlis.ili2c.metamodel.Element elt = (ch.interlis.ili2c.metamodel.Element) it.next();
 
 
 
-      lastClass = printElement(container, lastClass, elt,language,filename);
+          lastClass = printElement(container, lastClass, elt,language);
+        }
+        
     }
   }
 protected Class printElement(Container container, Class lastClass, ch.interlis.ili2c.metamodel.Element elt,
-		String language, String filename) {
+		String language) {
 	if (elt instanceof AttributeDef)
       {
         printAttribute (container, (AttributeDef) elt, language);
@@ -3328,7 +3325,7 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
 
           */
           //ipw.println ();
-          printModel((Model) elt, language, filename);
+          printModel((Model) elt, language);
           lastClass = Model.class;
         }
       }
@@ -3414,13 +3411,13 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
 }
 
   protected void printTransferDescription (
-    TransferDescription   td, String language, String filename)
+    TransferDescription   td, String language)
   {
     ipw.println("INTERLIS 2.3;");
     ipw.unindent();
     ipw.println();
 
 
-    printElements(td, language, filename);
+    printElements(td, language);
   }
 }

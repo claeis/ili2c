@@ -51,7 +51,7 @@ public class Interlis2GeneratorTransformationTest {
 
 		// create a new Ili File
 		FileWriter out = new FileWriter(new File(OUTPUT_ILI_FILE));
-		new Interlis2Generator().generate(out, td, false, trafoParam, ILI_FILE);
+		new Interlis2Generator().generateWithNewCrs(out, td, trafoParam);
 		out.close();
 
 		// Read new Ili

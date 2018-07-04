@@ -58,7 +58,7 @@ public class Interlis2GeneratorTest {
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
 		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-		new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -85,7 +85,7 @@ public class Interlis2GeneratorTest {
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-        new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -128,7 +128,7 @@ public class Interlis2GeneratorTest {
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-        new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -155,7 +155,7 @@ public class Interlis2GeneratorTest {
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-        new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -182,7 +182,7 @@ public class Interlis2GeneratorTest {
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-        new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -209,7 +209,7 @@ public class Interlis2GeneratorTest {
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-        new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -236,7 +236,7 @@ public class Interlis2GeneratorTest {
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-        new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -270,7 +270,7 @@ public class Interlis2GeneratorTest {
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-        new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -297,7 +297,7 @@ public class Interlis2GeneratorTest {
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-        new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -324,7 +324,7 @@ public class Interlis2GeneratorTest {
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-        new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -361,7 +361,7 @@ public class Interlis2GeneratorTest {
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));		// neues ili mit namen aus xml schreiben
 		// neues ili mit namen aus xml schreiben
 		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-		new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -388,7 +388,7 @@ public class Interlis2GeneratorTest {
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));		// neues ili mit namen aus xml schreiben
 		// neues ili mit namen aus xml schreiben
 		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-		new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -422,7 +422,7 @@ public class Interlis2GeneratorTest {
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
 		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-		new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -463,7 +463,7 @@ public class Interlis2GeneratorTest {
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
 		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-		new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -490,7 +490,7 @@ public class Interlis2GeneratorTest {
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
 		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-		new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -518,7 +518,7 @@ public class Interlis2GeneratorTest {
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
 		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-		new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -545,7 +545,7 @@ public class Interlis2GeneratorTest {
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
 		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-		new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -572,7 +572,7 @@ public class Interlis2GeneratorTest {
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
 		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-		new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -599,7 +599,7 @@ public class Interlis2GeneratorTest {
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
 		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-		new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -626,7 +626,7 @@ public class Interlis2GeneratorTest {
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
 		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-		new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
@@ -653,7 +653,7 @@ public class Interlis2GeneratorTest {
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
 		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
-		new Interlis2Generator().generate(out, td, modelElements, Ili2TranslationXml.FR, Interlis2GeneratorTest.ILI_FILE);
+		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));

@@ -239,10 +239,10 @@ public class Ili2TranslationXml {
 	}
 
 	/**
-	 * check if element contains a root language.
+	 * Get Element in root language or itself.
 	 * 
-	 * @param ele check the Element if it contains the root elements.
-	 * @return root language element
+	 * @param ele  the Element to get the root translation of it. 
+	 * @return the element in the root language or the element itself (if it is not translated).
 	 */
 	public static Element getElementInRootLanguage(Element ele) {
 		Element baseLanguageElement = ele.getTranslationOf();
