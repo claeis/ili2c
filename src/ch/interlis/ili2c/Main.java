@@ -720,11 +720,9 @@ public class Main {
 			if (config.getLanguage() != null && config.getNlsxmlFilename() != null) {
 				ModelElements modelElements = Ili2TranslationXml
 						.readModelElementsXml(new File(config.getNlsxmlFilename()));
-				FileEntry e = (FileEntry) config.getFileEntry(config.getSizeFileEntry() - 1);
-				gen.generate(out, desc, modelElements, config.getLanguage(), e.getFilename());
+				gen.generateWithNewLanguage(out, desc, modelElements, config.getLanguage());
 			} else if (config.getParams() != null) { 
-				FileEntry sourceFile = config.getFileEntry(0);
-				gen.generate(out, desc, false, config.getParams(), sourceFile.getFilename());
+				gen.generateWithNewCrs(out, desc, config.getParams());
 			}else {
 				gen.generate(out, desc, emitPredefined);
 			}
