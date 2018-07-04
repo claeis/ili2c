@@ -158,6 +158,22 @@ public class TransferDescription extends Container<Model>
 	}
 	return mainModel;
   }
+  public Model[] getModelsFromLastFile()
+  {
+    String mainModelFileName = getLastModel().getFileName();
+    if(mainModelFileName==null) {
+        return new Model[0];
+    }
+    ArrayList<Model> models=new ArrayList<Model>();
+    Iterator<Model> modeli = iterator();
+    while (modeli.hasNext()) {
+        Model model = modeli.next();
+        if(mainModelFileName.equals((model.getFileName()))) {
+            models.add(model);
+        }
+    }
+    return models.toArray(new Model[models.size()]);
+  }
   public Element getElement(String scopedName) {
       if(name2ele==null) {
           name2ele=new HashMap<String,Element>();

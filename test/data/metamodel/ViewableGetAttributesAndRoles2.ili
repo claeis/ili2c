@@ -1,0 +1,69 @@
+INTERLIS 2.3;
+
+MODEL ViewableGetAttributesAndRoles2 AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC topicA =
+
+		CLASS ClassB =
+                  attr_b1 : TEXT*10;
+                  attr_b2 : TEXT*10;
+		END ClassB;
+
+		CLASS ClassC =
+		END ClassC;
+
+		ASSOCIATION b2c =
+			b -- {0..*} ClassB; 
+			c -- {1}    ClassC;
+		END b2c;
+
+	END topicA;
+
+	TOPIC topicB EXTENDS topicA =
+    OID AS INTERLIS.UUIDOID;
+		CLASS ClassB (EXTENDED)=
+                  attr_b2 (EXTENDED) : TEXT*10;
+                  attr_b3 : TEXT*10;
+		END ClassB;
+
+		CLASS ClassC (EXTENDED) =
+		END ClassC;
+
+		ASSOCIATION b2c (EXTENDED) =
+			b (EXTENDED) -- {0..*} ViewableGetAttributesAndRoles2.topicB.ClassB; 
+			c (EXTENDED) -- {1} ViewableGetAttributesAndRoles2.topicB.ClassC;
+		END b2c;
+		
+	END topicB;
+	
+	TOPIC topicC =
+
+		CLASS ClassB =
+                  attr_b1 : TEXT*10;
+                  attr_b2 : TEXT*10;
+		END ClassB;
+
+		CLASS ClassC =
+		END ClassC;
+
+		CLASS ClassBp EXTENDS ClassB =
+                  attr_b2 (EXTENDED) : TEXT*10;
+                  attr_b3 : TEXT*10;
+		END ClassBp;
+
+		CLASS ClassCp EXTENDS ClassC =
+		END ClassCp;
+
+		ASSOCIATION b2c =
+			b -- {0..*} ClassB; 
+			c -- {1}    ClassC;
+		END b2c;
+
+		ASSOCIATION b2cp EXTENDS b2c  =
+			b (EXTENDED) -- {0..*} ClassBp; 
+			c (EXTENDED) -- {1} ClassCp;
+		END b2cp;
+		
+	END topicC;
+	
+END ViewableGetAttributesAndRoles2.

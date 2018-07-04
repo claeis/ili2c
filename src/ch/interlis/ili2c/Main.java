@@ -110,12 +110,15 @@ public class Main {
 	System.err.println("Generate an XML-Schema:");
 	System.err.println("    java -jar " + progName + " -oXSD file1.ili file2.ili");
     System.err.println();
-    System.err.println("Generate an Translation-XML file:");
+    System.err.println("Generate a Translation-XML file:");
     System.err.println("    java -jar " + progName + " -oNLS --out translation.xml file.ili");
     System.err.println();
-    System.err.println("Generate an INTERLIS-2 definition after adding translations to a Translation-XML file:");
+    System.err.println("Generate a translated INTERLIS-2 definition with help of a Translation-XML file:");
     System.err.println("    java -jar " + progName + " -o2 --out file_it.ili --lang it --nlsxml translation.xml file.ili");
 	System.err.println();
+    System.err.println("Generate a CRS transformed INTERLIS-2 definition:");
+    System.err.println("    java -jar " + progName + " -o2 --out file_LV95.ili --trafoNewModel model_LV95 --trafoDiff 2000000,1000000 --trafoFactor 1,1 --trafoEpsg 2056 --trafoImports  GeometryCHLV95_V1=GeometryCHLV03_V1 file.ili");
+    System.err.println();
     System.err.println("List all models starting in the given repository:");
     System.err.println("    java -jar " + progName + " --listModels "+ILI_REPOSITORY);
     System.err.println();
@@ -174,11 +177,11 @@ public class Main {
 	    System.err.println("-oNLS                 Generate an Translation-XML file.");
 	    System.err.println("--nlsxml file         Name of the Translation-XML file.");
 	    System.err.println("--lang lang           Language (de,fr,it or en).");
-	    System.err.println("--trafoDiff			  Value of the New Calculation Formula (value of the Sum)");
-	    System.err.println("--trafoFactor		  Value of the New Calculation Formula (value of the Multiply)");
-	    System.err.println("--trafoEpsg			  Generate a new EPSG Code in INTERLIS-2 output.");
-	    System.err.println("--trafoImports		  Change the name of the Model with another new Model name.");
-	    System.err.println("--trafoNewModel		  Generate a new Trafo Model name in INTERLIS-2 output.");
+	    System.err.println("--trafoDiff d_x,d_y   offset to calculate new coord domains");
+	    System.err.println("--trafoFactor f_x,f_y factor to calculate new coord domains");
+	    System.err.println("--trafoEpsg code      new EPSG code (e.g. 2056)");
+	    System.err.println("--trafoImports  newImport=oldImport change the name of an imported model (e.g. GeometryCHLV95_V1=GeometryCHLV03_V1)");
+	    System.err.println("--trafoNewModel newName name of the new model.");
 	    System.err.println("-oUML                 Generate Model as UML2/XMI-Transfer (eclipse flavour).");
 	    System.err.println("-oIOM                 (deprecated) Generate Model as INTERLIS-Transfer (XTF).");
 	    System.err.println("--check-repo-ilis uri   check all ili files in the given repository.");
@@ -829,7 +832,7 @@ public class Main {
 	private static void generateXML(Configuration config, TransferDescription desc) throws Exception{
 		FileEntry e = (FileEntry) config.getFileEntry(config.getSizeFileEntry() - 1);
 		Ili2TranslationXml xml = new Ili2TranslationXml();
-		ModelElements eles=xml.convertTransferDescription2ModelElements(desc,new File(e.getFilename()));
+		ModelElements eles=xml.convertTransferDescription2ModelElements(desc);
 		Ili2TranslationXml.writeModelElementsAsXML(eles,new File(config.getOutputFile()));
 	}
 

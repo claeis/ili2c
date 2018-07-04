@@ -529,7 +529,7 @@ public class AssociationDef extends AbstractClassDef<Element>
 	if(role1Base==null) {
         role1Base=role1;
     }
-	RoleDef role2Base=role1.getRootExtending();
+	RoleDef role2Base=role2.getRootExtending();
 	if(role2Base==null) {
         role2Base=role2;
     }

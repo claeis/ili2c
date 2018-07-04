@@ -383,29 +383,32 @@ END B;<br></pre></code>
 				attri=embv.iterator();
 				while (attri.hasNext()) {
 					RoleDef role = (RoleDef) attri.next();
+					role=getSpecificRoleDef(baseviewv, role);
 					RoleDef oppend = role.getOppEnd();
-					int idx=0;
-					boolean found=false;
-					for(Iterator<ViewableTransferElement> resi=result.iterator();resi.hasNext();idx++){
-						Object res=resi.next();
-						// extended/specialized role?
-						if((((ViewableTransferElement)res).obj instanceof RoleDef && ((RoleDef)((ViewableTransferElement)res).obj).getName().equals(oppend.getName()))){
-							found=true;
-							ViewableTransferElement ele=result.get(idx);
-							ele.obj=oppend;
-							ele.embedded=true;
-							break;
-						}
-					}
-					// new role?
-					if(!found){
-						result.add(new ViewableTransferElement(oppend,true));
-					}
+                    result.add(new ViewableTransferElement(oppend,true));
 				}
 			}
 		}
 		return result.iterator ();
 	}
+  }
+  private static RoleDef getSpecificRoleDef(List<Viewable> baseviewv,RoleDef roleDef) {
+      for(int idx=baseviewv.size();idx>0;idx--) {
+          Viewable v=baseviewv.get(idx-1);
+          if(v instanceof AbstractClassDef) {
+              AbstractClassDef aclass=(AbstractClassDef)v;
+              for(RoleDef extRoleDef:roleDef.getExtensions()) {
+                  Iterator<AbstractClassDef> targetIt=extRoleDef.iteratorDestination();
+                  while(targetIt.hasNext()) {
+                      AbstractClassDef target=targetIt.next();
+                      if(target==aclass) {
+                          return extRoleDef;
+                      }
+                  }
+              }
+          }
+      }
+      return roleDef;
   }
   public Iterator<ViewableTransferElement> getDefinedAttributesAndRoles2()
   {

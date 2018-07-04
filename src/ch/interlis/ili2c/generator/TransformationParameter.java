@@ -2,10 +2,10 @@ package ch.interlis.ili2c.generator;
 
 public class TransformationParameter {
 	// -o2 --out neuesModel.ili --trafoDiff diffx,diffy --trafoFactor factorx,factory --trafoEpsg epsgCode --trafoImports neusBasisModel=altesBasisModel --trafoNewModel neuesModel altesModel.ili
-	private double factor_x;
-	private double factor_y;
-	private double diff_x;
-	private double diff_y;
+	private double factor_x=1.0;
+	private double factor_y=1.0;
+	private double diff_x=0.0;
+	private double diff_y=0.0;
 	private int epsgCode;
 	private String newModelName;
 	private ModelTransformation importModels[];

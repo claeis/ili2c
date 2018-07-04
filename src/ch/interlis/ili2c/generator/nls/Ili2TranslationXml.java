@@ -2,6 +2,7 @@ package ch.interlis.ili2c.generator.nls;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -55,9 +56,9 @@ public class Ili2TranslationXml {
 	 * @param iliFile path of the source file
 	 * @return all collected elements are returned
 	 */
-	public ModelElements convertTransferDescription2ModelElements(TransferDescription td, File iliFile) {
+	public ModelElements convertTransferDescription2ModelElements(TransferDescription td) {
 
-		readAllModelsFromTransferDesc(td, iliFile.getName());
+		readAllModelsFromTransferDesc(td);
 		return elements;
 	}
 	
@@ -81,25 +82,23 @@ public class Ili2TranslationXml {
 	 * @param td all ili models
 	 * @param file read only models from this file
 	 */
-	private void readAllModelsFromTransferDesc(TransferDescription td, String file) {
-		Iterator<Model> modeli = td.iterator();
-
-		List<Model> list = new ArrayList<Model>();
-		while (modeli.hasNext()) {
-			list.add(0, modeli.next());
-		}
-		String baseLanguageModel = "";
-		modeli = list.iterator();
-		while (modeli.hasNext()) {
-			Model model = modeli.next();
-
-			if (controlOfTheFileName(model, file)) {
-				continue;
-			}
-
-			if (model.getName().equals(baseLanguageModel)) {
-				continue;
-			}
+	private void readAllModelsFromTransferDesc(TransferDescription td) {
+	    Model models[]=td.getModelsFromLastFile();
+	    HashSet<Model> visitedModels=new HashSet<Model>();
+	    ArrayList<Model> mostSpecificModels=new ArrayList<Model>();
+	    for(int modeli=models.length-1;modeli>=0;modeli--) {
+	        Model model=models[modeli];
+	        if(!visitedModels.contains(model)) {
+	            visitedModels.add(model);
+	            mostSpecificModels.add(0,model);
+	            Model translatedModel=(Model)model.getTranslationOf();
+	            while(translatedModel!=null) {
+	                visitedModels.add(translatedModel);
+	                translatedModel=(Model)translatedModel.getTranslationOf();
+	            }
+	        }
+	    }
+		for(Model model:mostSpecificModels) {
 
 			TranslationElement text = new TranslationElement();
 			allFieldsWithSetTOEmpty(text);
@@ -110,7 +109,6 @@ public class Ili2TranslationXml {
 			printModelElement(text);
 
 			visitAllElements(model);
-			baseLanguageModel = hasATranslation(model);
 		}
 	}
 

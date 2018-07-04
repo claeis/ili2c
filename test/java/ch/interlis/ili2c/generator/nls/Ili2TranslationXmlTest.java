@@ -7,7 +7,13 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.util.HashMap;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import ch.ehi.basics.settings.Settings;
 import ch.interlis.ili2c.config.Configuration;
@@ -42,6 +48,7 @@ public class Ili2TranslationXmlTest {
 				if (ele.getScopedName().equals("EnumOkA")) {
 					assertEquals("EnumOkA", ele.getName_de());
 					assertEquals("EnumOkB", ele.getName_fr());
+                    assertEquals(null, ele.getName_it());
 					assertEquals("Das ist Dokumentation zum Modell in DE", ele.getDocumentation_de());
 					assertEquals("Das ist Dokumentation zum Modell in FR", ele.getDocumentation_fr());
 					assertEquals(ElementType.MODEL, ele.getElementType());
@@ -50,6 +57,22 @@ public class Ili2TranslationXmlTest {
 			}
 		}
 		assertEquals(1,modelAcount);
+		// verify empty column name_it is written as "-"
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = dbf.newDocumentBuilder(); 
+		Document doc = db.parse(new File(xmlFileName));
+		NodeList elements=doc.getElementsByTagName("element");
+		Node nameItNode=null;
+		for(int elei=0;elei<elements.getLength();elei++) {
+		    Node node=elements.item(elei);
+		    Node scopedNameNode=node.getFirstChild();
+		    if(scopedNameNode.getTextContent().equals("EnumOkA")) {
+		      nameItNode=node.getChildNodes().item(4);
+		      break;
+		    }
+		}
+		assertEquals("name_it",nameItNode.getNodeName());
+        assertEquals("-",nameItNode.getTextContent());
 	}
 	/**
 	 * Es ueberprueft, ob das MODEL korrekt in das XML file geschrieben wurde.
@@ -390,7 +413,7 @@ public class Ili2TranslationXmlTest {
 			return null;
 		}
 
-		return new Ili2TranslationXml().convertTransferDescription2ModelElements(td, iliFile);
+		return new Ili2TranslationXml().convertTransferDescription2ModelElements(td);
 	}
 	/**
 	 * with TransferDescription we can get ili data from the source file.
