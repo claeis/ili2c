@@ -3,9 +3,13 @@ Known Issues:
 
 LATEST
 ---------------------------
+
+ili2c 4.7.9 (2018-07-05)
+---------------------------
 - fixed: getAttributesAndRoles2() returned the extended embedded roles twice
 - translation-xml: read/write empty elements with "-" to force column existence in Excel
 - translation-xml: fixed ordering of exported models
+- Ili2 generator: fixed domaindef/unitdef output
 
 ili2c 4.7.8 (2018-06-22)
 ---------------------------
