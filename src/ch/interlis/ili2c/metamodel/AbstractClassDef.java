@@ -282,7 +282,7 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
 	while (it.hasNext ())
 	{
 	  RoleDef e = it.next ();
-	  if (e.isAssociationEmbedded()){
+	  if (e.isAssociationEmbedded() && !e.isExtended()){
 		assocv.add(e);
 	  }
 	}

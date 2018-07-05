@@ -2,6 +2,7 @@ package ch.interlis.ili2c.generator.nls;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import ch.interlis.ili2c.metamodel.Element;
 import ch.interlis.ili2c.metamodel.Enumeration;
 import ch.interlis.ili2c.metamodel.EnumerationType;
 import ch.interlis.ili2c.metamodel.ExpressionSelection;
+import ch.interlis.ili2c.metamodel.FormalArgument;
 import ch.interlis.ili2c.metamodel.Function;
 import ch.interlis.ili2c.metamodel.Graphic;
 import ch.interlis.ili2c.metamodel.LineForm;
@@ -54,9 +56,9 @@ public class Ili2TranslationXml {
 	 * @param iliFile path of the source file
 	 * @return all collected elements are returned
 	 */
-	public ModelElements convertTransferDescription2ModelElements(TransferDescription td, File iliFile) {
+	public ModelElements convertTransferDescription2ModelElements(TransferDescription td) {
 
-		readAllModelsFromTransferDesc(td, iliFile.getName());
+		readAllModelsFromTransferDesc(td);
 		return elements;
 	}
 	
@@ -80,25 +82,23 @@ public class Ili2TranslationXml {
 	 * @param td all ili models
 	 * @param file read only models from this file
 	 */
-	private void readAllModelsFromTransferDesc(TransferDescription td, String file) {
-		Iterator<Model> modeli = td.iterator();
-
-		List<Model> list = new ArrayList<Model>();
-		while (modeli.hasNext()) {
-			list.add(0, modeli.next());
-		}
-		String baseLanguageModel = "";
-		modeli = list.iterator();
-		while (modeli.hasNext()) {
-			Model model = modeli.next();
-
-			if (controlOfTheFileName(model, file)) {
-				continue;
-			}
-
-			if (model.getName().equals(baseLanguageModel)) {
-				continue;
-			}
+	private void readAllModelsFromTransferDesc(TransferDescription td) {
+	    Model models[]=td.getModelsFromLastFile();
+	    HashSet<Model> visitedModels=new HashSet<Model>();
+	    ArrayList<Model> mostSpecificModels=new ArrayList<Model>();
+	    for(int modeli=models.length-1;modeli>=0;modeli--) {
+	        Model model=models[modeli];
+	        if(!visitedModels.contains(model)) {
+	            visitedModels.add(model);
+	            mostSpecificModels.add(0,model);
+	            Model translatedModel=(Model)model.getTranslationOf();
+	            while(translatedModel!=null) {
+	                visitedModels.add(translatedModel);
+	                translatedModel=(Model)translatedModel.getTranslationOf();
+	            }
+	        }
+	    }
+		for(Model model:mostSpecificModels) {
 
 			TranslationElement text = new TranslationElement();
 			allFieldsWithSetTOEmpty(text);
@@ -109,7 +109,6 @@ public class Ili2TranslationXml {
 			printModelElement(text);
 
 			visitAllElements(model);
-			baseLanguageModel = hasATranslation(model);
 		}
 	}
 
@@ -240,10 +239,10 @@ public class Ili2TranslationXml {
 	}
 
 	/**
-	 * check if element contains a root language.
+	 * Get Element in root language or itself.
 	 * 
-	 * @param ele check the Element if it contains the root elements.
-	 * @return root language element
+	 * @param ele  the Element to get the root translation of it. 
+	 * @return the element in the root language or the element itself (if it is not translated).
 	 */
 	public static Element getElementInRootLanguage(Element ele) {
 		Element baseLanguageElement = ele.getTranslationOf();
@@ -428,6 +427,30 @@ public class Ili2TranslationXml {
 					String text = getElementInRootLanguage(ele).getScopedName();
 					prepareAllEnumaration((EnumerationType) domain.getType(), text, domain);
 				}
+			} else if (ele instanceof Function) {
+			    TranslationElement traslationElement = new TranslationElement();
+			    Function function = (Function) ele;
+			    FormalArgument[] arguments = function.getArguments();
+			    for (int i = 0; i < arguments.length; i++) {
+			        convertModelElement(traslationElement, arguments[i], getLanguage(function));
+			        
+			        Function function2 = arguments[i].getFunction();
+			        Element baseLanguageElement = function2.getTranslationOf();
+			        while (baseLanguageElement != null) {
+			            if (baseLanguageElement instanceof Function) {
+			                Function fnc = (Function) baseLanguageElement;
+			                FormalArgument[] argumentsSubElement = fnc.getArguments();
+			                for (int j = 0; j < argumentsSubElement.length; j++) {
+			                    convertModelElement(traslationElement, argumentsSubElement[j], getLanguage(baseLanguageElement));
+			                    traslationElement.setScopedName(getElementInRootLanguage(function).getScopedName() + "." + argumentsSubElement[j].getName());
+			                    
+			                    function2 = argumentsSubElement[i].getFunction();
+			                    baseLanguageElement = function2.getTranslationOf();
+			                }
+			            }
+			        }
+			        printModelElement(traslationElement);
+			    }
 			}
 		}
 
@@ -479,8 +502,7 @@ public class Ili2TranslationXml {
 	}
 
 	/**
-	 * it gets all Enumeration and SubEnumeration data and insert into Structure
-	 * with language
+	 * it gets all Enumeration and SubEnumeration data and insert into Structure with language
 	 * 
 	 * @param enumeration Related Enumeration Elements
 	 * @param scopedNamePrefix Scope Name

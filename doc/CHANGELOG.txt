@@ -1,6 +1,16 @@
 Known Issues:
 - "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
 
+LATEST
+---------------------------
+
+ili2c 4.7.9 (2018-07-05)
+---------------------------
+- fixed: getAttributesAndRoles2() returned the extended embedded roles twice
+- translation-xml: read/write empty elements with "-" to force column existence in Excel
+- translation-xml: fixed ordering of exported models
+- Ili2 generator: fixed domaindef/unitdef output
+
 ili2c 4.7.8 (2018-06-22)
 ---------------------------
 - fixed StackOverflow if name of translated model is the same as the origin model name
