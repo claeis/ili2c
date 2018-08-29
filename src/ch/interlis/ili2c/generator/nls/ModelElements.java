@@ -1,6 +1,8 @@
 package ch.interlis.ili2c.generator.nls;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,5 +34,14 @@ public class ModelElements implements Iterable<TranslationElement> {
 	 * */
 	public boolean add(TranslationElement ele) {
 		return element.add(ele);
+	}
+	
+	public void sort() {
+	    Collections.sort(element, new Comparator<TranslationElement>() { 
+	        @Override
+	        public int compare(TranslationElement ele1, TranslationElement ele2) {
+	            return ele1.getScopedName().compareTo(ele2.getScopedName());
+	        }
+	    });
 	}
 }
