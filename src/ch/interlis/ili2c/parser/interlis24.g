@@ -1025,7 +1025,7 @@ protected topicDef[Container container]
 		      }
 		 )* SEMI
 		)*
-		(	"DEFFERED" "GENERICS" domainRef[container]
+		(	"DEFERRED" "GENERICS" domainRef[container]
 			( COMMA domainRef[container]
 			)* SEMI
 		)?
