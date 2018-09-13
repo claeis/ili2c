@@ -4,6 +4,7 @@ Known Issues:
 LATEST
 ---------------------------
 - imd export: fixed NPE in INTERLIS.myClass()
+- fixed lookup of ili2.4 models
 
 ili2c 4.7.9 (2018-07-05)
 ---------------------------

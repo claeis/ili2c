@@ -181,7 +181,10 @@ public class RepositoryCrawler {
 		}else{
 			IliFile iliFile=null;
 			if(iliVersion==0.0){
-				iliFile=iliFiles.getFileWithModel(modelName,2.3);
+				iliFile=iliFiles.getFileWithModel(modelName,2.4);
+                if(iliFile==null){
+                    iliFile=iliFiles.getFileWithModel(modelName,2.3);
+                }
 				if(iliFile==null){
 					iliFile=iliFiles.getFileWithModel(modelName,1.0);
 				}
