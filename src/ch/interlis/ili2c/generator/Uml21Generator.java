@@ -512,7 +512,8 @@ public class Uml21Generator
 					typeId=idOIDType;
 				}else if(type instanceof ReferenceType){
 					// TODO
-					throw new IllegalStateException();
+                    //typeId=idTextType;
+					throw new IllegalStateException("ReferenceType not yet implemented");
 				}else{
 					throw new IllegalStateException();
 				}
