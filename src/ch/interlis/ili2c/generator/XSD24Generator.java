@@ -34,6 +34,8 @@ public final class XSD24Generator
     public static final String CONSISTENCY_ATTR="consistency"; 
     public static final String CONSISTENCY_ATTR_COMPLETE="COMPLETE";
     public static final String CONSISTENCY_ATTR_INCOMPLETE="INCOMPLETE";
+    
+    public static final String DOMAINS_ATTR="domains"; 
 
     public static final String KIND_ATTR="kind"; 
     public static final String KIND_ATTR_FULL="FULL";
@@ -390,6 +392,9 @@ public final class XSD24Generator
 		ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+KIND_ATTR+"\"/>");
 		ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+STARTSTATE_ATTR+"\"/>");
 		ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+ENDSTATE_ATTR+"\"/>");
+	}
+	if(topic.getDefferedGenerics().length>0) {
+	   ipw.println ("<xsd:attribute ref=\""+getIliXmlns()+DOMAINS_ATTR+"\" use=\"required\"/>");
 	}
 	ipw.unindent ();
 	ipw.println ("</xsd:complexType>");

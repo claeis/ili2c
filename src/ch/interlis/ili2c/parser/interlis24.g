@@ -948,6 +948,7 @@ protected topicDef[Container container]
 	  boolean viewTopic=false;
 	  Domain topicOid=null;
 	  Domain topicOid2=null;
+	  Domain genericDomain=null;
 	  String ilidoc=null;
 	  Settings metaValues=null;
 	}
@@ -1025,8 +1026,15 @@ protected topicDef[Container container]
 		      }
 		 )* SEMI
 		)*
-		(	"DEFERRED" "GENERICS" domainRef[container]
-			( COMMA domainRef[container]
+		(	"DEFERRED" "GENERICS" 
+			genericDomain=domainRef[container]
+				{ 
+					topic.addDeferredGeneric(genericDomain);
+				}
+			( COMMA genericDomain=domainRef[container]
+				{ 
+					topic.addDeferredGeneric(genericDomain);
+				}
 			)* SEMI
 		)?
 		definitions[topic]
@@ -3000,18 +3008,44 @@ protected rotationDef
   ;
 
 protected contextDefs[Container container]
-	:	"CONTEXT"  NAME EQUALS ( contextDef[container] )*
+	{
+	  ContextDefs defs=null;
+	  int nameIdx=1;
+	}
+	:	"CONTEXT"  n:NAME EQUALS 
+		{defs=new ContextDefs(n.getText());
+		}
+		( 
+		contextDef[container,defs,nameIdx++] 
+		)*
+		{
+		container.add(defs);
+		}
 	;
-protected contextDef[Container container]
+protected contextDef[Container container,ContextDefs defs,int nameIdx]
 	{
 	  String ilidoc=null;
 	  Settings metaValues=null;
+	  Domain genericCoordDef=null;
+	  Domain concreteCoordDef=null;
+	  ArrayList<Domain> concreteCoordDefs=new ArrayList<Domain>();
 	}
 	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
-		domainRef[container]
+		genericCoordDef=domainRef[container]
 		eq:EQUALS
-		domainRef[container]
-		( "OR" domainRef[container] )*
+		concreteCoordDef=domainRef[container]
+			{ concreteCoordDefs.add(concreteCoordDef);
+			}
+		( "OR" concreteCoordDef=domainRef[container] 
+			{ concreteCoordDefs.add(concreteCoordDef);
+			}
+		)*
+		{
+			ContextDef def=new ContextDef(nameIdx,genericCoordDef,concreteCoordDefs.toArray(new Domain[concreteCoordDefs.size()]));
+			def.setDocumentation(ilidoc);
+			def.setMetaValues(metaValues);
+			defs.add(def);
+		}
 		SEMI
 	;
   

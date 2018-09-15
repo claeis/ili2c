@@ -243,6 +243,16 @@ public abstract class Model extends Importable<Element>
 		return true;
 	}
 
+    if(e instanceof ContextDefs){
+        Element conflicting = getElement ( e.getName());
+        if ((conflicting != null) && (conflicting != e)) {
+          throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
+            "err_contextdefs_nonunique",
+            e.getName(),
+            Model.this.toString()));
+      }
+      return true;
+  }
 
 		throw new ClassCastException (formatMessage (
 		  "err_container_cannotContain",
@@ -578,5 +588,66 @@ public void setXmlns(String xmlns) {
 		}
 		
 	}
+	  /** gets the possible concrete domains for a generic domain according to a context definition.
+	   */
+	  public Domain[] resolveGenericDomain(Domain generic) {
+	      // search in this model
+	      {
+	          Domain concretes[]=getConcreteDomains(generic);
+	          if(concretes!=null) {
+	              return concretes;
+	          }
+	      }
+	      // search in the (direct and indirect) imported models
+	      Set<Model> visitedModels=new HashSet<Model>();
+	      return resolveGenericDomain_deepFirstSearch(generic,this,visitedModels);
+	  }
+    private static Domain[] resolveGenericDomain_deepFirstSearch(Domain generic,Model model,Set<Model> visitedModels) {
+        Model imps[]=model.getImporting();
+        for(int i=imps.length-1;i>=0;i--) {
+            Model imp=imps[i];
+              if(!visitedModels.contains(imp)) {
+                  visitedModels.add(imp);
+                  Domain concretes[]=imp.getConcreteDomains(generic);
+                  if(concretes!=null) {
+                      return concretes;
+                  }
+                  concretes=resolveGenericDomain_deepFirstSearch(generic,imp,visitedModels);
+                  if(concretes!=null) {
+                      return concretes;
+                  }
+              }
+	      }
+        return null;
+    }
+      public Domain[] getConcreteDomains(Domain generic) {
+          Iterator eleIt=iterator();
+          while(eleIt.hasNext()) {
+              Object ele=eleIt.next();
+              if(ele instanceof ContextDefs) {
+                  ContextDefs defs=(ContextDefs)ele;
+                  Iterator<ContextDef> defIt=defs.iterator();
+                  while(defIt.hasNext()) {
+                      ContextDef def=defIt.next();
+                      if(def.getGeneric()==generic) {
+                          return def.getConcretes();
+                      }
+                  }
+              }
+          }
+          return null;
+      }
+    public Domain mapGenericDomain(Domain genericCoordDomain, Map<String, String> genericDomains) {
+        String genericQname=genericCoordDomain.getScopedName();
+        String concreteQname=genericDomains.get(genericQname);
+        if(concreteQname==null) {
+            throw new IllegalArgumentException("no assignment of a concrete domain for the generic domain "+genericQname);
+        }
+        Element ele = ((TransferDescription)getContainer()).getElement(concreteQname);
+        if(ele==null || !(ele instanceof Domain)) {
+            throw new IllegalArgumentException("no concrete domain "+concreteQname+" (for the generic domain "+genericQname+")");
+        }
+        return (Domain)ele;
+    }
 	
 }

@@ -29,7 +29,7 @@ public class Topic extends AbstractPatternDef<Element>
   protected String   name = "";
   private Domain oid=null;
   private Domain basketOid=null;
-
+  private ArrayList<Domain> deferredGenerics=new ArrayList<Domain>();
 
   protected List<Topic> dependsOn = new LinkedList<Topic>();
 
@@ -299,5 +299,12 @@ public class Topic extends AbstractPatternDef<Element>
   {
 	  return basketOid;
   }
-
+  public void addDeferredGeneric(Domain generic)
+  {
+      deferredGenerics.add(generic);
+  }
+  public Domain[] getDefferedGenerics()
+  {
+      return deferredGenerics.toArray(new Domain[deferredGenerics.size()]);
+  }
 }
