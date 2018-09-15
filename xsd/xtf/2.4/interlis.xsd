@@ -3,12 +3,8 @@
   xmlns="http://www.interlis.ch/xtf/2.4/INTERLIS"
   targetNamespace="http://www.interlis.ch/xtf/2.4/INTERLIS"
   xmlns:geom="http://www.interlis.ch/geometry/1.0" elementFormDefault="qualified"
-  attributeFormDefault="unqualified" version="2014-08-05">
+  attributeFormDefault="unqualified" version="2018-09-15">
   <xsd:import namespace="http://www.interlis.ch/geometry/1.0"/>
-  
-  <!-- DRAFT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-  <!-- DRAFT !!! may change without xmlns change !!! -->
-  <!-- DRAFT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 
   <xsd:element name="extensions">
     <xsd:complexType>
@@ -48,7 +44,7 @@
     </xsd:restriction>
   </xsd:simpleType>
   <xsd:simpleType name="domainsType">
-    <xsd:restriction base="xsd:NMTOKENS"> </xsd:restriction>
+    <xsd:restriction base="xsd:normalizedString"> </xsd:restriction>
   </xsd:simpleType>
   <xsd:simpleType name="transferKindType">
     <xsd:restriction base="xsd:token">
