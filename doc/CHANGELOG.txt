@@ -5,6 +5,7 @@ LATEST
 ---------------------------
 - imd export: fixed NPE in INTERLIS.myClass()
 - fixed lookup of ili2.4 models
+- iox-ili-1.20.6
 
 ili2c 4.7.9 (2018-07-05)
 ---------------------------
