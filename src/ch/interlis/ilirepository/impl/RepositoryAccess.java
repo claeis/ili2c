@@ -57,11 +57,20 @@ import ch.interlis.iox.IoxException;
  * @author ceis
  */
 public class RepositoryAccess {
-	private HashMap<String,IliFiles> reposIliFiles=new HashMap<String,IliFiles>();
+    public static final String ILI_CACHE = "ILI_CACHE";
+    private HashMap<String,IliFiles> reposIliFiles=new HashMap<String,IliFiles>();
 	private HashMap<String,IliSite> reposIliSite=new HashMap<String,IliSite>();
 	private long metaMaxTTL=86400000L; // max time to live in ms for a file in the cache
-	private File localCache=new File(System.getProperty("user.home"),".ilicache");
+	private File localCache=null;
 	private IliResolver resolver=null;
+    public RepositoryAccess() {
+        String userDefinedCacheFolder=System.getenv(ILI_CACHE);
+        if(userDefinedCacheFolder!=null && userDefinedCacheFolder.trim().length()>0) {
+            localCache=new File(userDefinedCacheFolder);
+        }else {
+            localCache=new File(System.getProperty("user.home"),".ilicache");
+        }
+    }
 	
 	public IliResolver getResolver() {
 		return resolver;

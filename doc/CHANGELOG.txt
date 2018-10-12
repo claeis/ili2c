@@ -8,6 +8,7 @@ LATEST
 - iox-ili-1.20.6
 - xsd24: add ili:domains if required
 - ili24: support ContextDef
+- use env variable ILI_CACHE to override default $user.home/.ilicache
 
 ili2c 4.7.9 (2018-07-05)
 ---------------------------
