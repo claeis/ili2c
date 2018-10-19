@@ -3,6 +3,7 @@ Known Issues:
 
 LATEST
 ---------------------------
+- new function (--listData) to generate a list of data in the repositories
 - imd export: fixed NPE in INTERLIS.myClass()
 - fixed lookup of ili2.4 models
 - iox-ili-1.20.6

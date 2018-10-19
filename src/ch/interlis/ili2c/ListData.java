@@ -13,9 +13,13 @@ import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ilirepository.impl.RepositoryVisitor;
+import ch.interlis.iom.IomObject;
+import ch.interlis.ilirepository.Dataset;
+import ch.interlis.ilirepository.impl.DataFinder;
 import ch.interlis.ilirepository.impl.ModelLister;
 import ch.interlis.ilirepository.impl.RepositoryAccess;
 import ch.interlis.ilirepository.impl.RepositoryAccessException;
+import ch.interlis.iom_j.Iom_jObject;
 import ch.interlis.iom_j.xtf.XtfModel;
 import ch.interlis.iom_j.xtf.XtfWriterBase;
 import ch.interlis.iox.IoxException;
@@ -25,10 +29,10 @@ import ch.interlis.iox_j.ObjectEvent;
 import ch.interlis.iox_j.StartBasketEvent;
 import ch.interlis.iox_j.StartTransferEvent;
 
-public class ListModels {
+public class ListData {
 
-	public boolean listModels(Configuration config,
-			UserSettings settings, boolean onlyLatestVersions) {
+	public boolean listData(Configuration config,
+			UserSettings settings) {
 		boolean failed=false;
 		Main.setHttpProxySystemProperties(settings);
 		RepositoryAccess reposAccess=new RepositoryAccess();
@@ -46,9 +50,8 @@ public class ListModels {
 	            }
 	        }
 		}
-        ModelLister modelLister=new ModelLister();
-        modelLister.setIgnoreDuplicates(true);
-		RepositoryVisitor visitor=new RepositoryVisitor( reposAccess,modelLister);
+        DataFinder dataLister=new DataFinder();
+		RepositoryVisitor visitor=new RepositoryVisitor( reposAccess,dataLister);
 		visitor.setRepositories(repos.toArray(new String[repos.size()]));
         try {
             visitor.visitRepositories();
@@ -56,13 +59,10 @@ public class ListModels {
             EhiLogger.logError(ex);
             return false;
         }
-        List<ModelMetadata> mergedModelMetadatav=modelLister.getResult();
-        if(onlyLatestVersions) {
-            mergedModelMetadatav=RepositoryAccess.getLatestVersions(mergedModelMetadatav);
-        }
+        List<Dataset> dataMetadatav=dataLister.getResult();
 		
 				
-		// write new ilimodels.xml
+		// write new ilidata.xml
 		java.io.OutputStream outStream=null;
 
 		XtfWriterBase ioxWriter=null;
@@ -74,18 +74,21 @@ public class ListModels {
 	            outStream=new java.io.FileOutputStream(destFile);
 	        }
 			
-			ioxWriter = new XtfWriterBase( outStream,  ILIREPOSITORY09.getIoxMapping(),"2.3");
-			ioxWriter.setModels(new XtfModel[]{ILIREPOSITORY09.getXtfModel()});
+			ioxWriter = new XtfWriterBase( outStream,  ch.interlis.models.DATASETIDX16.getIoxMapping(),"2.3");
+			ioxWriter.setModels(new XtfModel[]{ch.interlis.models.DATASETIDX16.getXtfModel()});
 			StartTransferEvent startTransferEvent = new StartTransferEvent();
 			startTransferEvent.setSender( Main.APP_NAME+"-"+Main.getVersion() );
 			ioxWriter.write( startTransferEvent );
-			StartBasketEvent startBasketEvent = new StartBasketEvent( ILIREPOSITORY09.RepositoryIndex, "b1");
+			StartBasketEvent startBasketEvent = new StartBasketEvent( ch.interlis.models.DATASETIDX16.DataIndex, "b1");
 			ioxWriter.write( startBasketEvent );
 			int tid=1;
-			for(ModelMetadata model:mergedModelMetadatav){
-			    model.setobjectoid(Integer.toString(tid));
-				ioxWriter.write(new ObjectEvent(model));
-				tid++;
+			if(dataMetadatav!=null) {
+	            for(Dataset dataset:dataMetadatav){
+	                IomObject data=new Iom_jObject(dataset.getMetadata());
+	                data.setobjectoid(Integer.toString(tid));
+	                ioxWriter.write(new ObjectEvent(data));
+	                tid++;
+	            }
 			}
 			
 			ioxWriter.write( new EndBasketEvent() );

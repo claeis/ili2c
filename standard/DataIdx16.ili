@@ -2,11 +2,11 @@ INTERLIS 2.3;
 
 MODEL DatasetIdx16 (de)
 AT "mailto:ce@eisenhutinformatik.ch"
-VERSION "2018-08-02.2" =
-  IMPORTS Localisation_V1;
-  
+VERSION "2018-10-19" =
   DOMAIN
 
+  	LanguageCode_ISO639_1 = TEXT*2;
+  
     AbsoluteLocation = URI;
 
     BasketId = TEXT;
@@ -27,9 +27,13 @@ VERSION "2018-08-02.2" =
   STRUCTURE BasketId_ = value : MANDATORY BasketId; END BasketId_;
   STRUCTURE Code_ = value : MANDATORY Code; END Code_;
   STRUCTURE DatasetId_ = value : MANDATORY DatasetId; END DatasetId_;
-  STRUCTURE RelativeFilePath_ = value : MANDATORY RelativeFilePath; END RelativeFilePath_;
   STRUCTURE WebService_ = value : MANDATORY WebService; END WebService_;
   STRUCTURE WebSite_ = value : MANDATORY WebSite; END WebSite_;
+
+  STRUCTURE File = 
+  	path : MANDATORY RelativeFilePath;
+  	md5 : TEXT*32;
+  END File;
 
   STRUCTURE BasketLink = 
   	id : MANDATORY BasketId; 
@@ -41,11 +45,32 @@ VERSION "2018-08-02.2" =
   	locationHint : URI; !! repo
   	versionHint : TEXT;
   END ModelLink;
+  
+  STRUCTURE LocalisedText =
+    Language: LanguageCode_ISO639_1;
+    Text: MANDATORY TEXT;
+  END LocalisedText;
+  
+  STRUCTURE LocalisedMText =
+    Language: LanguageCode_ISO639_1;
+    Text: MANDATORY MTEXT;
+  END LocalisedMText;
+
+  STRUCTURE MultilingualText =
+    LocalisedText : BAG {1..*} OF LocalisedText;
+    UNIQUE (LOCAL) LocalisedText:Language;
+  END MultilingualText;  
+  
+  STRUCTURE MultilingualMText =
+    LocalisedText : BAG {1..*} OF LocalisedMText;
+    UNIQUE (LOCAL) LocalisedText:Language;
+  END MultilingualMText;
+  
 
   STRUCTURE QualityResult = 
 	/** Validation result as a short summery.
 	*/
-  	summary : MANDATORY Localisation_V1.MultilingualText;
+  	summary : MANDATORY MultilingualText;
 	/** Validation result as a code.
 	*/
   	code : Code;
@@ -57,7 +82,7 @@ VERSION "2018-08-02.2" =
 	data : URI;
   END QualityResult;
   
-  STRUCTURE File = 
+  STRUCTURE DataFile = 
   	  /** Mimetype of file format
   	   * DERIVED
        */
@@ -66,8 +91,8 @@ VERSION "2018-08-02.2" =
        *  More than one entry if it is split into multiple parts.
   	   * DERIVED
        */
-      file : LIST {1..*} OF DatasetIdx16.RelativeFilePath_;
-  END File;
+      file : LIST {1..*} OF DatasetIdx16.File;
+  END DataFile;
   
   STRUCTURE BoundingBox =
 	  westlimit: MANDATORY -180.0000..180.0000;
@@ -109,7 +134,8 @@ VERSION "2018-08-02.2" =
        * Might be in the different repository.
        */
       sourceData : BAG {0..*} OF DatasetIdx16.BasketLink;
-      /** machine readable model/schema of this data
+      /** machine readable model/schema of this data. Qualified TOPIC name
+       * for INTERLIS data.
   	   * DERIVED
        */
       model : DatasetIdx16.ModelLink;
@@ -175,10 +201,10 @@ VERSION "2018-08-02.2" =
       qualityResults : BAG {0..*} OF DatasetIdx16.QualityResult;
       /** Title of data e.g. "Amtliche Vermessung"
        */
-      title : Localisation_V1.MultilingualText;
+      title : MultilingualText;
       /** A short description of this data.
        */
-      shortDescription : Localisation_V1.MultilingualMText;
+      shortDescription : MultilingualMText;
       /** Comma seperated list of terms associated with this data e.g. "DM01"
        */
       terms : TEXT;
@@ -218,7 +244,7 @@ VERSION "2018-08-02.2" =
       /** the data (one entry per file-format)
   	   * DERIVED
        */
-      files : BAG {1..*} OF DatasetIdx16.File;
+      files : BAG {1..*} OF DatasetIdx16.DataFile;
       /** Basktes that togethere are this dataset.
   	   * DERIVED
        */

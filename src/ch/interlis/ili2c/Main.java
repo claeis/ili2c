@@ -122,6 +122,9 @@ public class Main {
     System.err.println("List all models starting in the given repository:");
     System.err.println("    java -jar " + progName + " --listModels "+ILI_REPOSITORY);
     System.err.println();
+    System.err.println("List all data starting in the given repository:");
+    System.err.println("    java -jar " + progName + " --listData "+ILI_REPOSITORY);
+    System.err.println();
     }
 
 
@@ -133,6 +136,7 @@ public class Main {
 	boolean doCloneRepos = false;
     boolean doListModels = false;
     boolean doListAllModels = false;
+    boolean doListData = false;
 	boolean withWarnings = true;
 	int numErrorsWhileGenerating = 0;
 	String notifyOnError = "compiler@interlis.ch";
@@ -188,6 +192,7 @@ public class Main {
 	    System.err.println("--clone-repos         clones the given repositories to the --out folder.");
         System.err.println("--listModels uri      list all models starting in the given repository.");
         System.err.println("--listAllModels uri   list all models (without removing old entries) starting in the given repository.");
+        System.err.println("--listData uri        list all data starting in the given repository.");
 	    System.err.println("--translation translatedModel=originModel assigns a translated model to its orginal language equivalent.");
 	    System.err.println("--out file/dir        file or folder for output (folder must exist).");
 	    System.err.println("--ilidirs " + ilidirs + " list of directories with ili-files.");
@@ -247,6 +252,10 @@ public class Main {
 		}
         if (args[i].equals("--listModels")) {
             doListModels = true;
+            continue;
+        }
+        if (args[i].equals("--listData")) {
+            doListData = true;
             continue;
         }
         if (args[i].equals("--listAllModels")) {
@@ -371,7 +380,7 @@ public class Main {
 		    continue;
 		} else {
 			String filename = args[i];
-			if (doCheckRepoIlis  || doCloneRepos || doListModels || doListAllModels || new File(filename).isFile()) {
+			if (doCheckRepoIlis  || doCloneRepos || doListModels || doListAllModels || doListData || new File(filename).isFile()) {
 				ilifilev.add(filename);
 			} else {
 				EhiLogger.logError(args[i] + ": There is no such file.");
@@ -406,7 +415,7 @@ public class Main {
 		config.setLanguage(language);
 		config.setNlsxmlFilename(nlsxmlFilename);
 		config.setParams(params);
-	    if (doCloneRepos || doListModels || doListAllModels || outputKind != GenerateOutputKind.NOOUTPUT) {
+	    if (doCloneRepos || doListModels || doListAllModels || doListData || outputKind != GenerateOutputKind.NOOUTPUT) {
 			if (outfile != null) {
 			    config.setOutputFile(outfile);
 			} else {
@@ -431,6 +440,12 @@ public class Main {
                 boolean failed = new ListModels().listModels(config, settings,doListModels==true);
                 if (failed) {
                     EhiLogger.logError("list of models failed");
+                    System.exit(1);
+                }
+            }else if (doListData) {
+                boolean failed = new ListData().listData(config, settings);
+                if (failed) {
+                    EhiLogger.logError("list of data failed");
                     System.exit(1);
                 }
 			} else {

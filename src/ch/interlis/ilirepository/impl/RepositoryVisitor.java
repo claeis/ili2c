@@ -38,29 +38,31 @@ import ch.interlis.ilirepository.IliSite;
  */
 public class RepositoryVisitor {
 	private String repositoryUri[];
-	private RepositoryAccess rep=new RepositoryAccess();
+	private RepositoryAccess rep=null;
+	protected VisitorAction action=null;
 	
 	/** Initialize crawler.
 	 * @param repositoryUri list of repositories to start search for models.
 	 * @param rep handles access to repositories.
 	 */
-	public void setup(String repositoryUri[],RepositoryAccess rep)
+	public RepositoryVisitor(RepositoryAccess rep,VisitorAction action)
 	{
 		this.rep=rep;
-		this.repositoryUri=repositoryUri;
+		this.action=action;
+	}
+	public void setRepositories(String repositoryUri[]) {
+        this.repositoryUri=repositoryUri;
 	}
 
-	private List<ModelMetadata> crawlParents(HashSet<String> visitedSites, List<String> parents,boolean ignoreDuplicates) throws RepositoryAccessException {
-	    List<ModelMetadata> iliModels=new ArrayList<ModelMetadata>();
+	private boolean crawlParents(HashSet<String> visitedSites, List<String> parents) throws RepositoryAccessException {
 		while(!parents.isEmpty()){
 			String uri=fixUri(parents.remove(0));
 			if(!visitedSites.contains(uri)){
 				visitedSites.add(uri);
-				List<ModelMetadata> iliFile=rep.readIlimodelsXml(uri);
-				if(iliFile!=null){
-	                fixFiles(iliFile,uri);
-					mergeModelMetadata(iliModels, iliFile,ignoreDuplicates);
-				}
+                boolean stopVisiting=action.processRepository(uri,rep);
+                if(stopVisiting) {
+                    return true;
+                }
 				IliSite iliSite = rep.getIliSite(uri);
 				if(iliSite==null){
 					// site offline
@@ -74,9 +76,9 @@ public class RepositoryVisitor {
 				}
 			}
 		}
-		return iliModels;
+		return false;
 	}
-
+	
 	private String fixUri(String uri) {
         if(uri.endsWith("/")) {
             return uri;
@@ -84,35 +86,23 @@ public class RepositoryVisitor {
         return uri=uri+"/";
     }
 
-    private void fixFiles(List<ModelMetadata> models, String uri) {
-        if(!uri.endsWith("/")) {
-            uri=uri+"/";
-        }
-	    for(ModelMetadata md:models) {
-	        md.setFile(uri+md.getFile());
-	    }
-        
-    }
-
     /** Gets metadata of newest model with given name.
 	 * Crawls the web of repositories, until it finds the model, or there are no more repositories.
 	 * @return null if model not known/found.
 	 * @throws RepositoryAccessException 
 	 */
-	public List<ModelMetadata> getIliFileMetadataDeep(boolean ignoreDuplicates) throws RepositoryAccessException
+	public void visitRepositories() throws RepositoryAccessException
 	{
-	    List<ModelMetadata> mergedModelMetadatav = new ArrayList<ModelMetadata>();
 		HashSet<String> visitedSites=new HashSet<String>();
 		// search in defined repos
 		for(int i=0;i<repositoryUri.length;i++){
 			String uri=fixUri(repositoryUri[i]);
 			if(!visitedSites.contains(uri)){
 				visitedSites.add(uri);
-				List<ModelMetadata> iliModels=rep.readIlimodelsXml(uri);
-				if(iliModels!=null){
-	                fixFiles(iliModels,uri);
-				    mergeModelMetadata(mergedModelMetadatav, iliModels,ignoreDuplicates);
-				}
+                boolean stopVisiting=action.processRepository(uri,rep);
+                if(stopVisiting) {
+                    return;
+                }
 			}
 		}
 		
@@ -141,8 +131,10 @@ public class RepositoryVisitor {
 		
 		// crawl direct parent repositories
 		{
-	        List<ModelMetadata> iliModels=crawlParents(visitedSites, parents,ignoreDuplicates);
-	        mergeModelMetadata(mergedModelMetadatav, iliModels,ignoreDuplicates);
+	        boolean stopVisiting=crawlParents(visitedSites, parents);
+	        if(stopVisiting) {
+	            return;
+	        }
 		}
 		
         
@@ -151,10 +143,11 @@ public class RepositoryVisitor {
 			String uri=fixUri(subsidiaries.remove(0));
 			if(!visitedSites.contains(uri)){
 				visitedSites.add(uri);
-				List<ModelMetadata> iliModels=rep.readIlimodelsXml(uri);
-				if(iliModels!=null){
-	                fixFiles(iliModels,uri);
-				    mergeModelMetadata(mergedModelMetadatav, iliModels,ignoreDuplicates);
+				{
+	                boolean stopVisiting=action.processRepository(uri,rep);
+	                if(stopVisiting) {
+	                    return;
+	                }
 				}
 				IliSite iliSite = rep.getIliSite(uri);
 				if(iliSite==null){
@@ -173,24 +166,15 @@ public class RepositoryVisitor {
 						// add parent to queue
 						parents.add(parent);
 					}
-					List<ModelMetadata> ret2=crawlParents(visitedSites, parents,ignoreDuplicates);
-                    mergeModelMetadata(mergedModelMetadatav, ret2,ignoreDuplicates);
+					boolean stopVisiting=crawlParents(visitedSites, parents);
+					if(stopVisiting) {
+					    return;
+					}
 				}
 			}
 		}
 		
-		return mergedModelMetadatav;
+	
 	}
 
-    private void mergeModelMetadata(List<ModelMetadata> mergedModelMetadatav, List<ModelMetadata> iliModels,boolean ignoreDuplicates) {
-        if(ignoreDuplicates) {
-            for(ModelMetadata md:iliModels) {
-                if(RepositoryAccess.findModelMetadata(mergedModelMetadatav,md.getName(),md.getSchemaLanguage(),md.getVersion())==null) {
-                    mergedModelMetadatav.add(md);
-                }
-            }
-        }else {
-            mergedModelMetadatav.addAll(iliModels);
-        }
-    }
 }
