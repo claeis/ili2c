@@ -14,6 +14,7 @@ public class UserSettings extends ch.ehi.basics.settings.Settings {
 	public final static String TEMP_REPOS_ILIFILES = "ch.interlis.ili2c.tempReposIliFiles";
 	public final static String CUSTOM_ILI_RESOLVER = "ch.interlis.ili2c.customIliResolver";
 	public final static String ILIDIRS_PATHMAP = "ch.interlis.ili2c.pathMap";
+    public final static String CUSTOM_ILI_MANAGER = "ch.interlis.ili2c.customIliManager";
 
 
 	public static UserSettings load() 

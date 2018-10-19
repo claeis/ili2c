@@ -580,8 +580,12 @@ public class Main {
 
 		ArrayList modeldirv = getModelRepos(settings, ilifilev, pathmap);
 
-		// create repository manager
-		ch.interlis.ilirepository.IliManager manager = new ch.interlis.ilirepository.IliManager();
+		// get/create repository manager
+		ch.interlis.ilirepository.IliManager manager = (ch.interlis.ilirepository.IliManager) settings
+                .getTransientObject(UserSettings.CUSTOM_ILI_MANAGER);
+		if(manager==null) {
+		    manager=new ch.interlis.ilirepository.IliManager();
+		}
 		ch.interlis.ilirepository.IliResolver resolver = (ch.interlis.ilirepository.IliResolver) settings
 		        .getTransientObject(UserSettings.CUSTOM_ILI_RESOLVER);
 		if (resolver != null) {
