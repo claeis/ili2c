@@ -39,9 +39,7 @@ import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ili2c.ModelScan;
 import ch.interlis.ilirepository.impl.RepositoryCrawler;
 import ch.interlis.ilirepository.impl.RepositoryVisitor;
-import ch.interlis.models.DatasetIdx16.DataIndex.BasketMetadata;
 import ch.interlis.ilirepository.impl.DataFinder;
-import ch.interlis.ilirepository.impl.ModelLister;
 import ch.interlis.ilirepository.impl.RepositoryAccess;
 import ch.interlis.ilirepository.impl.RepositoryAccessException;
 
@@ -65,7 +63,7 @@ import ch.interlis.ilirepository.impl.RepositoryAccessException;
  * </code></pre>
  * @author ceis
  */
-public class IliManager {
+public class IliManager implements ReposManager {
 	/** name of ilisite.xml file.
 	 */
 	public static final String ILISITE_XML = "ilisite.xml";
@@ -439,11 +437,17 @@ public class IliManager {
 		return null;
 		
 	}
+	/* (non-Javadoc)
+     * @see ch.interlis.ilirepository.ReposManager#getDatasetIndex(java.lang.String, java.lang.String[])
+     */
 	public List<Dataset> getDatasetIndex(String bid,String topics[]) throws RepositoryAccessException {
 	    dataFinder.setCriteria(bid,topics);
 	    dataCrawler.visitRepositories();
 	    return dataFinder.getResult();
 	}
+	/* (non-Javadoc)
+     * @see ch.interlis.ilirepository.ReposManager#getLocalFileOfRemoteDataset(ch.interlis.ilirepository.Dataset, java.lang.String)
+     */
 	public File[] getLocalFileOfRemoteDataset(Dataset dataset,String fileformat) throws Ili2cException {
 
 	    ch.interlis.models.DatasetIdx16.DataFile fileMetadata=null;

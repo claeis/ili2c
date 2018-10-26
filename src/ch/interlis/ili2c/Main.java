@@ -20,9 +20,7 @@ import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.config.GenerateOutputKind;
-import ch.interlis.ili2c.generator.Interlis2Generator;
 import ch.interlis.ili2c.generator.TransformationParameter;
-import ch.interlis.ili2c.generator.TransformationParameter.ModelTransformation;
 import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
 import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.gui.UserSettings;
@@ -32,7 +30,6 @@ import ch.interlis.ili2c.parser.Ili1Parser;
 import ch.interlis.ili2c.parser.Ili22Parser;
 import ch.interlis.ili2c.parser.Ili23Parser;
 import ch.interlis.ili2c.parser.Ili24Parser;
-import sun.security.provider.certpath.DistributionPointFetcher;
 
 
 public class Main {
