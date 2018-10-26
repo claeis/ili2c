@@ -130,7 +130,7 @@ VERSION "2018-10-19" =
        * Might be in the different repository.
        */
       derivedData : BAG {0..*} OF DatasetIdx16.BasketLink;
-      /** If this is derived data, the source of it.
+      /** If this is derived (manually or autoamtically) data, the source of it.
        * Might be in the different repository.
        */
       sourceData : BAG {0..*} OF DatasetIdx16.BasketLink;
