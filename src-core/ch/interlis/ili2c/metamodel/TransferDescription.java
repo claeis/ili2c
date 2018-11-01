@@ -143,6 +143,8 @@ public class TransferDescription extends Container<Model>
 	return metaDataBaskets.get(boid);
   }
   private Ili1Format ili1Format=null;
+public static final String MIMETYPE_ITF = "application/interlis;version=1.0";
+public static final String MIMETYPE_XTF = "application/interlis+xml;version=2.3";
   public Ili1Format getIli1Format(){
   	return ili1Format;
   }

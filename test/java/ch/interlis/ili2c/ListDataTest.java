@@ -19,7 +19,6 @@ import ch.interlis.ili2c.metamodel.Table;
 import ch.interlis.ili2c.metamodel.Topic;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ilirepository.Dataset;
-import ch.interlis.ilirepository.IliManager;
 import ch.interlis.iom.IomObject;
 import ch.interlis.iom_j.xtf.XtfReader;
 import ch.interlis.iox.EndBasketEvent;
@@ -122,7 +121,7 @@ public class ListDataTest {
         
         assertEquals(1,result.size());
         Dataset dataset=result.get(0);
-        File[] files=manager.getLocalFileOfRemoteDataset(dataset, IliManager.MIMETYPE_XTF);
+        File[] files=manager.getLocalFileOfRemoteDataset(dataset, TransferDescription.MIMETYPE_XTF);
         assertEquals(1,files.length);
         assertTrue(files[0].exists());
     }

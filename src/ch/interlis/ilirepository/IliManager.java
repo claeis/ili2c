@@ -73,9 +73,7 @@ public class IliManager implements ReposManager {
     /** name of ilidata.xml file.
      */
     public static final String ILIDATA_XML = "ilidata.xml";
-    public static final String MIMETYPE_XTF = "application/interlis+xml;version=2.3";
-    public static final String MIMETYPE_ITF = "application/interlis;version=1.0";
-	private long iliMaxTTL=604800000L; // max time (7 days) to live in ms for a file in the cache
+    private long iliMaxTTL=604800000L; // max time (7 days) to live in ms for a file in the cache
     private long dataMaxTTL=43200000L; // max time (24h) to live in ms for a file in the cache
 	private RepositoryAccess rep=new RepositoryAccess();
 	private RepositoryCrawler iliCrawler=new RepositoryCrawler(rep);
