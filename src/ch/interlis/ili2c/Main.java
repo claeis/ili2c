@@ -30,6 +30,7 @@ import ch.interlis.ili2c.parser.Ili1Parser;
 import ch.interlis.ili2c.parser.Ili22Parser;
 import ch.interlis.ili2c.parser.Ili23Parser;
 import ch.interlis.ili2c.parser.Ili24Parser;
+import ch.interlis.ilirepository.impl.RepositoryVisitor;
 
 
 public class Main {
@@ -590,9 +591,12 @@ public class Main {
 		}
 		// set list of repositories to search
 		manager.setRepositories((String[]) modeldirv.toArray(new String[1]));
-		manager.setIliFiles(settings.getTransientValue(UserSettings.TEMP_REPOS_URI),
-		        (ch.interlis.ilirepository.IliFiles) settings
-		                .getTransientObject(UserSettings.TEMP_REPOS_ILIFILES));
+		String tempReposUri=settings.getTransientValue(UserSettings.TEMP_REPOS_URI);
+		if(tempReposUri!=null) {
+	        manager.setIliFiles(RepositoryVisitor.fixUri(tempReposUri),
+	                (ch.interlis.ilirepository.IliFiles) settings
+	                        .getTransientObject(UserSettings.TEMP_REPOS_ILIFILES));
+		}
 
 		// get complete list of required ili-files
 		try {

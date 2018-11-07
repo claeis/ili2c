@@ -79,7 +79,7 @@ public class RepositoryVisitor {
 		return false;
 	}
 	
-	private String fixUri(String uri) {
+	public static String fixUri(String uri) {
         if(uri.endsWith("/")) {
             return uri;
         }
