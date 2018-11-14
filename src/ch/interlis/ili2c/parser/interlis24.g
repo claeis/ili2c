@@ -1206,7 +1206,17 @@ protected classDef[Container container]
 		        panic ();
 		      }
 		    }
-		( (oid:"OID" "AS" classOid=domainRef[container]  | "NO" "OID" {classOid=new NoOid();}) {table.setOid(classOid);} SEMI 
+		( (oid:"OID" "AS" classOid=domainRef[container]  
+			{
+					if(!(classOid.getType() instanceof OIDType)){
+						reportError (formatMessage ("err_topic_domainnotanoid",classOid.toString()),oid.getLine());
+					}
+			}
+		| "NO" "OID" {classOid=new NoOid();}) 
+			{
+				table.setOid(classOid);
+			} 
+			SEMI 
 		)?
 		(	"ATTRIBUTE"
 		|
@@ -1782,7 +1792,17 @@ protected associationDef[Container scope]
 		        }
 		)?
 		EQUALS
-		( (oid:"OID" "AS" assocOid=domainRef[scope] | "NO" "OID" {assocOid=new NoOid();}) SEMI { def.setOid(assocOid); }
+		( (oid:"OID" "AS" assocOid=domainRef[scope] 
+				{
+					if(!(assocOid.getType() instanceof OIDType)){
+						reportError (formatMessage ("err_topic_domainnotanoid",assocOid.toString()),oid.getLine());
+					}
+				}
+			| "NO" "OID" {assocOid=new NoOid();}) 
+			SEMI 
+				{ 
+					def.setOid(assocOid); 
+				}
 		)?
 		{
 			scope.add(def);
