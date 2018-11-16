@@ -1577,7 +1577,7 @@ private void setup(
         ipw.print ("ANYSTRUCTURE");
     }else{
         if (language == null) {
-			if (params != null) {
+			if (params != null && params.getImportModels()!=null) {
 	      		ModelTransformation[] importModels = params.getImportModels();
 	      		for (ModelTransformation importModel : importModels) {
 	      			if (elt.getScopedName(scope).contains(importModel.getFromModel())) {
