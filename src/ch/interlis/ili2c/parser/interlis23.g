@@ -4,6 +4,7 @@ header
 	import ch.interlis.ili2c.metamodel.*;
 	import ch.interlis.ili2c.generator.Interlis2Generator;
 	import ch.interlis.ili2c.CompilerLogEvent;
+	import ch.interlis.ili2c.Ili2cException;
 	import java.util.*;
 	import ch.ehi.basics.logging.EhiLogger;
 	import ch.ehi.basics.settings.Settings;
@@ -119,6 +120,50 @@ options
     } catch (Exception ex) {
       CompilerLogEvent.logError(filename,0,ex);
       return false;
+    }
+  }
+  static public ObjectPath parseObjectOrAttributePath(TransferDescription td
+    ,Viewable start,String objectPath
+    )
+    throws Ili2cException
+  {
+
+    try {
+      Ili2Lexer lexer= new Ili2Lexer (new java.io.StringReader(objectPath));
+      
+      //
+      // setup token stream splitting to filter out comments
+      //
+      //filter.getHiddenAfter(end)
+      //filter.getHiddenBefore(begin)
+
+      // create token objects augmented with links to hidden tokens. 
+      lexer.setTokenObjectClass("antlr.CommonHiddenStreamToken");
+
+      // create filter that pulls tokens from the lexer
+      antlr.TokenStreamHiddenTokenFilter filter = new antlr.TokenStreamHiddenTokenFilter(lexer);
+
+      // tell the filter which tokens to hide, and which to discard
+      filter.hide(ILI_DOC);
+      filter.hide(ILI_METAVALUE);
+
+      // connect parser to filter (instead of lexer)
+      Ili23Parser parser = new Ili23Parser (filter);
+      
+      // Ili2.3 always check existence of metaobject
+      parser.checkMetaObjs=true; // checkMetaObjects;
+      parser.lexer=lexer;
+      parser.filter=filter;
+      parser.setFilename (td.getName());
+      return parser.standaloneObjectOrAttributePath (td,start);
+    }catch(antlr.RecognitionException ex){
+      throw new Ili2cException(ex);
+    }catch(antlr.TokenStreamRecognitionException ex){
+      throw new Ili2cException(ex);
+    } catch (antlr.ANTLRError ex) {
+      throw new Ili2cException(ex);
+    } catch (Exception ex) {
+      throw new Ili2cException(ex);
     }
   }
 
@@ -778,6 +823,24 @@ public interlisDescription [TransferDescription td1]
 		    {
 		      reportError (rsrc.getString ("err_notIliDescription"));
 		      canProceed = false;
+		    }
+	;
+public standaloneObjectOrAttributePath[TransferDescription td1,Viewable start]
+	returns [ObjectPath result]
+	{
+		result=null;
+		this.td = td1;
+		this.modelInterlis = td.INTERLIS;
+		this.predefinedBooleanType = Type.findReal (td.INTERLIS.BOOLEAN.getType());
+		this.predefinedScalSystemClass = td.INTERLIS.SCALSYSTEM;
+		this.predefinedCoordSystemClass = td.INTERLIS.COORDSYSTEM;
+	}
+	:	result=objectOrAttributePath[start,start]
+		EOF		
+	    exception
+		    catch [NoViableAltException nvae]
+		    {
+		    	throw nvae;
 		    }
 	;
 

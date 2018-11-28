@@ -25,7 +25,10 @@ import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
 import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
+import ch.interlis.ili2c.metamodel.ObjectPath;
+import ch.interlis.ili2c.metamodel.PathEl;
 import ch.interlis.ili2c.metamodel.TransferDescription;
+import ch.interlis.ili2c.metamodel.Viewable;
 import ch.interlis.ili2c.parser.Ili1Parser;
 import ch.interlis.ili2c.parser.Ili22Parser;
 import ch.interlis.ili2c.parser.Ili23Parser;
@@ -1010,6 +1013,11 @@ public class Main {
 	return ret;
     }
 
+    static public ObjectPath parseObjectOrAttributePath(Viewable viewable,String objectPath) throws Ili2cException
+    {
+        TransferDescription td=(TransferDescription) viewable.getContainer(TransferDescription.class);
+        return Ili23Parser.parseObjectOrAttributePath(td,viewable, objectPath);
+    }
 
     static public void logIliFiles(ch.interlis.ili2c.config.Configuration config) {
 	java.util.Iterator filei = config.iteratorFileEntry();
