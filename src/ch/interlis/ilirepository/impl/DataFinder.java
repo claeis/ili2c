@@ -11,7 +11,7 @@ import ch.interlis.models.DatasetIdx16.DataIndex.BasketMetadata;
 import ch.interlis.models.DatasetIdx16.DataIndex.DatasetMetadata;
 
 public class DataFinder implements VisitorAction {
-    private List<Dataset> result=null;
+    private List<Dataset> result=new ArrayList<Dataset>();
     private String bid=null;
     private java.util.Set<String> topics=null;
     private String topicLogTxt=null;
@@ -47,9 +47,16 @@ public class DataFinder implements VisitorAction {
             // site offline
         }else{
             for(DatasetMetadata iliFile:iliFiles) {
-                for(BasketMetadata basket:iliFile.getbaskets()) {
-                    if((bid==null || basket.getid().equals(bid)) && (topics==null || topics.contains(basket.getmodel().getname()))) {
-                        result.add(iliFile);
+                if(bid==null && topics==null) {
+                    result.add(iliFile);
+                }else if(bid!=null && iliFile.getid().equals(bid)) {
+                    result.add(iliFile);
+                }else {
+                    for(BasketMetadata basket:iliFile.getbaskets()) {
+                        if((bid==null || bid.equals(basket.getid())) && (topics==null || topics.contains(basket.getmodel().getname()))) {
+                            result.add(iliFile);
+                            break; // add it only once
+                        }
                     }
                 }
             }

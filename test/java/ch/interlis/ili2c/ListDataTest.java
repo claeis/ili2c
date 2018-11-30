@@ -37,6 +37,8 @@ public class ListDataTest {
     private static final String DATASET_1_VERSION2 = "2";
     private static final String DATASET_2 = "ch.interlis.ili2c.test.data2";
     private static final String DATASET_2_VERSION1 = "1";
+    private static final String DATASET_3 = "ch.interlis.ili2c.test.data3";
+    private static final String DATASET_4 = "ch.interlis.ili2c.test.data4";
 
 	@Test
 	public void simpleList() throws Exception {
@@ -61,10 +63,12 @@ public class ListDataTest {
             assertEquals(DATASET_1,iomObj.getattrvalue(ch.interlis.models.DatasetIdx16.DataIndex.DatasetMetadata.tag_id));
             assertEquals(DATASET_1_VERSION2,iomObj.getattrvalue(ch.interlis.models.DatasetIdx16.DataIndex.DatasetMetadata.tag_version));
             
-            event=reader.read();
-            assertTrue(event instanceof ObjectEvent);
-            iomObj=((ObjectEvent)event).getIomObject();
-            assertEquals(ch.interlis.models.DatasetIdx16.DataIndex.DatasetMetadata.tag,iomObj.getobjecttag());
+            for(int i=0;i<3;i++) {
+                event=reader.read();
+                assertTrue(event instanceof ObjectEvent);
+                iomObj=((ObjectEvent)event).getIomObject();
+                assertEquals(ch.interlis.models.DatasetIdx16.DataIndex.DatasetMetadata.tag,iomObj.getobjecttag());
+            }
             
             assertTrue(reader.read() instanceof EndBasketEvent);
             assertTrue(reader.read() instanceof EndTransferEvent);
@@ -83,6 +87,30 @@ public class ListDataTest {
         assertEquals(DATASET_1,iomObj.getattrvalue(ch.interlis.models.DatasetIdx16.DataIndex.DatasetMetadata.tag_id));
         assertEquals(DATASET_1_VERSION2,iomObj.getattrvalue(ch.interlis.models.DatasetIdx16.DataIndex.DatasetMetadata.tag_version));
         
+    }
+    @Test
+    public void queryDatasetById() throws Exception {
+
+        ch.interlis.ilirepository.IliManager manager = new ch.interlis.ilirepository.IliManager();
+        manager.setRepositories(new String[] {TEST_REPOS});
+        List<Dataset> result=manager.getDatasetIndex(DATASET_3, null);
+        
+        assertEquals(1,result.size());
+        IomObject iomObj=result.get(0).getMetadata();
+        assertEquals(ch.interlis.models.DatasetIdx16.DataIndex.DatasetMetadata.tag,iomObj.getobjecttag());
+        assertEquals(DATASET_3,iomObj.getattrvalue(ch.interlis.models.DatasetIdx16.DataIndex.DatasetMetadata.tag_id));
+    }
+    @Test
+    public void queryDatasetWithoutBasketsById() throws Exception {
+
+        ch.interlis.ilirepository.IliManager manager = new ch.interlis.ilirepository.IliManager();
+        manager.setRepositories(new String[] {TEST_REPOS});
+        List<Dataset> result=manager.getDatasetIndex(DATASET_4, null);
+        
+        assertEquals(1,result.size());
+        IomObject iomObj=result.get(0).getMetadata();
+        assertEquals(ch.interlis.models.DatasetIdx16.DataIndex.DatasetMetadata.tag,iomObj.getobjecttag());
+        assertEquals(DATASET_4,iomObj.getattrvalue(ch.interlis.models.DatasetIdx16.DataIndex.DatasetMetadata.tag_id));
     }
     @Test
     public void queryById_Fail() throws Exception {
