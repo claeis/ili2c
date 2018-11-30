@@ -199,12 +199,12 @@
     </propertyfile>
 
     <jar jarfile="${build}/jar/${ant.project.name}-tool.jar">
-	<fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class,ch/interlis/models/**/*.class,ch/interlis/ili2c/generator/**/*.class,ch/interlis/ili2c/modelscan/**/*.class,ch/interlis/ili2c/metamodel/**/*.class,ch/interlis/ili2c/config/**/*.class,ch/interlis/ili2c/CompilerLogEvent.class,ch/interlis/ili2c/Ili2cException.class,ch/interlis/ili2c/Ili2cFailure.class,ch/interlis/ili2c/gui/UserSettings.class,ch/interlis/ilirepository/ReposManager.class,ch/interlis/ilirepository/impl/RepositoryAccessException.class,ch/interlis/ilirepository/Dataset.class" includes="**/*.class"/>
+	<fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class,ch/interlis/models/**/*.class,ch/interlis/ili2c/parser/**/*.class,ch/interlis/ili2c/generator/**/*.class,ch/interlis/ili2c/modelscan/**/*.class,ch/interlis/ili2c/metamodel/**/*.class,ch/interlis/ili2c/config/**/*.class,ch/interlis/ili2c/CompilerLogEvent.class,ch/interlis/ili2c/Ili2cException.class,ch/interlis/ili2c/Ili2cFailure.class,ch/interlis/ili2c/gui/UserSettings.class,ch/interlis/ilirepository/ReposManager.class,ch/interlis/ilirepository/impl/RepositoryAccessException.class,ch/interlis/ilirepository/Dataset.class" includes="**/*.class"/>
     	<fileset dir="${src}" includes="**/*.properties"/>
     	<fileset dir="${src}" includes="**/iom/AliasTable.txt"/>
     </jar>
     <jar jarfile="${build}/jar/${ant.project.name}-core.jar">
-	<fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class" includes="ch/interlis/models/**/*.class,ch/interlis/ili2c/generator/**/*.class,ch/interlis/ili2c/modelscan/**/*.class,ch/interlis/ili2c/metamodel/**/*.class,ch/interlis/ili2c/config/**/*.class,ch/interlis/ili2c/CompilerLogEvent.class,ch/interlis/ili2c/Ili2cException.class,ch/interlis/ili2c/Ili2cFailure.class,ch/interlis/ili2c/gui/UserSettings.class,ch/interlis/ilirepository/ReposManager.class,ch/interlis/ilirepository/impl/RepositoryAccessException.class,ch/interlis/ilirepository/Dataset.class"/>
+	<fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class" includes="ch/interlis/models/**/*.class,ch/interlis/ili2c/parser/**/*.class,ch/interlis/ili2c/generator/**/*.class,ch/interlis/ili2c/modelscan/**/*.class,ch/interlis/ili2c/metamodel/**/*.class,ch/interlis/ili2c/config/**/*.class,ch/interlis/ili2c/CompilerLogEvent.class,ch/interlis/ili2c/Ili2cException.class,ch/interlis/ili2c/Ili2cFailure.class,ch/interlis/ili2c/gui/UserSettings.class,ch/interlis/ilirepository/ReposManager.class,ch/interlis/ilirepository/impl/RepositoryAccessException.class,ch/interlis/ilirepository/Dataset.class"/>
     	<fileset dir="${src-core}" includes="**/*.properties"/>
     </jar>
   </target>

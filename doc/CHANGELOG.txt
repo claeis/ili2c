@@ -11,6 +11,7 @@ LATEST
 - ili24: support ContextDef
 - use env variable ILI_CACHE to override default $user.home/.ilicache
 - fixed: validate OID-DomainRef in ClassDef/OID AS
+- moved parser to core
 
 ili2c 4.7.9 (2018-07-05)
 ---------------------------
