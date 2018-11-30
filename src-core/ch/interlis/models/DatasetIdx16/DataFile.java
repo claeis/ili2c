@@ -10,14 +10,12 @@ public class DataFile extends ch.interlis.iom_j.Iom_jObject
   }
   public final static String tag_fileFormat="fileFormat";
   /** Mimetype of file format
-   * DERIVED
    */
   public String getfileFormat() {
     String value=getattrvalue("fileFormat");
     return value;
   }
   /** Mimetype of file format
-   * DERIVED
    */
   public void setfileFormat(String value) {
     setattrvalue("fileFormat", value);
@@ -25,7 +23,6 @@ public class DataFile extends ch.interlis.iom_j.Iom_jObject
   public final static String tag_file="file";
   /** path of data-file, as it is in the repository e.g. "BFE/91.1_TypeOfReactorCatalogue_12-09-10.xml".
    * More than one entry if it is split into multiple parts.
-   * DERIVED
    */
   public int sizefile() {return getattrvaluecount("file");}
   public ch.interlis.models.DatasetIdx16.File[] getfile() {
@@ -38,7 +35,6 @@ public class DataFile extends ch.interlis.iom_j.Iom_jObject
   }
   /** path of data-file, as it is in the repository e.g. "BFE/91.1_TypeOfReactorCatalogue_12-09-10.xml".
    * More than one entry if it is split into multiple parts.
-   * DERIVED
    */
   public void addfile(ch.interlis.models.DatasetIdx16.File value) {
     addattrobj("file", value);

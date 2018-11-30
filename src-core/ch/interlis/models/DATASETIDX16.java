@@ -3,16 +3,15 @@ public class DATASETIDX16{
   private DATASETIDX16() {}
   public final static String MODEL= "DatasetIdx16";
   public final static String DataIndex= "DatasetIdx16.DataIndex";
-  public static ch.interlis.iom_j.xtf.XtfModel getXtfModel(){ return new ch.interlis.iom_j.xtf.XtfModel("DatasetIdx16","mailto:ce@eisenhutinformatik.ch","2018-08-02.2"); }
+  public static ch.interlis.iom_j.xtf.XtfModel getXtfModel(){ return new ch.interlis.iom_j.xtf.XtfModel("DatasetIdx16","mailto:ce@eisenhutinformatik.ch","2018-11-21"); }
   static public ch.interlis.iox.IoxFactory getIoxFactory()
   {
     return new ch.interlis.iox.IoxFactory(){
       public ch.interlis.iom.IomObject createIomObject(String type,String oid) throws ch.interlis.iox.IoxException {
       if(type.equals("DatasetIdx16.DataFile"))return new ch.interlis.models.DatasetIdx16.DataFile();
-      if(type.equals("DatasetIdx16.BasketId_"))return new ch.interlis.models.DatasetIdx16.BasketId_();
-      if(type.equals("DatasetIdx16.BasketLink"))return new ch.interlis.models.DatasetIdx16.BasketLink();
+      if(type.equals("DatasetIdx16.Metadata"))return new ch.interlis.models.DatasetIdx16.Metadata();
       if(type.equals("DatasetIdx16.DataIndex.Metadata"))return new ch.interlis.models.DatasetIdx16.DataIndex.Metadata(oid);
-      if(type.equals("DatasetIdx16.DatasetId_"))return new ch.interlis.models.DatasetIdx16.DatasetId_();
+      if(type.equals("DatasetIdx16.DataLink"))return new ch.interlis.models.DatasetIdx16.DataLink();
       if(type.equals("DatasetIdx16.MultilingualText"))return new ch.interlis.models.DatasetIdx16.MultilingualText();
       if(type.equals("DatasetIdx16.Code_"))return new ch.interlis.models.DatasetIdx16.Code_();
       if(type.equals("DatasetIdx16.WebService_"))return new ch.interlis.models.DatasetIdx16.WebService_();
@@ -39,21 +38,53 @@ public class DATASETIDX16{
     mapping.defineClass("DatasetIdx16.DataFile", new String[]{   "fileFormat"
       ,"file"
       });
-    nameMap.put("DatasetIdx16.BasketId_", "BasketId_");
-    mapping.defineClass("DatasetIdx16.BasketId_", new String[]{   "value"
-      });
-    nameMap.put("DatasetIdx16.BasketLink", "BasketLink");
-    mapping.defineClass("DatasetIdx16.BasketLink", new String[]{   "id"
-      ,"repository"
-      });
-    nameMap.put("DatasetIdx16.DataIndex.Metadata", "Metadata");
-    mapping.defineClass("DatasetIdx16.DataIndex.Metadata", new String[]{   "owner"
-      ,"technicalContact"
+    nameMap.put("DatasetIdx16.Metadata", "Metadata");
+    mapping.defineClass("DatasetIdx16.Metadata", new String[]{   "id"
+      ,"originalId"
+      ,"version"
+      ,"versionComment"
+      ,"precursorVersion"
+      ,"followupData"
+      ,"derivedData"
+      ,"sourceData"
+      ,"model"
+      ,"epsgCode"
+      ,"geoScope"
+      ,"resolutionScope"
       ,"publishingDate"
       ,"lastEditingDate"
+      ,"original"
+      ,"restrictions"
+      ,"qualityResults"
+      ,"owner"
+      ,"boundary"
       });
-    nameMap.put("DatasetIdx16.DatasetId_", "DatasetId_");
-    mapping.defineClass("DatasetIdx16.DatasetId_", new String[]{   "value"
+    nameMap.put("DatasetIdx16.DataIndex.Metadata", "DataIndex.Metadata");
+    mapping.defineClass("DatasetIdx16.DataIndex.Metadata", new String[]{   "id"
+      ,"originalId"
+      ,"version"
+      ,"versionComment"
+      ,"precursorVersion"
+      ,"followupData"
+      ,"derivedData"
+      ,"sourceData"
+      ,"model"
+      ,"epsgCode"
+      ,"geoScope"
+      ,"resolutionScope"
+      ,"publishingDate"
+      ,"lastEditingDate"
+      ,"original"
+      ,"restrictions"
+      ,"qualityResults"
+      ,"owner"
+      ,"boundary"
+      ,"technicalContact"
+      });
+    nameMap.put("DatasetIdx16.DataLink", "DataLink");
+    mapping.defineClass("DatasetIdx16.DataLink", new String[]{   "basketId"
+      ,"datasetId"
+      ,"localBasketId"
       });
     nameMap.put("DatasetIdx16.MultilingualText", "MultilingualText");
     mapping.defineClass("DatasetIdx16.MultilingualText", new String[]{   "LocalisedText"
@@ -92,13 +123,16 @@ public class DATASETIDX16{
       ,"sourceData"
       ,"model"
       ,"epsgCode"
+      ,"geoScope"
       ,"resolutionScope"
       ,"publishingDate"
       ,"lastEditingDate"
       ,"original"
       ,"restrictions"
       ,"qualityResults"
+      ,"owner"
       ,"boundary"
+      ,"localId"
       });
     nameMap.put("DatasetIdx16.DataIndex.DatasetMetadata", "DatasetMetadata");
     mapping.defineClass("DatasetIdx16.DataIndex.DatasetMetadata", new String[]{   "id"
@@ -106,14 +140,24 @@ public class DATASETIDX16{
       ,"version"
       ,"versionComment"
       ,"precursorVersion"
-      ,"publishingDate"
+      ,"followupData"
+      ,"derivedData"
+      ,"sourceData"
+      ,"model"
+      ,"epsgCode"
       ,"geoScope"
+      ,"resolutionScope"
+      ,"publishingDate"
+      ,"lastEditingDate"
+      ,"original"
+      ,"restrictions"
       ,"qualityResults"
+      ,"owner"
+      ,"boundary"
       ,"title"
       ,"shortDescription"
-      ,"terms"
       ,"keywords"
-      ,"owner"
+      ,"categories"
       ,"servicer"
       ,"technicalContact"
       ,"furtherInformation"
