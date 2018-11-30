@@ -80,7 +80,7 @@
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
     	<!-- <arg value="-diagnostic"/> -->
-    	<arg value="${src}/ch/interlis/ili2c/parser/interlis24.g"/>
+    	<arg value="${src-core}/ch/interlis/ili2c/parser/interlis24.g"/>
     </java>
   </target>
   
@@ -91,7 +91,7 @@
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
     	<!-- <arg value="-diagnostic"/> -->
-    	<arg value="${src}/ch/interlis/ili2c/parser/interlis23.g"/>
+    	<arg value="${src-core}/ch/interlis/ili2c/parser/interlis23.g"/>
     </java>
   </target>
   
@@ -100,7 +100,7 @@
     <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
-    	<arg value="${src}/ch/interlis/ili2c/parser/interlis22.g"/>
+    	<arg value="${src-core}/ch/interlis/ili2c/parser/interlis22.g"/>
     </java>
   </target>
   
@@ -109,7 +109,7 @@
     <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
-    	<arg value="${src}/ch/interlis/ili2c/parser/metavalue.g"/>
+    	<arg value="${src-core}/ch/interlis/ili2c/parser/metavalue.g"/>
     </java>
   </target>
   
@@ -118,7 +118,7 @@
     <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
-    	<arg value="${src}/ch/interlis/ili2c/parser/interlis1.g"/>
+    	<arg value="${src-core}/ch/interlis/ili2c/parser/interlis1.g"/>
     </java>
   </target>
 
@@ -129,7 +129,7 @@
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
     	<!--  <arg value="-diagnostic"/> -->
-    	<arg value="${src}/ch/interlis/ili2c/parser/modelscan.g"/>
+    	<arg value="${src-core}/ch/interlis/ili2c/parser/modelscan.g"/>
     </java>
   </target>
   
@@ -138,7 +138,7 @@
     <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
-    	<arg value="${src}/ch/interlis/ili2c/parser/ili1undef.g"/>
+    	<arg value="${src-core}/ch/interlis/ili2c/parser/ili1undef.g"/>
     </java>
   </target>
 
