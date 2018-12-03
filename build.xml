@@ -177,11 +177,11 @@
 
 
     <jar jarfile="${projectjar}" manifest="other/manifest">
-	<fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class" includes="**/*.class"/>
+		<!-- fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class" includes="**/*.class"/>
     	<fileset dir="${src-core}" includes="**/*.properties"/>
     	<fileset dir="${src}" includes="**/*.properties"/>
     	<fileset dir="${src}" includes="**/*.xsd"/>
-    	<fileset dir="${src}" includes="**/iom/AliasTable.txt"/>
+    	<fileset dir="${src}" includes="**/iom/AliasTable.txt"/ -->
     	<zipfileset src="lib/antlr.jar"/>
     	<!-- zipfileset src="lib/xerces.jar"/>
     	<zipfileset src="lib/xmlParserAPIs.jar"/ -->
