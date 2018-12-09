@@ -3,6 +3,7 @@
 
   <!-- set global properties for this build -->
   <property name="src" value="${basedir}/src"/>
+  <property name="src-core" value="${basedir}/src-core"/>
   <property name="build" value="${basedir}/build"/>
   <property name="dist" value="${basedir}/dist"/>
   <property name="antlr" value="${basedir}/lib/antlr.jar"/>
@@ -29,7 +30,7 @@
 		<artifact:pom id="pomE-tool" groupId="${groupId}" artifactId="ili2c-tool" version="${buildnr}" name="ili2c-tool">
 			<artifact:dependency groupId="ch.interlis" artifactId="ili2c-core" version="${buildnr}"/>
 			<artifact:dependency groupId="ch.interlis" artifactId="iox-api" version="1.0.3"/>
-			<artifact:dependency groupId="ch.interlis" artifactId="iox-ili" version="1.20.6"/>
+			<artifact:dependency groupId="ch.interlis" artifactId="iox-ili" version="1.20.9"/>
 			<artifact:dependency groupId="antlr" artifactId="antlr" version="2.7.6"/>
 		</artifact:pom>
 		  <artifact:writepom pomRefId="pomE-tool" file="build/pom-tool.xml"/>
@@ -79,7 +80,7 @@
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
     	<!-- <arg value="-diagnostic"/> -->
-    	<arg value="${src}/ch/interlis/ili2c/parser/interlis24.g"/>
+    	<arg value="${src-core}/ch/interlis/ili2c/parser/interlis24.g"/>
     </java>
   </target>
   
@@ -90,7 +91,7 @@
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
     	<!-- <arg value="-diagnostic"/> -->
-    	<arg value="${src}/ch/interlis/ili2c/parser/interlis23.g"/>
+    	<arg value="${src-core}/ch/interlis/ili2c/parser/interlis23.g"/>
     </java>
   </target>
   
@@ -99,7 +100,7 @@
     <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
-    	<arg value="${src}/ch/interlis/ili2c/parser/interlis22.g"/>
+    	<arg value="${src-core}/ch/interlis/ili2c/parser/interlis22.g"/>
     </java>
   </target>
   
@@ -108,7 +109,7 @@
     <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
-    	<arg value="${src}/ch/interlis/ili2c/parser/metavalue.g"/>
+    	<arg value="${src-core}/ch/interlis/ili2c/parser/metavalue.g"/>
     </java>
   </target>
   
@@ -117,7 +118,7 @@
     <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
-    	<arg value="${src}/ch/interlis/ili2c/parser/interlis1.g"/>
+    	<arg value="${src-core}/ch/interlis/ili2c/parser/interlis1.g"/>
     </java>
   </target>
 
@@ -128,7 +129,7 @@
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
     	<!--  <arg value="-diagnostic"/> -->
-    	<arg value="${src}/ch/interlis/ili2c/parser/modelscan.g"/>
+    	<arg value="${src-core}/ch/interlis/ili2c/parser/modelscan.g"/>
     </java>
   </target>
   
@@ -137,7 +138,7 @@
     <java classname="antlr.Tool" classpath="${java.class.path};${antlr}" fork="yes">
     	<arg value="-o"/>
         <arg value="${build}/src/ch/interlis/ili2c/parser"/>
-    	<arg value="${src}/ch/interlis/ili2c/parser/ili1undef.g"/>
+    	<arg value="${src-core}/ch/interlis/ili2c/parser/ili1undef.g"/>
     </java>
   </target>
 
@@ -154,6 +155,7 @@
         <pathelement location="lib/iox-api.jar"/>
       </classpath>
     	<src path="${src}" />
+    	<src path="${src-core}" />
     	<src path="${build}/src"/>
     </javac>
 
@@ -165,6 +167,7 @@
     <mkdir dir="${build}/javadoc"/>
     <javadoc Public="true" Windowtitle="INTERLIS Compiler" destdir="${build}/javadoc" packagenames="ch.interlis.ili2c,ch.interlis.ili2c.metamodel,ch.interlis.ili2c.config">
     	<sourcepath path="${src}"/>
+    	<sourcepath path="${src-core}"/>
 	</javadoc>
   </target>
 
@@ -174,10 +177,11 @@
 
 
     <jar jarfile="${projectjar}" manifest="other/manifest">
-	<fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class" includes="**/*.class"/>
+		<!-- fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class" includes="**/*.class"/>
+    	<fileset dir="${src-core}" includes="**/*.properties"/>
     	<fileset dir="${src}" includes="**/*.properties"/>
     	<fileset dir="${src}" includes="**/*.xsd"/>
-    	<fileset dir="${src}" includes="**/iom/AliasTable.txt"/>
+    	<fileset dir="${src}" includes="**/iom/AliasTable.txt"/ -->
     	<zipfileset src="lib/antlr.jar"/>
     	<!-- zipfileset src="lib/xerces.jar"/>
     	<zipfileset src="lib/xmlParserAPIs.jar"/ -->
@@ -195,13 +199,13 @@
     </propertyfile>
 
     <jar jarfile="${build}/jar/${ant.project.name}-tool.jar">
-	<fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class,ch/interlis/models/**/*.class,ch/interlis/ili2c/generator/**/*.class,ch/interlis/ili2c/modelscan/**/*.class,ch/interlis/ili2c/metamodel/**/*.class,ch/interlis/ili2c/config/**/*.class,ch/interlis/ili2c/CompilerLogEvent.class,ch/interlis/ili2c/Ili2cException.class,ch/interlis/ili2c/Ili2cFailure.class,ch/interlis/ili2c/gui/UserSettings.class" includes="**/*.class"/>
-    	<fileset dir="${src}" excludes="ch/interlis/ili2c/metamodel/ErrorMessages.properties" includes="**/*.properties"/>
+	<fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class,ch/interlis/models/**/*.class,ch/interlis/ili2c/parser/**/*.class,ch/interlis/ili2c/generator/**/*.class,ch/interlis/ili2c/modelscan/**/*.class,ch/interlis/ili2c/metamodel/**/*.class,ch/interlis/ili2c/config/**/*.class,ch/interlis/ili2c/CompilerLogEvent.class,ch/interlis/ili2c/Ili2cException.class,ch/interlis/ili2c/Ili2cFailure.class,ch/interlis/ili2c/gui/UserSettings.class,ch/interlis/ilirepository/ReposManager.class,ch/interlis/ilirepository/impl/RepositoryAccessException.class,ch/interlis/ilirepository/Dataset.class" includes="**/*.class"/>
+    	<fileset dir="${src}" includes="**/*.properties"/>
     	<fileset dir="${src}" includes="**/iom/AliasTable.txt"/>
     </jar>
     <jar jarfile="${build}/jar/${ant.project.name}-core.jar">
-	<fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class" includes="ch/interlis/models/**/*.class,ch/interlis/ili2c/generator/**/*.class,ch/interlis/ili2c/modelscan/**/*.class,ch/interlis/ili2c/metamodel/**/*.class,ch/interlis/ili2c/config/**/*.class,ch/interlis/ili2c/CompilerLogEvent.class,ch/interlis/ili2c/Ili2cException.class,ch/interlis/ili2c/Ili2cFailure.class,ch/interlis/ili2c/gui/UserSettings.class"/>
-    	<fileset dir="${src}" includes="ch/interlis/ili2c/metamodel/ErrorMessages.properties"/>
+	<fileset dir="${build}/classes" excludes="ch/interlis/ili2c/tests/**/*.class" includes="ch/interlis/models/**/*.class,ch/interlis/ili2c/parser/**/*.class,ch/interlis/ili2c/generator/**/*.class,ch/interlis/ili2c/modelscan/**/*.class,ch/interlis/ili2c/metamodel/**/*.class,ch/interlis/ili2c/config/**/*.class,ch/interlis/ili2c/CompilerLogEvent.class,ch/interlis/ili2c/Ili2cException.class,ch/interlis/ili2c/Ili2cFailure.class,ch/interlis/ili2c/gui/UserSettings.class,ch/interlis/ilirepository/ReposManager.class,ch/interlis/ilirepository/impl/RepositoryAccessException.class,ch/interlis/ilirepository/Dataset.class"/>
+    	<fileset dir="${src-core}" includes="**/*.properties"/>
     </jar>
   </target>
   <target depends="init,buildnr" name="bindist">
@@ -247,8 +251,10 @@
 	    	<patternset includes="lib/*.jar"/>
 	    	<patternset includes="other/manifest"/>
 	    	<patternset includes="src/**/*.java" excludes="**/bak~/*.java"/>
+	    	<patternset includes="src-core/**/*.java" excludes="**/bak~/*.java"/>
 	    	<patternset includes="src/**/*.xsd"/>
 	    	<patternset includes="src/**/*.properties"/>
+	    	<patternset includes="src-core/**/*.properties"/>
 		<patternset includes="src/**/iom/AliasTable.txt"/>
 	    	<patternset includes="${build}/src/**/*.java"/>
 	    	<patternset includes="src/**/*.g"/>
@@ -274,6 +280,7 @@
   <target depends="init" name="copyres">
 
     <copy toDir="${build}/classes">
+    	<fileset dir="${src-core}" includes="**/*.properties"/>
     	<fileset dir="${src}" includes="**/*.properties"/>
     	<fileset dir="${src}" includes="**/*.gif"/>
     </copy>

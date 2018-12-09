@@ -46,22 +46,34 @@ import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLa
 import ch.ehi.iox.ilisite.IliSite09.RepositoryLocation_;
 import ch.interlis.ili2c.modelscan.IliFile;
 import ch.interlis.ili2c.modelscan.IliModel;
+import ch.interlis.ilirepository.Dataset;
 import ch.interlis.ilirepository.IliFiles;
 import ch.interlis.ilirepository.IliResolver;
 import ch.interlis.ilirepository.IliSite;
 import ch.interlis.ilirepository.IliManager;
 import ch.interlis.iox.IoxException;
+import ch.interlis.models.DatasetIdx16.DataIndex.DatasetMetadata;
 
 /** Handles access to a file in a repository.
  * Hides the caching, downloading of files.
  * @author ceis
  */
 public class RepositoryAccess {
-	private HashMap<String,IliFiles> reposIliFiles=new HashMap<String,IliFiles>();
+    public static final String ILI_CACHE = "ILI_CACHE";
+    private HashMap<String,IliFiles> reposIliFiles=new HashMap<String,IliFiles>();
+    private HashMap<String,List<DatasetMetadata>> reposIliData=new HashMap<String,List<DatasetMetadata>>();
 	private HashMap<String,IliSite> reposIliSite=new HashMap<String,IliSite>();
 	private long metaMaxTTL=86400000L; // max time to live in ms for a file in the cache
-	private File localCache=new File(System.getProperty("user.home"),".ilicache");
+	private File localCache=null;
 	private IliResolver resolver=null;
+    public RepositoryAccess() {
+        String userDefinedCacheFolder=System.getenv(ILI_CACHE);
+        if(userDefinedCacheFolder!=null && userDefinedCacheFolder.trim().length()>0) {
+            localCache=new File(userDefinedCacheFolder);
+        }else {
+            localCache=new File(System.getProperty("user.home"),".ilicache");
+        }
+    }
 	
 	public IliResolver getResolver() {
 		return resolver;
@@ -119,36 +131,25 @@ public class RepositoryAccess {
 		IliFiles iliFiles=reposIliFiles.get(uri);
 		return iliFiles;
 	}
+	@Deprecated
     public IliFiles getModelMetadata(String uri)
     {
-        if(!reposIliFiles.containsKey(uri)){
-            if(isLegacyDir(uri)){
-                // scan directory
-                try {
-                    EhiLogger.traceState("scan ili-files in folder <"+uri+">...");
-                    HashSet<IliFile> files=ch.interlis.ili2c.ModelScan.scanIliFileDir(new File(uri), null);
-                    Iterator<IliFile> filei=files.iterator();
-                    IliFiles iliFiles=new IliFiles();
-                    while(filei.hasNext()){
-                        iliFiles.addFile((IliFile)filei.next());
-                    }
-                    reposIliFiles.put(uri, iliFiles);
-                } catch (IOException e) {
-                    throw new IllegalArgumentException(e);
-                }
-            }else{
-                IliFiles iliFiles;
-                try {
-                    EhiLogger.traceState("read "+IliManager.ILIMODELS_XML+" from <"+uri+">...");
-                    iliFiles = readIlimodelsXmlAsIliFiles(uri);
-                } catch (RepositoryAccessException e) {
-                    handleRepositoryAccessException(e,uri);
-                    iliFiles=null;
-                }
-                reposIliFiles.put(uri, iliFiles);
+        return getIliFiles(uri);
+    }
+    public List<DatasetMetadata> getIliData(String uri)
+    {
+        if(!reposIliData.containsKey(uri)){
+            List<DatasetMetadata> iliFiles;
+            try {
+                EhiLogger.traceState("read "+IliManager.ILIDATA_XML+" from <"+uri+">...");
+                iliFiles = readIliDataXmlLatest(uri);
+            } catch (RepositoryAccessException e) {
+                handleRepositoryAccessException(e,uri);
+                iliFiles=null;
             }
+            reposIliData.put(uri, iliFiles);
         }
-        IliFiles iliFiles=reposIliFiles.get(uri);
+        List<DatasetMetadata> iliFiles=reposIliData.get(uri);
         return iliFiles;
     }
 	/** Gets the site metadata for a given repository.
@@ -325,6 +326,45 @@ public class RepositoryAccess {
 		List<ModelMetadata> modelv = readIliModelsXml(file);
         return modelv;
     }
+
+    public List<DatasetMetadata> readIliDataXmlLatest(String uri) throws RepositoryAccessException {
+        List<DatasetMetadata> datav = readIliDataXml(uri);
+        
+        List<String> datasetIds=new ArrayList<String>();
+        java.util.Map<String,List<DatasetMetadata>> versionsPerId=new HashMap<String,List<DatasetMetadata>>();  
+        // group by datasetId
+        for(DatasetMetadata data:datav) {
+            String datasetId = data.getid();
+            List<DatasetMetadata> versions=versionsPerId.get(datasetId);
+            if(versions==null) {
+                datasetIds.add(datasetId);
+                versions=new ArrayList<DatasetMetadata>();
+                versionsPerId.put(datasetId, versions);
+            }
+            versions.add(data);
+        }
+        List<DatasetMetadata> result=new ArrayList<DatasetMetadata>();
+        // find latest version per datasetId
+        for(String datasetId:datasetIds) {
+            List<DatasetMetadata> versions=versionsPerId.get(datasetId);
+            DatasetMetadata latest=getLatestVersion(versions);
+            if(latest!=null) {
+                result.add(latest);
+            }
+        }
+        return result;
+        
+    }
+    public List<DatasetMetadata> readIliDataXml(String uri) throws RepositoryAccessException {
+        File file=getLocalFileLocation(uri,IliManager.ILIDATA_XML,metaMaxTTL,null);
+        if(file==null){
+            return null;
+        }
+        // read file
+        List<DatasetMetadata> modelv = readIliDataXmlLocalFile(file);
+        return modelv;
+    }
+    
 	static private final String REGEX_ILI_NAME="[a-zA-Z]([a-zA-Z0-9_]*)";
 	static public List<ModelMetadata> readIliModelsXml(File file) 
 	throws RepositoryAccessException
@@ -382,6 +422,45 @@ public class RepositoryAccess {
 		}
 		return modelv;
 	}
+    static public List<DatasetMetadata> readIliDataXmlLocalFile(File file) 
+    throws RepositoryAccessException
+    {
+        ArrayList<DatasetMetadata> datav=new ArrayList<DatasetMetadata>();
+        ch.interlis.iom_j.xtf.XtfReader reader=null;
+        try {
+            reader=new ch.interlis.iom_j.xtf.XtfReader(file);
+            reader.getFactory().registerFactory(ch.interlis.models.DATASETIDX16.getIoxFactory());
+            ch.interlis.iox.IoxEvent event=null;
+            do{
+                 event=reader.read();
+                 if(event instanceof ch.interlis.iox.ObjectEvent){
+                     ch.interlis.iom.IomObject iomObj=((ch.interlis.iox.ObjectEvent)event).getIomObject();
+                     if(iomObj instanceof DatasetMetadata){
+                         DatasetMetadata model=(DatasetMetadata)iomObj;
+                         {
+                         }
+                         datav.add(model);
+                     }else if(iomObj instanceof ch.interlis.models.DatasetIdx16.DataIndex.Metadata){
+                         // ignore it
+                     }else{
+                         EhiLogger.logAdaption("TID="+iomObj.getobjectoid()+": ignored; unknown class <"+iomObj.getobjecttag()+">");
+                     }
+                 }
+            }while(!(event instanceof ch.interlis.iox.EndTransferEvent));
+        } catch (IoxException e) {
+            throw new RepositoryAccessException("failed to read "+IliManager.ILIDATA_XML,e);
+        }finally{
+            if(reader!=null){
+                try {
+                    reader.close();
+                } catch (IoxException e) {
+                    throw new RepositoryAccessException(e);
+                }
+                reader=null;
+            }
+        }
+        return datav;
+    }
 	/** read an ilisite.xml file
 	 * 
 	 * @param uri uri of the repository (without ilisite.xml)
@@ -569,6 +648,60 @@ public class RepositoryAccess {
 		}
 		return lastVersion;
 	}
+    private static DatasetMetadata getLatestVersion(List<DatasetMetadata> datasetVersions1)
+    {
+        ArrayList<DatasetMetadata> datasetVersions=new ArrayList<DatasetMetadata>(datasetVersions1);
+        DatasetMetadata dataset=null;
+        
+        // find first version and eliminate other versions without duplicate
+        DatasetMetadata first=null;
+        for(Iterator<DatasetMetadata> i=datasetVersions.iterator();i.hasNext();){
+            dataset=i.next();
+            if(dataset.getprecursorVersion()==null){
+                if(first==null){
+                    first=dataset;
+                    i.remove();
+                }else{
+                    EhiLogger.logAdaption("dataset "+dataset.getid()+": duplicate version without precursor; version "+dataset.getversion()+" ignored");
+                    i.remove();
+                }
+            }
+        }
+        if(first==null){
+            EhiLogger.logAdaption("dataset "+dataset.getid()+": no version without precursor; dataset ignored");
+            return null;
+        }
+        DatasetMetadata lastVersion=first;
+        DatasetMetadata current=first;
+        while(!datasetVersions.isEmpty()){
+            // find next version
+            DatasetMetadata next=null;
+            for(Iterator<DatasetMetadata> i=datasetVersions.iterator();i.hasNext();){
+                dataset=i.next();
+                if(current.getversion().equals(dataset.getprecursorVersion())){
+                    if(next==null){
+                        // next version found
+                        next=dataset;
+                        i.remove();
+                    }else{
+                        // another next version found; ignore it
+                        EhiLogger.logAdaption("dataset "+dataset.getid()+": duplicate version with same precursor; version "+dataset.getversion()+" ignored");
+                        i.remove();
+                    }
+                }
+            }
+            if(next==null){
+                // no next version found
+                break;
+            }
+            current=next;
+            lastVersion=current;
+        }
+        if(!datasetVersions.isEmpty()){
+            EhiLogger.logAdaption("dataset "+lastVersion.getid()+": broken version chain; use version "+lastVersion.getversion()+"; others ignored");
+        }
+        return lastVersion;
+    }
 	/** Gets access to a file.
 	 * If the file is in a remote repository, it will be downloaded to the cache and path to the version in the cache is returned.
 	 * If the file is already in the cache, the repository will be checked for never version depending on age of cached file and md5 digest.
@@ -957,4 +1090,5 @@ public class RepositoryAccess {
 		}
 		
 	}
+
 }

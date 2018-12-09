@@ -20,19 +20,20 @@ import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.config.GenerateOutputKind;
-import ch.interlis.ili2c.generator.Interlis2Generator;
 import ch.interlis.ili2c.generator.TransformationParameter;
-import ch.interlis.ili2c.generator.TransformationParameter.ModelTransformation;
 import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
 import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
+import ch.interlis.ili2c.metamodel.ObjectPath;
+import ch.interlis.ili2c.metamodel.PathEl;
 import ch.interlis.ili2c.metamodel.TransferDescription;
+import ch.interlis.ili2c.metamodel.Viewable;
 import ch.interlis.ili2c.parser.Ili1Parser;
 import ch.interlis.ili2c.parser.Ili22Parser;
 import ch.interlis.ili2c.parser.Ili23Parser;
 import ch.interlis.ili2c.parser.Ili24Parser;
-import sun.security.provider.certpath.DistributionPointFetcher;
+import ch.interlis.ilirepository.impl.RepositoryVisitor;
 
 
 public class Main {
@@ -122,6 +123,9 @@ public class Main {
     System.err.println("List all models starting in the given repository:");
     System.err.println("    java -jar " + progName + " --listModels "+ILI_REPOSITORY);
     System.err.println();
+    System.err.println("List all data starting in the given repository:");
+    System.err.println("    java -jar " + progName + " --listData "+ILI_REPOSITORY);
+    System.err.println();
     }
 
 
@@ -133,6 +137,7 @@ public class Main {
 	boolean doCloneRepos = false;
     boolean doListModels = false;
     boolean doListAllModels = false;
+    boolean doListData = false;
 	boolean withWarnings = true;
 	int numErrorsWhileGenerating = 0;
 	String notifyOnError = "compiler@interlis.ch";
@@ -188,6 +193,7 @@ public class Main {
 	    System.err.println("--clone-repos         clones the given repositories to the --out folder.");
         System.err.println("--listModels uri      list all models starting in the given repository.");
         System.err.println("--listAllModels uri   list all models (without removing old entries) starting in the given repository.");
+        System.err.println("--listData uri        list all data starting in the given repository.");
 	    System.err.println("--translation translatedModel=originModel assigns a translated model to its orginal language equivalent.");
 	    System.err.println("--out file/dir        file or folder for output (folder must exist).");
 	    System.err.println("--ilidirs " + ilidirs + " list of directories with ili-files.");
@@ -247,6 +253,10 @@ public class Main {
 		}
         if (args[i].equals("--listModels")) {
             doListModels = true;
+            continue;
+        }
+        if (args[i].equals("--listData")) {
+            doListData = true;
             continue;
         }
         if (args[i].equals("--listAllModels")) {
@@ -371,7 +381,7 @@ public class Main {
 		    continue;
 		} else {
 			String filename = args[i];
-			if (doCheckRepoIlis  || doCloneRepos || doListModels || doListAllModels || new File(filename).isFile()) {
+			if (doCheckRepoIlis  || doCloneRepos || doListModels || doListAllModels || doListData || new File(filename).isFile()) {
 				ilifilev.add(filename);
 			} else {
 				EhiLogger.logError(args[i] + ": There is no such file.");
@@ -406,7 +416,7 @@ public class Main {
 		config.setLanguage(language);
 		config.setNlsxmlFilename(nlsxmlFilename);
 		config.setParams(params);
-	    if (doCloneRepos || doListModels || doListAllModels || outputKind != GenerateOutputKind.NOOUTPUT) {
+	    if (doCloneRepos || doListModels || doListAllModels || doListData || outputKind != GenerateOutputKind.NOOUTPUT) {
 			if (outfile != null) {
 			    config.setOutputFile(outfile);
 			} else {
@@ -431,6 +441,12 @@ public class Main {
                 boolean failed = new ListModels().listModels(config, settings,doListModels==true);
                 if (failed) {
                     EhiLogger.logError("list of models failed");
+                    System.exit(1);
+                }
+            }else if (doListData) {
+                boolean failed = new ListData().listData(config, settings);
+                if (failed) {
+                    EhiLogger.logError("list of data failed");
                     System.exit(1);
                 }
 			} else {
@@ -565,8 +581,12 @@ public class Main {
 
 		ArrayList modeldirv = getModelRepos(settings, ilifilev, pathmap);
 
-		// create repository manager
-		ch.interlis.ilirepository.IliManager manager = new ch.interlis.ilirepository.IliManager();
+		// get/create repository manager
+		ch.interlis.ilirepository.IliManager manager = (ch.interlis.ilirepository.IliManager) settings
+                .getTransientObject(UserSettings.CUSTOM_ILI_MANAGER);
+		if(manager==null) {
+		    manager=new ch.interlis.ilirepository.IliManager();
+		}
 		ch.interlis.ilirepository.IliResolver resolver = (ch.interlis.ilirepository.IliResolver) settings
 		        .getTransientObject(UserSettings.CUSTOM_ILI_RESOLVER);
 		if (resolver != null) {
@@ -574,9 +594,12 @@ public class Main {
 		}
 		// set list of repositories to search
 		manager.setRepositories((String[]) modeldirv.toArray(new String[1]));
-		manager.setIliFiles(settings.getTransientValue(UserSettings.TEMP_REPOS_URI),
-		        (ch.interlis.ilirepository.IliFiles) settings
-		                .getTransientObject(UserSettings.TEMP_REPOS_ILIFILES));
+		String tempReposUri=settings.getTransientValue(UserSettings.TEMP_REPOS_URI);
+		if(tempReposUri!=null) {
+	        manager.setIliFiles(RepositoryVisitor.fixUri(tempReposUri),
+	                (ch.interlis.ilirepository.IliFiles) settings
+	                        .getTransientObject(UserSettings.TEMP_REPOS_ILIFILES));
+		}
 
 		// get complete list of required ili-files
 		try {
@@ -990,6 +1013,11 @@ public class Main {
 	return ret;
     }
 
+    static public ObjectPath parseObjectOrAttributePath(Viewable viewable,String objectPath) throws Ili2cException
+    {
+        TransferDescription td=(TransferDescription) viewable.getContainer(TransferDescription.class);
+        return Ili23Parser.parseObjectOrAttributePath(td,viewable, objectPath);
+    }
 
     static public void logIliFiles(ch.interlis.ili2c.config.Configuration config) {
 	java.util.Iterator filei = config.iteratorFileEntry();

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TRANSFER xmlns="http://www.interlis.ch/INTERLIS2.3">
+  <HEADERSECTION SENDER="ceis" VERSION="2.3">
+    <MODELS>
+      <MODEL NAME="DatasetIdx16" VERSION="2018-10-19" URI="mailto:ce@eisenhutinformatik.ch"/>
+    </MODELS>
+  </HEADERSECTION>
+  <DATASECTION>
+    <DatasetIdx16.DataIndex BID="b1">
+
+      <DatasetIdx16.DataIndex.Metadata TID="m1">
+      	<id>ch.interlis.ili2c.test.metadata1</id>
+      	<version>1</version>
+        <owner>mailto:ce@eisenhutinformatik.ch</owner>
+      </DatasetIdx16.DataIndex.Metadata>
+
+      <DatasetIdx16.DataIndex.DatasetMetadata TID="1">
+      	<id>ch.interlis.ili2c.test.data1</id>
+      	<version>2</version>
+      	<precursorVersion>1</precursorVersion>
+      	<owner>mailto:ce@eisenhutinformatik.ch</owner>
+      	<files>
+      		<DatasetIdx16.DataFile>
+      			<fileFormat>application/interlis+xml;version=2.3</fileFormat>
+      			<file>
+      				<DatasetIdx16.File>
+      					<path>data/test1.xtf</path>
+      				</DatasetIdx16.File>
+      			</file>
+      		</DatasetIdx16.DataFile>
+      	</files>
+      	<baskets>
+      		<DatasetIdx16.DataIndex.BasketMetadata>
+      			<id>ch.interlis.ili2c.test.b1</id> <!-- BID of basket in XTF -->
+      			<version>1</version>
+      			<model>
+      				<DatasetIdx16.ModelLink>
+      					<name>Ili2cModelListTest1.TopicA</name>	 <!-- qualified TOPIC name -->
+      				</DatasetIdx16.ModelLink>
+      			</model>
+      			<owner>mailto:ce@eisenhutinformatik.ch</owner>
+      		</DatasetIdx16.DataIndex.BasketMetadata>
+      	</baskets>
+      </DatasetIdx16.DataIndex.DatasetMetadata>
+      <DatasetIdx16.DataIndex.DatasetMetadata TID="1old">
+      	<id>ch.interlis.ili2c.test.data1</id>
+      	<version>1</version>
+      	<owner>mailto:ce@eisenhutinformatik.ch</owner>
+      	<files>
+      		<DatasetIdx16.DataFile>
+      			<fileFormat>application/interlis+xml;version=2.3</fileFormat>
+      			<file>
+      				<DatasetIdx16.File>
+      					<path>data/test1-old.xtf</path>
+      				</DatasetIdx16.File>
+      			</file>
+      		</DatasetIdx16.DataFile>
+      	</files>
+      	<baskets>
+      		<DatasetIdx16.DataIndex.BasketMetadata>
+      			<id>ch.interlis.ili2c.test.b1</id> <!-- BID of basket in XTF -->
+      			<version>1</version>
+      			<model>
+      				<DatasetIdx16.ModelLink>
+      					<name>Ili2cModelListTest1.TopicA</name>	 <!-- qualified TOPIC name -->
+      				</DatasetIdx16.ModelLink>
+      			</model>
+      			<owner>mailto:ce@eisenhutinformatik.ch</owner>
+      		</DatasetIdx16.DataIndex.BasketMetadata>
+      	</baskets>
+      </DatasetIdx16.DataIndex.DatasetMetadata>
+      <DatasetIdx16.DataIndex.DatasetMetadata TID="2">
+      	<id>ch.interlis.ili2c.test.data2</id>
+      	<version>1</version>
+      	<owner>mailto:ce@eisenhutinformatik.ch</owner>
+      	<files>
+      		<DatasetIdx16.DataFile>
+      			<fileFormat>application/interlis+xml;version=2.3</fileFormat>
+      			<file>
+      				<DatasetIdx16.File>
+      					<path>data/test2.xtf</path>
+      				</DatasetIdx16.File>
+      			</file>
+      		</DatasetIdx16.DataFile>
+      	</files>
+      	<baskets>
+      		<DatasetIdx16.DataIndex.BasketMetadata>
+      			<id>ch.interlis.ili2c.test.b2</id> <!-- BID of basket in XTF -->
+      			<version>1</version>
+      			<model>
+      				<DatasetIdx16.ModelLink>
+      					<name>Ili2cModelListTest1.TopicA</name>	 <!-- qualified TOPIC name -->
+      				</DatasetIdx16.ModelLink>
+      			</model>
+      			<owner>mailto:ce@eisenhutinformatik.ch</owner>
+      		</DatasetIdx16.DataIndex.BasketMetadata>
+      	</baskets>
+      </DatasetIdx16.DataIndex.DatasetMetadata>
+      <DatasetIdx16.DataIndex.DatasetMetadata TID="3"> <!-- dataset with baskets that have localId -->
+      	<id>ch.interlis.ili2c.test.data3</id>
+      	<version>1</version>
+      	<owner>mailto:ce@eisenhutinformatik.ch</owner>
+      	<files>
+      		<DatasetIdx16.DataFile>
+      			<fileFormat>application/interlis+xml;version=2.3</fileFormat>
+      			<file>
+      				<DatasetIdx16.File>
+      					<path>data/test3.xtf</path>
+      				</DatasetIdx16.File>
+      			</file>
+      		</DatasetIdx16.DataFile>
+      	</files>
+      	<baskets>
+      		<DatasetIdx16.DataIndex.BasketMetadata>
+      			<version>1</version>
+      			<model>
+      				<DatasetIdx16.ModelLink>
+      					<name>Ili2cModelListTest1.TopicB</name>	 <!-- qualified TOPIC name -->
+      				</DatasetIdx16.ModelLink>
+      			</model>
+      			<owner>mailto:ce@eisenhutinformatik.ch</owner>
+      			<localId>b3a</localId> <!-- BID of basket in XTF -->
+      		</DatasetIdx16.DataIndex.BasketMetadata>
+      		<DatasetIdx16.DataIndex.BasketMetadata>
+      			<version>1</version>
+      			<model>
+      				<DatasetIdx16.ModelLink>
+      					<name>Ili2cModelListTest1.TopicB</name>	 <!-- qualified TOPIC name -->
+      				</DatasetIdx16.ModelLink>
+      			</model>
+      			<owner>mailto:ce@eisenhutinformatik.ch</owner>
+      			<localId>b3b</localId> <!-- BID of basket in XTF -->
+      		</DatasetIdx16.DataIndex.BasketMetadata>
+      	</baskets>
+      </DatasetIdx16.DataIndex.DatasetMetadata>
+      <DatasetIdx16.DataIndex.DatasetMetadata TID="4"> <!-- dataset without baskets (no interlis) -->
+      	<id>ch.interlis.ili2c.test.data4</id>
+      	<version>1</version>
+      	<owner>mailto:ce@eisenhutinformatik.ch</owner>
+      	<files>
+      		<DatasetIdx16.DataFile>
+      			<fileFormat>application/geopackage+vnd.sqlite3</fileFormat>
+      			<file>
+      				<DatasetIdx16.File>
+      					<path>data/test4.gpkg</path>
+      				</DatasetIdx16.File>
+      			</file>
+      		</DatasetIdx16.DataFile>
+      	</files>
+      </DatasetIdx16.DataIndex.DatasetMetadata>
+    </DatasetIdx16.DataIndex>
+  </DATASECTION>
+</TRANSFER>

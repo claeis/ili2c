@@ -23,15 +23,10 @@
 package ch.interlis.ilirepository;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.tools.TopoSort;
@@ -42,13 +37,11 @@ import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
 import ch.interlis.ili2c.modelscan.IliFile;
 import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ili2c.ModelScan;
+import ch.interlis.ilirepository.impl.RepositoryCrawler;
+import ch.interlis.ilirepository.impl.RepositoryVisitor;
+import ch.interlis.ilirepository.impl.DataFinder;
 import ch.interlis.ilirepository.impl.RepositoryAccess;
 import ch.interlis.ilirepository.impl.RepositoryAccessException;
-import ch.interlis.ilirepository.impl.RepositoryCrawler;
-import ch.interlis.iom_j.xtf.XtfReader;
-import ch.interlis.iox.IoxException;
-import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage;
-import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata;
 
 /** Enables cached access to a web of model repositories.
  * Usage:
@@ -70,23 +63,30 @@ import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata;
  * </code></pre>
  * @author ceis
  */
-public class IliManager {
+public class IliManager implements ReposManager {
 	/** name of ilisite.xml file.
 	 */
 	public static final String ILISITE_XML = "ilisite.xml";
 	/** name of ilimodels.xml file.
 	 */
 	public static final String ILIMODELS_XML = "ilimodels.xml";
-	private long iliMaxTTL=604800000L; // max time to live in ms for a file in the cache
+    /** name of ilidata.xml file.
+     */
+    public static final String ILIDATA_XML = "ilidata.xml";
+    private long iliMaxTTL=604800000L; // max time (7 days) to live in ms for a file in the cache
+    private long dataMaxTTL=43200000L; // max time (24h) to live in ms for a file in the cache
 	private RepositoryAccess rep=new RepositoryAccess();
-	private RepositoryCrawler crawler=new RepositoryCrawler();
+	private RepositoryCrawler iliCrawler=new RepositoryCrawler(rep);
+	private DataFinder dataFinder=new DataFinder();
+    private RepositoryVisitor dataCrawler=new RepositoryVisitor(rep,dataFinder);
 	/** sets the list of repositories to start search for models.
 	 */
 	public void setRepositories(String uriv[]){
 		for(String uri:uriv){
 			EhiLogger.traceState("uri <"+uri+">");
 		}
-		crawler.setup(uriv,rep);
+		iliCrawler.setRepositories(uriv);
+        dataCrawler.setRepositories(uriv);
 	}
 	public void setIliFiles(String uri,IliFiles iliFiles){
 		if(uri!=null && iliFiles!=null){
@@ -179,7 +179,7 @@ public class IliManager {
 					// first model
 					String firstModel=fname;
 					IliModel model=null;
-					IliFile ilifile=crawler.getIliFileMetadataDeep(firstModel,0.0,true);
+					IliFile ilifile=iliCrawler.getIliFileMetadataDeep(firstModel,0.0,true);
 					if(ilifile!=null){
 						Iterator<IliModel> modeli=ilifile.iteratorModel();
 						while(modeli.hasNext()){
@@ -212,7 +212,7 @@ public class IliManager {
 					String modelname=fname;
 					if(!availablemodels.contains(modelname)){
 						IliModel model=null;
-						IliFile ilifile=crawler.getIliFileMetadataDeep(modelname,version,true);
+						IliFile ilifile=iliCrawler.getIliFileMetadataDeep(modelname,version,true);
 						if(ilifile!=null){
 							Iterator<IliModel> modeli=ilifile.iteratorModel();
 							while(modeli.hasNext()){
@@ -267,7 +267,7 @@ public class IliManager {
 			// get version of first model
 			String firstModel=requiredModels.get(0);
 			IliModel model=null;
-			IliFile ilifile=crawler.getIliFileMetadataDeep(firstModel,0.0,true);
+			IliFile ilifile=iliCrawler.getIliFileMetadataDeep(firstModel,0.0,true);
 			if(ilifile!=null){
 				Iterator<IliModel> modeli=ilifile.iteratorModel();
 				while(modeli.hasNext()){
@@ -299,7 +299,7 @@ public class IliManager {
 			}
 			IliFile file=getFromSet(toVisitFiles,model,iliVersion);
 			if(file==null){
-				file=crawler.getIliFileMetadataDeep(model,iliVersion,true);
+				file=iliCrawler.getIliFileMetadataDeep(model,iliVersion,true);
 				if(file==null){
 					if(!missingModels.contains(model)){
 						missingModels.add(model);
@@ -355,7 +355,7 @@ public class IliManager {
 						supplier=getFromSet(toVisitFiles,dep, iliVersion);
 					}
 					if(supplier==null){
-						supplier=crawler.getIliFileMetadataDeep(dep,iliVersion,true);
+						supplier=iliCrawler.getIliFileMetadataDeep(dep,iliVersion,true);
 					}
 					if(supplier==null){
 						if(!missingModels.contains(dep)){
@@ -434,6 +434,50 @@ public class IliManager {
 		}
 		return null;
 		
+	}
+	/* (non-Javadoc)
+     * @see ch.interlis.ilirepository.ReposManager#getDatasetIndex(java.lang.String, java.lang.String[])
+     */
+	public List<Dataset> getDatasetIndex(String bid,String topics[]) throws RepositoryAccessException {
+	    dataFinder.setCriteria(bid,topics);
+	    dataCrawler.visitRepositories();
+	    return dataFinder.getResult();
+	}
+	/* (non-Javadoc)
+     * @see ch.interlis.ilirepository.ReposManager#getLocalFileOfRemoteDataset(ch.interlis.ilirepository.Dataset, java.lang.String)
+     */
+	public File[] getLocalFileOfRemoteDataset(Dataset dataset,String fileformat) throws Ili2cException {
+
+	    ch.interlis.models.DatasetIdx16.DataFile fileMetadata=null;
+	    for(ch.interlis.models.DatasetIdx16.DataFile file:dataset.getMetadata().getfiles()){
+	        if(fileformat.equals(file.getfileFormat())) {
+	            fileMetadata=file;
+	        }
+	    }
+	    if(fileMetadata==null) {
+            throw new Ili2cException("no format <"+fileformat+"> of dataset <"+dataset.getMetadata().getid()+">");
+	    }
+        ch.interlis.models.DatasetIdx16.File paths[]=fileMetadata.getfile();
+        File iliFile[]=new File[paths.length];
+	    for(int fileidx=0;fileidx<paths.length;fileidx++) {
+	        String path=paths[fileidx].getpath();
+	        // fetch file from repository to cache
+	          try {
+	              iliFile[fileidx] = rep.getLocalFileLocation(dataset.getUri(),path,dataMaxTTL,paths[fileidx].getmd5());
+	              if(iliFile[fileidx]==null){
+	                  if(dataset.getUri()==null){
+	                      throw new Ili2cException("failed to get data file "+path);
+	                  }
+	                  throw new Ili2cException("failed to get data file "+dataset.getUri()+"/"+path);
+	              }
+	          } catch (RepositoryAccessException e) {
+	              if(dataset.getUri()==null){
+	                  throw new Ili2cException("failed to get data file "+path,e);
+	              }
+	              throw new Ili2cException("failed to get data file "+dataset.getUri()+"/"+path,e);
+	          }
+	    }
+        return iliFile;
 	}
 	static public void main(String args[])
 	{

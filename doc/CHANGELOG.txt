@@ -4,6 +4,19 @@ Known Issues:
 LATEST
 ---------------------------
 
+ili2c 4.7.10 (2018-12-09)
+---------------------------
+- new function (--listData) to generate a list of data in the repositories
+- imd export: fixed NPE in INTERLIS.myClass()
+- fixed lookup of ili2.4 models
+- iox-ili-1.20.6
+- xsd24: add ili:domains if required
+- ili24: support ContextDef
+- use env variable ILI_CACHE to override default $user.home/.ilicache
+- fixed: validate OID-DomainRef in ClassDef/OID AS
+- moved parser to core
+- added object path parser
+
 ili2c 4.7.9 (2018-07-05)
 ---------------------------
 - fixed: getAttributesAndRoles2() returned the extended embedded roles twice

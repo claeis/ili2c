@@ -170,6 +170,7 @@ public class CheckReposIlis {
 						try {
 							File iliFile = reposAccess.getLocalFileLocation(file.getRepositoryUri(),file.getPath(),0,file.getMd5());
 							if(iliFile==null){
+							    EhiLogger.logError("File <"+file.getPath()+"> not found");
 								failedFiles.add(file);
 								continue;
 							}
