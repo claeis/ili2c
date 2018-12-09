@@ -3,6 +3,9 @@ Known Issues:
 
 LATEST
 ---------------------------
+
+ili2c 4.7.10 (2018-12-09)
+---------------------------
 - new function (--listData) to generate a list of data in the repositories
 - imd export: fixed NPE in INTERLIS.myClass()
 - fixed lookup of ili2.4 models
@@ -12,6 +15,7 @@ LATEST
 - use env variable ILI_CACHE to override default $user.home/.ilicache
 - fixed: validate OID-DomainRef in ClassDef/OID AS
 - moved parser to core
+- added object path parser
 
 ili2c 4.7.9 (2018-07-05)
 ---------------------------
