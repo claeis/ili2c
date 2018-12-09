@@ -4,6 +4,10 @@ Known Issues:
 LATEST
 ---------------------------
 
+ili2c 4.7.11 (2018-12-09)
+---------------------------
+- iox-ili-1.20.10
+
 ili2c 4.7.10 (2018-12-09)
 ---------------------------
 - new function (--listData) to generate a list of data in the repositories
