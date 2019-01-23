@@ -1,0 +1,15 @@
+INTERLIS 2.3;
+
+MODEL UnicodeDoc (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC TopicA =
+
+		/** DocäöüÄÖÜàöéè
+		*/
+		CLASS ClassA =
+			attrA : TEXT*10;
+		END ClassA;
+
+	END TopicA;
+
+END UnicodeDoc.

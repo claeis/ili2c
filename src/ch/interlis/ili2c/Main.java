@@ -651,9 +651,9 @@ public class Main {
 		if (version == 0.0) {
 		    version = ModelScan.getIliFileVersion(new File(streamName));
 		}
-		FileInputStream stream = null;
+		java.io.Reader stream=null;
 		try {
-		    stream = new FileInputStream(streamName);
+            stream = new java.io.InputStreamReader(new FileInputStream(streamName),"UTF-8");
 		} catch (Exception ex) {
 		    EhiLogger.logError(ex);
 		    return null;
@@ -703,7 +703,7 @@ public class Main {
 	    }
 	}
 
-	BufferedWriter out = null;
+	java.io.Writer out = null;
 	try{
 		// output options
 		switch (config.getOutputKind()) {
@@ -715,7 +715,7 @@ public class Main {
 			;
 		    } else {
 			try {
-			    out = new BufferedWriter(new FileWriter(config.getOutputFile()));
+			    out = new java.io.OutputStreamWriter(new FileOutputStream(config.getOutputFile()),"UTF-8");
 			} catch (IOException ex) {
 			    EhiLogger.logError(ex);
 			    return desc;
@@ -733,7 +733,7 @@ public class Main {
 			;
 		    } else {
 			try {
-			    out = new BufferedWriter(new FileWriter(config.getOutputFile()));
+                out = new java.io.OutputStreamWriter(new FileOutputStream(config.getOutputFile()),"UTF-8");
 			} catch (IOException ex) {
 			    EhiLogger.logError(ex);
 			    return desc;
@@ -784,7 +784,7 @@ public class Main {
 			;
 		    } else {
 			try {
-			    out = new BufferedWriter(new FileWriter(config.getOutputFile()));
+                out = new java.io.OutputStreamWriter(new FileOutputStream(config.getOutputFile()),"UTF-8");
 			} catch (IOException ex) {
 			    EhiLogger.logError(ex);
 			    return desc;

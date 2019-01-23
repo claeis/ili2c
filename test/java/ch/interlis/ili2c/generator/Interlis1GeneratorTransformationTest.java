@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
@@ -46,7 +47,8 @@ public class Interlis1GeneratorTransformationTest {
 		trafoParam.setNewModelName(NEW_MODEL_NAME);
 
 		// generate new (transformed) Ili file
-		FileWriter out = new FileWriter(new File(OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
+		
 		ch.interlis.ili2c.generator.Interlis1Generator.generate(out, td, trafoParam);
 		out.close();
 
