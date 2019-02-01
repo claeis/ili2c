@@ -915,10 +915,12 @@ public class Main {
 		if (httpProxyHost != null) {
 		    EhiLogger.logState("httpProxyHost <" + httpProxyHost + ">");
 		    System.setProperty("http.proxyHost", httpProxyHost);
+            System.setProperty("https.proxyHost", httpProxyHost);
 
 		    if (httpProxyPort != null) {
 			EhiLogger.logState("httpProxyPort <" + httpProxyPort + ">");
 			System.setProperty("http.proxyPort", httpProxyPort);
+            System.setProperty("https.proxyPort", httpProxyPort);
 		    }
 		} else {
 		    System.setProperty("java.net.useSystemProxies", "true");
