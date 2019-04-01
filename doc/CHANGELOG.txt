@@ -6,6 +6,7 @@ LATEST
 
 ili2c 5.0.0 (2019-04-01)
 ---------------------------
+- failed to use proxy to access https repositories
 - read/write ili files always UTF-8 encoded
 - iox-ili-1.20.11
 
