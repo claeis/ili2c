@@ -144,7 +144,7 @@ version
 
 class IliScanLexer extends Lexer;
 options {
-  charVocabulary = '\u0000'..'\u00FF'; // set the vocabulary to be all 8 bit binary values
+  charVocabulary = '\u0000'..'\uFFFE'; // set the vocabulary to be all 8 bit binary values
   k=5;                   // number of lookahead characters
   testLiterals = false;  // do not test for literals by default
 }

@@ -4,6 +4,12 @@ Known Issues:
 LATEST
 ---------------------------
 
+ili2c 5.0.0 (2019-04-01)
+---------------------------
+- failed to use proxy to access https repositories
+- read/write ili files always UTF-8 encoded
+- iox-ili-1.20.11
+
 ili2c 4.7.11 (2018-12-09)
 ---------------------------
 - iox-ili-1.20.10

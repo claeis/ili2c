@@ -74,29 +74,6 @@ public class Ili2TranslationXmlTest {
 		assertEquals("name_it",nameItNode.getNodeName());
         assertEquals("-",nameItNode.getTextContent());
 	}
-	/**
-	 * Es ueberprueft, ob das MODEL korrekt in das XML file geschrieben wurde.
-	 * @throws Exception 
-	 * */
-	@Test
-	public void model2() throws Exception {
-		// ili lesen und xml schreiben
-		final String xmlFileName = FILEPATH + ".xml";
-		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(FILEPATH)), new File(xmlFileName));
-		// xml lesen
-		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
-		
-		for (TranslationElement ele : modelElements) {
-			if (ele.getScopedName() != null) {
-				if (ele.getScopedName().equals("EnumOkBasis")) {
-					assertEquals("EnumOkBasis", ele.getName_de());
-					assertEquals(ElementType.MODEL, ele.getElementType());
-					return;
-				}
-			}
-		}
-		fail("MODEL EnumOkBasis can not be found!");
-	}
 
 	/**
 	 * Es ueberprueft, ob das TOPIC korrekt in das XML file geschrieben wurde.

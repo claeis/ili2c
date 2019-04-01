@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -57,7 +58,7 @@ public class Interlis2GeneratorTest {
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
-		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
 		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
@@ -84,7 +85,7 @@ public class Interlis2GeneratorTest {
         // xml lesen
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
-        FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
         new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
@@ -127,7 +128,7 @@ public class Interlis2GeneratorTest {
         // xml lesen
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
-        FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
         new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
@@ -154,7 +155,7 @@ public class Interlis2GeneratorTest {
         // xml lesen
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
-        FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
         new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
@@ -181,7 +182,7 @@ public class Interlis2GeneratorTest {
         // xml lesen
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
-        FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
         new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
@@ -208,7 +209,7 @@ public class Interlis2GeneratorTest {
         // xml lesen
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
-        FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
         new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
@@ -235,7 +236,7 @@ public class Interlis2GeneratorTest {
         // xml lesen
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
-        FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
         new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
@@ -269,7 +270,7 @@ public class Interlis2GeneratorTest {
         // xml lesen
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
-        FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
         new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
@@ -296,7 +297,7 @@ public class Interlis2GeneratorTest {
         // xml lesen
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
-        FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
         new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
@@ -323,7 +324,7 @@ public class Interlis2GeneratorTest {
         // xml lesen
         ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
-        FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
         new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
         out.close();
         // neues ili lesen
@@ -360,7 +361,7 @@ public class Interlis2GeneratorTest {
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));		// neues ili mit namen aus xml schreiben
 		// neues ili mit namen aus xml schreiben
-		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
 		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
@@ -387,7 +388,7 @@ public class Interlis2GeneratorTest {
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));		// neues ili mit namen aus xml schreiben
 		// neues ili mit namen aus xml schreiben
-		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
 		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
@@ -421,7 +422,7 @@ public class Interlis2GeneratorTest {
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
-		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
 		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
@@ -462,7 +463,7 @@ public class Interlis2GeneratorTest {
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
-		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
 		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
@@ -489,7 +490,7 @@ public class Interlis2GeneratorTest {
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
-		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
 		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
@@ -517,7 +518,7 @@ public class Interlis2GeneratorTest {
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
-		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
 		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
@@ -544,7 +545,7 @@ public class Interlis2GeneratorTest {
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
-		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
 		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
@@ -571,7 +572,7 @@ public class Interlis2GeneratorTest {
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
-		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
 		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
@@ -598,7 +599,7 @@ public class Interlis2GeneratorTest {
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
-		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
 		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
@@ -625,7 +626,7 @@ public class Interlis2GeneratorTest {
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
-		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
 		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen
@@ -652,7 +653,7 @@ public class Interlis2GeneratorTest {
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
-		FileWriter out = new FileWriter(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE));
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
 		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
 		out.close();
 		// neues ili lesen

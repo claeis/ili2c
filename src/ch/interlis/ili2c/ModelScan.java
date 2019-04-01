@@ -81,9 +81,9 @@ public class ModelScan {
      */
     public static double getIliFileVersion(File file) {
 	String streamName = file.getAbsolutePath();
-	FileInputStream stream = null;
+	java.io.Reader stream = null;
 	try {
-	    stream = new FileInputStream(file);
+	    stream = new java.io.InputStreamReader(new FileInputStream(file),"UTF-8");
 	    double version = Ili2ModelScan.getIliVersion(stream);
 	    stream.close();
 	    return version;
