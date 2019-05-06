@@ -51,7 +51,13 @@ public class RepositoryVisitor {
 		this.action=action;
 	}
 	public void setRepositories(String repositoryUri[]) {
-        this.repositoryUri=repositoryUri;
+	    ArrayList<String> repos=new ArrayList<String>();
+	    for(String uri:repositoryUri) {
+	        if(uri!=null && uri.trim().length()>0) {
+	            repos.add(uri.trim());
+	        }
+	    }
+        this.repositoryUri=repos.toArray(new String[repos.size()]);
 	}
 
 	private boolean crawlParents(HashSet<String> visitedSites, List<String> parents) throws RepositoryAccessException {

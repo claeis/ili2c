@@ -3,6 +3,7 @@ Known Issues:
 
 LATEST
 ---------------------------
+- fails with NPE if PathMap entry (e.g. %JAR_DIR) is null
 
 ili2c 5.0.0 (2019-04-01)
 ---------------------------
