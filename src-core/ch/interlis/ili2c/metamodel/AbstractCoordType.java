@@ -181,6 +181,10 @@ public abstract class AbstractCoordType extends BaseType
 		String crs=getCrs();
 		if(crs==null) {
 			crs=domainOrAttrDef.getMetaValue(Ili2cMetaAttrs.ILI2C_CRS);
+			if(crs==null) {
+			    Model model=(Model)domainOrAttrDef.getContainer(Model.class);
+	            crs=model.getMetaValue(Ili2cMetaAttrs.ILI2C_CRS);
+			}
 		}
 		return crs;
 	}
