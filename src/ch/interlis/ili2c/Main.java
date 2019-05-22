@@ -145,8 +145,7 @@ public class Main {
 	String httpProxyHost = null;
 	String httpProxyPort = null;
 	String translationDef=null;
-    String translatedModelName=null;
-    String originLanguageModelName=null;
+    Ili2cMetaAttrs ili2cMetaAttrs=new Ili2cMetaAttrs();
     
     TransformationParameter params = new TransformationParameter();
     
@@ -270,9 +269,15 @@ public class Main {
 		}
 		if (args[i].equals("--translation")) {
 		    i++;
-		    String modelNames[]=args[i].split("=");
-		    translatedModelName=modelNames[0];
-		    originLanguageModelName=modelNames[1];
+            String modelNameMappings[]=args[i].split(";");
+            for(String modelNameMapping:modelNameMappings) {
+                String modelNames[]=modelNameMapping.split("=");
+                String translatedModelName=modelNames[0];
+                String originLanguageModelName=modelNames[1];
+                if(translatedModelName!=null && originLanguageModelName!=null){
+                    ili2cMetaAttrs.setMetaAttrValue(translatedModelName, Ili2cMetaAttrs.ILI2C_TRANSLATION_OF, originLanguageModelName);
+	            }
+            }
 		    continue;
 		}
 		if (args[i].equals("--proxy")) {
@@ -395,10 +400,6 @@ public class Main {
 	    settings.setHttpProxyHost(httpProxyHost);
 	    settings.setHttpProxyPort(httpProxyPort);
 	    settings.setIlidirs(ilidirs);
-	    Ili2cMetaAttrs ili2cMetaAttrs=new Ili2cMetaAttrs();
-	    if(translatedModelName!=null && originLanguageModelName!=null){
-	    	ili2cMetaAttrs.setMetaAttrValue(translatedModelName, Ili2cMetaAttrs.ILI2C_TRANSLATION_OF, originLanguageModelName);
-	    }
 	    Configuration config = new Configuration();
 	    Iterator ilifilei = ilifilev.iterator();
 	    while (ilifilei.hasNext()) {
