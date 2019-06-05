@@ -4,7 +4,9 @@ Known Issues:
 LATEST
 ---------------------------
 - fails with NPE if PathMap entry (e.g. %JAR_DIR) is null
+- --listData fails with NPE if repos doesn't contain an ilidata.xml
 - support multiple --translation (#39) 
+- support CRS meta attr at MODEL level
 
 ili2c 5.0.0 (2019-04-01)
 ---------------------------
