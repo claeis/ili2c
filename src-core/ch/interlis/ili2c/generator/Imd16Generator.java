@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.xml.ws.Holder;
+import ch.ehi.basics.types.OutParam;
 
 import ch.ehi.basics.logging.EhiLogger;
 import ch.interlis.iom.IomConstants;
@@ -614,7 +614,7 @@ public class Imd16Generator {
 	private void visitDomain(ch.interlis.ili2c.metamodel.Domain domain)
 	throws IoxException
 	{
-		visitDomainType(new Holder<String>(),domain.getType(),domain);
+		visitDomainType(new OutParam<String>(),domain.getType(),domain);
 	}
 	private void visitAttribute(ch.interlis.ili2c.metamodel.LocalAttribute attr,int attrPos)
 	throws IoxException
@@ -684,7 +684,7 @@ public class Imd16Generator {
 				ch.interlis.ili2c.metamodel.TypeAlias alias=(ch.interlis.ili2c.metamodel.TypeAlias)type;
 				ch.interlis.ili2c.metamodel.Domain domain=alias.getAliasing();
 				if(domain==td.INTERLIS.URI || domain==td.INTERLIS.NAME  || domain==td.INTERLIS.BOOLEAN){
-					Holder<String> typeTid=new Holder<String>();
+				    OutParam<String> typeTid=new OutParam<String>();
 					visitAttrLocalType(typeTid,type,attr); 
 					iomAttr.setType(typeTid.value);
 				}else{
@@ -704,7 +704,7 @@ public class Imd16Generator {
 					}
 				}
 			}else{
-				Holder<String> typeTid=new Holder<String>();
+			    OutParam<String> typeTid=new OutParam<String>();
 				visitAttrLocalType(typeTid,type,attr);
 				iomAttr.setType(typeTid.value);
 			}
@@ -740,12 +740,12 @@ public class Imd16Generator {
 				ch.interlis.ili2c.metamodel.TypeAlias alias=(ch.interlis.ili2c.metamodel.TypeAlias)type;
 				ch.interlis.ili2c.metamodel.Domain domain=alias.getAliasing();
 				if(domain==td.INTERLIS.URI || domain==td.INTERLIS.NAME || domain==td.INTERLIS.BOOLEAN){
-					Holder<String> typeTid=new Holder<String>();
+				    OutParam<String> typeTid=new OutParam<String>();
 					visitParameterLocalType(typeTid,type,param);
 					iomParam.setType(typeTid.value);
 				}else{
 					if(alias.isMandatory()){
-						Holder<String> typeTid=new Holder<String>();
+					    OutParam<String> typeTid=new OutParam<String>();
 						visitParameterLocalType(typeTid,domain.getType(),param);
 						iomParam.setType(typeTid.value);
 					}else{
@@ -753,7 +753,7 @@ public class Imd16Generator {
 					}
 				}
 			}else{
-				Holder<String> typeTid=new Holder<String>();
+			    OutParam<String> typeTid=new OutParam<String>();
 				visitParameterLocalType(typeTid,type,param);
 				iomParam.setType(typeTid.value);
 			}
@@ -1328,7 +1328,7 @@ public class Imd16Generator {
 		iomFunc.setExplanation(func.getExplanation());
 		
 		ch.interlis.ili2c.metamodel.Type retType=func.getDomain();
-		Holder<String> typeTid=new Holder<String>();
+		OutParam<String> typeTid=new OutParam<String>();
 		if(retType instanceof ch.interlis.ili2c.metamodel.TypeAlias){
 			ch.interlis.ili2c.metamodel.TypeAlias alias=(ch.interlis.ili2c.metamodel.TypeAlias)retType;
 			ch.interlis.ili2c.metamodel.Domain domain=alias.getAliasing();
@@ -1356,7 +1356,7 @@ public class Imd16Generator {
 			iomArg.setFunction(iomFunc.getobjectoid(),argi+1);
 			ch.interlis.ili2c.metamodel.Type argType=arg.getType();
 			if(argType instanceof ch.interlis.ili2c.metamodel.TypeAlias){
-				Holder<String> argTypeTid=new Holder<String>();
+			    OutParam<String> argTypeTid=new OutParam<String>();
 				ch.interlis.ili2c.metamodel.TypeAlias alias=(ch.interlis.ili2c.metamodel.TypeAlias)argType;
 				ch.interlis.ili2c.metamodel.Domain domain=alias.getAliasing();
 				if(domain==td.INTERLIS.URI || domain==td.INTERLIS.NAME || domain==td.INTERLIS.BOOLEAN){
@@ -1378,7 +1378,7 @@ public class Imd16Generator {
 				}
 			}else{
 				//EhiLogger.debug("arg "+arg.getName());
-				Holder<String> argTypeTid=new Holder<String>();
+			    OutParam<String> argTypeTid=new OutParam<String>();
 				visitFunctionArgumentLocalType(argTypeTid,argType,arg,func);
 				iomArg.setType(argTypeTid.value);
 			}
@@ -1911,7 +1911,7 @@ public class Imd16Generator {
 		}
 		return iomType;
 	}
-	private void visitAttrLocalType(Holder<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.AttributeDef attr)
+	private void visitAttrLocalType(OutParam<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.AttributeDef attr)
 	throws IoxException
 	{
 		typeTid.value=getTypeTid(type,attr,null);
@@ -1946,7 +1946,7 @@ public class Imd16Generator {
 		//EhiLogger.debug("iomType "+iomType.toString());
 		out.write(new ObjectEvent(iomType));
 	}
-	private void visitDomainType(Holder<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.Domain domain)
+	private void visitDomainType(OutParam<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.Domain domain)
 	throws IoxException
 	{
 		typeTid.value=getTypeTid(type,domain,null);
@@ -1974,7 +1974,7 @@ public class Imd16Generator {
 		out.write(new ObjectEvent(iomType));
 	}
 	
-	private void visitFunctionReturnLocalType(Holder<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.Function func)
+	private void visitFunctionReturnLocalType(OutParam<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.Function func)
 	throws IoxException
 	{
 		typeTid.value=getTypeTid(type,func,null);
@@ -1988,7 +1988,7 @@ public class Imd16Generator {
 		}
 		out.write(new ObjectEvent(iomType));
 	}
-	private void visitFunctionArgumentLocalType(Holder<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.FormalArgument arg,ch.interlis.ili2c.metamodel.Function function)
+	private void visitFunctionArgumentLocalType(OutParam<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.FormalArgument arg,ch.interlis.ili2c.metamodel.Function function)
 	throws IoxException
 	{
 		typeTid.value=getTypeTid(type,arg,function);
@@ -2002,7 +2002,7 @@ public class Imd16Generator {
 		}
 		out.write(new ObjectEvent(iomType));
 	}
-	private void visitParameterLocalType(Holder<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.Parameter param)
+	private void visitParameterLocalType(OutParam<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.Parameter param)
 	throws IoxException
 	{
 		typeTid.value=getTypeTid(type,param,null);

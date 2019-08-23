@@ -328,8 +328,12 @@ public class RepositoryAccess {
     }
 
     public List<DatasetMetadata> readIliDataXmlLatest(String uri) throws RepositoryAccessException {
+        List<DatasetMetadata> result=new ArrayList<DatasetMetadata>();
         List<DatasetMetadata> datav = readIliDataXml(uri);
-        
+        if(datav==null) {
+            // no ilidata.xml in repository
+            return result;
+        }
         List<String> datasetIds=new ArrayList<String>();
         java.util.Map<String,List<DatasetMetadata>> versionsPerId=new HashMap<String,List<DatasetMetadata>>();  
         // group by datasetId
@@ -343,7 +347,6 @@ public class RepositoryAccess {
             }
             versions.add(data);
         }
-        List<DatasetMetadata> result=new ArrayList<DatasetMetadata>();
         // find latest version per datasetId
         for(String datasetId:datasetIds) {
             List<DatasetMetadata> versions=versionsPerId.get(datasetId);

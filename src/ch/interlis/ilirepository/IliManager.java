@@ -261,7 +261,9 @@ public class IliManager implements ReposManager {
 	throws Ili2cException
 	{
 		HashSet<IliFile> toVisitFiles=new HashSet<IliFile>();
-		
+		if(requiredModels==null || requiredModels.size()==0) {
+            throw new Ili2cException("no models given to look for");
+		}
 		// auto determine version?
 		if(iliVersion==0.0){
 			// get version of first model

@@ -4,6 +4,14 @@ Known Issues:
 LATEST
 ---------------------------
 
+ili2c 5.0.1 (2019-08-23)
+---------------------------
+- fails with NPE if PathMap entry (e.g. %JAR_DIR) is null
+- --listData fails with NPE if repos doesn't contain an ilidata.xml
+- support multiple --translation (#39) 
+- support CRS meta attr at MODEL level
+- iox-ili-1.20.12
+
 ili2c 5.0.0 (2019-04-01)
 ---------------------------
 - failed to use proxy to access https repositories
