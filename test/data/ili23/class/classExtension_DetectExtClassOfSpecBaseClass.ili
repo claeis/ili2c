@@ -1,0 +1,25 @@
+INTERLIS 2.3;
+
+MODEL Model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC BaseTopic =
+
+    CLASS Base =
+    END Base;
+    
+    CLASS Extends
+    EXTENDS Base = 
+    END Extends;
+
+  END BaseTopic;
+
+  TOPIC Topic
+  EXTENDS Model.BaseTopic =
+
+    CLASS Base(EXTENDED) = !! illegal; because base class is specialised in base topic
+    END Base;
+
+
+  END Topic;
+
+END Model.

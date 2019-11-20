@@ -1,0 +1,15 @@
+INTERLIS 2.2;
+
+MODEL model =
+	IMPORTS Meta;
+	REFSYSTEM BASKET Basket ~ Meta.Refsystem;
+	REFSYSTEM BASKET ExtendedBasket EXTENDS Basket ~ Meta.ExtendedRefsystem;
+
+	TOPIC topic =
+
+		CLASS a =
+			pos : 0.000 .. 200.000 [INTERLIS.m] {ExtendedBasket.refsysA};
+		END a;
+
+	END topic;
+END model.

@@ -1,0 +1,28 @@
+TRANSFER Beispiel;
+DOMAIN
+	LKoord = COORD2 480000.00 60000.00
+		850000.00 320000.00;
+MODEL Beispiel
+	TOPIC Bodenbedeckung =
+		TABLE BoFlaechen =
+			Art: (Gebaeude, befestigt, humusiert, Gewaesser,
+			bestockt, vegetationslos);
+			Form: AREA WITH (STRAIGHTS, ARCS) VERTEX LKoord
+			WITHOUT OVERLAPS > 0.10;
+			NO IDENT
+			!! Suche ueber Form oder Gebaeude
+		END BoFlaechen;
+		TABLE Gebaeude =
+			AssNr: TEXT*6;
+			HAli : HALIGNMENT;
+			Flaeche: -> BoFlaechen // Art = Gebaeude //;
+			IDENT
+			AssNr; !! Annahme AssNr sei eindeutig.
+			Flaeche; !! Dem Gebaeude ist genau eine Flaeche zugeordnet
+		END Gebaeude;
+	END Bodenbedeckung.
+END Beispiel.
+FORMAT FREE;
+CODE BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+TID = ANY;
+END.

@@ -1,0 +1,42 @@
+INTERLIS 2.3;
+
+MODEL ModelA  AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"=
+
+	STRUCTURE ClassA =
+		a : TEXT*10;
+	END ClassA;
+	
+	STRUCTURE ClassAp EXTENDS ClassA =
+		a (EXTENDED) : TEXT*10;
+		ap : TEXT*10;
+	END ClassAp;
+
+	TOPIC TopicB =
+		
+		CLASS ClassBb =
+			b : TEXT*10;
+		END ClassBb;
+
+		CLASS ClassBbp EXTENDS ClassBb =
+			b (EXTENDED) : TEXT*10;
+			bp : TEXT*10;
+		END ClassBbp;
+		
+	END TopicB;
+
+	TOPIC TopicC EXTENDS TopicB =
+
+		CLASS ClassBbp (EXTENDED) =
+			b (EXTENDED) : TEXT*10;
+			bp (EXTENDED) : TEXT*10;
+			bpp : TEXT*10;
+		END ClassBbp;
+		
+		CLASS ClassCc =
+			c : TEXT*10;
+		END ClassCc;
+
+	END TopicC;
+
+END ModelA.
+

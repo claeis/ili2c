@@ -1,0 +1,52 @@
+TRANSFER Ili1GeneratorTest;
+
+MODEL Model
+	TOPIC Topic=
+		DOMAIN Lkoord = COORD2 1.00 100.0 9.99 999.9;
+		TABLE Table =
+			!! Koord2
+			koord2 : COORD2 1.00 100.0 9.99 999.9;
+			!! Koord3
+			koord3 : COORD3 1.00 100.0 1000 9.99 999.9 9999;
+			!! Laenge
+			dim1 : DIM1 1.0 9.9;
+			!! Flaechenmass
+			dim2 : DIM2 1.0 9.9;
+			!! Winkel
+			radians : RADIANS 0.0 6.2;
+			grads : GRADS 0.0 399.9;
+			degrees : DEGREES 0.0 359.9;
+			!! Bereich
+			bereich : [0.0 .. 9.9 ];
+			!! Text
+			text : TEXT*10;
+			!! Datum
+			datum : DATE;
+			!! Aufzaehlung
+			aufzaehlung : (null, eins, zwei, drei, mehr ( vier, fuenf, sechs, sieben, acht ,neun, zehn)); !! == zwei Stellen
+			!! HorizAlignment
+			horizAlignment : HALIGNMENT;
+			!! VertAlignment
+			vertAlignment : VALIGNMENT;
+			!! Linientyp
+			linientyp : POLYLINE WITH (STRAIGHTS) VERTEX Lkoord;
+			!! Flaechentyp
+			surface : SURFACE WITH (STRAIGHTS,ARCS) VERTEX Lkoord;
+			area : AREA WITH (STRAIGHTS,ARCS) VERTEX Lkoord WITHOUT OVERLAPS > 0.0
+					LINEATTR =
+						attr : TEXT*20;
+					END;
+		NO IDENT
+		END Table;
+		TABLE OtherTable =
+			!! BezAttribut
+			main : -> Table;
+		NO IDENT
+		END OtherTable;
+	END Topic.
+END Model.
+
+FORMAT FREE;
+CODE BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+TID = ANY;
+END.

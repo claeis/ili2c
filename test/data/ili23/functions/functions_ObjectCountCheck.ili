@@ -1,0 +1,24 @@
+INTERLIS 2.3;
+
+MODEL ModelA AT "mailto:ce" VERSION "test" =
+TOPIC TopicA =
+
+CLASS O =
+END O;
+
+CLASS U =
+ maxAnzO : MANDATORY 0..10000;
+END U;
+
+ASSOCIATION =
+ o -- O;
+ u -- {1} U;
+END;
+
+CONSTRAINTS OF U =
+ MANDATORY CONSTRAINT INTERLIS.objectCount(o)<=maxAnzO;
+END;
+
+END TopicA;
+END ModelA.
+

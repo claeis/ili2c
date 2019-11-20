@@ -1,0 +1,20 @@
+INTERLIS 2.2;
+
+MODEL model =
+
+	TOPIC topic =
+
+		CLASS a =
+		END a;
+
+		CLASS b =
+		END b;
+
+		ASSOCIATION =
+			a -- {1,2} a; !! illgeal; wrong Cardinality syntax
+			b --b;
+		END ;
+
+	END topic;
+
+END model.

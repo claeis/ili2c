@@ -1,0 +1,32 @@
+INTERLIS 2.2;
+
+MODEL Test =
+
+  DOMAIN
+    Coord2 = COORD
+      480000.000 .. 850000.000, 
+      60000.000 .. 320000.000;
+
+  TOPIC Base = 
+
+    CLASS G =
+      Start: Coord2;
+      Geometry: POLYLINE WITH (STRAIGHTS,ARCS) VERTEX Coord2;
+    END G;
+
+  END Base;
+
+  TOPIC Inspection =
+
+    DEPENDS ON Test.Base;
+
+    VIEW VG
+      INSPECTION OF GeometrySegments~Test.Base.G->Geometry;
+	=
+    MANDATORY CONSTRAINT
+      GeometrySegments->Segments[FIRST]->SegmentEndPoint == PARENT->Start;
+    END VG;
+
+  END Inspection;
+
+END Test.

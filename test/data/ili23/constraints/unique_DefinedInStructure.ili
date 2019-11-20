@@ -1,0 +1,20 @@
+INTERLIS 2.3;
+
+TYPE MODEL Localization (en)
+  AT "http://www.interlis.ch/" VERSION "2011-01-03" =
+
+  DOMAIN
+    Language = (de,fr,it,rm);
+
+  STRUCTURE LocalizedText =
+    Language: Language;
+    Text: MANDATORY TEXT;
+  END LocalizedText;
+  
+  STRUCTURE MultilingualText =
+    localizedText : BAG {1..*} OF LocalizedText;
+  UNIQUE (LOCAL) localizedText:Language;
+  END MultilingualText;  
+    
+END Localization.
+

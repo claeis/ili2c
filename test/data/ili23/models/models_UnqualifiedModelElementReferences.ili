@@ -1,0 +1,13 @@
+INTERLIS 2.3;
+	MODEL Other AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+		STRUCTURE A =
+		END A;
+	END Other.
+
+	MODEL Model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+		IMPORTS UNQUALIFIED Other;
+
+		STRUCTURE B EXTENDS A =
+		END B;
+
+	END Model.

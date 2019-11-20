@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TRANSFER>
+   <HEADERSECTION VERSION="2.1" SENDER="ce">
+      <ALIAS/>
+   </HEADERSECTION>
+   <DATASECTION>
+      <model.topic BOID="1">
+         <model.topic.LandCover TID="1">
+            <Geometry>
+               <POLYLINE>
+                  <P C1="1" C2="1"/>
+                  <P C1="2" C2="2"/>
+                  <A C1="3" C2="3" R="2"/>
+               </POLYLINE>
+            </Geometry>
+         </model.topic.LandCover>
+         <model.topic.LandCover TID="2">
+            <Geometry>
+               <POLYLINE>
+                  <P C1="1" C2="1"/>
+                  <P C1="1" C2="1"/>
+                  <A C1="1" C2="1" R="1"/>
+               </POLYLINE>
+            </Geometry>
+         </model.topic.LandCover>
+      </model.topic>
+   </DATASECTION>
+</TRANSFER>

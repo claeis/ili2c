@@ -1,0 +1,41 @@
+INTERLIS 2.3;
+
+/*
+
+  Attribute von Beziehungen k�nnen nicht erweitert werden.
+  Vgl. Fehlermeldung Zeile 24:
+
+There can not be an attribute "aa" in ASSOCIATION C20.T.AA1 because there is already an attribute or a role with the same name. Use a different name.
+compiler failed
+
+
+*/
+
+
+CONTRACTED MODEL C20 AT "http://www.interlis.ch"
+  VERSION "2009-03-09" =
+
+  TOPIC T =
+
+    CLASS A =
+      b : TEXT*20;
+    END A;
+    CLASS AB EXTENDS A =
+      b (EXTENDED) : TEXT*20;
+    END AB;
+
+    ASSOCIATION AA =
+      a1 -- A;
+      a2 -- A;
+      aa: TEXT;
+    END AA;
+
+    ASSOCIATION AA1 EXTENDS AA =
+      aa (EXTENDED): TEXT*1;
+    END AA1;
+
+  END T;
+
+
+END C20.
+

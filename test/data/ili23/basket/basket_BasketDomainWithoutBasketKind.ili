@@ -1,0 +1,10 @@
+INTERLIS 2.3;
+
+MODEL Test AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"  =
+TOPIC topic =
+  CLASS aclass  =
+    attr : BASKET;
+  END aclass;
+END topic;
+
+END Test.

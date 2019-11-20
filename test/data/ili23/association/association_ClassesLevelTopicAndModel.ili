@@ -1,0 +1,20 @@
+INTERLIS 2.3;
+
+MODEL Basis (de)  AT "mailto:ce@eisenhutinformatik.ch" VERSION "2007011001"  =
+
+	CLASS KatalogElem (ABSTRACT) =
+	END KatalogElem;
+
+    TOPIC Kataloge =
+
+    CLASS Test =
+    END Test;
+    
+      ASSOCIATION Hierarchie =
+	Parent -<> {0..*} KatalogElem;
+	Child -- {0..*} Test;
+      END Hierarchie;
+
+    END Kataloge;
+
+END Basis.

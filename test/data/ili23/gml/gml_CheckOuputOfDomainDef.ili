@@ -1,0 +1,84 @@
+INTERLIS 2.3;
+	MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	DOMAIN
+		LKoord = COORD 480000.00 .. 850000.00 [INTERLIS.m], !! {CHLV03[1]},
+			60000.00 .. 320000.00 [INTERLIS.m], !! {CHLV03[2]},
+			ROTATION 2 -> 1;
+		Horizontbezeichung = TEXT*20;
+
+		TestText = TEXT;
+		TestTextLen = TEXT*10;
+		TestMText = MTEXT;
+		TestMTextLen = MTEXT*10;
+		TestURI = URI;
+		TestName = NAME;
+
+	    FarbeFinal (FINAL) = (rot, gelb, gruen);
+	    Farbe = (rot, gelb, gruen);
+	    FarbePlus EXTENDS Farbe = (rot(dunkel,hell),gelb,gruen);
+
+	    TOPIC Enums =
+		  CLASS Fahrzeug =
+		    CarrosserieFarbe : Farbe;
+		  END Fahrzeug;
+		
+		  CLASS Auto EXTENDS Fahrzeug =
+		    CarrosserieFarbe (EXTENDED) : FarbePlus;
+		  END Auto;
+	    END Enums;
+	    
+	    DOMAIN
+	    TestInt = 1 .. 10;
+	    TestDec = 1.0 .. 10.0;
+	    TestDouble = 0.123e1 .. 0.234e1;
+
+	    STRUCTURE GregorianDate =
+	      Year: 1582 .. 2999;
+	      SUBDIVISION Month: 1 .. 12;
+	      SUBDIVISION Day: 1 .. 31;
+	    END GregorianDate;	
+
+	DOMAIN  
+	    BuchungsDatum = FORMAT INTERLIS.XMLDate 
+			    "2002-01-01" .. 
+			    "2007-12-31";
+	    StartZeit = FORMAT INTERLIS.XMLTime 
+			    "00:00:00.000" ..
+			    "23:59:59.999";
+	    MessZeitpunkt = FORMAT INTERLIS.XMLDateTime 
+			    "2002-01-01T00:00:00.000" ..
+			    "2007-12-31T23:59:59.999";
+	    EigenesDatum = FORMAT BASED ON GregorianDate 
+			     ( Year "Y" Month "M" Day "D");
+
+			     
+		BlackboxXml = BLACKBOX XML;
+		BlackboxBinary = BLACKBOX BINARY;
+
+		InterlisClassRef = CLASS;
+		InterlisAttributeRef = ATTRIBUTE;
+
+		Strassenachse = POLYLINE WITH (ARCS,STRAIGHTS) VERTEX  
+			LKoord WITHOUT OVERLAPS>0.10;
+
+
+		GebaeudeFlaeche = SURFACE WITH (ARCS,STRAIGHTS) VERTEX  
+		     LKoord WITHOUT OVERLAPS>0.10;
+		STRUCTURE GrenzlinieEigenschaften =
+			streitig : BOOLEAN;
+		END GrenzlinieEigenschaften;
+		TOPIC AreaDef =
+		CLASS Grundstueck =
+			Grenze : MANDATORY AREA WITH (ARCS,STRAIGHTS) 
+				VERTEX LKoord 
+				WITHOUT OVERLAPS>0.10
+				LINE ATTRIBUTES GrenzlinieEigenschaften;
+		END Grundstueck;
+		END AreaDef;
+
+		DOMAIN
+		BFS_EGID = OID 1 .. 999999999;
+		UUID = OID TEXT*36;
+		
+	END ModelA.
+	

@@ -1,0 +1,31 @@
+INTERLIS 2.2;
+
+MODEL Model =
+
+	TOPIC BaseTopic =
+		CLASS A =
+		END A;
+
+		CLASS B =
+		END B;
+
+		ASSOCIATION =
+			RoleB_embeddedInA -- {0..1} B;
+			a -- {0..*} A;
+		END;
+
+	END BaseTopic;
+
+	TOPIC Topic EXTENDS BaseTopic =
+
+		CLASS C =
+		END C;
+
+		ASSOCIATION =
+			RoleB_NOTembeddedInA -- {0..1} C; !! not embedded because A is defined in a differen topic
+			a -- {0..*} A;
+		END;
+
+	END Topic;
+	
+END Model.

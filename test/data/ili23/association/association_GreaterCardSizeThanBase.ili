@@ -1,0 +1,27 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC topic =
+
+		CLASS a =
+		END a;
+
+		CLASS b =
+		END b;
+
+		CLASS c =
+		END c;
+
+		ASSOCIATION a2b=
+			a -<>a;
+			b -- {1..10} b;
+		END a2b;
+
+		ASSOCIATION a2bextended EXTENDS a2b=
+			b (EXTENDED) -- {1..20} b; !! illegal; cardinality can be only reduced
+		END a2bextended;
+
+	END topic;
+
+END model.

@@ -1,0 +1,12 @@
+INTERLIS 2.2;
+
+MODEL model =
+
+	TOPIC topic =
+		DOMAIN
+			Farbe = (rot , 
+				blau, 
+				rot); !! illegal, duplicate value
+
+	END topic;
+END model.

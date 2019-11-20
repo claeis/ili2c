@@ -1,0 +1,55 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.interlis.ch/INTERLIS2.3" xmlns:ili2c="http://www.interlis.ch/ili2c" targetNamespace="http://www.interlis.ch/INTERLIS2.3" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xsd:annotation>
+    <xsd:appinfo source="http://www.interlis.ch/ili2c/ili2cversion">4.1.2-20090819</xsd:appinfo>
+    <xsd:appinfo source="http://www.interlis.ch/ili2c">
+      <ili2c:model>ModelA</ili2c:model>
+      <ili2c:modelVersion>2009-08-19</ili2c:modelVersion>
+      <ili2c:modelAt>mailto:ce@local</ili2c:modelAt>
+    </xsd:appinfo>
+  </xsd:annotation>
+    <xsd:element name="TRANSFER" type="Transfer"/>
+    <xsd:simpleType name="IliID">
+      <xsd:restriction base="xsd:string">
+        <xsd:pattern value="([a-zA-Z_][0-9a-zA-Z_\-\.]*:)?[0-9a-zA-Z_][0-9a-zA-Z_\-\.]*"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:complexType name="Transfer">
+      <xsd:sequence>
+        <xsd:element name="HEADERSECTION" type="HeaderSection"/>
+        <xsd:element name="DATASECTION" type="DataSection"/>
+      </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Models">
+      <xsd:sequence>
+        <xsd:element name="MODEL" type="Model" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="Model">
+      <xsd:attribute name="NAME" type="INTERLIS.NAME" use="required"/>
+      <xsd:attribute name="VERSION" type="xsd:string" use="required"/>
+      <xsd:attribute name="URI" type="xsd:anyURI" use="required"/>
+    </xsd:complexType>
+    <xsd:complexType name="RoleType">
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute name="REF" type="IliID" use="required"/>
+          <xsd:attribute name="BID" type="IliID"/>
+          <xsd:attribute name="ORDER_POS" type="xsd:positiveInteger"/>
+        </xsd:extension>
+      </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="DataSection">
+      <xsd:sequence>
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        </xsd:choice>
+      </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="HeaderSection">
+      <xsd:sequence>
+        <xsd:element name="MODELS" type="Models"/>
+        <xsd:element name="COMMENT" type="xsd:string" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="VERSION" type="xsd:decimal" use="required" fixed="2.3"/>
+      <xsd:attribute name="SENDER" type="xsd:string" use="required"/>
+    </xsd:complexType>
+  </xsd:schema>

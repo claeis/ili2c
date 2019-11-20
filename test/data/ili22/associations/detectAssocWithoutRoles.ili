@@ -1,0 +1,13 @@
+INTERLIS 2.2;
+
+MODEL model =
+
+	TOPIC topic =
+
+
+		ASSOCIATION a2b =
+		END a2b;
+
+	END topic;
+
+END model.

@@ -1,0 +1,21 @@
+INTERLIS 2.3;
+
+MODEL ModelA AT "mailto:ce@local" VERSION "2009-08-19"=
+TOPIC TopicA =
+	CLASS ClassA =
+	END ClassA;
+	CLASS ClassB =
+	END ClassB;
+	
+	ASSOCIATION =
+	a--{0..*}ClassA;
+	refToB--{1}ClassB;
+	END;
+	ASSOCIATION =
+	aWithAttrs--{0..*}ClassA;
+	refWithAttrsToB--{1}ClassB;
+	attr : TEXT*10;
+	END;
+END TopicA;
+
+END ModelA.

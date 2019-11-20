@@ -1,0 +1,27 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic =
+		STRUCTURE astruct =
+			a : TEXT*10;
+		END astruct;
+
+		STRUCTURE bstruct =
+			b : astruct;
+		END bstruct;
+		
+		CLASS aclass =
+			attr1 : TEXT*10;
+			attr2 : bstruct;
+			UNIQUE attr1,attr2->b->a;  !! ok
+		END aclass;
+		
+		CLASS bclass =
+			attr1 : TEXT*10;
+			attr2 : bstruct;
+			UNIQUE attr1,attr2->b; !! illegal to use struct attr2->b
+		END bclass;
+
+	END topic;
+
+END model.

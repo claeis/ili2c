@@ -1,0 +1,11 @@
+INTERLIS 2.2;
+
+MODEL Model =
+
+	TOPIC TopicA =
+	END TopicA;
+
+	TOPIC TopicB =
+	END TopicB;
+
+END Model.

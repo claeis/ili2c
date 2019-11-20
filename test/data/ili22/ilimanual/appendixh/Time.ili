@@ -1,0 +1,90 @@
+!! File Time.ili Release 2003-03-18
+
+INTERLIS 2.2;
+
+REFSYSTEM MODEL Time (en) =  !! en = 2-letter code (ISO 639)
+
+  CONTRACT ISSUED BY Unknown;  !! Contractor(s) have to be defined!
+
+  IMPORTS Units;
+
+  UNIT
+    HM = {Units.h : Units.min[0 .. 59]} CONTINUOUS;
+    HMS = {Units.h : Units.min[0 .. 59] : INTERLIS.s[0 .. 59]} CONTINUOUS;
+
+    Year [Y] EXTENDS INTERLIS.TIME;
+    Month [M] EXTENDS INTERLIS.TIME;
+
+    DayOfYear [MD] = {M:Units.d[1 .. 31]};
+    Date [YMD] = {Y:M[1 .. 12]:Units.d[1 .. 31]};
+
+  DOMAIN
+    Year = 1582 .. 2999 [Y]; !! Gregorian Calendar
+    Date = 1582:10:15 .. 2999:12:31 [YMD];
+    DayOfYear = 1:1 .. 12:31 [MD];
+
+    WeekDay = (WorkingDay (Monday, Tuesday, Wednesday,
+               Thursday, Friday, Saturday), Sunday);
+
+    HMOfDay = 0:0 .. 23:59 [HM];
+    DifferenceToUTC = MANDATORY -13:00 .. 13:00 [HM]; !! UTC := LocTime + Diff
+
+  FUNCTION AppropriateDate (dayOfYear: MANDATORY DayOfYear;
+                            weekDay: WeekDay): DayOfYear
+    // returns first parameter if second is undefined;
+       returns first day from (incl) first parameter being the
+       requested weekday // ;
+
+  FUNCTION DSTOrdered (doy1: DayOfYear; doy2: DayOfYear) : BOOLEAN
+    // returns TRUE if the second parameter comes after the
+       first parameter or if both parameters are equal //;
+
+  STRUCTURE DSTransition =
+    TransitionDSTime: MANDATORY HMOfDay;
+    FirstDate: MANDATORY DayOfYear;
+    DayOfWeek: WeekDay;
+    TransitionDate: DayOfYear := AppropriateDate (FirstDate, DayOfWeek);
+  END DSTransition;
+
+  STRUCTURE DaylightSavingPeriod =
+    DSToUTC: DifferenceToUTC;
+    From: MANDATORY Year;
+    To:   MANDATORY Year;
+    DSStart: MANDATORY DSTransition;
+    DSEnd: MANDATORY DSTransition;
+  MANDATORY CONSTRAINT
+    DSTOrdered (DSStart, DSEnd);
+  MANDATORY CONSTRAINT
+    To >= From;
+  END DaylightSavingPeriod;
+
+  FUNCTION DSPOverlaps (periods: BAG {1 .. *} OF DaylightSavingPeriod) : BOOLEAN
+    // returns TRUE if any one of the periods overlap //;
+
+
+  TOPIC TimeZone =
+
+    CLASS TimeZone (ABSTRACT) EXTENDS INTERLIS.SCALSYSTEM =
+    PARAMETER
+      Unit (EXTENDED): NUMERIC [INTERLIS.TIME];
+    END TimeZone;
+
+    CLASS BaseTimeZone EXTENDS TimeZone = !! TimeZone without daylight saving
+      DiffToUTC: DifferenceToUTC;
+    END BaseTimeZone;
+
+    CLASS DaylightSavingTZ EXTENDS TimeZone =
+      Periods: BAG {1..*} OF DaylightSavingPeriod;
+    MANDATORY CONSTRAINT
+      NOT ( DSPOverlaps (Periods) );
+    END DaylightSavingTZ;
+
+    ASSOCIATION DaylightSavingTZOf =
+      BaseTZ -<> BaseTimeZone;
+      DSTZ -- DaylightSavingTZ;
+    END DaylightSavingTZOf;
+
+  END TimeZone;
+
+END Time.
+

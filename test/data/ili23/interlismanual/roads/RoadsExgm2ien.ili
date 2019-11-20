@@ -1,0 +1,125 @@
+!! File RoadsExgm2ien.ili Release 2005-06-16
+
+INTERLIS 2.3;
+
+CONTRACTED MODEL RoadsExgm2ien (en) AT "http://www.interlis.ch/models"
+  VERSION "2005-06-16" = !! Roads graphics
+
+  IMPORTS RoadsExdm2ben;
+  IMPORTS RoadsExdm2ien;
+  IMPORTS StandardSymbology;
+
+  SIGN BASKET StandardSymbology ~ StandardSymbology.StandardSigns
+    OBJECTS OF SurfaceSign: Building, Street, Water, Other
+    OBJECTS OF PolylineSign: continuous, dotted
+    OBJECTS OF TextSign: Linefont_18
+    OBJECTS OF SymbolSign: NoParking, GP;
+
+
+  TOPIC Graphics =
+    DEPENDS ON RoadsExdm2ben.Roads, RoadsExdm2ien.RoadsExtended;
+
+    GRAPHIC Surface_Graphics
+      BASED ON RoadsExdm2ien.RoadsExtended.LandCover =
+
+      Building OF StandardSymbology.StandardSigns.SurfaceSign:
+        WHERE Type == #building (
+          Sign := {Building};
+          Geometry := Geometry;
+          Priority := 100);
+
+      Street OF StandardSymbology.StandardSigns.SurfaceSign:
+        WHERE Type == #street (
+          Sign := {Street};
+          Geometry := Geometry;
+          Priority := 100);
+
+      Water OF StandardSymbology.StandardSigns.SurfaceSign:
+        WHERE Type == #water (
+          Sign := {Water};
+          Geometry := Geometry;
+          Priority := 100);
+
+      Other OF StandardSymbology.StandardSigns.SurfaceSign:
+        WHERE Type == #other (
+          Sign := {Other};
+          Geometry := Geometry;
+          Priority := 100);
+
+    END Surface_Graphics;
+
+    VIEW Surface_Boundary
+      INSPECTION OF RoadsExdm2ien.RoadsExtended.LandCover -> Geometry;
+      =
+    ATTRIBUTE
+      ALL OF LandCover;
+    END Surface_Boundary;
+
+    VIEW Surface_Boundary2
+      INSPECTION OF Base ~ Surface_Boundary -> Lines;
+      =
+    ATTRIBUTE
+      Geometry := Base -> Geometry;
+      LineAttr := Base -> LineAttrs;
+    END Surface_Boundary2;
+
+    GRAPHIC SurfaceBoundary_Graphics
+      BASED ON Surface_Boundary2 =
+
+      Boundary OF StandardSymbology.StandardSigns.PolylineSign: (
+        Sign := {continuous};
+        Geometry := Geometry;
+        Priority := 101);
+
+    END SurfaceBoundary_Graphics;
+
+    GRAPHIC Polyline_Graphics
+      BASED ON RoadsExdm2ien.RoadsExtended.StreetAxis =
+
+      Street_precise OF StandardSymbology.StandardSigns.PolylineSign:
+        WHERE Precision == #precise (
+          Sign := {continuous};
+          Geometry := Geometry;
+          Priority := 110);
+
+      Street_unprecise OF StandardSymbology.StandardSigns.PolylineSign:
+        WHERE Precision == #unprecise (
+          Sign := {dotted};
+          Geometry := Geometry;
+          Priority := 110);
+
+    END Polyline_Graphics;
+
+    GRAPHIC Text_Graphics
+      BASED ON RoadsExdm2ien.RoadsExtended.StreetNamePosition =
+
+      StreetName OF StandardSymbology.StandardSigns.TextSign: (
+          Sign := {Linefont_18};
+          Txt := Street -> Name;
+          Geometry := NamPos;
+          Rotation := NamOri;
+          Priority := 120);
+
+    END Text_Graphics;
+
+    GRAPHIC Point_Graphics
+      BASED ON RoadsExdm2ien.RoadsExtended.RoadSign =
+
+      Tree OF StandardSymbology.StandardSigns.SymbolSign:
+        WHERE Type == #prohibition.noparking (
+          Sign := {NoParking};
+          Geometry := Position;
+          Priority := 130);
+
+      GP OF StandardSymbology.StandardSigns.SymbolSign:
+        WHERE Type == #danger (
+          Sign := {GP};
+          Geometry := Position;
+          Priority := 130);
+
+    END Point_Graphics;
+
+  END Graphics;
+
+END RoadsExgm2ien.
+

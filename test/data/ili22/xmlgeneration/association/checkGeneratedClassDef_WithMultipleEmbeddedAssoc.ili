@@ -1,0 +1,47 @@
+INTERLIS 2.2;
+
+MODEL Model =
+
+	TOPIC Topic =
+
+		CLASS A =
+		END A;
+
+ 
+
+
+		CLASS C =
+		END C;
+
+		ASSOCIATION =
+			a -- {0..*} A;
+			c -- {0..1} C; !! embedded in A
+		END;
+
+		CLASS B =
+		END B;
+
+		ASSOCIATION =
+			a -- {0..*} A;
+			b -- {0..1} B; !! embedded in A, before c!
+		END;
+
+		CLASS D =
+		END D;
+
+		ASSOCIATION =
+			a -- {0..*} A;
+			d -- {0..1} D; !! embedded in A
+		END;
+
+		CLASS C2 =
+		END C2;
+
+		ASSOCIATION =
+			a -- {0..*} A;
+			c2 -- {0..1} C2; !! embedded in A, after c, before d!
+		END;
+	END Topic;
+
+END Model.
+

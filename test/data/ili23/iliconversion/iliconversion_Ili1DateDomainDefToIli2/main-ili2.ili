@@ -1,0 +1,17 @@
+INTERLIS 2.3;
+
+
+MODEL model
+  AT "mailto:ceis@localhost"
+  VERSION "2013-08-07" =
+
+
+
+  TOPIC topic =
+    DOMAIN
+      Datum (FINAL) = TEXT*8;
+
+  END topic;
+
+END model.
+

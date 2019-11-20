@@ -1,0 +1,50 @@
+INTERLIS 2.3;
+
+MODEL Model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC TopicA =
+
+		CLASS a =
+		END a;
+
+	END TopicA;
+
+	TOPIC TopicC EXTENDS TopicA = 
+
+		CLASS c =
+		END c;
+
+		ASSOCIATION a2b=
+			a --a; !! ok
+			c --c; 
+		END a2b;
+
+	END TopicC;
+
+	TOPIC TopicB1 = 
+		DEPENDS ON TopicA;
+
+		CLASS b =
+		END b;
+
+		ASSOCIATION a2b=
+			a (EXTERNAL) --Model.TopicA.a;
+			b1 --b;
+		END a2b;
+
+	END TopicB1;
+
+	TOPIC TopicB2 = 
+		DEPENDS ON TopicA;
+
+		CLASS b =
+		END b;
+
+		ASSOCIATION a2b=
+			a --Model.TopicA.a;  !! EXTERNAL required
+			b2 --b;
+		END a2b;
+
+	END TopicB2;
+
+END Model.

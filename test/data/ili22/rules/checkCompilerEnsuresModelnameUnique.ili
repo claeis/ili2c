@@ -1,0 +1,7 @@
+INTERLIS 2.2;
+	MODEL model =
+	END model.
+	
+	!! illegal second model with same name
+	MODEL model =
+	END model.

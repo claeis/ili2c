@@ -1,0 +1,8 @@
+INTERLIS 2.2;
+
+	MODEL model =
+		CONTRACT ISSUED BY ce;
+
+		FUNCTION func (doy1: BOOLEAN; doy2: TEXT*3) : BOOLEAN
+			// an explanation //;
+	END model.

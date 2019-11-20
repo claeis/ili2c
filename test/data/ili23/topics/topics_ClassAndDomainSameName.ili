@@ -1,0 +1,12 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic =
+		DOMAIN
+			class = TEXT*3;
+
+		!! illegal; class and domain have the same namespace
+		CLASS class =
+		END class;
+	END topic;
+END model.

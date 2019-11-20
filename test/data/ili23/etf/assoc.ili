@@ -1,0 +1,55 @@
+INTERLIS 2.3;
+
+MODEL Assoc (de)
+AT "mailto:ceis@localhost"
+VERSION "2010-01-20"  =
+
+  TOPIC TopicA =
+
+    CLASS ClassA1 =
+    END ClassA1;
+
+    CLASS ClassA2 =
+    END ClassA2;
+
+    CLASS ClassB1 =
+    END ClassB1;
+
+    CLASS ClassB2 =
+    END ClassB2;
+
+    CLASS Part =
+    END Part;
+
+    CLASS SharedPart =
+    END SharedPart;
+
+    CLASS Whole =
+    END Whole;
+
+    CLASS WholeOfSharedPart =
+    END WholeOfSharedPart;
+
+    ASSOCIATION AssociationDef100 =
+      whole -<#> {1} Whole;
+      part -- {0..*} Part;
+    END AssociationDef100;
+
+    ASSOCIATION AssociationDef107 =
+      whole -<> {0..*} WholeOfSharedPart;
+      part -- {0..*} SharedPart;
+    END AssociationDef107;
+
+    ASSOCIATION AssociationDef114 =
+      a -- {1} ClassA2;
+      b -- {1} ClassB2;
+    END AssociationDef114;
+
+    ASSOCIATION AssociationDef93 =
+      a -- {0..*} ClassA1;
+      b -- {0..*} ClassB1;
+    END AssociationDef93;
+
+  END TopicA;
+
+END Assoc.

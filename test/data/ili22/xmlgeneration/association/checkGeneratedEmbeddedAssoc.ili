@@ -1,0 +1,24 @@
+INTERLIS 2.2;
+
+MODEL Model =
+
+	TOPIC Topic =
+		CLASS A =
+		END A;
+
+		CLASS B =
+		END B;
+
+		ASSOCIATION =
+			RoleA_embeddedInB -- {0..1} A;
+			b -- {0..*} B;
+		END;
+
+		ASSOCIATION =
+			RoleB_embeddedInA -- {0..1} B;
+			a -- {0..1} A;
+		END;
+
+	END Topic;
+
+END Model.

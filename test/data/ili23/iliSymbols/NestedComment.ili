@@ -1,0 +1,7 @@
+INTERLIS 2.3;
+
+MODEL Test (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+
+  /* dies ist geschachtelter /* Kommentar */ */
+END Test.

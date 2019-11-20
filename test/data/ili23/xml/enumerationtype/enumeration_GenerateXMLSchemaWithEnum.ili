@@ -1,0 +1,19 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC topic =
+
+    DOMAIN
+      Farbe = (rot,
+           gelb,
+           gruen);
+	   
+    CLASS a =
+      farbe : Farbe;
+    END a;
+    CLASS b EXTENDS a=
+      farbe (EXTENDED): MANDATORY;
+    END b;
+  END topic;
+END model.

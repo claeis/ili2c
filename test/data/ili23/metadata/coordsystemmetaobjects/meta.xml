@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<TRANSFER xmlns="http://www.interlis.ch/INTERLIS2.2">
+	<HEADERSECTION VERSION="2.2" SENDER="ch.ehi">
+		<ALIAS>
+			<ENTRIES FOR="INTERLIS">
+				<TAGENTRY FROM="Meta.Refsystem.GeoCartesian2D" TO="INTERLIS.COORDSYSTEM"> </TAGENTRY>
+			</ENTRIES>
+		</ALIAS>
+	</HEADERSECTION>
+	<DATASECTION>
+		<Meta.Refsystem BID="xch.ehi.1">
+			<Meta.Refsystem.GeoCartesian2D TID="xch.ehi.2">
+				<Name>CHLV03</Name>
+			</Meta.Refsystem.GeoCartesian2D>
+		</Meta.Refsystem>
+	</DATASECTION>
+</TRANSFER>

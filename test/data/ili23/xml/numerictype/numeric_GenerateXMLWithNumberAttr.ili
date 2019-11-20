@@ -1,0 +1,14 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC topic =
+  
+    CLASS Class =
+	attrInt : 0 .. 10;
+	attrDouble : 0.0 .. 10.0;
+    END Class; 
+
+  END topic;
+
+END model.

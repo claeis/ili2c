@@ -1,0 +1,29 @@
+INTERLIS 2.2;
+
+MODEL Test =
+	CONTRACT ISSUED BY ce;
+
+  TOPIC Base = 
+
+    CLASS B =
+      Attr1: TEXT*20;
+    END B;
+
+  END Base;
+
+  FUNCTION countB(elements : BAG OF Test.Base.B):NUMERIC;
+
+  TOPIC Aggregation =
+
+    DEPENDS ON Test.Base;
+
+    VIEW VB2 
+      AGGREGATION OF Test.Base.B  EQUAL(B->Attr1);
+	=
+      ATTRIBUTE
+        ElementCount : 0 .. 10000 := countB(AGGREGATES);
+    END VB2;
+
+  END Aggregation;
+
+END Test.

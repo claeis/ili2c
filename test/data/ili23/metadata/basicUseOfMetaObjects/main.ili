@@ -1,0 +1,14 @@
+INTERLIS 2.3;
+
+MODEL modelAT "http://www.interlis.ch/ili2c/tests/" VERSION "1"  =
+	IMPORTS Meta;
+	REFSYSTEM BASKET Basket ~ Meta.Refsystem;
+
+	TOPIC topic =
+
+		CLASS a =
+			pos : 0.000 .. 200.000 [INTERLIS.m] {refsysA};
+		END a;
+
+	END topic;
+END model.

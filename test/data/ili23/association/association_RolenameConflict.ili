@@ -1,0 +1,21 @@
+INTERLIS 2.2;
+
+MODEL model =
+
+	TOPIC topic =
+
+		CLASS ClassA =
+			b : TEXT*10;
+		END ClassA;
+
+		CLASS ClassB =
+		END ClassB;
+
+		ASSOCIATION =
+			a --ClassA;
+			b --ClassB;  !! illegal; source class ClassA already has an attribut b 
+		END ;
+
+	END topic;
+
+END model.

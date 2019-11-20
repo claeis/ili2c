@@ -1,0 +1,33 @@
+INTERLIS 2.2;
+
+MODEL Test =
+
+  TOPIC Base = 
+
+    CLASS B =
+      Attr1: TEXT*20;
+      Attr2: TEXT*10;
+    END B;
+
+    CLASS C =
+      Attr3: TEXT*30;
+    END C;
+
+  END Base;
+
+  TOPIC Join =
+
+    DEPENDS ON Test.Base;
+
+    VIEW BC
+      JOIN OF B ~ Test.Base.B,C ~ Test.Base.C (OR NULL);
+      WHERE B->Attr1 == C->Attr3;
+	=
+      ATTRIBUTE
+        ALL OF B;
+        ALL OF C;
+    END BC;
+
+  END Join;
+
+END Test.

@@ -1,0 +1,6 @@
+INTERLIS 2.2;
+
+!! illegal; DATA is not valid in Ili 2.2
+DATA MODEL model =
+
+END model.

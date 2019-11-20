@@ -1,0 +1,23 @@
+TRANSFER Ili1FmtTest;
+
+MODEL Model
+	TOPIC Topic=
+		TABLE OtherTable =
+			text : TEXT*10;
+		NO IDENT
+		END OtherTable;
+		TABLE Table =
+			attr2 : TEXT*10;
+			attr3 : -> OtherTable;
+			attr4 : TEXT*10;
+			attr5 : -> OtherTable;
+			attr6 : TEXT*10;
+		NO IDENT
+		END Table;
+	END Topic.
+END Model.
+
+FORMAT FREE;
+CODE BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+TID = ANY;
+END.

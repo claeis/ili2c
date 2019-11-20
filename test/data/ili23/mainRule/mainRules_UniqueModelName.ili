@@ -1,0 +1,7 @@
+INTERLIS 2.3;
+	MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	END model.
+	
+	!! illegal second model with same name
+	MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	END model.

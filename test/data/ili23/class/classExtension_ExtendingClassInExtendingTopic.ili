@@ -1,0 +1,21 @@
+INTERLIS 2.3;
+
+MODEL Model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC BaseTopic =
+
+    CLASS Base =
+    END Base;
+
+  END BaseTopic;
+
+  TOPIC Topic
+  EXTENDS BaseTopic =
+
+    CLASS Base
+      EXTENDS Model.BaseTopic.Base = !! illegal; because of class with same name in base topic
+    END Base;
+
+  END Topic;
+
+END Model.

@@ -1,0 +1,28 @@
+TRANSFER transfer;
+MODEL model
+	TOPIC topic =
+		TABLE A =
+			a: TEXT*20;
+			b: TEXT*10;
+		IDENT
+			a;
+		END A;
+		TABLE B =
+			a: TEXT*20;
+			b: TEXT*10;
+			c: TEXT*10;
+		IDENT
+			a,c;
+		END B;
+		TABLE C =
+			a: TEXT*20;
+			b: TEXT*10;
+		NO IDENT
+		END C;
+	END topic.
+END model.
+FORMAT FREE;
+CODE
+	BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+	TID = ANY;
+END.

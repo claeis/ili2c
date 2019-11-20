@@ -1,0 +1,11 @@
+INTERLIS 2.2;
+
+MODEL model =
+	TOPIC topic =
+		STRUCTURE ClassA =
+		END ClassA;
+		STRUCTURE ClassB =
+			attr : REFERENCE TO ClassA; !! illegal, can only reference a class
+		END ClassB;
+	END topic;
+END model.

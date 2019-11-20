@@ -1,0 +1,22 @@
+
+INTERLIS 2.2;
+
+MODEL UnitsA =
+
+  IMPORTS UNQUALIFIED INTERLIS;
+
+
+  UNIT
+    SwissFrancs [CHF] EXTENDS MONEY;
+
+END UnitsA.
+
+MODEL ModelA =
+
+
+
+  DOMAIN
+    Amount = 0 .. 100 [UnitsA.CHF]; !! IMPORT UnitsA; required
+
+END ModelA.
+

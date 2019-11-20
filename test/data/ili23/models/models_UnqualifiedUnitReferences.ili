@@ -1,0 +1,23 @@
+
+INTERLIS 2.3;
+
+MODEL UnitsA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  !! IMPORTS INTERLIS; !! not required
+
+
+  UNIT
+    SwissFrancs [CHF] EXTENDS INTERLIS.MONEY;
+
+END UnitsA.
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  IMPORTS UnitsA;
+
+
+  DOMAIN
+    Amount = 0 .. 100 [UnitsA.CHF];
+
+END ModelA.
+

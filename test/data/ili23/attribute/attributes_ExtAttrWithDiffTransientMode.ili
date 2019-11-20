@@ -1,0 +1,12 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic =
+		CLASS ClassA (ABSTRACT) =
+			attr (ABSTRACT,TRANSIENT) : TEXT*10 := "test";
+		END ClassA;
+		CLASS ClassB EXTENDS ClassA =
+			attr (EXTENDED) : TEXT*10;
+		END ClassB;
+	END topic;
+END model.

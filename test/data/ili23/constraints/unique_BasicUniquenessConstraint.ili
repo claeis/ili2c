@@ -1,0 +1,23 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic =
+
+		STRUCTURE SubItem =
+			attr1 : TEXT*10;
+			attr2 : TEXT*10;
+		END SubItem;
+
+		STRUCTURE Item =
+			subitems : BAG {0..*} OF SubItem;
+		END Item;
+
+		CLASS aclass =
+			items : BAG {0..*} OF Item;
+			UNIQUE (LOCAL) items->subitems:attr1,attr2;
+		END aclass;
+		
+
+	END topic;
+
+END model.

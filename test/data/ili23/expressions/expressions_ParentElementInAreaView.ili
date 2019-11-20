@@ -1,0 +1,31 @@
+INTERLIS 2.3;
+
+
+MODEL Test AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+
+  TOPIC Base = 
+
+    DOMAIN
+    
+    Point2D = COORD 
+      0.000 .. 200.000,
+      0.000 .. 200.000,
+      ROTATION 2 -> 1;
+
+    CLASS B =
+      a: AREA WITH (STRAIGHTS) 
+        VERTEX Point2D WITHOUT OVERLAPS > 0.100;
+      attr: TEXT*20;
+    END B;
+
+    VIEW VB 
+      AREA INSPECTION OF B~Test.Base.B->a;
+      =
+      ATTRIBUTE
+        Attr2 : TEXT*10 := PARENT->attr; !! illegal; PARENT cant be applied to an AREA INSPECTION
+    END VB;
+
+  END Base;
+
+END Test.

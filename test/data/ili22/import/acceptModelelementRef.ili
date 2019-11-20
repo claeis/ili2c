@@ -1,0 +1,11 @@
+INTERLIS 2.2;
+	MODEL Meta =
+		TOPIC Refsystem =
+		END Refsystem;
+	END Meta.
+
+	MODEL model =
+		IMPORTS Meta;
+		REFSYSTEM BASKET Basket ~ Meta.Refsystem;
+
+	END model.

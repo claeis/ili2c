@@ -1,0 +1,12 @@
+INTERLIS 2.2;
+
+MODEL model =
+	TOPIC basetopic =
+		CLASS class =
+		END class;
+	END basetopic;
+	TOPIC topic =
+		CLASS class EXTENDS model.basetopic.class =
+		END class;
+	END topic;
+END model.

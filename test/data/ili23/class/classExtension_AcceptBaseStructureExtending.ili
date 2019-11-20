@@ -1,0 +1,25 @@
+INTERLIS 2.3;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  STRUCTURE Base =
+  END Base;
+
+  TOPIC BaseTopic =
+
+  END BaseTopic;
+
+END ModelA.
+
+MODEL ModelB AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+  IMPORTS ModelA;
+  
+  TOPIC Topic
+  EXTENDS ModelA.BaseTopic =
+
+    STRUCTURE Base EXTENDS ModelA.Base = 
+    END Base;
+
+  END Topic;
+
+END ModelB.
