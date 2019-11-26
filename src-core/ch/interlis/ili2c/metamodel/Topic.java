@@ -249,11 +249,6 @@ public class Topic extends AbstractPatternDef<Element>
 
   boolean containsConcreteExtensionOfTable (Table abstractTable)
   {
-    if (!abstractTable.isAbstract()) {
-        throw new IllegalArgumentException ();
-    }
-
-
     Iterator<Element> iter = iterator();
     while (iter.hasNext())
     {
@@ -266,13 +261,6 @@ public class Topic extends AbstractPatternDef<Element>
         }
       }
     }
-
-
-    if (extending != null) {
-        return ((Topic) extending).containsConcreteExtensionOfTable (abstractTable);
-    }
-
-
     return false;
   }
   public void setViewTopic(boolean v)
@@ -307,4 +295,35 @@ public class Topic extends AbstractPatternDef<Element>
   {
       return deferredGenerics.toArray(new Domain[deferredGenerics.size()]);
   }
+
+
+
+@Override
+public void checkIntegrity(List<Ili2cSemanticException> errs) throws IllegalStateException {
+    super.checkIntegrity(errs);
+    checkIntegrityAbstract(errs);
+}
+
+
+
+private void checkIntegrityAbstract(List<Ili2cSemanticException> errs) {
+    if(isAbstract()) {
+        return;
+    }
+    Iterator<Element> iter = iterator();
+    while (iter.hasNext())
+    {
+        Element obj = iter.next();
+          if (obj instanceof Table)
+          {
+            Table tab = (Table) obj;
+            if (tab.isAbstract()) {
+                // check that there is a concrete extension in this topic
+                if(!containsConcreteExtensionOfTable(tab)) {
+                    errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_topic_abstractElement",getScopedName(),tab.getName())));
+                }
+            }
+          }
+    }
+}
 }
