@@ -4,6 +4,7 @@ Known Issues:
 LATEST
 ---------------------------
 - fix TOPIC must be ABSTRACT if it contains abstract classes without concrete extensions
+- fix validation of TopicDef translation (#13)
 
 ili2c 5.0.3 (2019-11-08)
 ---------------------------

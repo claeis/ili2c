@@ -1,0 +1,54 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	DOMAIN
+	  OidA = OID TEXT*10;
+	  
+	TOPIC TopicA0 =
+
+	END TopicA0;
+	
+	TOPIC TopicA1 (ABSTRACT) =
+
+	END TopicA1;
+
+	TOPIC TopicA2 (FINAL) EXTENDS TopicA1 =
+		BASKET OID AS OidA;
+		OID AS INTERLIS.UUIDOID;
+		DEPENDS ON TopicA0;
+
+	END TopicA2;
+
+	VIEW TOPIC TopicA3 =
+
+	END TopicA3;
+	
+END ModelA.
+
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	DOMAIN
+	  OidB = OID TEXT*10;
+	  
+	TOPIC TopicB0 =
+
+	END TopicB0;
+	
+	TOPIC TopicB1 (ABSTRACT) =
+
+	END TopicB1;
+
+	TOPIC TopicB2 (FINAL) EXTENDS TopicB1 =
+		BASKET OID AS OidB;
+		OID AS INTERLIS.UUIDOID;
+		DEPENDS ON TopicB0;
+
+	END TopicB2;
+
+	VIEW TOPIC TopicB3 =
+
+	END TopicB3;
+
+END ModelB.

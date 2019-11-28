@@ -74,6 +74,15 @@ public abstract class Element implements BeanContextChild,ElementAlias {
       return "Internal compiler error [" + ex.getLocalizedMessage() + "]";
     }
   }
+  static Ili2cSemanticException checkElementRef(Element ele1, Element ele2, int sourceLine, String msg) {
+      if(ele1==null && ele2==null) {
+      }else if(ele1==null || ele2==null) {
+          return new Ili2cSemanticException (sourceLine,formatMessage(msg));
+      }else if(ele1.getTranslationOfOrSame()!=ele2.getTranslationOfOrSame()) {
+          return new Ili2cSemanticException (sourceLine,formatMessage(msg));
+      }
+      return null;
+  }
 
 
   static final String formatMessage(String msg)

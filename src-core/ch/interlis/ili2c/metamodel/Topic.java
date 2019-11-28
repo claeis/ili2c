@@ -326,4 +326,53 @@ private void checkIntegrityAbstract(List<Ili2cSemanticException> errs) {
           }
     }
 }
+@Override
+public void checkTranslationOf(List<Ili2cSemanticException> errs)
+  throws java.lang.IllegalStateException
+{
+    super.checkTranslationOf(errs);
+    Topic baseElement=(Topic)getTranslationOf();
+    if(baseElement==null) {
+        return;
+    }
+    
+    if(isAbstract()!=baseElement.isAbstract()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInAbstractness",getScopedName(),baseElement.getScopedName())));
+    }
+    if(isFinal()!=baseElement.isFinal()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInFinality",getScopedName(),baseElement.getScopedName())));
+    }
+    if(isViewTopic()!=baseElement.isViewTopic()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchViewTopic",getScopedName(),baseElement.getScopedName())));
+    }
+    Ili2cSemanticException err=null;
+    err=checkElementRef(getBasketOid(),baseElement.getBasketOid(),getSourceLine(),"err_diff_bidMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+    err=checkElementRef(getOid(),baseElement.getOid(),getSourceLine(),"err_diff_oidMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+    err=checkElementRef(getExtending(),baseElement.getExtending(),getSourceLine(),"err_diff_baseTopicMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+    Iterator<Topic> depIt=getDependentOn();
+    Iterator<Topic> baseDepIt=baseElement.getDependentOn();
+    while(true) {
+        if(!depIt.hasNext() || !baseDepIt.hasNext()) {
+            if(depIt.hasNext()!=baseDepIt.hasNext()) {
+                errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_dependencyTopicMismatch")));
+            }
+            break;
+        }
+        Topic dep=depIt.next();
+        Topic baseDep=baseDepIt.next();
+        err=checkElementRef(dep,baseDep,getSourceLine(),"err_diff_dependencyTopicMismatch");
+        if(err!=null) {
+            errs.add(err);
+        }
+    }
+}
 }
