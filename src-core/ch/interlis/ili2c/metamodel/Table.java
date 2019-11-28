@@ -582,5 +582,19 @@ public class Table extends AbstractClassDef<AbstractLeafElement>
 		this.ili1LineAttrStruct = ili1LineAttrStruct;
 	}
 
+	@Override
+	public void checkTranslationOf(List<Ili2cSemanticException> errs)
+	  throws java.lang.IllegalStateException
+	{
+	    super.checkTranslationOf(errs);
+	    Table baseElement=(Table)getTranslationOf();
+	    if(baseElement==null) {
+	        return;
+	    }
+	    
+	    if(isIdentifiable()!=baseElement.isIdentifiable()) {
+	        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchStructure",getScopedName(),baseElement.getScopedName())));
+	    }
+	}
 
 }
