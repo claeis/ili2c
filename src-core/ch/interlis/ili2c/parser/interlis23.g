@@ -1250,7 +1250,7 @@ protected classDef[Container container]
 					}
 				} 
 		
-			| "NO" "OID" {classOid=new NoOid();}) 
+			| "NO" "OID" {classOid=NoOid.createNoOid();}) 
 			{
 				table.setOid(classOid);
 			} 
@@ -1836,7 +1836,7 @@ protected associationDef[Container scope]
 						reportError (formatMessage ("err_topic_domainnotanoid",assocOid.toString()),oid.getLine());
 					}
 				} 
-		| "NO" "OID" {assocOid=new NoOid();}) 
+		| "NO" "OID" {assocOid=NoOid.createNoOid();}) 
 		SEMI 
 			{ 
 				def.setOid(assocOid); 

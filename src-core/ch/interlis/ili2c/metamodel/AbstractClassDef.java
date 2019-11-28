@@ -329,4 +329,31 @@ public Domain getDefinedOid() {
 public void setOid(Domain oid) {
 	this.oid = oid;
 }
+@Override
+public void checkTranslationOf(List<Ili2cSemanticException> errs)
+  throws java.lang.IllegalStateException
+{
+    super.checkTranslationOf(errs);
+    AbstractClassDef baseElement=(AbstractClassDef)getTranslationOf();
+    if(baseElement==null) {
+        return;
+    }
+    
+    if(isAbstract()!=baseElement.isAbstract()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInAbstractness",getScopedName(),baseElement.getScopedName())));
+    }
+    if(isFinal()!=baseElement.isFinal()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInFinality",getScopedName(),baseElement.getScopedName())));
+    }
+    Ili2cSemanticException err=null;
+    err=checkElementRef(getDefinedOid(),baseElement.getDefinedOid(),getSourceLine(),"err_diff_oidMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+    err=checkElementRef(getExtending(),baseElement.getExtending(),getSourceLine(),"err_diff_baseClassMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+}
+
 }

@@ -1,0 +1,27 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC TopicA1 =
+	
+		CLASS ClassA1 =
+			OID AS INTERLIS.UUIDOID;
+		END ClassA1;
+
+	END TopicA1;
+
+END ModelA.
+
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	
+	TOPIC TopicB1 =
+	
+		CLASS ClassB1 =
+		END ClassB1;
+
+	END TopicB1;
+
+END ModelB.
