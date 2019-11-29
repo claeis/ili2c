@@ -1,0 +1,70 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	
+	TOPIC TopicA1 =
+	
+		CLASS ClassA0 =
+		END ClassA0;
+
+		CLASS ClassA1 =
+		END ClassA1;
+		
+		CLASS ClassA2 =
+		END ClassA2;
+		
+		VIEW IntersectionA1
+			JOIN OF A0~ClassA0,A1~ClassA1;
+			=
+		END IntersectionA1;
+		
+		VIEW IntersectionA2
+			JOIN OF A0~ClassA0,A1~ClassA2;
+			=
+		END IntersectionA2;
+
+		ASSOCIATION assocA4
+			DERIVED FROM IntersectionA1 =
+			a4_0 -- ClassA0 := IntersectionA1 -> A0;
+			a4_1 -- ClassA1 := IntersectionA1 -> A1;
+		END assocA4;
+
+	END TopicA1;
+
+END ModelA.
+
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	
+	TOPIC TopicB1 =
+	
+		CLASS ClassB0 =
+		END ClassB0;
+
+		CLASS ClassB1 =
+		END ClassB1;
+		
+		CLASS ClassB2 =
+		END ClassB2;
+		
+		VIEW IntersectionB1
+			JOIN OF B0~ClassB0,B1~ClassB1;
+			=
+		END IntersectionB1;
+		
+		VIEW IntersectionB2
+			JOIN OF B0~ClassB0,B1~ClassB2;
+			=
+		END IntersectionB2;
+
+		ASSOCIATION assocB4
+			DERIVED FROM IntersectionB2 =
+			b4_0 -- ClassB0 := IntersectionB2 -> B0;
+			b4_1 -- ClassB1 := IntersectionB2 -> B1;
+		END assocB4;
+		
+	END TopicB1;
+
+END ModelB.

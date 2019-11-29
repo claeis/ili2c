@@ -614,5 +614,39 @@ public class AssociationDef extends AbstractClassDef<Element>
 	public void setIdentifiable(boolean b) {
 		identifiable = b;
 	}
+    @Override
+    public void checkTranslationOf(List<Ili2cSemanticException> errs)
+      throws java.lang.IllegalStateException
+    {
+        super.checkTranslationOf(errs);
+        AssociationDef baseElement=(AssociationDef)getTranslationOf();
+        if(baseElement==null) {
+            return;
+        }
+        
+        if(isIdentifiable()!=baseElement.isIdentifiable()) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_oidMismatch")));
+        }
+        Cardinality card=getDefinedCardinality();
+        Cardinality baseCard=baseElement.getDefinedCardinality();
+        if(card!=null && baseCard!=null) {
+            if(card.equals(baseCard)) {
+                // ok
+            }else {
+                errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_cardinalityMismatch")));
+            }
+        }else {
+            if(card==null && baseCard==null) {
+                // ok
+            }else {
+                errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_cardinalityMismatch")));
+            }
+        }
+        Ili2cSemanticException err=null;
+        err=checkElementRef(getDerivedFrom(),baseElement.getDerivedFrom(),getSourceLine(),"err_diff_derviedFromMismatch");
+        if(err!=null) {
+            errs.add(err);
+        }
+    }
 
 }

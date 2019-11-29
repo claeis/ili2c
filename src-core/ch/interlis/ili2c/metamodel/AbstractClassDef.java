@@ -228,6 +228,9 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
 		  return ret;
 	  }
 
+	  if(context instanceof Viewable) {
+	      context=context.getContainer();
+	  }
 	  if(!(context instanceof Topic || context instanceof Model)){
 		  throw new IllegalArgumentException("illegal context "+context.getScopedName());
 	  }

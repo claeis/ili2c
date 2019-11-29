@@ -6,7 +6,8 @@ LATEST
 - fix TOPIC must be ABSTRACT if it contains abstract classes without concrete extensions
 - fix validation of TopicDef translation (#13)
 - fix validation of ClassDef translation (#13)
-- fix validation of StrcutureDef translation (#13)
+- fix validation of StructureDef translation (#13)
+- fix validation of AssociationDef translation (#13)
 
 ili2c 5.0.3 (2019-11-08)
 ---------------------------
