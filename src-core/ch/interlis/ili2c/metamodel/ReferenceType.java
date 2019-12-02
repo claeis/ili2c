@@ -143,6 +143,10 @@ public class ReferenceType extends Type
       if(baseElement==null) {
           return;
       }
+
+      if(isExternal()!=baseElement.isExternal()) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInExternal",getScopedName(),baseElement.getScopedName())));
+      }
       
       Ili2cSemanticException err=null;
       err=checkElementRef(getReferred(),baseElement.getReferred(),getSourceLine(),"err_diff_referencedClassMismatch");
