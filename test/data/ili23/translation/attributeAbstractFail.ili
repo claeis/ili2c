@@ -1,0 +1,34 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC TopicA =
+
+		CLASS ClassA1 (ABSTRACT) =
+			attrA1 (ABSTRACT) : TEXT*20;
+		END ClassA1;
+
+		CLASS ClassA2 EXTENDS ClassA1 =
+			attrA1 (EXTENDED) : TEXT*20;
+		END ClassA2;
+
+	END TopicA;
+	
+END ModelA.
+
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	TOPIC TopicB =
+
+		CLASS ClassB1 (ABSTRACT) =
+			attrB1 : TEXT*20;
+		END ClassB1;
+
+		CLASS ClassB2 EXTENDS ClassB1 =
+			attrB1 (EXTENDED) : TEXT*20;
+		END ClassB2;
+
+	END TopicB;
+
+END ModelB.

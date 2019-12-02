@@ -738,6 +738,17 @@ public abstract class AttributeDef
         if(baseElement==null) {
             return;
         }
+        if(isAbstract()!=baseElement.isAbstract()) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInAbstractness",getScopedName(),baseElement.getScopedName())));
+        }
+        if(isFinal()!=baseElement.isFinal()) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInFinality",getScopedName(),baseElement.getScopedName())));
+        }
+        if(isTransient()!=baseElement.isTransient()) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInTransientness",getScopedName(),baseElement.getScopedName())));
+        }
+        
+        
         Type baseType=((AttributeDef) baseElement).getDomain();
         if(type.getClass()!=baseType.getClass()){
             errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName())));

@@ -1,0 +1,45 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC TopicA =
+
+		CLASS ClassA1 (ABSTRACT) =
+			attrA1 (ABSTRACT) : TEXT*20;
+		END ClassA1;
+
+		CLASS ClassA2 EXTENDS ClassA1 =
+			attrA1 (EXTENDED) : TEXT*20;
+			attrA2 (FINAL) : TEXT*20;
+			attrA3 (TRANSIENT) : TEXT*20 := "4";
+			attrA4 : 1..9;
+			SUBDIVISION attrA5 : 1..9;
+			CONTINUOUS SUBDIVISION attrA6 : 1..9;
+			attrA7 : MANDATORY TEXT*20;
+		END ClassA2;
+
+		CLASS ClassA3 EXTENDS ClassA2 =
+		END ClassA3;
+		
+		STRUCTURE StructA1 =
+			attrA10 : REFERENCE TO ClassA1 RESTRICTION (ClassA3);
+		END StructA1;
+
+		STRUCTURE StructA2 EXTENDS StructA1 =
+		END StructA2;
+		
+		CLASS ClassA4 =
+			attrA20 : BAG OF StructA1 RESTRICTION (StructA2);
+			attrA21 : LIST {1..2} OF StructA1;
+		END ClassA4;
+		
+	END TopicA;
+	
+END ModelA.
+
+/*
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+
+END ModelB.
+*/

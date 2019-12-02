@@ -9,6 +9,7 @@ LATEST
 - fix validation of ClassDef translation (#13)
 - fix validation of StructureDef translation (#13)
 - fix validation of AssociationDef translation (#13)
+- fix validation of AttributeDef translation (#13)
 
 ili2c 5.0.3 (2019-11-08)
 ---------------------------
