@@ -650,4 +650,37 @@ public void setXmlns(String xmlns) {
         return (Domain)ele;
     }
 	
+    @Override
+    public void checkTranslationOf(List<Ili2cSemanticException> errs)
+      throws java.lang.IllegalStateException
+    {
+        super.checkTranslationOf(errs);
+        Model baseElement=(Model)getTranslationOf();
+        if(baseElement==null) {
+            return;
+        }
+        
+        if(isContracted()!=baseElement.isContracted()) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInContracted",getScopedName(),baseElement.getScopedName())));
+        }
+        if(!getClass().equals(baseElement.getClass())) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_kindModelMismatch",getScopedName(),baseElement.getScopedName())));
+        }
+        Ili2cSemanticException err=null;
+        Model imps[]=getImporting();
+        Model baseImps[]=baseElement.getImporting();
+        if(imps.length!=baseImps.length) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_importsMismatch")));
+        }else {
+            for(int impi=0;impi<imps.length;impi++) {
+                Model imp=imps[impi];
+                Model baseImp=baseImps[impi];
+                err=checkElementRef(imp,baseImp,getSourceLine(),"err_diff_importsMismatch");
+                if(err!=null) {
+                    errs.add(err);
+                }
+            }
+            
+        }
+    }
 }
