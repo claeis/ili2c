@@ -7,6 +7,9 @@ MODEL Basis (de)  AT "mailto:ceis@localhost" VERSION "8.3.06do"  =
       CLASS KatalogElem (ABSTRACT) =
       END KatalogElem;
 
+      CLASS KatalogElement EXTENDS KatalogElem =
+      END KatalogElement;
+      
       ASSOCIATION Hierarchie =
 	Parent -<> {1} KatalogElem;
 	Child -- {0..*} KatalogElem;

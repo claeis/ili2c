@@ -6,6 +6,8 @@ MODEL Basis (de)  =
 
       CLASS KatalogElem (ABSTRACT) =
       END KatalogElem;
+      CLASS KatalogElement EXTENDS KatalogElem  =
+      END KatalogElement;
 
       ASSOCIATION Hierarchie =
 	Parent -<> {1} KatalogElem;

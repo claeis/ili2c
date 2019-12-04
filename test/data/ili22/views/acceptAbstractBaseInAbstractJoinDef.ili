@@ -9,6 +9,10 @@ MODEL Test =
       Attr2: TEXT*10;
     END B;
 
+    CLASS B2 EXTENDS B =
+      Attr1(EXTENDED): TEXT*20;
+    END B2;
+    
     CLASS C =
       Attr3: TEXT*30;
     END C;

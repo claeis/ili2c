@@ -1,7 +1,7 @@
 INTERLIS 2.2;
 
 MODEL model =
-	TOPIC topic =
+	TOPIC topic (ABSTRACT) =
 	  STRUCTURE ClassA(ABSTRACT) =
 	    Text (ABSTRACT) : MANDATORY TEXT;
 	  END ClassA;

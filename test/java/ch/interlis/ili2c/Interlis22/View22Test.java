@@ -352,7 +352,7 @@ public class View22Test {
 		assertEquals(1,errs.getErrs().size());
 		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
 		CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
-		assertEquals(26, compilerLogEvent.getLine());
+		assertEquals(31, compilerLogEvent.getLine());
 		assertEquals("VIEW Test.Join.BC must be declared as ABSTRACT. One of its attributes (Attr1) is abstract.", compilerLogEvent.getRawEventMsg());
 	}
 	
