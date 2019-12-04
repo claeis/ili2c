@@ -412,7 +412,7 @@ public class Association23Test {
 	}
 	
 	// This test checks if the compiler accepts an extended role.
-	@Ignore
+    @Test
 	public void association_AcceptExtendedRoles() throws Exception {
 		Configuration ili2cConfig=new Configuration();
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"association_AcceptExtendedRoles.ili", FileEntryKind.ILIMODELFILE);

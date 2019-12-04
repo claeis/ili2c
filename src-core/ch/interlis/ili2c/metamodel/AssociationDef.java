@@ -459,10 +459,14 @@ public class AssociationDef extends AbstractClassDef<Element>
 		Iterator desti=role.iteratorDestination();
 		while(desti.hasNext()){
 			AbstractClassDef targetClass=(AbstractClassDef)desti.next();
-			if(targetClass.getContainer()==getContainer()){
-				targetClass.addTargetForRole(role);
-			}else{
-				targetClass.addNonNavigableTargetForRole(role);
+			if(role.isExtended()) {
+			    // baseRole already known to targetClass
+			}else {
+	            if(targetClass.getContainer()==getContainer()){
+	                targetClass.addTargetForRole(role);
+	            }else{
+	                targetClass.addNonNavigableTargetForRole(role);
+	            }
 			}
 		}
 	}
