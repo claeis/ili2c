@@ -13,7 +13,10 @@ package ch.interlis.ili2c.metamodel;
 
 
 import java.util.Set;
+import java.beans.PropertyVetoException;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 import ch.ehi.basics.logging.EhiLogger;
 
@@ -29,6 +32,7 @@ public class Domain extends AbstractLeafElement
   protected Type type = null;
   protected boolean    _abstract = false;
   protected boolean    _final = false;
+  protected boolean    _mandatory = false;
 
   protected Domain extending = null;
   protected Set<Domain> extendedBy = new HashSet<Domain>(2);
@@ -471,4 +475,43 @@ public class Domain extends AbstractLeafElement
 		}
 		type.linkTranslationOf(baseType);
   	}
+	@Override
+	public void checkTranslationOf(List<Ili2cSemanticException> errs)
+	  throws java.lang.IllegalStateException
+	{
+	    super.checkTranslationOf(errs);
+	    Domain baseElement=(Domain)getTranslationOf();
+	    if(baseElement==null) {
+	        return;
+	    }
+	    
+	    if(isAbstract()!=baseElement.isAbstract()) {
+	        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInAbstractness",getScopedName(),baseElement.getScopedName())));
+	    }
+	    if(isFinal()!=baseElement.isFinal()) {
+	        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInFinality",getScopedName(),baseElement.getScopedName())));
+	    }
+        if(isDefinedMandatory()!=baseElement.isDefinedMandatory()) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInMandatory",getScopedName(),baseElement.getScopedName())));
+        }
+	    Ili2cSemanticException err=null;
+	    err=checkElementRef(getExtending(),baseElement.getExtending(),getSourceLine(),"err_diff_baseDomainMismatch");
+	    if(err!=null) {
+	        errs.add(err);
+	    }
+	}
+
+
+    public boolean isDefinedMandatory() {
+        return _mandatory;
+    }
+
+
+    public void setDefinedMandatory(boolean _mandatory) throws PropertyVetoException {
+        this._mandatory = _mandatory;
+        if(type!=null) {
+            type.setMandatory(true);
+        }
+    }
+
 }

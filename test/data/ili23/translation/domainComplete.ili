@@ -1,0 +1,22 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+    DOMAIN
+      DomainA1 = TEXT*20;
+      DomainA2 EXTENDS DomainA1 = TEXT*10;
+      DomainA3 (ABSTRACT) = TEXT*20;
+      DomainA4 (FINAL) = TEXT*20;
+      DomainA5 = MANDATORY TEXT*20;
+END ModelA.
+
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+    DOMAIN
+      DomainB1 = TEXT*20;
+      DomainB2 EXTENDS DomainB1 = TEXT*10;
+      DomainB3 (ABSTRACT) = TEXT*20;
+      DomainB4 (FINAL) = TEXT*20;
+      DomainB5 = MANDATORY TEXT*20;
+END ModelB.

@@ -2086,6 +2086,7 @@ protected domainDef[Container container]
 	  int        mods = 0;
 	  String ilidoc=null;
 	  Settings metaValues=null;
+	  Boolean definedMandatory=null;
 	}
 	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
 		n:NAME
@@ -2097,7 +2098,7 @@ protected domainDef[Container container]
 		      }
 		)?
 		eq:EQUALS
-		(	"MANDATORY" (declared=type[container,extendingType,null])?
+		(	"MANDATORY" (declared=type[container,extendingType,null])? {definedMandatory=true;}
 		|	declared=type[container,extendingType,null]
 		)
 		SEMI
@@ -2123,8 +2124,9 @@ protected domainDef[Container container]
 		}
 
 		try {
-		  if (declared != null)
+		  if (declared != null){
 		    dd.setType (declared);
+		  }
 		} catch (Exception ex) {
 		  reportError (ex, n.getLine());
 		}
@@ -2141,6 +2143,9 @@ protected domainDef[Container container]
 			eq.getLine());
 		    declared.setMandatory(true);
 		  }
+			if(definedMandatory!=null){
+				dd.setDefinedMandatory(definedMandatory);
+			}
 
 		  if(declared!=null && declared instanceof EnumerationType){
 			try {

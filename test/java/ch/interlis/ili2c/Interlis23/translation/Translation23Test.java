@@ -153,22 +153,6 @@ public class Translation23Test {
         assertEquals(1,errs.getErrs().size());
     }
     @Test
-    public void domainTypeFail() throws Exception {
-        LogCollector errs=new LogCollector();
-        EhiLogger.getInstance().addListener(errs);
-        Configuration ili2cConfig=new Configuration();
-        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/domainTypeFail.ili", FileEntryKind.ILIMODELFILE);
-        ili2cConfig.addFileEntry(fileEntry);
-        TransferDescription td=null;
-        try{
-            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-        }catch(Ili2cFailure ex){
-            
-        }
-        assertNull(td);
-        assertEquals(1,errs.getErrs().size());
-    }
-    @Test
     public void enumOk() throws Exception {
         Configuration ili2cConfig=new Configuration();
         FileEntry fileEntry=new FileEntry("test/data/ili23/translation/enumOk.ili", FileEntryKind.ILIMODELFILE);
