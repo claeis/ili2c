@@ -2,6 +2,8 @@ package ch.interlis.ili2c.Interlis22;
 
 import static org.junit.Assert.*;
 import org.junit.Ignore;
+import org.junit.Test;
+
 import ch.ehi.basics.logging.EhiLogger;
 import ch.interlis.ili2c.CompilerLogEvent;
 import ch.interlis.ili2c.Ili2cFailure;

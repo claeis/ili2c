@@ -12,7 +12,7 @@ MODEL Model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
 
 		ASSOCIATION a2c=
 			a --a; 
-			c -- ANYCLASS RESTRICTED TO c; 
+			c -- ANYCLASS RESTRICTION(c); 
 		END a2c;
 
 	END TopicA;

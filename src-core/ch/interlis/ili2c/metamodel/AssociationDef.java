@@ -130,6 +130,7 @@ public class AssociationDef extends AbstractClassDef<Element>
           /* A non-abstract AssociationDef can not contain an abstract
              RoleDef. */
           if (role.isAbstract() && !isAbstract()) {
+              setDirty(true);
             throw new Ili2cSemanticException (role.getSourceLine(),formatMessage (
               "err_abstractRoleInConcreteContainer",
               AssociationDef.this.toString()));

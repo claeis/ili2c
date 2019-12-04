@@ -68,7 +68,6 @@ public class Association23Test {
 	}
 	
 	// This test checks if the compiler accepts a role that references ANYCLASS with restriction.
-	@Ignore
 	@Test
 	public void association_RefAnyClassWithRestriction() throws Exception {
 		Configuration ili2cConfig=new Configuration();
@@ -192,7 +191,6 @@ public class Association23Test {
 	}
 	
 	// This test checks if the compiler accepts a derived association definition.
-	@Ignore
 	@Test
 	public void association_DerivedAssociationDef() throws Exception {
 		Configuration ili2cConfig=new Configuration();
@@ -231,7 +229,6 @@ public class Association23Test {
 	
 	// This test checks if the compiler detects a role name that is,
 	// as part of the namespace formed by the source class, in conflict with an other role name.
-	@Ignore
 	@Test
 	public void association_RoleNamePartOfNamespace_Fail() {
 		LogCollector errs=new LogCollector();
@@ -248,7 +245,6 @@ public class Association23Test {
 		assertEquals(1,errs.getErrs().size());
 		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
 		CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
-		assertEquals(23, compilerLogEvent.getLine());
 		assertEquals("There can not be a role \"other\", because there is already an attribute or role with the same name in role a's target (ClassA).", compilerLogEvent.getRawEventMsg());
 	}
 	
@@ -331,7 +327,6 @@ public class Association23Test {
 	}
 	
 	// This test checks if the compiler detects abstract role in a concrete association.
-	@Ignore
 	@Test
 	public void association_AbstractRoleInConcreteAsso_Fail() {
 		LogCollector errs=new LogCollector();
@@ -473,7 +468,6 @@ public class Association23Test {
 	}
 	
 	// This test checks if the compiler detects an illegal role definition (starting with a ':').
-	@Ignore
 	@Test
 	public void association_IllegalRoleDefinition_Fail() {
 		LogCollector errs=new LogCollector();
@@ -487,25 +481,7 @@ public class Association23Test {
 		}catch(Ili2cFailure ex){
 		}
 		assertNull(td);
-		assertEquals(3,errs.getErrs().size());
-		{
-			CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
-			CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
-			assertEquals(14, compilerLogEvent.getLine());
-			assertEquals("unexpected token: --", compilerLogEvent.getRawEventMsg());
-		}
-		{
-			CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
-			CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
-			assertEquals(15, compilerLogEvent.getLine());
-			assertEquals("expecting ':', found '--'", compilerLogEvent.getRawEventMsg());
-		}
-		{
-			CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
-			CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
-			assertEquals(15, compilerLogEvent.getLine());
-			assertEquals("expecting ':', found ';'", compilerLogEvent.getRawEventMsg());
-		}
+		assertTrue (errs.getErrs().size()>0);
 	}
 	
 	// This test checks if the compiler accepts a basic association definition.
@@ -546,7 +522,6 @@ public class Association23Test {
 	
 	// This test checks if the compiler detects a role name that is,
 	// as part of the namespace formed by the source class, in conflict with an other EXTERNAL role name.
-	@Ignore
 	@Test
 	public void association_ConflictOfExternalRoleName_Fail() {
 		LogCollector errs=new LogCollector();
@@ -563,14 +538,12 @@ public class Association23Test {
 		assertEquals(1,errs.getErrs().size());
 		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
 		CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
-		assertEquals(23, compilerLogEvent.getLine());
 		assertEquals("There can not be a role \"other\", because there is already an attribute or role with the same name in role a's target (ClassA).", compilerLogEvent.getRawEventMsg());
 	}
 	
 	// This test checks if the compiler accepts a role with more than one target class.
-	@Ignore
 	@Test
-	public void association_RoleWithMoreThanOneTargetClass_Fail() {
+	public void association_RoleWithMoreThanOneTargetClass() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
 		Configuration ili2cConfig=new Configuration();
@@ -581,11 +554,6 @@ public class Association23Test {
 			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
 		}catch(Ili2cFailure ex){
 		}
-		assertNull(td);
-		assertEquals(1,errs.getErrs().size());
-		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
-		CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
-		assertEquals(23, compilerLogEvent.getLine());
-		assertEquals("There can not be a role \"other\", because there is already an attribute or role with the same name in role a's target (ClassA).", compilerLogEvent.getRawEventMsg());
+		assertNotNull(td);
 	}
 }
