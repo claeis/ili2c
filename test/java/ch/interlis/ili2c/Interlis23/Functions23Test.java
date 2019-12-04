@@ -35,6 +35,7 @@ public class Functions23Test {
 	
 	// This test checks if the compiler detects a function definition at topic level in an uncontracted model.
 	@Ignore
+	@Test
 	public void functions_TopicFunctionInUncontractedModel() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -69,6 +70,7 @@ public class Functions23Test {
 	
 	// This test checks if the compiler accepts a use of function INTERLIS.isSubClass().
 	@Ignore
+	@Test
 	public void functions_AcceptFunctionIsSubClass() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

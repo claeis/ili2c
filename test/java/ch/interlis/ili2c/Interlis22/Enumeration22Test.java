@@ -36,6 +36,7 @@ public class Enumeration22Test {
 	
 	// This test checks uniqueness of elements in an extended enumeration type
 	@Ignore
+	@Test
 	public void checkUniqueEleInExtEnumerationType_Fail() { // this test should fail
 		LogCollector errs=new LogCollector(); // 02112257
 		EhiLogger.getInstance().addListener(errs);

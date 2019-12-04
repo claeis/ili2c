@@ -17,6 +17,7 @@ public class MetaData22Test {
 	
 	// This test checks a basic use of meta objects
 	@Ignore
+	@Test
 	public void checksBasicUseOfMetaObj() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -36,6 +37,7 @@ public class MetaData22Test {
 	
 	// This test checks if the compiler detects if a undefined meta object is referenced.
 	@Ignore
+	@Test
 	public void detectUndefinedMetaObjectIsReferenced_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -59,6 +61,7 @@ public class MetaData22Test {
 	
 	// This test checks a qualified MetaDataUseRef
 	@Ignore
+	@Test
 	public void checkQualifiedMetaDataUseRef() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -78,6 +81,7 @@ public class MetaData22Test {
 	
 	// This test checks a basic use of COORDSYSTEM meta objects
 	@Ignore
+	@Test
 	public void checkBasicUseOfCOORDSYSTEMMetaObj() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -97,6 +101,7 @@ public class MetaData22Test {
 	
 	// This test checks a use of a extended MetaDataUseDef
 	@Ignore
+	@Test
 	public void checkUseOfExtMetaData() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

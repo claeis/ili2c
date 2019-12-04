@@ -35,6 +35,7 @@ public class Associations22Test {
 	
 	// This test checks if the compiler detects an illegal role definition (starting with a ':').
 	@Ignore
+	@Test
 	public void detectIllegalRoleDef_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -112,6 +113,7 @@ public class Associations22Test {
 	
 	// This test checks if the compiler accepts an extended role.
 	@Ignore
+	@Test
 	public void acceptExtRole() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -192,6 +194,7 @@ public class Associations22Test {
 	
 	// This test checks if the compiler detects abstract role in a concrete association.
 	@Ignore
+	@Test
 	public void detectAbstractRoleInConcreteAssoc_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -230,6 +233,7 @@ public class Associations22Test {
 	
 	// This test checks if the compiler detects a duplicate role name.
 	@Ignore
+	@Test
 	public void detectDublicateRoleName_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -335,6 +339,7 @@ public class Associations22Test {
 	
 	// This test checks if the compiler accepts a derived association definition.
 	@Ignore
+	@Test
 	public void acceptDerivedAssocDef() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

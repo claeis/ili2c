@@ -18,6 +18,7 @@ public class Gml23Test {
 	
 	// This test checks gml output of a embedded association.
 	@Ignore
+	@Test
 	public void gml_EmbeddedAssociation() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -39,6 +40,7 @@ public class Gml23Test {
 	
 	// This test checks gml output of a attributedefs.
 	@Ignore
+	@Test
 	public void gml_CheckOutputOfAttrDefs() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -60,6 +62,7 @@ public class Gml23Test {
 	
 	// This test checks gml output of a classdef.
 	@Ignore
+	@Test
 	public void gml_CheckOutputOfClassDef() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -81,6 +84,7 @@ public class Gml23Test {
 	
 	// This test checks gml output of domaindefs.
 	@Ignore
+	@Test
 	public void gml_CheckOuputOfDomainDef() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -102,6 +106,7 @@ public class Gml23Test {
 	
 	// This test checks gml output of a simple model.
 	@Ignore
+	@Test
 	public void gml_CheckOutputOfModel() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -123,6 +128,7 @@ public class Gml23Test {
 	
 	// This test checks gml output of a model with import.
 	@Ignore
+	@Test
 	public void gml_CheckOutputOfModelWithImport() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -144,6 +150,7 @@ public class Gml23Test {
 	
 	// This test checks gml output of a topicdef.
 	@Ignore
+	@Test
 	public void gml_CheckOutputOfTopicDef() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

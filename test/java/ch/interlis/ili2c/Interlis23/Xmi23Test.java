@@ -16,6 +16,7 @@ public class Xmi23Test {
 	
 	//TODO add comment
 	@Ignore
+	@Test
 	public void xmi_MoPublic() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

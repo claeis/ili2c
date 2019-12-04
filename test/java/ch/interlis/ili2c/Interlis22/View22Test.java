@@ -87,6 +87,7 @@ public class View22Test {
 	
 	// This test checks if the compiler accepts a basic inspection definition of a geometry type.
 	@Ignore
+	@Test
 	public void acceptBasicInspectionDefOfGeomType() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -358,6 +359,7 @@ public class View22Test {
 	
 	// This test checks if the compiler detects an abstract attribute in an concret view definition.
 	@Ignore
+	@Test
 	public void detectAbstractAttrInConcreteViewDef_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

@@ -229,6 +229,7 @@ public class Topics22Test {
 	
 	// This test checks if the compiler detects a BASKET domain with multiple basket kinds.
 	@Ignore
+	@Test
 	public void detectBasketDomainWithMultipleBasketKind_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

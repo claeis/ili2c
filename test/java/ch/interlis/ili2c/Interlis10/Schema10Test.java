@@ -69,6 +69,7 @@ public class Schema10Test {
 	
 	// This test checks the conversion of INTERLIS-2 datatypes to INTERLIS-1
 	@Ignore
+	@Test
 	public void datatypes_ConversionIli2ToIli1() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

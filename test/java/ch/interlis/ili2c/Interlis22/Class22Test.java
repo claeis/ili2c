@@ -91,6 +91,7 @@ public class Class22Test {
 	
 	// This test checks if the compiler detects that a class X doesn't EXTENDS a class X in a extended TOPIC
 	@Ignore
+	@Test
 	public void detectClassNotExtendInExtendedTopic_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -112,6 +113,7 @@ public class Class22Test {
 	
 	// This test checks if the compiler detects a class specialization of a extended base class.
 	@Ignore
+	@Test
 	public void detectClassSpecializationOfExtBaseClass_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -133,6 +135,7 @@ public class Class22Test {
 	
 	// This test checks if the compiler detects a extended class of a already specialised base class.
 	@Ignore
+	@Test
 	public void detectExtClassOfSpecialisedBaseClass_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

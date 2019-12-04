@@ -37,6 +37,7 @@ public class InterlisManual23Test {
 	
 	// Appendix K (Symbology) from the INTERLIS reference manual
 	@Ignore
+	@Test
 	public void ilimanual_AbstractSymbology() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -73,6 +74,7 @@ public class InterlisManual23Test {
 	
 	// Appendix H (Time) from the INTERLIS reference manual
 	@Ignore
+	@Test
 	public void ilimanual_TimeAppendix() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -109,6 +111,7 @@ public class InterlisManual23Test {
 	
 	// Appendix C (Roads example) from the INTERLIS reference manual
 	@Ignore
+	@Test
 	public void ilimanual_RoadsAppendix() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

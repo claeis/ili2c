@@ -20,6 +20,7 @@ public class MetaData23Test {
 
 	// This test checks a use of a extended MetaDataUseDef
 	@Ignore
+	@Test
 	public void metadata_ExtendedUseDef() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -36,6 +37,7 @@ public class MetaData23Test {
 	
 	// This test checks a basic use of COORDSYSTEM meta objects
 	@Ignore
+	@Test
 	public void metadata_CoordSystemMetaObjects() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -52,6 +54,7 @@ public class MetaData23Test {
 	
 	// This test checks a qualified MetaDataUseRef
 	@Ignore
+	@Test
 	public void metadata_QualifiedMetaDataUseRef() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -68,6 +71,7 @@ public class MetaData23Test {
 	
 	// This test checks if the compiler detects if a undefined meta object is referenced.
 	@Ignore
+	@Test
 	public void metadata_UndefinedMetaObjectIsReferenced_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -89,6 +93,7 @@ public class MetaData23Test {
 	
 	// This test checks a basic use of meta objects
 	@Ignore
+	@Test
 	public void metadata_BasicUseOfMetaObjects() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -105,6 +110,7 @@ public class MetaData23Test {
 	
 	// This test checks that a class that extends INTERLIS.REFSYSTEM is defined in a REFSYSTEM MODEL
 	@Ignore
+	@Test
 	public void refSystem_RefDefinedInRefSystemModel_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

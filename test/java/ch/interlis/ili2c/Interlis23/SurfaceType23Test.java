@@ -35,6 +35,7 @@ public class SurfaceType23Test {
 	
 	// This test checks if the compiler detects a missing overlaps
 	@Ignore
+	@Test
 	public void surface_MissingOverlaps() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -74,6 +75,7 @@ public class SurfaceType23Test {
 	
 	// This test checks if the compiler detects an SURFACE with an illegal OVERLAP extension.
 	@Ignore
+	@Test
 	public void surface_IllegalOverlapExtension_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

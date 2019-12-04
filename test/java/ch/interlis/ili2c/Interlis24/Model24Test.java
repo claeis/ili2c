@@ -24,6 +24,7 @@ public class Model24Test {
 	
 	//TODO add comment
 	@Ignore
+	@Test
 	public void ili24_ModelA() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

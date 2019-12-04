@@ -155,6 +155,7 @@ public class Constraints23Test {
 	
 	// This test checks a existence constraint that requires a DEPENDS ON.
 	@Ignore
+	@Test
 	public void existence_RequireADependsOn() throws Exception {
 		Settings settings=new Settings();
 		Configuration ili2cConfig=new Configuration();
@@ -185,6 +186,7 @@ public class Constraints23Test {
 	
 	// This test checks the detcection of struct attr in a uniqueness constraint.
 	@Ignore
+	@Test
 	public void unique_DetectStructAttrInUniqueConst() throws Exception {
 		Settings settings=new Settings();
 		Configuration ili2cConfig=new Configuration();

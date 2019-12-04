@@ -306,6 +306,7 @@ public class Models23Test {
 	
 	// Tests if the compiler finds model Units in %JAR_DIR
 	@Ignore
+	@Test
 	public void models_FindModelUnitsInJarDir_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

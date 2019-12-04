@@ -17,6 +17,7 @@ public class Coords22Test {
 	
 	// This test checks if the compiler detects a COORD domaindef with different precision.
 	@Ignore
+	@Test
 	public void detectCoordDomainWithDiffPrecision_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

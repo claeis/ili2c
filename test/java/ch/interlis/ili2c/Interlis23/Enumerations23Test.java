@@ -42,6 +42,7 @@ public class Enumerations23Test {
 	
 	// This test checks an extended enumeration type.
 	@Ignore
+	@Test
 	public void enumeration_ExtendedEnumerationTypeFails() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -147,6 +148,7 @@ public class Enumerations23Test {
 	
 	// This test checks uniqueness of XSD elements in a basic enumeration type
 	@Ignore
+	@Test
 	public void enumeration_XSDUniquenessElementsInBasicEnum_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

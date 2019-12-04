@@ -95,6 +95,7 @@ public class Topics23Test {
 	
 	// This test checks if the compiler checks topic dependencies of reference attributes.
 	@Ignore
+	@Test
 	public void topics_ChecksTopicDependenciesOfRefAttrs_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -116,6 +117,7 @@ public class Topics23Test {
 	
 	// This test checks if the compiler accepts unqualified class references in a extended topic to classes in a base topic.
 	@Ignore
+	@Test
 	public void topics_ClassRefInExtendedBaseTopic() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

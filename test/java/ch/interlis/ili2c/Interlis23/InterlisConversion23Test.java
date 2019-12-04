@@ -37,6 +37,7 @@ public class InterlisConversion23Test {
 	
 	// This test checks the conversion of INTERLIS-2 datatypes to INTERLIS-2
 	@Ignore
+	@Test
 	public void iliconversion_CheckConversionOfIli2ToIli2() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -105,6 +106,7 @@ public class InterlisConversion23Test {
 	
 	// This test checks the generation of the predefined base INTERLIS schema in INTERLIS 2
 	@Ignore
+	@Test
 	public void iliconversion_ili1SchemaToili2() { // 07000181 TODO ili file not found.
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -122,6 +124,7 @@ public class InterlisConversion23Test {
 	
 	// This test checks the generation of an INTERLIS-2 schema for a simple INTERLIS-1 schema
 	@Ignore
+	@Test
 	public void iliconversion_Ili1SchemaToIli2Schema_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

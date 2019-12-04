@@ -19,6 +19,7 @@ public class View23Test {
 	
 	// This test checks if the compiler accepts a view basename in the EQUAL part of an Aggregation View.
 	@Ignore
+	@Test
 	public void view_ViewBasenameEQUALAggregationView() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -184,6 +185,7 @@ public class View23Test {
 	
 	// This test checks if the compiler accepts a basic aggregation definition.
 	@Ignore
+	@Test
 	public void view_AcceptBasicAggregationDef() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -218,6 +220,7 @@ public class View23Test {
 	
 	// This test checks if the compiler accepts a basic inspection definition of a geometry type.
 	@Ignore
+	@Test
 	public void view_AcceptBasicInspectionDefOfGeoType() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -303,6 +306,7 @@ public class View23Test {
 	
 	// This test checks if the compiler detects an abstract attribute in an concret view definition.
 	@Ignore
+	@Test
 	public void abstractView_DetectAbstractAllOfAttrInConcreteViewDef_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -324,6 +328,7 @@ public class View23Test {
 	
 	// This test checks if the compiler detects an abstract attribute in an concret view definition.
 	@Ignore
+	@Test
 	public void abstractView_DetectAbstractAttrInConcretViewDef_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

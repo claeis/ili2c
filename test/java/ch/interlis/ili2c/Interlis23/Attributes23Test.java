@@ -160,6 +160,7 @@ public class Attributes23Test {
 	
 	// This test checks if the compiler accepts a reference attribute to ANYCLASS.
 	@Ignore
+	@Test
 	public void attributeRef_RefAttrToAnyClass() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -236,6 +237,7 @@ public class Attributes23Test {
 	
 	// This test checks if the compiler accepts an AttriutePathType with a ClassType restriction
 	@Ignore
+	@Test
 	public void attributePathType_ClassTypeRestriction() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -291,6 +293,7 @@ public class Attributes23Test {
 	
 	// This test checks if the compiler detects an extended attribute with a different type.
 	@Ignore
+	@Test
 	public void attributePathType_ExtendedAttributeWithADifferentType_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -329,6 +332,7 @@ public class Attributes23Test {
 	
 	// This test checks if the compiler accepts an extended attribute with the same enumeration domain.
 	@Ignore
+	@Test
 	public void attributeSpecialized_ExtendedAttrWithSameEnumDomain_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

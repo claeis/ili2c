@@ -69,6 +69,7 @@ public class Association23Test {
 	
 	// This test checks if the compiler accepts a role that references ANYCLASS with restriction.
 	@Ignore
+	@Test
 	public void association_RefAnyClassWithRestriction() throws Exception {
 		Configuration ili2cConfig=new Configuration();
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"association_RefAnyClassWithRestriction.ili", FileEntryKind.ILIMODELFILE);
@@ -192,6 +193,7 @@ public class Association23Test {
 	
 	// This test checks if the compiler accepts a derived association definition.
 	@Ignore
+	@Test
 	public void association_DerivedAssociationDef() throws Exception {
 		Configuration ili2cConfig=new Configuration();
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"association_DerivedAssociationDef.ili", FileEntryKind.ILIMODELFILE);
@@ -230,6 +232,7 @@ public class Association23Test {
 	// This test checks if the compiler detects a role name that is,
 	// as part of the namespace formed by the source class, in conflict with an other role name.
 	@Ignore
+	@Test
 	public void association_RoleNamePartOfNamespace_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -329,6 +332,7 @@ public class Association23Test {
 	
 	// This test checks if the compiler detects abstract role in a concrete association.
 	@Ignore
+	@Test
 	public void association_AbstractRoleInConcreteAsso_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -470,6 +474,7 @@ public class Association23Test {
 	
 	// This test checks if the compiler detects an illegal role definition (starting with a ':').
 	@Ignore
+	@Test
 	public void association_IllegalRoleDefinition_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -542,6 +547,7 @@ public class Association23Test {
 	// This test checks if the compiler detects a role name that is,
 	// as part of the namespace formed by the source class, in conflict with an other EXTERNAL role name.
 	@Ignore
+	@Test
 	public void association_ConflictOfExternalRoleName_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -563,6 +569,7 @@ public class Association23Test {
 	
 	// This test checks if the compiler accepts a role with more than one target class.
 	@Ignore
+	@Test
 	public void association_RoleWithMoreThanOneTargetClass_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

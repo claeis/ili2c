@@ -17,6 +17,7 @@ public class InterlisManual22Test {
 	
 	// Appendix C (Roads example) from the INTERLIS reference manual
 	@Ignore
+	@Test
 	public void appendixC_RefRoad() {
 		final String APPENDIX="appendixc/";
 		LogCollector errs=new LogCollector();
@@ -60,6 +61,7 @@ public class InterlisManual22Test {
 	
 	// Appendix H (Time) from the INTERLIS reference manual
 	@Ignore
+	@Test
 	public void appendixH_Time() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -94,6 +96,7 @@ public class InterlisManual22Test {
 	
 	// Appendix K (Symbology) from the INTERLIS reference manual
 	@Ignore
+	@Test
 	public void appendixK_StandardSymbology() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -111,6 +114,7 @@ public class InterlisManual22Test {
 	
 	// Appendix J (CoordSys) from the INTERLIS reference manual
 	@Ignore
+	@Test
 	public void appendixJ_CoordSysEx() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

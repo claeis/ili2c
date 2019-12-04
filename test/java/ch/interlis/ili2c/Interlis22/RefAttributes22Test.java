@@ -133,6 +133,7 @@ public class RefAttributes22Test {
 	
 	// This test checks that a class that extends INTERLIS.REFSYSTEM is defined in a REFSYSTEM MODEL
 	@Ignore
+	@Test
 	public void checkExtIliREFSYSTEMIsDefined_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -340,6 +341,7 @@ public class RefAttributes22Test {
 	
 	// This test checks if the compiler accepts a PARENT path element of an inspection of a sub-substructure.
 	@Ignore
+	@Test
 	public void acceptPARENTEleOfInspectionSubStruct() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -357,6 +359,7 @@ public class RefAttributes22Test {
 	
 	// This test checks if the compiler detects a PARENT path element in a non inspection view.
 	@Ignore
+	@Test
 	public void detectPARENTEleInNonInspectionView_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

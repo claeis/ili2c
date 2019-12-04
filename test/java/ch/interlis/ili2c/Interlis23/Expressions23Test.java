@@ -116,6 +116,7 @@ public class Expressions23Test {
 	
 	// This test checks if the compiler detects a PARENT path element in a non inspection view.
 	@Ignore
+	@Test
 	public void expressions_ParentPathInNonInspectionView_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -137,6 +138,7 @@ public class Expressions23Test {
 	
 	// This test checks if the compiler accepts a PARENT path element of an inspection of a sub-substructure.
 	@Ignore
+	@Test
 	public void expressions_ParentPathEleOfSubStruct() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -239,6 +241,7 @@ public class Expressions23Test {
 	
 	// This test checks if the compiler detects a role name element from a class that may point to multiple objects.
 	@Ignore
+	@Test
 	public void expressions_DetectRoleToMultiObjects_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -277,6 +280,7 @@ public class Expressions23Test {
 	
 	// This test checks if the compiler detects an association path that may point to multiple objects.
 	@Ignore
+	@Test
 	public void expressions_DetectAssocPathToMultiObjects_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

@@ -41,6 +41,7 @@ public class MainRule23Test {
 	
 	// This test check if the compiler detects an illegal INTERLIS version.
 	@Ignore
+	@Test
 	public void mainRules_IllegalIliVersion() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

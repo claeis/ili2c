@@ -18,6 +18,7 @@ public class Basket23Test {
 
 	// This test checks if the compiler detects a BASKET domain with multiple basket kinds.
 	@Ignore
+	@Test
 	public void basket_MultipleBasketKinds_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -41,6 +42,7 @@ public class Basket23Test {
 	
 	// This test checks if the compiler accepts a BASKET domain without basket kind.
 	@Ignore
+	@Test
 	public void basket_BasketDomainWithoutBasketKind() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);

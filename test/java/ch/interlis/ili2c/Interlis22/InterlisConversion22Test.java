@@ -35,6 +35,7 @@ public class InterlisConversion22Test {
 	
 	// This test checks the generation of an INTERLIS-2 schema for a simple INTERLIS-1 schema
 	@Ignore
+	@Test
 	public void generateIli1ToIli2Schema_Fail() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
@@ -122,6 +123,7 @@ public class InterlisConversion22Test {
 	
 	// This test checks the conversion of INTERLIS-2 datatypes to INTERLIS-2
 	@Ignore
+	@Test
 	public void conversionOfIli2ToIli2Datatypes() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
