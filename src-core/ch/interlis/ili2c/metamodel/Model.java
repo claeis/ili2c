@@ -584,7 +584,7 @@ public void setXmlns(String xmlns) {
 	            return;
 			}
 			linkTranslationOf(baseModel);
-			checkTranslationOf(errs);
+			checkTranslationOf(errs,getName(),baseModel.getName());
 		}
 		
 	}
@@ -651,10 +651,10 @@ public void setXmlns(String xmlns) {
     }
 	
     @Override
-    public void checkTranslationOf(List<Ili2cSemanticException> errs)
+    public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
       throws java.lang.IllegalStateException
     {
-        super.checkTranslationOf(errs);
+        super.checkTranslationOf(errs,name,baseName);
         Model baseElement=(Model)getTranslationOf();
         if(baseElement==null) {
             return;

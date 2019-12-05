@@ -136,16 +136,16 @@ public class ReferenceType extends Type
   }
 
   @Override
-  protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
   {
-      super.checkTranslationOf(errs);
+      super.checkTranslationOf(errs,name,baseName);
       ReferenceType baseElement=(ReferenceType)getTranslationOf();
       if(baseElement==null) {
           return;
       }
 
       if(isExternal()!=baseElement.isExternal()) {
-          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInExternal",getScopedName(),baseElement.getScopedName())));
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInExternal",name,baseName)));
       }
       
       Ili2cSemanticException err=null;

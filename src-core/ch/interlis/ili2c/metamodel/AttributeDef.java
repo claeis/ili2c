@@ -727,9 +727,9 @@ public abstract class AttributeDef
 	    
   	}
     @Override
-    protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+    protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
     {
-        super.checkTranslationOf(errs);
+        super.checkTranslationOf(errs,name,baseName);
         Type type=getDomain();
         if(type==null){
             return; // FIXME type should not be null; fix in parser/viewAttributes() (near attrib.setTypeProxy(true))
@@ -761,9 +761,9 @@ public abstract class AttributeDef
             }
         }
         try {
-            type.checkTranslationOf(errs);
+            type.checkTranslationOf(errs,getScopedName(),baseElement.getScopedName());
         }catch(Ili2cSemanticException ex) {
-            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName())));
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),baseElement.getScopedName())));
         }
     }
 }

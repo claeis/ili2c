@@ -949,7 +949,7 @@ public void setDocumentation(String string) {
   	    }
   		this.baseLanguageElement=baseElement;
   	}
-    protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+    protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
     {
     }
 

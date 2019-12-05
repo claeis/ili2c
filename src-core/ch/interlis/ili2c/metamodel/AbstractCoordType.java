@@ -137,9 +137,9 @@ public abstract class AbstractCoordType extends BaseType
     return fine;
   }
   @Override
-  protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
   {
-      super.checkTranslationOf(errs);
+      super.checkTranslationOf(errs,name,baseName);
       AbstractCoordType origin=(AbstractCoordType)getTranslationOf();
       if(origin==null) {
           return;
@@ -160,7 +160,7 @@ public abstract class AbstractCoordType extends BaseType
           throw new Ili2cSemanticException();
       }
       for(NumericalType dim:dimensions) {
-          dim.checkTranslationOf(errs);
+          dim.checkTranslationOf(errs,name,baseName);
       }
   }
 

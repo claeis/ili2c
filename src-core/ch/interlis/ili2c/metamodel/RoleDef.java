@@ -368,5 +368,85 @@ public String toString ()
 
   return cont.getScopedName(null) + ":" + getName();
 }
+@Override
+protected void linkTranslationOf(Element baseElement)
+{
+    super.linkTranslationOf(baseElement);
+
+    Iterator<ReferenceType> depIt=iteratorReference();
+    Iterator<ReferenceType> baseDepIt=((RoleDef)baseElement).iteratorReference();
+    while(true) {
+        if(!depIt.hasNext() || !baseDepIt.hasNext()) {
+            break;
+        }
+        ReferenceType dep=depIt.next();
+        ReferenceType baseDep=baseDepIt.next();
+        dep.linkTranslationOf(baseDep);
+    }
+    
+}
+@Override
+public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+  throws java.lang.IllegalStateException
+{
+    super.checkTranslationOf(errs,name,baseName);
+    RoleDef baseElement=(RoleDef)getTranslationOf();
+    if(baseElement==null) {
+        return;
+    }
+    if(isAbstract()!=baseElement.isAbstract()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInAbstractness",getScopedName(),baseElement.getScopedName())));
+    }
+    if(isFinal()!=baseElement.isFinal()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInFinality",getScopedName(),baseElement.getScopedName())));
+    }
+    Ili2cSemanticException err=null;
+    err=checkElementRef(getExtending(),baseElement.getExtending(),getSourceLine(),"err_diff_baseRoleMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+    if(isHiding()!=baseElement.isHiding()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInHiding",getScopedName(),baseElement.getScopedName())));
+    }
+    if(isOrdered()!=baseElement.isOrdered()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInOrdered",getScopedName(),baseElement.getScopedName())));
+    }
+    if(getKind()!=baseElement.getKind()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_roleKindMismatch",getScopedName(),baseElement.getScopedName())));
+    }
+    Cardinality card=getDefinedCardinality();
+    Cardinality baseCard=baseElement.getDefinedCardinality();
+    if(card!=null && baseCard!=null) {
+        if(card.equals(baseCard)) {
+            // ok
+        }else {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_cardinalityMismatch")));
+        }
+    }else {
+        if(card==null && baseCard==null) {
+            // ok
+        }else {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_cardinalityMismatch")));
+        }
+    }
+    Iterator<ReferenceType> depIt=iteratorReference();
+    Iterator<ReferenceType> baseDepIt=baseElement.iteratorReference();
+    while(true) {
+        if(!depIt.hasNext() || !baseDepIt.hasNext()) {
+            if(depIt.hasNext()!=baseDepIt.hasNext()) {
+                errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_referencedClassMismatch")));
+            }
+            break;
+        }
+        ReferenceType dep=depIt.next();
+        ReferenceType baseDep=baseDepIt.next();
+        dep.checkTranslationOf(errs,getScopedName(),baseElement.getScopedName());
+    }
+    
+    err=Evaluable.checkTranslation(getDerivedFrom(),baseElement.getDerivedFrom(),getSourceLine(),"err_diff_derviedFromMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+}
 
 }

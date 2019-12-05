@@ -6390,12 +6390,29 @@ protected property [int acceptable, int encountered]
                                t.getLine());
             }
 	|	"OID"     
-		{ // TODO property OID
-		mod=ch.interlis.ili2c.metamodel.Properties.eOID;
-		}
+            {
+              if ((acceptable & ch.interlis.ili2c.metamodel.Properties.eOID) == 0)
+                reportError(rsrc.getString ("err_cantBeOid"),
+                            t.getLine());
+               else
+                 mod = ch.interlis.ili2c.metamodel.Properties.eOID;
+
+              if ((encountered & mod) != 0)
+                reportWarning (rsrc.getString("err_multipleOid"),
+                               t.getLine());
+            }
 	|	"HIDING"
-		{ // TODO property HIDING
-		}
+            {
+              if ((acceptable & ch.interlis.ili2c.metamodel.Properties.eHIDING) == 0)
+                reportError(rsrc.getString ("err_cantBeHiding"),
+                            t.getLine());
+               else
+                 mod = ch.interlis.ili2c.metamodel.Properties.eHIDING;
+
+              if ((encountered & mod) != 0)
+                reportWarning (rsrc.getString("err_multipleHiding"),
+                               t.getLine());
+            }
 	;
 
 

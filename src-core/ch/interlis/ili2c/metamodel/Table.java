@@ -583,10 +583,10 @@ public class Table extends AbstractClassDef<AbstractLeafElement>
 	}
 
 	@Override
-	public void checkTranslationOf(List<Ili2cSemanticException> errs)
+	public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
 	  throws java.lang.IllegalStateException
 	{
-	    super.checkTranslationOf(errs);
+	    super.checkTranslationOf(errs,name,baseName);
 	    Table baseElement=(Table)getTranslationOf();
 	    if(baseElement==null) {
 	        return;

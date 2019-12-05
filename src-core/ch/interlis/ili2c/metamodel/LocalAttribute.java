@@ -161,9 +161,9 @@ public class LocalAttribute extends AttributeDef
 	}
 
     @Override
-    protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+    protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
     {
-        super.checkTranslationOf(errs);
+        super.checkTranslationOf(errs,name,baseName);
         LocalAttribute baseElement=(LocalAttribute)getTranslationOf();
         if(baseElement==null) {
             return;

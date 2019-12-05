@@ -131,9 +131,9 @@ public void setNormalized(boolean b) {
         return (TextType) super.clone();
     }
     @Override
-    protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+    protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
     {
-        super.checkTranslationOf(errs);
+        super.checkTranslationOf(errs,name,baseName);
         TextType   originDef= (TextType) getTranslationOf();
         if(originDef==null) {
             return;

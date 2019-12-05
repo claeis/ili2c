@@ -208,9 +208,9 @@ public abstract class LineType extends Type
   }
 
   @Override
-  protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
   {
-      super.checkTranslationOf(errs);
+      super.checkTranslationOf(errs,name,baseName);
       LineType origin=(LineType)getTranslationOf();
       if(origin==null) {
           return;

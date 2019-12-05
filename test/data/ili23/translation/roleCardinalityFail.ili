@@ -1,0 +1,42 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	
+	TOPIC TopicA1 =
+	
+		CLASS ClassA0 =
+		END ClassA0;
+
+		CLASS ClassA1 =
+		END ClassA1;
+		
+		ASSOCIATION assocA1 =
+			a1_0 -- {1} ClassA0;
+			a1_1 -- {1..3} ClassA1;
+		END assocA1;
+
+	END TopicA1;
+
+END ModelA.
+
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+
+	TOPIC TopicB1 =
+	
+		CLASS ClassB0 =
+		END ClassB0;
+
+		CLASS ClassB1 =
+		END ClassB1;
+
+		ASSOCIATION assocB1 =
+			b1_0 -- {1} ClassB0;
+			b1_1 -- {1..4} ClassB1;
+		END assocB1;
+
+	END TopicB1;
+
+END ModelB.

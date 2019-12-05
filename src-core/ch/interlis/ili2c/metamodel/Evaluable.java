@@ -1,5 +1,7 @@
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
+
 public abstract class Evaluable
 {
   /** Checks whether it is possible to assign this Evaluable to
@@ -18,5 +20,17 @@ public abstract class Evaluable
   */
   void checkAssignment (Element target, Type targetType)
   {
+  }
+  public Ili2cSemanticException checkTranslation(Evaluable other)
+  {
+      return null;
+  }
+  static Ili2cSemanticException checkTranslation(Evaluable ele1, Evaluable ele2, int sourceLine, String msg) {
+      if(ele1==null && ele2==null) {
+          return null;
+      }else if(ele1==null || ele2==null) {
+          return new Ili2cSemanticException (sourceLine,Element.formatMessage(msg));
+      }
+      return ele1.checkTranslation(ele2);
   }
 }

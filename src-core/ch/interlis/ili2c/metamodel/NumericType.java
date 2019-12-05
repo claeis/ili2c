@@ -292,9 +292,9 @@ public class NumericType extends NumericalType
     checkCardinalityExtension(wantToExtend);
   }
   @Override
-  protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
   {
-      super.checkTranslationOf(errs);
+      super.checkTranslationOf(errs,name,baseName);
       NumericType   origin=(NumericType)getTranslationOf();
 
       if (origin == null){

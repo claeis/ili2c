@@ -125,9 +125,9 @@ public class CompositionType extends Type
     checkCardinalityExtension(general);
   }
   @Override
-  protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
   {
-      super.checkTranslationOf(errs);
+      super.checkTranslationOf(errs,name,baseName);
       CompositionType baseElement=(CompositionType)getTranslationOf();
       if(baseElement==null) {
           return;

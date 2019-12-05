@@ -327,10 +327,10 @@ private void checkIntegrityAbstract(List<Ili2cSemanticException> errs) {
     }
 }
 @Override
-public void checkTranslationOf(List<Ili2cSemanticException> errs)
+public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
   throws java.lang.IllegalStateException
 {
-    super.checkTranslationOf(errs);
+    super.checkTranslationOf(errs,name,baseName);
     Topic baseElement=(Topic)getTranslationOf();
     if(baseElement==null) {
         return;
