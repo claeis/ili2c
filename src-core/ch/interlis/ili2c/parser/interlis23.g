@@ -6392,29 +6392,29 @@ protected property [int acceptable, int encountered]
                 reportWarning (rsrc.getString("err_multipleTransient"),
                                t.getLine());
             }
-	|	"OID"     
+	|	oidTok:"OID"     
             {
               if ((acceptable & ch.interlis.ili2c.metamodel.Properties.eOID) == 0)
                 reportError(rsrc.getString ("err_cantBeOid"),
-                            t.getLine());
+                            oidTok.getLine());
                else
                  mod = ch.interlis.ili2c.metamodel.Properties.eOID;
 
               if ((encountered & mod) != 0)
                 reportWarning (rsrc.getString("err_multipleOid"),
-                               t.getLine());
+                               oidTok.getLine());
             }
-	|	"HIDING"
+	|	hidTok:"HIDING"
             {
               if ((acceptable & ch.interlis.ili2c.metamodel.Properties.eHIDING) == 0)
                 reportError(rsrc.getString ("err_cantBeHiding"),
-                            t.getLine());
+                            hidTok.getLine());
                else
                  mod = ch.interlis.ili2c.metamodel.Properties.eHIDING;
 
               if ((encountered & mod) != 0)
                 reportWarning (rsrc.getString("err_multipleHiding"),
-                               t.getLine());
+                               hidTok.getLine());
             }
 	;
 
