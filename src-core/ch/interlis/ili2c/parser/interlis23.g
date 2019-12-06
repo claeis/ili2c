@@ -3387,13 +3387,13 @@ protected unitDef[Container scope]
   Unit extending = null;
   Unit u = null;
   boolean _abstract = false;
-
+  int unitSourceLine=0;
   String docName = null, idName = null;
 	  String ilidoc=null;
 	  Settings metaValues=null;
 }
 	:	{ ilidoc=getIliDoc();metaValues=getMetaValues();}
-		n:NAME { docName = idName = n.getText(); }
+		n:NAME { docName = idName = n.getText(); unitSourceLine=n.getLine(); }
 			(	LBRACE idn:NAME RBRACE  {idName = idn.getText ();}
 			|	LPAREN "ABSTRACT" RPAREN {_abstract=true;}
 			|
@@ -3434,6 +3434,7 @@ protected unitDef[Container scope]
 
     {
       try {
+        u.setSourceLine(unitSourceLine);
       	u.setDocumentation(ilidoc);
 	u.setMetaValues(metaValues);
         scope.add(u);

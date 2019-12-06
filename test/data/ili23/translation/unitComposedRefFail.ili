@@ -1,0 +1,26 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	UNIT
+	   DomainA1 (ABSTRACT);
+	   DomainA2 [A2] EXTENDS DomainA1;
+	   DomainA4 = 1000 [A2];
+	   DomainA5 = FUNCTION // tests // [A2];
+	   DomainA6 = (A2/ DomainA5);
+
+END ModelA.
+
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+
+	UNIT
+	   DomainB1 (ABSTRACT);
+	   DomainB2 [B2] EXTENDS DomainB1;
+	   DomainB4 = 1000 [B2];
+	   DomainB5 = FUNCTION // tests // [B2];
+	   DomainB6 = (DomainB4/ DomainB5);
+
+END ModelB.

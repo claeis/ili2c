@@ -11,6 +11,8 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
+
 /** ComposedUnit is a class for composed Interlis units, for
     example <code>m/s</code>.
 
@@ -241,4 +243,31 @@ public class ComposedUnit extends Unit
 
     super.setAbstract (abst);
   }
+  @Override
+  public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+    throws java.lang.IllegalStateException
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      ComposedUnit baseElement=(ComposedUnit)getTranslationOf();
+      if(baseElement==null) {
+          return;
+      }
+      Ili2cSemanticException err=null;
+      if(composedUnits.length!=baseElement.composedUnits.length) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchUnitDef",getScopedName(),baseElement.getScopedName())));
+      }else {
+          for(int i=0;i<composedUnits.length;i++) {
+              if(i>0) {
+                 if(composedUnits[i].compositionOperator!=baseElement.composedUnits[i].compositionOperator) {
+                     errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchUnitDef",getScopedName(),baseElement.getScopedName())));
+                 }
+              }
+              if(composedUnits[i].unit.getTranslationOfOrSame()!=baseElement.composedUnits[i].unit.getTranslationOfOrSame()) {
+                  errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchUnitDef",getScopedName(),baseElement.getScopedName())));
+              }
+          }
+          
+      }
+  }
 }
+

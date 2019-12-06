@@ -11,6 +11,8 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
+
 /** A NumericallyDerivedUnit defines a unit by multiplication with
     or division by a constant numeric factor, for example
     <code>km = m * 1000</code>.
@@ -123,4 +125,29 @@ public class NumericallyDerivedUnit extends DerivedUnit
   {
     return conversionFactors;
   }
+  @Override
+  public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+    throws java.lang.IllegalStateException
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      NumericallyDerivedUnit baseElement=(NumericallyDerivedUnit)getTranslationOf();
+      if(baseElement==null) {
+          return;
+      }
+      Ili2cSemanticException err=null;
+      if(getConversionFactors().length!=baseElement.getConversionFactors().length) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchUnitDef",getScopedName(),baseElement.getScopedName())));
+      }else {
+          for(int i=0;i<getConversionFactors().length;i++) {
+              if(i>0) {
+                 if(conversionFactors[i].conversionOperator!=baseElement.conversionFactors[i].conversionOperator) {
+                     errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchUnitDef",getScopedName(),baseElement.getScopedName())));
+                 }
+              }
+              if(!PrecisionDecimal.equals(conversionFactors[i].conversionFactor,baseElement.conversionFactors[i].conversionFactor)) {
+                  errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchUnitDef",getScopedName(),baseElement.getScopedName())));
+              }
+          }
+      }
+  }  
 }

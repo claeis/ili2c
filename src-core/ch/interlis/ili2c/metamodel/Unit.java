@@ -305,4 +305,29 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
     _final = newValue;
     firePropertyChange("final", oldValue, newValue);
   }
+  @Override
+  public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+    throws java.lang.IllegalStateException
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      Unit baseElement=(Unit)getTranslationOf();
+      if(baseElement==null) {
+          return;
+      }
+      if(!getClass().equals(baseElement.getClass())) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchUnitDef",getScopedName(),baseElement.getScopedName())));
+          return;
+      }
+      if(isAbstract()!=baseElement.isAbstract()) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInAbstractness",getScopedName(),baseElement.getScopedName())));
+      }
+      if(isFinal()!=baseElement.isFinal()) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInFinality",getScopedName(),baseElement.getScopedName())));
+      }
+      Ili2cSemanticException err=null;
+      err=checkElementRef(getExtending(),baseElement.getExtending(),getSourceLine(),"err_diff_baseUnitMismatch");
+      if(err!=null) {
+          errs.add(err);
+      }
+  }
 }

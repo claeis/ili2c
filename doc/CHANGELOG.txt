@@ -12,6 +12,7 @@ LATEST
 - fix validation of AttributeDef translation (#13)
 - fix validation of DomainDef translation (#13)
 - fix validation of RoleDef translation (#13)
+- fix validation of UnitDef translation (#13)
 - fix extended RoleDef
 
 ili2c 5.0.3 (2019-11-08)
