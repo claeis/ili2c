@@ -1696,6 +1696,8 @@ protected restrictedClassOrAssRef[Container scope]
 		}
 	}
 	)
+	{ rt.setSourceLine(refto);
+	}
     	("RESTRICTION" LPAREN restrictedTo=classOrAssociationRef[scope]
 			{ rt.addRestrictedTo(restrictedTo); }
 		(SEMI restrictedTo=classOrAssociationRef[scope]
