@@ -2111,6 +2111,7 @@ protected domainDef[Container container]
 		dd.setName (n.getText());
 		dd.setDocumentation(ilidoc);
 		dd.setMetaValues(metaValues);
+		dd.setSourceLine(n.getLine());
 		try {
 		  if ((mods & ch.interlis.ili2c.metamodel.Properties.eABSTRACT) != 0)
 		    dd.setAbstract (true);
