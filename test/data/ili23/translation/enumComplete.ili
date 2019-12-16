@@ -13,6 +13,9 @@ MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
 			attrA3 : (a1,a2(a21,a22)) CIRCULAR;
 			attrA4 : (a1,a2(a21,a22):FINAL);
 			attrA5: ALL OF domainA1;
+			attrA6: HALIGNMENT;
+			attrA7: VALIGNMENT;
+			attrA8: BOOLEAN;
 		END ClassA1;
 
 		CLASS ClassA2 EXTENDS ClassA1=
@@ -40,6 +43,9 @@ TRANSLATION OF ModelA [ "1"]
 			attrB3 : (b1,b2(b21,b22)) CIRCULAR;
 			attrB4 : (b1,b2(b21,b22):FINAL);
 			attrB5: ALL OF domainB1;
+			attrB6: HALIGNMENT;
+			attrB7: VALIGNMENT;
+			attrB8: BOOLEAN;
 		END ClassB1;
 
 		CLASS ClassB2 EXTENDS ClassB1=
