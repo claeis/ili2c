@@ -713,7 +713,14 @@ public abstract class AttributeDef
 		}
 		return false;
 	}
-	
+	  @Override
+	    public void setSourceLine(int sourceLine) {
+	        super.setSourceLine(sourceLine);
+	        if(domain!=null){
+	            domain.setSourceLine(sourceLine);
+	        }
+	    }
+
 	@Override
   	protected void linkTranslationOf(Element baseElement)
   	{
@@ -723,8 +730,9 @@ public abstract class AttributeDef
 			return; // FIXME type should not be null; fix in parser/viewAttributes() (near attrib.setTypeProxy(true))
 		}
 		Type baseType=((AttributeDef) baseElement).getDomain();
-		type.linkTranslationOf(baseType);
-	    
+		if(type.getClass().equals(baseType.getClass())) {
+	        type.linkTranslationOf(baseType);
+		}
   	}
     @Override
     protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
@@ -749,9 +757,9 @@ public abstract class AttributeDef
         }
         
         
-        Type baseType=((AttributeDef) baseElement).getDomain();
+        Type baseType=baseElement.getDomain();
         if(type.getClass()!=baseType.getClass()){
-            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName())));
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),baseElement.getScopedName())));
             return;
         }
         if (type instanceof TypeAlias){

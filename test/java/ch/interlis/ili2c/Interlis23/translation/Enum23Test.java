@@ -18,12 +18,13 @@ import ch.interlis.ili2c.metamodel.Table;
 import ch.interlis.ili2c.metamodel.Topic;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 
-public class Translation23Test {
-
+public class Enum23Test {
     @Test
-    public void simpleOk() throws Exception {
+    public void enumComplete() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
         Configuration ili2cConfig=new Configuration();
-        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/simpleOk.ili", FileEntryKind.ILIMODELFILE);
+        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/enumComplete.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
         TransferDescription td=null;
         try{
@@ -32,36 +33,14 @@ public class Translation23Test {
             
         }
         assertNotNull(td);
-        Model modelA=(Model) td.getElement(Model.class, "ModelA");
-        assertNotNull(modelA);
-        Topic topicA=(Topic) modelA.getElement(Topic.class, "TopicA");
-        assertNotNull(topicA);
-        Table classA=(Table) topicA.getElement(Table.class, "ClassA");
-        assertNotNull(classA);
-        AttributeDef attrA=(AttributeDef) classA.getElement(AttributeDef.class, "attrA");
-        assertNotNull(attrA);
-        
-        Model modelB=(Model) td.getElement(Model.class, "ModelB");
-        assertNotNull(modelB);
-        Topic topicB=(Topic) modelB.getElement(Topic.class, "TopicB");
-        assertNotNull(topicB);
-        Table classB=(Table) topicB.getElement(Table.class, "ClassB");
-        assertNotNull(classB);
-        AttributeDef attrB=(AttributeDef) classB.getElement(AttributeDef.class, "attrB");
-        assertNotNull(attrB);
-
-
-        assertEquals(modelA,modelB.getTranslationOf());
-        assertEquals(topicA,topicB.getTranslationOf());
-        assertEquals(classA,classB.getTranslationOf());
-        assertEquals(attrA,attrB.getTranslationOf());
+        assertEquals(0,errs.getErrs().size());
     }
     @Test
-    public void topicCountLessFail() throws Exception {
+    public void enumFlatFail() throws Exception {
         LogCollector errs=new LogCollector();
         EhiLogger.getInstance().addListener(errs);
         Configuration ili2cConfig=new Configuration();
-        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/topicCountLessFail.ili", FileEntryKind.ILIMODELFILE);
+        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/enumFlatFail.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
         TransferDescription td=null;
         try{
@@ -73,11 +52,11 @@ public class Translation23Test {
         assertEquals(1,errs.getErrs().size());
     }
     @Test
-    public void topicCountMoreFail() throws Exception {
+    public void enumSubEnumFail() throws Exception {
         LogCollector errs=new LogCollector();
         EhiLogger.getInstance().addListener(errs);
         Configuration ili2cConfig=new Configuration();
-        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/topicCountMoreFail.ili", FileEntryKind.ILIMODELFILE);
+        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/enumSubEnumFail.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
         TransferDescription td=null;
         try{
@@ -89,11 +68,11 @@ public class Translation23Test {
         assertEquals(1,errs.getErrs().size());
     }
     @Test
-    public void attrCountLessFail() throws Exception {
+    public void enumOrderedFail() throws Exception {
         LogCollector errs=new LogCollector();
         EhiLogger.getInstance().addListener(errs);
         Configuration ili2cConfig=new Configuration();
-        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/attrCountLessFail.ili", FileEntryKind.ILIMODELFILE);
+        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/enumOrderedFail.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
         TransferDescription td=null;
         try{
@@ -105,11 +84,11 @@ public class Translation23Test {
         assertEquals(1,errs.getErrs().size());
     }
     @Test
-    public void attrCountMoreFail() throws Exception {
+    public void enumCircularFail() throws Exception {
         LogCollector errs=new LogCollector();
         EhiLogger.getInstance().addListener(errs);
         Configuration ili2cConfig=new Configuration();
-        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/attrCountMoreFail.ili", FileEntryKind.ILIMODELFILE);
+        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/enumCircularFail.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
         TransferDescription td=null;
         try{
@@ -121,27 +100,11 @@ public class Translation23Test {
         assertEquals(1,errs.getErrs().size());
     }
     @Test
-    public void attrTypeFail() throws Exception {
+    public void enumFinalFail() throws Exception {
         LogCollector errs=new LogCollector();
         EhiLogger.getInstance().addListener(errs);
         Configuration ili2cConfig=new Configuration();
-        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/attrTypeFail.ili", FileEntryKind.ILIMODELFILE);
-        ili2cConfig.addFileEntry(fileEntry);
-        TransferDescription td=null;
-        try{
-            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-        }catch(Ili2cFailure ex){
-            
-        }
-        assertNull(td);
-        assertEquals(10,errs.getErrs().size());
-    }
-    @Test
-    public void attrDomainRefFail() throws Exception {
-        LogCollector errs=new LogCollector();
-        EhiLogger.getInstance().addListener(errs);
-        Configuration ili2cConfig=new Configuration();
-        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/attrDomainRefFail.ili", FileEntryKind.ILIMODELFILE);
+        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/enumFinalFail.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
         TransferDescription td=null;
         try{
@@ -153,9 +116,11 @@ public class Translation23Test {
         assertEquals(1,errs.getErrs().size());
     }
     @Test
-    public void enumOk() throws Exception {
+    public void enumExtendedFinalFail() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
         Configuration ili2cConfig=new Configuration();
-        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/enumOk.ili", FileEntryKind.ILIMODELFILE);
+        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/enumExtendedFinalFail.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
         TransferDescription td=null;
         try{
@@ -163,34 +128,39 @@ public class Translation23Test {
         }catch(Ili2cFailure ex){
             
         }
-        assertNotNull(td);
-        Model modelA=(Model) td.getElement(Model.class, "ModelA");
-        assertNotNull(modelA);
-        Topic topicA=(Topic) modelA.getElement(Topic.class, "TopicA");
-        assertNotNull(topicA);
-        Table classA=(Table) topicA.getElement(Table.class, "ClassA");
-        assertNotNull(classA);
-        AttributeDef attrA=(AttributeDef) classA.getElement(AttributeDef.class, "attrA");
-        assertNotNull(attrA);
-        EnumerationType typeA=(EnumerationType) attrA.getDomain();
-        
-        Model modelB=(Model) td.getElement(Model.class, "ModelB");
-        assertNotNull(modelB);
-        Topic topicB=(Topic) modelB.getElement(Topic.class, "TopicB");
-        assertNotNull(topicB);
-        Table classB=(Table) topicB.getElement(Table.class, "ClassB");
-        assertNotNull(classB);
-        AttributeDef attrB=(AttributeDef) classB.getElement(AttributeDef.class, "attrB");
-        assertNotNull(attrB);
-        EnumerationType typeB=(EnumerationType) attrB.getDomain();
-
-
-        assertEquals(modelA,modelB.getTranslationOf());
-        assertEquals(topicA,topicB.getTranslationOf());
-        assertEquals(classA,classB.getTranslationOf());
-        assertEquals(attrA,attrB.getTranslationOf());
-        assertEquals(typeA.getEnumeration().getElement(0),typeB.getEnumeration().getElement(0).getTranslationOf());
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
     }
-
-
+    @Test
+    public void enumAllOfFail() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/enumAllOfFail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+            
+        }
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+    }
+    @Test
+    public void enumAllOfRefFail() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/enumAllOfRefFail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+            
+        }
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+    }
 }

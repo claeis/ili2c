@@ -1,0 +1,33 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC TopicA =
+		DOMAIN	
+			domainA1 = (a1,a2(a21,a22));
+
+		CLASS ClassA1 =
+			attrA5: ALL OF domainA1;
+		END ClassA1;
+
+	END TopicA;
+
+END ModelA.
+
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+
+	TOPIC TopicB =
+
+		DOMAIN
+			domainB1 = (b1,b2(b21,b22));
+			
+		CLASS ClassB1 =
+			attrB5: (b1,b2(b21,b22));
+		END ClassB1;
+
+	END TopicB;
+
+END ModelB.

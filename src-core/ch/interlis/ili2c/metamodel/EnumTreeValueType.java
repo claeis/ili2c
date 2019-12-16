@@ -1,5 +1,6 @@
 package ch.interlis.ili2c.metamodel;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 
@@ -49,4 +50,17 @@ public void setEnumType(Domain domain) {
 	      return ret;
 	}
 
+    protected void checkTranslationOf(List<Ili2cSemanticException> errs, String name, String baseName) {
+        super.checkTranslationOf(errs, name, baseName);
+        EnumTreeValueType baseElement = (EnumTreeValueType) getTranslationOf();
+        if (baseElement == null) {
+            return;
+        }
+        Ili2cSemanticException err=null;
+        err=checkElementRef(enumType, baseElement.enumType, getSourceLine(), "err_diff_baseDomainMismatch");
+        if(err!=null) {
+            errs.add(err);
+        }
+
+    }
 }
