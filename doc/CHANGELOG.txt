@@ -17,6 +17,7 @@ LATEST
 - fix validation of EnumerationType, EnumTreeValueType translation (#13)
 - fix validation of AlignmentType, BooleanType translation (#13)
 - fix validation of NumericType translation (#13)
+- fix validation of FormattedType translation (#13)
 - fix extended RoleDef
 
 ili2c 5.0.3 (2019-11-08)

@@ -499,6 +499,13 @@ public class Domain extends AbstractLeafElement
 	    if(err!=null) {
 	        errs.add(err);
 	    }
+	    Type type=getType();
+        try {
+            type.checkTranslationOf(errs,getScopedName(),baseElement.getScopedName());
+        }catch(Ili2cSemanticException ex) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_domainType",getScopedName(),baseElement.getScopedName())));
+        }
+	    
 	}
 
 
