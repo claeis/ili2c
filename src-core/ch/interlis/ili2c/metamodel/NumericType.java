@@ -307,20 +307,10 @@ public class NumericType extends NumericalType
       if (!PrecisionDecimal.equals(maximum,origin.maximum)) {
           throw new Ili2cSemanticException();
       }
-
-      if(this.unit == origin.unit) {
-          // ok
-      }else {
-          if(this.unit==null || origin.unit==null) {
+      if (!isAbstract()) {
+          if(minimum.getAccuracy()!=origin.minimum.getAccuracy()) {
               throw new Ili2cSemanticException();
           }
-          if(unit.getTranslationOfOrSame()!=origin.unit.getTranslationOfOrSame()) {
-              throw new Ili2cSemanticException();
-          }
-      }
-
-      if(getRotation()!=origin.getRotation()){
-          throw new Ili2cSemanticException();
       }
   }
 

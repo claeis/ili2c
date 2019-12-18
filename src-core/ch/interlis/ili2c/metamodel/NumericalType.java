@@ -9,6 +9,9 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
+
+import ch.interlis.ili2c.metamodel.RefSystemRef.CoordSystemAxis;
 
 /** An abstract superclass that groups together the structured and the
     non-structured numeric types.
@@ -168,5 +171,81 @@ public abstract class NumericalType extends BaseType
     fireVetoableChange ("rotation", new Integer (oldValue), new Integer (newValue));
     this.rotation = rotation;
     firePropertyChange ("rotation", new Integer (oldValue), new Integer (newValue));
+  }
+  @Override
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      NumericalType   origin=(NumericalType)getTranslationOf();
+
+      if (origin == null){
+          return;
+      }
+
+      if(this.unit == origin.unit) {
+          // ok
+      }else {
+          if(this.unit==null || origin.unit==null) {
+              throw new Ili2cSemanticException();
+          }
+          if(unit.getTranslationOfOrSame()!=origin.unit.getTranslationOfOrSame()) {
+              throw new Ili2cSemanticException();
+          }
+      }
+
+      if(getRotation()!=origin.getRotation()){
+          throw new Ili2cSemanticException();
+      }
+      if(isCircular()!=origin.isCircular()){
+          throw new Ili2cSemanticException();
+      }
+      RefSystemRef refSys = getReferenceSystem();
+      RefSystemRef originRefSys = origin.getReferenceSystem();
+      if(refSys==null && originRefSys==null) {
+          // equal, ok
+      }else {
+          if(refSys==null || originRefSys==null) {
+              // not equal
+              throw new Ili2cSemanticException();
+          }else {
+              if(!refSys.getClass().equals(originRefSys.getClass())){
+                  throw new Ili2cSemanticException();
+              }
+              if(refSys instanceof RefSystemRef.CoordDomain) {
+                  if(!Element.equalElementRef(((RefSystemRef.CoordDomain) refSys).getReferredDomain(), ((RefSystemRef.CoordDomain) originRefSys).getReferredDomain())) {
+                      throw new Ili2cSemanticException();
+                  }
+              }else if(refSys instanceof RefSystemRef.CoordDomainAxis) {
+                  if(!Element.equalElementRef(((RefSystemRef.CoordDomainAxis) refSys).getReferredDomain(), ((RefSystemRef.CoordDomainAxis) originRefSys).getReferredDomain())) {
+                      throw new Ili2cSemanticException();
+                  }
+                  if(((RefSystemRef.CoordDomainAxis) refSys).getAxisNumber()!= ((RefSystemRef.CoordDomainAxis) originRefSys).getAxisNumber()) {
+                      throw new Ili2cSemanticException();
+                  }
+              }else if(refSys instanceof RefSystemRef.CoordSystem) {
+                  MetaObject metaObj = ((RefSystemRef.CoordSystem) refSys).getSystem();
+                  MetaObject originMetaObj = ((RefSystemRef.CoordSystem) originRefSys).getSystem();
+                  if(!Element.equalElementRef(metaObj.getTable(),originMetaObj.getTable())) {
+                      throw new Ili2cSemanticException();
+                  }
+                  if(!metaObj.getName().equals(originMetaObj.getName())) {
+                      throw new Ili2cSemanticException();
+                  }
+              }else if(refSys instanceof RefSystemRef.CoordSystemAxis) {
+                  MetaObject metaObj = ((RefSystemRef.CoordSystemAxis) refSys).getSystem();
+                  MetaObject originMetaObj = ((RefSystemRef.CoordSystemAxis) originRefSys).getSystem();
+                  if(!Element.equalElementRef(metaObj.getTable(),originMetaObj.getTable())) {
+                      throw new Ili2cSemanticException();
+                  }
+                  if(!metaObj.getName().equals(originMetaObj.getName())) {
+                      throw new Ili2cSemanticException();
+                  }
+                  if(((RefSystemRef.CoordSystemAxis) refSys).getAxisNumber()!= ((RefSystemRef.CoordSystemAxis) originRefSys).getAxisNumber()) {
+                      throw new Ili2cSemanticException();
+                  }
+              }
+              
+          }
+      }
   }
 }

@@ -75,13 +75,19 @@ public abstract class Element implements BeanContextChild,ElementAlias {
     }
   }
   static Ili2cSemanticException checkElementRef(Element ele1, Element ele2, int sourceLine, String msg) {
-      if(ele1==null && ele2==null) {
-      }else if(ele1==null || ele2==null) {
-          return new Ili2cSemanticException (sourceLine,formatMessage(msg));
-      }else if(ele1.getTranslationOfOrSame()!=ele2.getTranslationOfOrSame()) {
+      if(!equalElementRef(ele1,ele2)) {
           return new Ili2cSemanticException (sourceLine,formatMessage(msg));
       }
       return null;
+  }
+  static boolean equalElementRef(Element ele1, Element ele2) {
+      if(ele1==null && ele2==null) {
+      }else if(ele1==null || ele2==null) {
+          return false;
+      }else if(ele1.getTranslationOfOrSame()!=ele2.getTranslationOfOrSame()) {
+          return false;
+      }
+      return true;
   }
 
 
