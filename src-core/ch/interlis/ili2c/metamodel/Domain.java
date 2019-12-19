@@ -502,6 +502,20 @@ public class Domain extends AbstractLeafElement
 	    Type type=getType();
         try {
             type.checkTranslationOf(errs,getScopedName(),baseElement.getScopedName());
+            if(type instanceof AbstractCoordType) {
+                String crs=((AbstractCoordType) type).getCrs(this);
+                String originCrs=((AbstractCoordType) baseElement.getType()).getCrs(baseElement);
+                if(crs==null && originCrs==null) {
+                    
+                }else {
+                    if(crs==null || originCrs==null) {
+                        throw new Ili2cSemanticException();
+                    }
+                    if(!crs.equals(originCrs)) {
+                        throw new Ili2cSemanticException();
+                    }
+                }
+            }
         }catch(Ili2cSemanticException ex) {
             errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_domainType",getScopedName(),baseElement.getScopedName())));
         }

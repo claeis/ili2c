@@ -150,8 +150,16 @@ public abstract class AbstractCoordType extends BaseType
       if(piHalfAxis!=origin.piHalfAxis) {
           throw new Ili2cSemanticException();
       }
-      if(crs!=origin.crs) {
-          throw new Ili2cSemanticException();
+      if(crs==null && origin.crs==null) {
+          
+      }else {
+          if(crs==null || origin.crs==null) {
+              throw new Ili2cSemanticException();
+          }
+          if(!crs.equals(origin.crs)) {
+              throw new Ili2cSemanticException();
+          }
+          
       }
       if(_generic!=origin._generic) {
           throw new Ili2cSemanticException();
@@ -163,7 +171,18 @@ public abstract class AbstractCoordType extends BaseType
           dim.checkTranslationOf(errs,name,baseName);
       }
   }
-
+  @Override
+  protected void linkTranslationOf(Element baseElement)
+  {
+      super.linkTranslationOf(baseElement);
+      if(dimensions.length==((AbstractCoordType)baseElement).dimensions.length) {
+          for(int dimi=0;dimi<dimensions.length;dimi++) {
+              NumericalType dim=dimensions[dimi];
+              NumericalType baseDim=((AbstractCoordType)baseElement).dimensions[dimi];
+              dim.linkTranslationOf(baseDim);
+          }
+      }
+  }
 
     public AbstractCoordType clone() {
         return (AbstractCoordType) super.clone();
