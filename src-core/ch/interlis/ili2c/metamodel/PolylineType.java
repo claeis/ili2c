@@ -11,6 +11,7 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
 
 /** The type which is represented in INTERLIS using the keywords
     <code>DIRECTED POLYLINE</code> and <code>POLYLINE</code>.
@@ -157,5 +158,17 @@ public class PolylineType extends LineType
       implicitLineGeometry.add(lineGeometry_segments);
     }
     return implicitLineGeometry;
+  }
+  @Override
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      PolylineType origin=(PolylineType)getTranslationOf();
+      if(origin==null) {
+          return;
+      }
+      if(isDirected()!=origin.isDirected()) {
+          throw new Ili2cSemanticException();
+      }
   }
 }

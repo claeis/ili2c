@@ -9,6 +9,10 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /** An abstract class that groups the INTERLIS line types such as
@@ -16,7 +20,15 @@ import java.util.List;
 */
 public abstract class LineType extends Type
 {
-  protected PrecisionDecimal    maxOverlap = null;
+  private final class LineFormComparator implements Comparator<LineForm> {
+        @Override
+        public int compare(LineForm o1, LineForm o2) {
+            o1=(LineForm) o1.getTranslationOfOrSame();
+            o2=(LineForm) o2.getTranslationOfOrSame();
+            return o1.getScopedName().compareTo(o2.getScopedName());
+        }
+    }
+protected PrecisionDecimal    maxOverlap = null;
   protected LineForm[] lineForms = new LineForm[0];
   protected Domain controlPointDomain = null;
 
@@ -227,8 +239,17 @@ public abstract class LineType extends Type
           if(lineForms.length!=origin.lineForms.length) {
               throw new Ili2cSemanticException();
           }
+          ArrayList<LineForm> lf=new ArrayList<LineForm>(lineForms.length);
+          Collections.addAll(lf, lineForms);
+          ArrayList<LineForm> originLf=new ArrayList<LineForm>(origin.lineForms.length);
+          Collections.addAll(originLf, origin.lineForms);
+          Collections.sort(lf,new LineFormComparator());
+          Collections.sort(originLf,new LineFormComparator());
           for(int i=0;i<lineForms.length;i++) {
-              if(lineForms[i]!=origin.lineForms[i]) {
+              if(!Element.equalElementRef(lf.get(i),originLf.get(i))) {
+                  throw new Ili2cSemanticException();
+              }
+              if(!Element.equalElementRef(lf.get(i).getSegmentStructure(),originLf.get(i).getSegmentStructure())) {
                   throw new Ili2cSemanticException();
               }
           }

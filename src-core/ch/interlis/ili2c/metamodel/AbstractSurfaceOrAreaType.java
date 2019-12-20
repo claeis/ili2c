@@ -12,6 +12,7 @@
 package ch.interlis.ili2c.metamodel;
 
 import java.beans.PropertyVetoException;
+import java.util.List;
 
 
 /** An abstract class that groups SurfaceType and AreaType, because these
@@ -233,5 +234,17 @@ public abstract class AbstractSurfaceOrAreaType extends LineType
           shouldExtend.toString ()));
       }
     }
+  }
+  @Override
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      AbstractSurfaceOrAreaType origin=(AbstractSurfaceOrAreaType)getTranslationOf();
+      if(origin==null) {
+          return;
+      }
+      if(!Element.equalElementRef(getLineAttributeStructure(), origin.getLineAttributeStructure())) {
+          throw new Ili2cSemanticException();
+      }
   }
 }
