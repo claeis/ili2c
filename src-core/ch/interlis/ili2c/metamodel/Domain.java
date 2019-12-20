@@ -491,9 +491,10 @@ public class Domain extends AbstractLeafElement
 	    if(isFinal()!=baseElement.isFinal()) {
 	        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInFinality",getScopedName(),baseElement.getScopedName())));
 	    }
-        if(isDefinedMandatory()!=baseElement.isDefinedMandatory()) {
+        /* do not validate MANDATORY here, because it is propagated to the type and validated there
+         * if(isDefinedMandatory()!=baseElement.isDefinedMandatory()) {
             errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInMandatory",getScopedName(),baseElement.getScopedName())));
-        }
+        }*/
 	    Ili2cSemanticException err=null;
 	    err=checkElementRef(getExtending(),baseElement.getExtending(),getSourceLine(),"err_diff_baseDomainMismatch");
 	    if(err!=null) {
