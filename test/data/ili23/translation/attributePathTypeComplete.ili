@@ -1,0 +1,37 @@
+INTERLIS 2.3;
+
+CONTRACTED MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	
+	TOPIC TopicA =
+		
+		CLASS ClassA =
+			attrA1 : ATTRIBUTE;
+			attrA2 : ATTRIBUTE RESTRICTION (TEXT*10);
+			attrA3 : CLASS;
+			attrA4 : ATTRIBUTE OF attrA3;
+		END ClassA;
+
+	END TopicA;
+
+	FUNCTION funcA (argA1: OBJECTS OF ANYCLASS; argA2: ATTRIBUTE OF @ argA1): BOOLEAN;
+
+END ModelA.
+
+CONTRACTED MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+
+	TOPIC TopicB =
+
+		CLASS ClassB =
+			attrB1 : ATTRIBUTE;
+			attrB2 : ATTRIBUTE RESTRICTION (TEXT*10);
+			attrB3 : CLASS;
+			attrB4 : ATTRIBUTE OF attrB3;
+		END ClassB;
+
+	END TopicB;
+	
+	FUNCTION funcB (argB1: OBJECTS OF ANYCLASS; argB2: ATTRIBUTE OF @ argB1): BOOLEAN;
+
+END ModelB.

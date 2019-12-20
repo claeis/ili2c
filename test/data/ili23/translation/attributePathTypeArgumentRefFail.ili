@@ -1,0 +1,15 @@
+INTERLIS 2.3;
+
+CONTRACTED MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	
+	FUNCTION funcA (argA0: OBJECTS OF ANYCLASS; argA1: OBJECTS OF ANYCLASS; argA2: ATTRIBUTE OF @ argA0): BOOLEAN;
+
+END ModelA.
+
+CONTRACTED MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+
+	FUNCTION funcB (argB0: OBJECTS OF ANYCLASS;argB1: OBJECTS OF ANYCLASS; argB2: ATTRIBUTE OF @ argB1): BOOLEAN;
+
+END ModelB.

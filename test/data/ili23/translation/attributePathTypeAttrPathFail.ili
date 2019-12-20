@@ -1,0 +1,31 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	
+	TOPIC TopicA =
+		
+		CLASS ClassA =
+			attrA2 : CLASS;
+			attrA3 : CLASS;
+			attrA4 : ATTRIBUTE OF attrA2;
+		END ClassA;
+
+	END TopicA;
+
+END ModelA.
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+
+	TOPIC TopicB =
+
+		CLASS ClassB =
+			attrB2 : CLASS;
+			attrB3 : CLASS;
+			attrB4 : ATTRIBUTE OF attrB3;
+		END ClassB;
+
+	END TopicB;
+	
+END ModelB.
