@@ -20,6 +20,7 @@ LATEST
 - fix validation of FormattedType translation (#13)
 - fix validation of CoordType translation (#13)
 - fix validation of LineType translation (#13)
+- fix validation of OIDType translation (#13)
 - fix extended RoleDef
 
 ili2c 5.0.3 (2019-11-08)
