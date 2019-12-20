@@ -358,17 +358,17 @@ public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,Str
     if(err!=null) {
         errs.add(err);
     }
-    Iterator<Topic> depIt=getDependentOn();
-    Iterator<Topic> baseDepIt=baseElement.getDependentOn();
-    while(true) {
-        if(!depIt.hasNext() || !baseDepIt.hasNext()) {
-            if(depIt.hasNext()!=baseDepIt.hasNext()) {
-                errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_dependencyTopicMismatch")));
-            }
-            break;
-        }
-        Topic dep=depIt.next();
-        Topic baseDep=baseDepIt.next();
+    if(dependsOn.size()!=baseElement.dependsOn.size()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_dependencyTopicMismatch")));
+    }
+    ArrayList<Topic> depTopics=new ArrayList<Topic>(dependsOn);
+    Collections.sort(depTopics,new TranslatedElementNameComparator());
+    ArrayList<Topic> baseDepTopics=new ArrayList<Topic>(baseElement.dependsOn);
+    Collections.sort(baseDepTopics,new TranslatedElementNameComparator());
+
+    for(int depi=0;depi<depTopics.size();depi++) {
+        Topic dep=depTopics.get(depi);
+        Topic baseDep=baseDepTopics.get(depi);
         err=checkElementRef(dep,baseDep,getSourceLine(),"err_diff_dependencyTopicMismatch");
         if(err!=null) {
             errs.add(err);

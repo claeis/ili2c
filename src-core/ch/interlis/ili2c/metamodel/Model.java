@@ -672,9 +672,16 @@ public void setXmlns(String xmlns) {
         if(imps.length!=baseImps.length) {
             errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_importsMismatch")));
         }else {
+            ArrayList<Model> impModels=new ArrayList<Model>(imps.length);
+            Collections.addAll(impModels, imps);
+            Collections.sort(impModels,new TranslatedElementNameComparator());
+            ArrayList<Model> baseimpModels=new ArrayList<Model>(baseImps.length);
+            Collections.addAll(baseimpModels, baseImps);
+            Collections.sort(baseimpModels,new TranslatedElementNameComparator());
+            
             for(int impi=0;impi<imps.length;impi++) {
-                Model imp=imps[impi];
-                Model baseImp=baseImps[impi];
+                Model imp=impModels.get(impi);
+                Model baseImp=baseimpModels.get(impi);
                 err=checkElementRef(imp,baseImp,getSourceLine(),"err_diff_importsMismatch");
                 if(err!=null) {
                     errs.add(err);
