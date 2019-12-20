@@ -121,22 +121,6 @@ public class Translation23Test {
         assertEquals(1,errs.getErrs().size());
     }
     @Test
-    public void attrTypeFail() throws Exception {
-        LogCollector errs=new LogCollector();
-        EhiLogger.getInstance().addListener(errs);
-        Configuration ili2cConfig=new Configuration();
-        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/attrTypeFail.ili", FileEntryKind.ILIMODELFILE);
-        ili2cConfig.addFileEntry(fileEntry);
-        TransferDescription td=null;
-        try{
-            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-        }catch(Ili2cFailure ex){
-            
-        }
-        assertNull(td);
-        assertEquals(10,errs.getErrs().size());
-    }
-    @Test
     public void attrDomainRefFail() throws Exception {
         LogCollector errs=new LogCollector();
         EhiLogger.getInstance().addListener(errs);
