@@ -11,6 +11,7 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
 
 /** An attribute whose type is neither relational nor composed, but
     stored locally.
@@ -159,4 +160,19 @@ public class LocalAttribute extends AttributeDef
 		this.typeProxy = typeProxy;
 	}
 
+    @Override
+    protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+    {
+        super.checkTranslationOf(errs,name,baseName);
+        LocalAttribute baseElement=(LocalAttribute)getTranslationOf();
+        if(baseElement==null) {
+            return;
+        }
+        if(isSubdivision()!=baseElement.isSubdivision()) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInSubdivision",getScopedName(),baseElement.getScopedName())));
+        }
+        if(isContinuous()!=baseElement.isContinuous()) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInContinuous",getScopedName(),baseElement.getScopedName())));
+        }
+    }
 }

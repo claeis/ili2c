@@ -1,5 +1,6 @@
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
 
 public class AttributePathType extends BaseType {
 
@@ -65,5 +66,58 @@ public class AttributePathType extends BaseType {
     public AttributePathType clone() {
         return (AttributePathType) super.clone();
     }
-
+    @Override
+    protected void linkTranslationOf(Element baseElement)
+    {
+        super.linkTranslationOf(baseElement);
+        AttributePathType originElement=(AttributePathType)baseElement;
+        if(typeRestrictions!=null && originElement.typeRestrictions!=null) {
+            for(int i=0;i<typeRestrictions.length;i++) {
+                Type type=typeRestrictions[i];
+                if(i<originElement.typeRestrictions.length) {
+                    Type originType=originElement.typeRestrictions[i];
+                    if(originType.getClass().equals(type.getClass())) {
+                        type.linkTranslationOf(originType);
+                    }
+                }
+            }
+        }
+        if(argRestriction!=null && originElement.argRestriction!=null) {
+            argRestriction.linkTranslationOf(originElement.argRestriction);
+        }
+    }    
+    @Override
+    public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+    {
+        super.checkTranslationOf(errs,name,baseName);
+        AttributePathType baseElement=(AttributePathType)getTranslationOf();
+        if(baseElement==null) {
+            return;
+        }
+        if(typeRestrictions==null && baseElement.typeRestrictions==null) {
+        }else {
+            if(typeRestrictions==null || baseElement.typeRestrictions==null) {
+                throw new Ili2cSemanticException();
+            }
+            if(typeRestrictions.length!=baseElement.typeRestrictions.length) {
+                throw new Ili2cSemanticException();
+            }
+            for(int i=0;i<typeRestrictions.length;i++) {
+                Type type=typeRestrictions[i];
+                Type originType=baseElement.typeRestrictions[i];
+                if(!originType.getClass().equals(type.getClass())) {
+                    throw new Ili2cSemanticException();
+                }
+                type.checkTranslationOf(errs, name, baseName);
+            }
+        }
+        if(argRestriction==null && baseElement.argRestriction==null) {
+            
+        }else {
+            if(argRestriction==null || baseElement.argRestriction==null) {
+                throw new Ili2cSemanticException();
+            }
+            argRestriction.checkTranslationOf(errs, name, baseName);
+        }
+    }
 }

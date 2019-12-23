@@ -1,0 +1,53 @@
+INTERLIS 2.3;
+
+MODEL Model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC Topic=
+
+		DOMAIN 
+			Lkoord = COORD 1.00 .. 9.99 [INTERLIS.m],
+				100.0 .. 999.9 [INTERLIS.m],
+				ROTATION 2 -> 1;
+	       	STRUCTURE linattr =
+			attr : TEXT*30;
+		END linattr;
+		
+		CLASS Class =
+		   !! TextType
+		   text : TEXT*10;
+		   !! EnumerationType
+		   aufzaehlung : (null, eins, zwei, drei, mehr ( vier, fuenf, sechs, sieben, acht ,neun, zehn)); !! == zwei Stellen
+		   !! AlignmentType
+		   horizAlignment : HALIGNMENT;
+		   vertAlignment : VALIGNMENT;
+		   !! BooleanType
+		   boolean : BOOLEAN;
+		   !! NumericType
+		   numDec : 0.0 .. 10.0;
+		   numInt : 0 .. 10;
+		   !! FormattedType
+		   datum : MANDATORY INTERLIS.XMLDate;
+		   datumf : MANDATORY FORMAT INTERLIS.XMLDate "2000-1-1" .. "2012-12-31";
+		   datumzeit : MANDATORY INTERLIS.XMLDateTime;
+		   datumzeitf : MANDATORY FORMAT INTERLIS.XMLDateTime  "2000-1-1T00:00:00" .. "2012-12-31T23:59:59";
+		   zeit : MANDATORY INTERLIS.XMLTime;
+		   zeitf : MANDATORY FORMAT INTERLIS.XMLTime "00:00:00" .. "23:59:59";
+		   !! CoordinateType
+		   coord : COORD 1.00 .. 9.99 [INTERLIS.m],
+				100.0 .. 999.9 [INTERLIS.m],
+				ROTATION 2 -> 1;
+		   !! OIDType
+		   oid : OID TEXT*30;
+		   !! BlackboxType
+		   basketBin : BLACKBOX BINARY;
+		   basketXml : BLACKBOX XML;
+		   !! ClassType
+		   class : CLASS;
+		   !! Linientyp
+		   linientyp : POLYLINE WITH (STRAIGHTS) VERTEX Lkoord;
+		   !! Flaechentyp
+		   surface : SURFACE WITH (STRAIGHTS,ARCS) VERTEX Lkoord;
+		   area : AREA WITH (STRAIGHTS,ARCS) VERTEX Lkoord WITHOUT OVERLAPS > 0.0
+					LINE ATTRIBUTES linattr;
+		END Class;
+	END Topic;
+END Model.

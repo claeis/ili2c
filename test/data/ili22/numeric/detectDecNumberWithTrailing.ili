@@ -1,0 +1,5 @@
+INTERLIS 2.2;
+	MODEL model =
+		DOMAIN
+			B = 0. .. 1.00;
+	END model.

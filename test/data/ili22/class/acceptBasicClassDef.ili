@@ -1,0 +1,8 @@
+INTERLIS 2.2;
+
+MODEL model =
+	TOPIC topic =
+		CLASS class =
+		END class;
+	END topic;
+END model.

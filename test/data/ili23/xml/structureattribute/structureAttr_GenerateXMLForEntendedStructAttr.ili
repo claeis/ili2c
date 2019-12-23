@@ -1,0 +1,31 @@
+INTERLIS 2.3;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC TopicA =
+
+    STRUCTURE StructA =
+    END StructA; 
+    STRUCTURE StructD =
+    END StructD; 
+
+    CLASS ClassA =
+      attrA : StructA;
+      attrB : MANDATORY StructA;
+      attrC : BAG {4..10} OF StructA;
+      attrD : StructD;
+    END ClassA; 
+
+    STRUCTURE StructAP EXTENDS StructA =
+    END StructAP; 
+
+  END TopicA;
+
+  TOPIC TopicB EXTENDS TopicA =
+
+    STRUCTURE StructBP EXTENDS StructA =
+    END StructBP; 
+
+  END TopicB;
+  
+END ModelA.

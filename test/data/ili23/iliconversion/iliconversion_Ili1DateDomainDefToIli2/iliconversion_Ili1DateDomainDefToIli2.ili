@@ -1,0 +1,13 @@
+TRANSFER Beispiel;
+
+MODEL model
+	TOPIC topic=
+	DOMAIN
+		Datum = DATE;
+	END topic.
+END model.
+
+FORMAT FREE;
+CODE BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+TID = ANY;
+END.

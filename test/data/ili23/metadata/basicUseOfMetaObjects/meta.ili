@@ -1,0 +1,11 @@
+INTERLIS 2.3;
+
+REFSYSTEM MODEL Meta AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC Refsystem =
+		CLASS Point EXTENDS INTERLIS.SCALSYSTEM =
+			PARAMETER
+				Unit (EXTENDED) : NUMERIC [INTERLIS.m] ;
+		END Point; 
+	END Refsystem;
+END Meta.

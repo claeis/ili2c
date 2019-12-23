@@ -135,4 +135,40 @@ public class ReferenceType extends Type
       return cloned;
   }
 
+  @Override
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      ReferenceType baseElement=(ReferenceType)getTranslationOf();
+      if(baseElement==null) {
+          return;
+      }
+
+      if(isExternal()!=baseElement.isExternal()) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInExternal",name,baseName)));
+      }
+      
+      Ili2cSemanticException err=null;
+      err=checkElementRef(getReferred(),baseElement.getReferred(),getSourceLine(),"err_diff_referencedClassMismatch");
+      if(err!=null) {
+          errs.add(err);
+      }
+      Iterator<AbstractClassDef> depIt=iteratorRestrictedTo();
+      Iterator<AbstractClassDef> baseDepIt=baseElement.iteratorRestrictedTo();
+      while(true) {
+          if(!depIt.hasNext() || !baseDepIt.hasNext()) {
+              if(depIt.hasNext()!=baseDepIt.hasNext()) {
+                  errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_referencedClassMismatch")));
+              }
+              break;
+          }
+          AbstractClassDef dep=depIt.next();
+          AbstractClassDef baseDep=baseDepIt.next();
+          err=checkElementRef(dep,baseDep,getSourceLine(),"err_diff_referencedClassMismatch");
+          if(err!=null) {
+              errs.add(err);
+          }
+      }
+      
+  }
 }

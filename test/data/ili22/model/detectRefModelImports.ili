@@ -1,0 +1,10 @@
+INTERLIS 2.2;
+	MODEL Meta =
+		TOPIC Refsystem =
+		END Refsystem;
+	END Meta.
+
+	MODEL model =
+		REFSYSTEM BASKET Basket ~ Meta.Refsystem; !! illegal; meta should be imported
+
+	END model.

@@ -1,0 +1,8 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic =
+		CLASS class =
+		END classx; !! illegal; same name required
+	END topic;
+END model.

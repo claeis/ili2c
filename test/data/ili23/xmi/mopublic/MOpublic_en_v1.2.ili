@@ -1,0 +1,537 @@
+INTERLIS 2.3;
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!
+!! MOpublic Model
+!! Datamodel of cadastral surveying, Federal level
+!! written in INTERLIS version 2 (SN 612031).
+!! 
+!! Swiss Federal Office of Topography swisstopo
+!! Federal Directorate of Cadastral Surveying
+!! CH-3084 Wabern
+!! www.cadastre.ch and www.interlis.ch
+!!
+!! Version: 1.2 english
+!! File name: MOpublic_en_v1.2.ili
+!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+MODEL MOpublic (en) AT "http://www.cadastre.ch"
+  VERSION "2010-04-01" =
+  
+  IMPORTS UNQUALIFIED INTERLIS;
+  IMPORTS CoordSys;
+  IMPORTS LookUp;
+
+  REFSYSTEM BASKET BCoordSys ~ CoordSys.CoordsysTopic
+  OBJECTS OF GeoCartesian2D : CHLV03
+  OBJECTS OF GeoHeight : SwissOrthometricAlt;
+
+    UNIT
+      Grads = 200.0 / PI [rad];
+      SquareMeters [m2] = (m * m);
+      
+    
+    DOMAIN
+      CoordP = COORD
+        480000.000 .. 850000.000 [m] {CHLV03[1]},
+         70000.000 .. 310000.000 [m] {CHLV03[2]},
+        ROTATION 2 -> 1;
+
+      CoordA = COORD
+        480000.000 .. 850000.000 [m] {CHLV03[1]},
+         70000.000 .. 310000.000 [m] {CHLV03[2]},
+          -200.000 ..   5000.000 [m] {SwissOrthometricAlt[1]},
+        ROTATION 2 -> 1;
+
+      Altitude = -200.000 .. 5000.000 [m];
+      
+      Rotation = 0.0 .. 399.9 [Grads];
+      
+      Accuracy = 0.0 .. 700.0;
+      
+      UUIDOID = OID TEXT*36;  !! of ISO 11578
+      
+
+    
+    TOPIC Control_points =
+    	
+    	BASKET OID AS UUIDOID;
+    	OID AS UUIDOID;
+
+      CLASS Control_point =
+        Category : MANDATORY 0..5; !! Designation under LookUp.Lookup_tables.Control_point_Category
+        IdentND : MANDATORY TEXT*12;
+        Number : MANDATORY TEXT*12;
+        Geometry : MANDATORY CoordP;
+        Plan_accuracy : Accuracy;
+        Geom_alt : Altitude;
+        Alt_accuracy : Accuracy;
+        Mark : MANDATORY 0..8; !! If the Mark is not defined, indicate Code 8 = undefined
+                               !! Designation under LookUp.Lookup_tables.Mark_type
+        FOSNr : 0 .. 9999;
+      UNIQUE IdentND, Number;
+      END Control_point;
+
+    END Control_points;
+
+
+    TOPIC Land_cover =
+    	
+    	BASKET OID AS UUIDOID;
+    	OID AS UUIDOID;
+
+      CLASS LCSurface =
+        Geometry : MANDATORY SURFACE WITH (STRAIGHTS, ARCS) VERTEX CoordP
+          WITHOUT OVERLAPS > 0.050;
+        Quality : MANDATORY 0..4; !! Designation under LookUp.Lookup_tables.QualityStandard_type 
+        Type : MANDATORY 0..25; !! Designation under LookUp.Lookup_tables.LCS_type
+        RegBL_EGID : 1 .. 999999999;
+        FOSNr :  0 .. 9999;
+      END LCSurface;
+
+      CLASS LCSurface_PosText =
+        Type : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Text_type 
+        Number_Name : MANDATORY TEXT*30;
+        Pos : CoordP;
+        Ori : Rotation;
+        FOSNr :  0 .. 9999;
+      END LCSurface_PosText;
+
+      ASSOCIATION LCSurface_PosTextPosText_of =
+        LCSurface_PosText -- {0..*} LCSurface_PosText;
+        PosText_of -<#> {1} LCSurface;
+      END LCSurface_PosTextPosText_of;
+
+      CLASS LCSurfaceProj =
+        Geometry : MANDATORY SURFACE WITH (STRAIGHTS, ARCS) VERTEX CoordP
+          WITHOUT OVERLAPS > 0.050;
+        Quality : MANDATORY 0..4; !! Designation under LookUp.Lookup_tables.QualityStandard_type
+        Type : MANDATORY 0..25; !! Designation under LookUp.Lookup_tables.LCS_type
+        RegBL_EGID : 1 .. 999999999;
+        FOSNr :  0 .. 9999;
+      END LCSurfaceProj;
+
+      CLASS LCSurfaceProj_PosText =
+        Type : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Text_type
+        Number_Name : MANDATORY TEXT*30;
+        Pos : CoordP;
+        Ori : Rotation;
+        FOSNr :  0 .. 9999;
+      END LCSurfaceProj_PosText;
+
+      ASSOCIATION LCSurfaceProj_PosTextPosText_of =
+        LCSurfaceProj_PosText -- {0..*} LCSurfaceProj_PosText;
+        PosText_of -<#> {1} LCSurfaceProj;
+      END LCSurfaceProj_PosTextPosText_of;
+
+    END Land_cover;
+
+
+    TOPIC Single_objects =
+    	
+    	BASKET OID AS UUIDOID;
+    	OID AS UUIDOID;
+
+      CLASS Surface_element =
+        Validity : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Validity_type
+        Type : MANDATORY 0..41; !! Designation under LookUp.Lookup_tables.SO_type
+        Geometry : MANDATORY SURFACE WITH (STRAIGHTS, ARCS) VERTEX CoordP
+          WITHOUT OVERLAPS > 0.050;
+        Quality : MANDATORY 0..4; !! Designation under LookUp.Lookup_tables.QualityStandard_type
+        RegBL_EGID : 1 .. 999999999;
+        FOSNr :  0 .. 9999;
+      END Surface_element;
+
+      CLASS Surface_element_PosText =
+        Type : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Text_type
+        Number_Name : MANDATORY TEXT*30;
+        Pos : CoordP;
+        Ori : Rotation;
+        FOSNr :  0 .. 9999;
+      END Surface_element_PosText;
+
+      ASSOCIATION Surface_element_PosTextPosText_of =
+        Surface_element_PosText -- {0..*} Surface_element_PosText;
+        PosText_of -<#> {1} Surface_element;
+      END Surface_element_PosTextPosText_of;
+
+      CLASS Linear_element =
+        Validity : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Validity_type
+        Type : MANDATORY 0..41; !! Designation under LookUp.Lookup_tables.SO_type
+        Geometry : MANDATORY POLYLINE WITH (STRAIGHTS, ARCS) VERTEX CoordP;
+        Quality : MANDATORY 0..4; !! Designation under LookUp.Lookup_tables.QualityStandard_type
+        FOSNr :  0 .. 9999;
+      END Linear_element;
+
+      CLASS Linear_element_PosText =
+        Type : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Text_type
+        Number_Name : MANDATORY TEXT*30;
+        Pos : CoordP;
+        Ori : Rotation;
+        FOSNr :  0 .. 9999;
+      END Linear_element_PosText;
+
+      ASSOCIATION Linear_element_PosTextPosText_of =
+        Linear_element_PosText -- {0..*} Linear_element_PosText;
+        PosText_of -<#> {1} Linear_element;
+      END Linear_element_PosTextPosText_of;
+
+      CLASS Point_element =
+        Validity : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Validity_type
+        Type : MANDATORY 0..41; !! Designation under LookUp.Lookup_tables.SO_type
+        Geometry : MANDATORY CoordP;
+        Quality : MANDATORY 0..4; !! Designation under LookUp.Lookup_tables.QualityStandard_type
+        Ori : MANDATORY Rotation;
+        FOSNr :  0 .. 9999;
+      END Point_element;
+
+      CLASS Point_element_PosText =
+        Type : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Text_type
+        Number_Name : MANDATORY TEXT*30;
+        Pos : CoordP;
+        Ori : Rotation;
+        FOSNr :  0 .. 9999;
+      END Point_element_PosText;
+
+      ASSOCIATION Point_element_PosTextPosText_of =
+        Point_element_PosText -- {0..*} Point_element_PosText;
+        PosText_of -<#> {1} Point_element;
+      END Point_element_PosTextPosText_of;
+
+    END Single_objects;
+
+
+    TOPIC Heights = 
+    	
+    	BASKET OID AS UUIDOID;
+    	OID AS UUIDOID;
+
+      CLASS Individual_point =
+        Geometry : MANDATORY CoordA;
+        UNIQUE Geometry;
+      END Individual_point;
+
+      CLASS Terrain_edge =
+        Geometry : MANDATORY POLYLINE WITH (STRAIGHTS) VERTEX CoordA;
+        Type : MANDATORY 0..2; !! Designation under LookUp.Lookup_tables.Terrain_edge_type
+      END Terrain_edge;
+
+      CLASS Cut_out_surface =
+        Geometry : MANDATORY SURFACE WITH (STRAIGHTS, ARCS) VERTEX CoordP;
+        Type : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Cut_out_surface_type
+      END Cut_out_surface;
+
+      CLASS Contour_line =
+        Geometry : MANDATORY POLYLINE WITH (STRAIGHTS, ARCS) VERTEX CoordA;
+        Altitude : MANDATORY Altitude;
+      END Contour_line;
+
+    END Heights;
+
+
+    TOPIC Local_names =
+    	BASKET OID AS UUIDOID;
+    	OID AS UUIDOID;
+
+      CLASS Names =
+        Category : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Local_names_type #0 or #1
+        Name : MANDATORY TEXT*40;
+        Geometry : MANDATORY SURFACE WITH (STRAIGHTS, ARCS) VERTEX CoordP
+          WITHOUT OVERLAPS > 0.200;
+        Type : TEXT*30;
+        FOSNr :  0 .. 9999;
+      END Names;
+
+      CLASS Names_PosName =
+        Category : MANDATORY 0..2; !! Designation under LookUp.Lookup_tables.Local_names_type #0, #1 or #2
+        Name : MANDATORY TEXT*40;
+        Pos : MANDATORY CoordP;
+        Ori : MANDATORY Rotation;
+        FOSNr :  0 .. 9999;
+      END Names_PosName;
+
+      ASSOCIATION Names_PosNamePosName_of =
+        Names_PosName -- {0..*} Names_PosName;
+        PosName_of -<#> {0..1} Names;
+      END Names_PosNamePosName_of;
+
+    END Local_names;
+
+    TOPIC Ownership =
+    	BASKET OID AS UUIDOID;
+    	OID AS UUIDOID;
+    	
+      CLASS Boundary_point =
+        Geometry : MANDATORY CoordP;
+        Validity : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Validity_type
+        Plan_accuracy : MANDATORY Accuracy;
+        Plan_reliability : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Reliability_type
+        Mark : MANDATORY 0..7; !! Designation under LookUp.Lookup_tables.Mark_type
+        FOSNr :  0 .. 9999;
+      END Boundary_point;
+
+      CLASS RealEstate =
+        IdentND : MANDATORY TEXT*12;
+        Number : MANDATORY TEXT*12;
+        EGRIS_EGRID : TEXT*14;
+        Completeness : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Completeness_type
+        Area : MANDATORY 1 .. 999999999 [m2];
+        Geometry : MANDATORY SURFACE WITH (STRAIGHTS, ARCS) VERTEX CoordP
+          WITHOUT OVERLAPS > 0.050;
+        FOSNr :  0 .. 9999;
+        UNIQUE IdentND, Number;
+      END RealEstate;
+
+      CLASS RealEstate_PosNumber =
+        IdentND : MANDATORY TEXT*12;
+        Number : MANDATORY TEXT*12;
+        Pos : MANDATORY CoordP;
+        Ori : MANDATORY Rotation;
+        FOSNr :  0 .. 9999;
+      END RealEstate_PosNumber;
+
+      ASSOCIATION RealEstate_PosNumberPosNumber_of =
+        RealEstate_PosNumber -- {1..*} RealEstate_PosNumber;
+        PosNumber_of -<#> {1} RealEstate;
+      END RealEstate_PosNumberPosNumber_of;
+
+      CLASS DPR_Mine =
+        IdentND : MANDATORY TEXT*12;
+        Number : MANDATORY TEXT*12;
+        EGRIS_EGRID : TEXT*14;
+        Completeness : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Completeness_type
+        RealEstate_Type : MANDATORY 0..4; !! Designation under LookUp.Lookup_tables.RealEstate_type
+        Area : MANDATORY 1 .. 999999999 [m2];
+        Geometry : MANDATORY SURFACE WITH (STRAIGHTS, ARCS) VERTEX CoordP
+          WITHOUT OVERLAPS > 0.050;
+        FOSNr :  0 .. 9999;
+        UNIQUE IdentND, Number;
+      END DPR_Mine;
+
+      CLASS DPR_Mine_PosNumber =
+        IdentND : MANDATORY TEXT*12;
+        Number : MANDATORY TEXT*12;
+        Pos : MANDATORY CoordP;
+        Ori : MANDATORY Rotation;
+        FOSNr :  0 .. 9999;
+      END DPR_Mine_PosNumber;
+
+      ASSOCIATION DPR_Mine_PosNumberPosNumber_of =
+        DPR_Mine_PosNumber -- {1..*} DPR_Mine_PosNumber;
+        PosNumber_of -<#>{1} DPR_Mine;
+      END DPR_Mine_PosNumberPosNumber_of;
+
+      CLASS RealEstateProj =
+        IdentND : MANDATORY TEXT*12;
+        Number : MANDATORY TEXT*12;
+        EGRIS_EGRID : TEXT*14;
+        Completeness : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Completeness_type
+        Area : MANDATORY 1 .. 999999999 [m2];
+        Geometry : MANDATORY SURFACE WITH (STRAIGHTS, ARCS) VERTEX CoordP
+          WITHOUT OVERLAPS > 0.050;
+        FOSNr :  0 .. 9999;
+      END RealEstateProj;
+
+      CLASS RealEstateProj_PosNumber =
+        IdentND : MANDATORY TEXT*12;
+        Number : MANDATORY TEXT*12;
+        Pos : MANDATORY CoordP;
+        Ori : MANDATORY Rotation;
+        FOSNr :  0 .. 9999;
+      END RealEstateProj_PosNumber;
+
+      ASSOCIATION RealEstateProj_PosNumberPosNumber_of =
+        RealEstateProj_PosNumber -- {1..*} RealEstateProj_PosNumber;
+        PosNumber_of -<#> {1} RealEstateProj;
+      END RealEstateProj_PosNumberPosNumber_of;
+
+      CLASS DPR_MineProj =
+        IdentND : MANDATORY TEXT*12;
+        Number : MANDATORY TEXT*12;
+        EGRIS_EGRID : TEXT*14;
+        Completeness : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Completeness_type
+        RealEstate_Type : MANDATORY 0..4; !! Designation under LookUp.Lookup_tables.RealEstate_type
+        Area : MANDATORY 1 .. 999999999 [m2];
+        Geometry : MANDATORY SURFACE WITH (STRAIGHTS, ARCS) VERTEX CoordP
+          WITHOUT OVERLAPS > 0.050;
+        FOSNr :  0 .. 9999;
+      END DPR_MineProj;
+
+      CLASS DPR_MineProj_PosNumber =
+        IdentND : MANDATORY TEXT*12;
+        Number : MANDATORY TEXT*12;
+        Pos : MANDATORY CoordP;
+        Ori : MANDATORY Rotation;
+        FOSNr :  0 .. 9999;
+      END DPR_MineProj_PosNumber;
+
+      ASSOCIATION DPR_MineProj_PosNumberPosNumber_of =
+        DPR_MineProj_PosNumber -- {1..*} DPR_MineProj_PosNumber;
+        PosNumber_of -<#> {1} DPR_MineProj;
+      END DPR_MineProj_PosNumberPosNumber_of;
+
+    END Ownership;
+
+
+    TOPIC Pipelines =
+    	
+    	BASKET OID AS UUIDOID;
+    	OID AS UUIDOID;
+
+      CLASS Surface_element =
+        Operating_company : MANDATORY TEXT*30;
+        Fluid : MANDATORY 0..2; !! Designation under LookUp.Lookup_tables.Fluid_type
+        Geometry : MANDATORY SURFACE WITH (STRAIGHTS, ARCS) VERTEX CoordP
+          WITHOUT OVERLAPS > 0.050;
+        Validity : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Validity_type
+        FOSNr :  0 .. 9999;
+      END Surface_element;
+
+      CLASS Surface_element_PosName =
+        Operating_company : MANDATORY TEXT*30;
+        Pos : MANDATORY CoordP;
+        Ori : MANDATORY Rotation;
+        FOSNr :  0 .. 9999;
+      END Surface_element_PosName;
+
+      ASSOCIATION Surface_element_PosNamePosName_of =
+        Surface_element_PosName -- {0..*} Surface_element_PosName;
+        PosName_of -<#> {1} Surface_element;
+      END Surface_element_PosNamePosName_of;
+
+      CLASS Linear_element =
+        Operating_company : MANDATORY TEXT*30;
+        Fluid : MANDATORY 0..2; !! Designation under LookUp.Lookup_tables.Fluid_type
+        Geometry : MANDATORY POLYLINE WITH (STRAIGHTS, ARCS) VERTEX CoordP;
+        Validity : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Validity_type
+        FOSNr :  0 .. 9999;
+      END Linear_element;
+
+      CLASS Linear_element_PosName =
+        Operating_company : MANDATORY TEXT*30;
+        Pos : MANDATORY CoordP;
+        Ori : MANDATORY Rotation;
+        FOSNr :  0 .. 9999;
+      END Linear_element_PosName;
+
+      ASSOCIATION Linear_element_PosNamePosName_of =
+        Linear_element_PosName -- {0..*} Linear_element_PosName;
+        PosName_of -<#> {1} Linear_element;
+      END Linear_element_PosNamePosName_of;
+
+      CLASS Point_element =
+        Operating_company : MANDATORY TEXT*30;
+        Fluid : MANDATORY 0..2; !! Designation under LookUp.Lookup_tables.Fluid_type
+        Geometry : MANDATORY CoordP;
+        Geom_alt : Altitude;
+        Ori : MANDATORY Rotation;
+        Validity : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Validity_type
+        FOSNr :  0 .. 9999;
+      END Point_element;
+
+    END Pipelines;
+
+
+    TOPIC Territorial_boundaries =
+    	
+    	BASKET OID AS UUIDOID;
+    	OID AS UUIDOID;
+
+      CLASS Boundary_terr_point =
+        Geometry : MANDATORY CoordP;
+        Validity : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Validity_type
+        Plan_accuracy : MANDATORY Accuracy;
+        Plan_reliability : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Reliability_type
+        Mark : MANDATORY 0..7; !! Designation under LookUp.Lookup_tables.Mark_type
+        FOSNr :  0 .. 9999;
+      END Boundary_terr_point;
+      
+      STRUCTURE Line_attribute =
+        Territorial_bound_Line_type : MANDATORY 0..3; !! Designation under LookUp.Lookup_tables.Territorial_bound_Line_type
+      END Line_attribute;
+
+      CLASS Municipal_boundary =
+        Name : MANDATORY TEXT*30;
+        Geometry : MANDATORY SURFACE WITH (STRAIGHTS, ARCS) VERTEX CoordP
+          WITHOUT OVERLAPS > 0.050
+          LINE ATTRIBUTES Line_attribute;
+        FOSNr :  0 .. 9999;
+      END Municipal_boundary;
+
+      CLASS Municipal_boundProj =
+        Name : MANDATORY TEXT*30;
+        Geometry : MANDATORY POLYLINE WITH (STRAIGHTS, ARCS) VERTEX CoordP
+          WITHOUT OVERLAPS > 0.050;
+        FOSNr :  0 .. 9999;
+      END Municipal_boundProj;
+
+      CLASS Other_territ_boundary =
+        Type : MANDATORY 0..2 ; !! Designation under LookUp.Lookup_tables.Other_territorial_bound_type
+        Geometry : MANDATORY POLYLINE WITH (STRAIGHTS, ARCS) VERTEX CoordP;
+        Bound_validity_Type : MANDATORY 0..3; !! Designation under LookUp.Lookup_tables.Bound_validity_type
+      END Other_territ_boundary;
+
+    END Territorial_boundaries;
+
+
+    TOPIC Building_addresses =
+    	
+    	BASKET OID AS UUIDOID;
+    	OID AS UUIDOID;
+    	
+     CLASS Street_name =
+        Street_name : MANDATORY TEXT*60;
+        Is_official_designation: MANDATORY BOOLEAN;
+        FOSNr :  0 .. 9999;
+      END Street_name;
+
+      CLASS Street_name_Pos =
+        Street_name : MANDATORY TEXT*60;
+        Pos : MANDATORY CoordP;
+        Ori : MANDATORY Rotation;
+        FOSNr :  0 .. 9999;
+      END Street_name_Pos;
+
+      ASSOCIATION Street_name_Pos_of =
+        Street_name_Pos -- {0..*} Street_name_Pos;
+        Street_name_of -<#>{1} Street_name;
+      END Street_name_Pos_of;
+
+      CLASS Building_entrance =
+        Validity : MANDATORY 0 .. 1; !! Designation under LookUp.Lookup_tables.Validity_type, only planned or valid object
+        Pos : MANDATORY CoordP;
+        Is_official_designation: MANDATORY BOOLEAN;
+        Level : -99 .. 99;
+        House_number : TEXT*12;
+        Name_of_house : TEXT*40;
+        RegBL_EGID : 1 .. 999999999;
+        RegBL_EDID : 0 .. 99;
+        Street_name : TEXT*60;
+        PostalCode : MANDATORY 1000 .. 9999;
+        Additional_number : MANDATORY 0 .. 99;
+        City : MANDATORY TEXT*40;
+        FOSNr :  0 .. 9999;
+      END Building_entrance;
+
+      CLASS Building_entrance_Pos =
+        Type : MANDATORY 0..1; !! Designation under LookUp.Lookup_tables.Text_type
+        Number_Name : MANDATORY TEXT*40;
+        Pos : MANDATORY CoordP;
+        Ori : MANDATORY Rotation;
+        FOSNr :  0 .. 9999;
+      END Building_entrance_Pos;
+
+      ASSOCIATION Building_entrance_PosPos_of =
+        House_entrance_Pos -- {0..*} Building_entrance_Pos;
+        Pos_of -<#> {1} Building_entrance;
+      END Building_entrance_PosPos_of;
+      
+      ASSOCIATION Street_name_House_entrance =
+        Street_of -<> {0..1} Street_name;
+        Entrance -- {0..*} Building_entrance;
+      END Street_name_House_entrance;
+
+    END Building_addresses;
+
+  END MOpublic.

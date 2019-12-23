@@ -1,0 +1,31 @@
+INTERLIS 2.3;
+
+MODEL ModelA0 (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC TopicA0 =
+
+	END TopicA0;
+END ModelA0.
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	IMPORTS ModelA0;
+	TOPIC TopicA1 =
+
+	END TopicA1;
+	TOPIC TopicA2 =
+		DEPENDS ON ModelA0.TopicA0,TopicA1;
+
+	END TopicA2;
+END ModelA.
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	IMPORTS ModelA0;
+	TOPIC TopicB1 =
+
+	END TopicB1;
+	TOPIC TopicB2 =
+		DEPENDS ON TopicB1,ModelA0.TopicA0;
+
+	END TopicB2;
+END ModelB.

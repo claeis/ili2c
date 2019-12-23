@@ -1,0 +1,22 @@
+INTERLIS 2.3;
+
+MODEL FunctionTest  AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"=
+
+
+  TOPIC TestTopic =
+
+    CLASS A =
+      Name: TEXT*2;
+    END A;
+
+    FUNCTION F2(O: OBJECT OF A): BOOLEAN;
+
+    CONSTRAINTS OF A =
+      MANDATORY CONSTRAINT
+        F2(THIS) == #true;
+    END;
+		
+  END TestTopic;
+
+END FunctionTest.
+

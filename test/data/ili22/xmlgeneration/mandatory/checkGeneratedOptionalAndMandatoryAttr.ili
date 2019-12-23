@@ -1,0 +1,16 @@
+INTERLIS 2.2;
+
+MODEL model =
+
+	TOPIC topic =
+
+  DOMAIN
+  
+    CLASS LandCover =
+	optAttr : BOOLEAN;
+	mandAttr : MANDATORY BOOLEAN;
+    END LandCover; 
+
+	END topic;
+
+END model.

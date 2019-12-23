@@ -1,0 +1,44 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC TopicA =
+
+		CLASS ClassA1 =
+		END ClassA1;
+		
+		CLASS ClassA2 EXTENDS ClassA1 =
+		END ClassA2;
+
+		CLASS ClassA3 EXTENDS ClassA2 =
+		END ClassA3;
+		
+		STRUCTURE StructA1 =
+			attrA10 : REFERENCE TO ClassA2;
+		END StructA1;
+
+	END TopicA;
+	
+END ModelA.
+
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	TOPIC TopicB =
+
+		CLASS ClassB1 =
+		END ClassB1;
+		
+		CLASS ClassB2 EXTENDS ClassB1 =
+		END ClassB2;
+
+		CLASS ClassB3 EXTENDS ClassB2 =
+		END ClassB3;
+		
+		STRUCTURE StructB1 =
+			attrB10 : REFERENCE TO ClassB3;
+		END StructB1;
+
+	END TopicB;
+
+END ModelB.

@@ -1,0 +1,38 @@
+INTERLIS 2.2;
+
+MODEL Model =
+
+	TOPIC TopicA =
+
+		CLASS a =
+		END a;
+
+	END TopicA;
+
+	TOPIC TopicC EXTENDS TopicA = 
+
+		STRUCTURE b =
+			a : REFERENCE TO a; !! ok
+		END b;
+
+	END TopicC;
+
+	TOPIC TopicB1 = 
+		DEPENDS ON TopicA;
+
+		STRUCTURE b =
+			a : REFERENCE TO (EXTERNAL) Model.TopicA.a; !! ok
+		END b;
+
+	END TopicB1;
+
+	TOPIC TopicB2 = 
+		DEPENDS ON TopicA;
+
+		STRUCTURE b =
+			a : REFERENCE TO Model.TopicA.a; !! requires EXTERNAL
+		END b;
+
+	END TopicB2;
+
+END Model.

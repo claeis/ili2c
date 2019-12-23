@@ -1,0 +1,25 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC basictopic =
+		CLASS A =
+		END A;
+
+	END basictopic;
+
+	TOPIC topic EXTENDS basictopic =
+		!! unqualified reference to A ok, because topic inherits all class names defined in basictopic
+		CLASS AA EXTENDS A =
+		END AA;
+	END topic;
+
+END model.
+MODEL model2AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"  =
+	IMPORTS model;
+	TOPIC topic EXTENDS model.basictopic =
+		!! unqualified reference to A ok, because topic inherits all class names defined in basictopic
+		CLASS AA EXTENDS A =
+		END AA;
+	END topic;
+
+END model2.

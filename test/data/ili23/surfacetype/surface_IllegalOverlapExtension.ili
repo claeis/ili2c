@@ -1,0 +1,26 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+  DOMAIN
+    Coord2 = COORD 470000.000 .. 840000.000,
+                     30000.000 .. 320000.000,
+                    ROTATION 2 -> 1;
+                    
+    Surface = SURFACE WITH (STRAIGHTS, ARCS) VERTEX Coord2
+						WITHOUT OVERLAPS > 0.001;
+    SurfaceB EXTENDS Surface = SURFACE WITHOUT OVERLAPS > 0.0005 ; !! ok
+    SurfaceC EXTENDS Surface = SURFACE WITHOUT OVERLAPS > 0.005 ; !! illegal
+                    
+	TOPIC topic =
+		CLASS ClassA  =
+			attr  : SURFACE WITH (STRAIGHTS, ARCS) VERTEX Coord2
+						WITHOUT OVERLAPS > 0.001;
+		END ClassA;
+		CLASS ClassB EXTENDS ClassA =
+			attr (EXTENDED) : SURFACE WITHOUT OVERLAPS > 0.0005 ; !! ok
+		END ClassB;
+		CLASS ClassC EXTENDS ClassA =
+			attr (EXTENDED) : SURFACE WITHOUT OVERLAPS > 0.005; !! illegal
+		END ClassC;
+	END topic;
+END model.

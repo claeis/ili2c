@@ -1,0 +1,11 @@
+INTERLIS 2.3;
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC Bodenbedeckung =
+		CLASS BoFlaechen =
+		END BoFlaechen;
+		
+		CLASS Gebaeude =
+		END Gebaeude;
+	END Bodenbedeckung;
+END ModelA.
+	

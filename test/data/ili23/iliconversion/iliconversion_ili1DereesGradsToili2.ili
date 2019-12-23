@@ -1,0 +1,14 @@
+TRANSFER Beispiel;
+MODEL Beispiel
+	TOPIC topic =
+		TABLE table =
+			a : GRADS 0.0 400.0;
+			b : DEGREES 0.00 360.00;
+			NO IDENT
+		END table;
+	END topic.
+END Beispiel.
+FORMAT FREE;
+CODE BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+TID = ANY;
+END.

@@ -1,0 +1,7 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	PARAMETER 
+		param : BOOLEAN;
+		param : TEXT*2; !! illegal; runtime parameter names should be unique
+END model.

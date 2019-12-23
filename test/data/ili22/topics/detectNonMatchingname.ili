@@ -1,0 +1,5 @@
+INTERLIS 2.2;
+	MODEL model =
+		TOPIC topic =
+		END topicx; !! illegal; should be the same name
+	END model.

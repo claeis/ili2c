@@ -1,0 +1,16 @@
+INTERLIS 2.3;
+
+MODEL ModelDef3 AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC TopicDef4 =
+
+    CLASS ClassDef6 =
+      attr1 : BOOLEAN;
+      attr2 : 1 .. 9999;
+      SET CONSTRAINT WHERE attr1 == #false: 
+        DEFINED (attr2);
+    END ClassDef6;
+
+  END TopicDef4;
+
+END ModelDef3.

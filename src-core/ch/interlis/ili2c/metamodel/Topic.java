@@ -249,11 +249,6 @@ public class Topic extends AbstractPatternDef<Element>
 
   boolean containsConcreteExtensionOfTable (Table abstractTable)
   {
-    if (!abstractTable.isAbstract()) {
-        throw new IllegalArgumentException ();
-    }
-
-
     Iterator<Element> iter = iterator();
     while (iter.hasNext())
     {
@@ -266,13 +261,6 @@ public class Topic extends AbstractPatternDef<Element>
         }
       }
     }
-
-
-    if (extending != null) {
-        return ((Topic) extending).containsConcreteExtensionOfTable (abstractTable);
-    }
-
-
     return false;
   }
   public void setViewTopic(boolean v)
@@ -307,4 +295,84 @@ public class Topic extends AbstractPatternDef<Element>
   {
       return deferredGenerics.toArray(new Domain[deferredGenerics.size()]);
   }
+
+
+
+@Override
+public void checkIntegrity(List<Ili2cSemanticException> errs) throws IllegalStateException {
+    super.checkIntegrity(errs);
+    checkIntegrityAbstract(errs);
+}
+
+
+
+private void checkIntegrityAbstract(List<Ili2cSemanticException> errs) {
+    if(isAbstract()) {
+        return;
+    }
+    Iterator<Element> iter = iterator();
+    while (iter.hasNext())
+    {
+        Element obj = iter.next();
+          if (obj instanceof Table)
+          {
+            Table tab = (Table) obj;
+            if (tab.isAbstract()) {
+                // check that there is a concrete extension in this topic
+                if(!containsConcreteExtensionOfTable(tab)) {
+                    errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_topic_abstractElement",getScopedName(),tab.getName())));
+                }
+            }
+          }
+    }
+}
+@Override
+public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+  throws java.lang.IllegalStateException
+{
+    super.checkTranslationOf(errs,name,baseName);
+    Topic baseElement=(Topic)getTranslationOf();
+    if(baseElement==null) {
+        return;
+    }
+    
+    if(isAbstract()!=baseElement.isAbstract()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInAbstractness",getScopedName(),baseElement.getScopedName())));
+    }
+    if(isFinal()!=baseElement.isFinal()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInFinality",getScopedName(),baseElement.getScopedName())));
+    }
+    if(isViewTopic()!=baseElement.isViewTopic()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchViewTopic",getScopedName(),baseElement.getScopedName())));
+    }
+    Ili2cSemanticException err=null;
+    err=checkElementRef(getBasketOid(),baseElement.getBasketOid(),getSourceLine(),"err_diff_bidMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+    err=checkElementRef(getOid(),baseElement.getOid(),getSourceLine(),"err_diff_oidMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+    err=checkElementRef(getExtending(),baseElement.getExtending(),getSourceLine(),"err_diff_baseTopicMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+    if(dependsOn.size()!=baseElement.dependsOn.size()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_dependencyTopicMismatch")));
+    }
+    ArrayList<Topic> depTopics=new ArrayList<Topic>(dependsOn);
+    Collections.sort(depTopics,new TranslatedElementNameComparator());
+    ArrayList<Topic> baseDepTopics=new ArrayList<Topic>(baseElement.dependsOn);
+    Collections.sort(baseDepTopics,new TranslatedElementNameComparator());
+
+    for(int depi=0;depi<depTopics.size();depi++) {
+        Topic dep=depTopics.get(depi);
+        Topic baseDep=baseDepTopics.get(depi);
+        err=checkElementRef(dep,baseDep,getSourceLine(),"err_diff_dependencyTopicMismatch");
+        if(err!=null) {
+            errs.add(err);
+        }
+    }
+}
 }

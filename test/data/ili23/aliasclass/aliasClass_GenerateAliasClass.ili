@@ -1,0 +1,61 @@
+INTERLIS 2.3;
+
+MODEL ModelA  AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"=
+
+	STRUCTURE ClassA =
+	END ClassA;
+	
+	STRUCTURE ClassAp EXTENDS ClassA =
+	END ClassAp;
+
+	TOPIC TopicB =
+		CLASS ClassBap EXTENDS ClassA =
+		END ClassBap;
+		
+		CLASS ClassBb =
+		END ClassBb;
+
+		CLASS ClassBbp EXTENDS ClassBb =
+		END ClassBbp;
+		
+		CLASS ClassBc =
+		END ClassBc;
+		
+	END TopicB;
+
+	TOPIC TopicC EXTENDS TopicB =
+		
+		CLASS ClassBc (EXTENDED) =
+		END ClassBc;
+
+		CLASS ClassCbp EXTENDS ClassBb =
+		END ClassCbp;
+		
+		CLASS ClassCc =
+		END ClassCc;
+
+	END TopicC;
+
+END ModelA.
+
+MODEL ModelB  AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"=
+	IMPORTS ModelA;
+		
+	STRUCTURE ClassAp EXTENDS ModelA.ClassA =
+	END ClassAp;
+
+	TOPIC TopicG EXTENDS ModelA.TopicB =
+		
+		CLASS ClassBc (EXTENDED) =
+		END ClassBc;
+
+		CLASS ClassCbp EXTENDS ClassBb =
+		END ClassCbp;
+		
+		CLASS ClassGg =
+		END ClassGg;
+		
+	END TopicG;
+
+END ModelB.
+

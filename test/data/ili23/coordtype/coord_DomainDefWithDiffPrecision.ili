@@ -1,0 +1,11 @@
+INTERLIS 2.3;
+
+MODEL Test (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	DOMAIN
+		!!Num = 20.00 .. 10.000;
+		LKoord = COORD 480000.00 .. 850000.00,
+                   60000.001 .. 320000.00, 
+                   ROTATION 2 -> 1;
+		
+END Test.

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<TRANSFER xmlns="http://www.interlis.ch/INTERLIS2.2">
+	<HEADERSECTION VERSION="2.2" SENDER="ch.ehi">
+		<ALIAS>
+			<ENTRIES FOR="INTERLIS">
+				<TAGENTRY FROM="Meta.Refsystem.Point" TO="INTERLIS.REFSYSTEM"> </TAGENTRY>
+			</ENTRIES>
+		</ALIAS>
+	</HEADERSECTION>
+	<DATASECTION>
+		<Meta.Refsystem BID="xch.ehi.1">
+			<Meta.Refsystem.Point TID="xch.ehi.2">
+				<Name>refsysA</Name>
+			</Meta.Refsystem.Point >
+		</Meta.Refsystem>
+	</DATASECTION>
+</TRANSFER>

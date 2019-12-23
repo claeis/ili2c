@@ -1,0 +1,13 @@
+INTERLIS 2.2;
+	MODEL Other =
+		STRUCTURE A =
+		END A;
+	END Other.
+
+	MODEL Model =
+		IMPORTS UNQUALIFIED Other;
+
+		STRUCTURE B EXTENDS A =
+		END B;
+
+	END Model.

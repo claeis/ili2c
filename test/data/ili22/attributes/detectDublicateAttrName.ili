@@ -1,0 +1,10 @@
+INTERLIS 2.2;
+
+MODEL model =
+	TOPIC topic =
+		CLASS class =
+			attr : BOOLEAN;
+			attr : TEXT*2; !! illegal; attribute names should be unique
+		END class;
+	END topic;
+END model.

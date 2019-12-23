@@ -137,9 +137,9 @@ public abstract class AbstractCoordType extends BaseType
     return fine;
   }
   @Override
-  protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
   {
-      super.checkTranslationOf(errs);
+      super.checkTranslationOf(errs,name,baseName);
       AbstractCoordType origin=(AbstractCoordType)getTranslationOf();
       if(origin==null) {
           return;
@@ -150,8 +150,16 @@ public abstract class AbstractCoordType extends BaseType
       if(piHalfAxis!=origin.piHalfAxis) {
           throw new Ili2cSemanticException();
       }
-      if(crs!=origin.crs) {
-          throw new Ili2cSemanticException();
+      if(crs==null && origin.crs==null) {
+          
+      }else {
+          if(crs==null || origin.crs==null) {
+              throw new Ili2cSemanticException();
+          }
+          if(!crs.equals(origin.crs)) {
+              throw new Ili2cSemanticException();
+          }
+          
       }
       if(_generic!=origin._generic) {
           throw new Ili2cSemanticException();
@@ -160,10 +168,21 @@ public abstract class AbstractCoordType extends BaseType
           throw new Ili2cSemanticException();
       }
       for(NumericalType dim:dimensions) {
-          dim.checkTranslationOf(errs);
+          dim.checkTranslationOf(errs,name,baseName);
       }
   }
-
+  @Override
+  protected void linkTranslationOf(Element baseElement)
+  {
+      super.linkTranslationOf(baseElement);
+      if(dimensions.length==((AbstractCoordType)baseElement).dimensions.length) {
+          for(int dimi=0;dimi<dimensions.length;dimi++) {
+              NumericalType dim=dimensions[dimi];
+              NumericalType baseDim=((AbstractCoordType)baseElement).dimensions[dimi];
+              dim.linkTranslationOf(baseDim);
+          }
+      }
+  }
 
     public AbstractCoordType clone() {
         return (AbstractCoordType) super.clone();

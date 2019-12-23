@@ -1,0 +1,23 @@
+INTERLIS 2.2;
+
+MODEL Model =
+
+	TOPIC BaseTopic =
+		CLASS A =
+		END A;
+
+	END BaseTopic;
+
+	TOPIC Topic EXTENDS BaseTopic =
+
+		CLASS C =
+		END C;
+
+		ASSOCIATION =
+			c -- {0..*} C;
+			a_embeddedInC -- {0..1} A;  !! embedded because C is defined in the same topic
+		END;
+
+	END Topic;
+	
+END Model.

@@ -1,0 +1,36 @@
+INTERLIS 2.2;
+
+MODEL Test =
+	CONTRACT ISSUED BY ce;
+
+  FUNCTION makeConstant(text : TEXT):TEXT;
+
+  TOPIC Base = 
+
+    STRUCTURE A =
+      Attr1: TEXT*20;
+    END A;
+
+    CLASS B =
+      Attr1: TEXT*20;
+      Attr2: BAG OF A;
+    UNIQUE
+      Attr1;
+    END B;
+
+  END Base;
+
+  TOPIC ViewProjection =
+
+    DEPENDS ON Test.Base;
+
+    VIEW VB PROJECTION OF Test.Base.B;
+	 =
+      ATTRIBUTE
+        ALL OF B;
+        Attr3 : TEXT*80 := makeConstant("hello World");
+    END VB;
+
+  END ViewProjection;
+
+END Test.

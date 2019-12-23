@@ -1,0 +1,89 @@
+INTERLIS 2.3;
+	MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+		TOPIC topic1 =
+			CLASS c1 =
+			END c1;
+			STRUCTURE c2 =
+				extref : REFERENCE TO (EXTERNAL) model.topic1.c1; !! ok; no topic dependency required, because same topic
+			END c2;
+		END topic1;
+		TOPIC topic2 =
+		DEPENDS ON topic1;
+			STRUCTURE c2b =
+				extref : REFERENCE TO (EXTERNAL) model.topic1.c1; !! ok; no topic dependency required, because no instances
+			END c2b;
+		END topic2;
+		TOPIC topic2c =
+			STRUCTURE c2c =
+				extref : REFERENCE TO (EXTERNAL) model.topic1.c1; !!  illegal; requires a topic dependency
+			END c2c;
+		END topic2c;
+		TOPIC topic3 =
+		DEPENDS ON topic1; !! required, because of extref in c3/c2
+			CLASS c3 =
+				struct : model.topic1.c2;
+			END c3;
+		END topic3;
+		TOPIC topic4 =
+			CLASS c4 =
+				struct : model.topic1.c2; !! illegal; requires a topic dependency because of extref in c2
+			END c4;
+			CLASS a4=
+			END a4;
+			CLASS b4=
+			END b4;
+			ASSOCIATION a2b =
+			  a4 -- a4;
+			  b4 --b4;
+			  struct : model.topic1.c2; !! illegal; requires a topic dependency because of extref in c2
+			END a2b;
+			
+		END topic4;
+		TOPIC topic5 =
+			CLASS c1 EXTENDS model.topic1.c1 =
+			END c1;
+			STRUCTURE c2 EXTENDS model.topic1.c2 =
+				extref (EXTENDED) : REFERENCE TO model.topic5.c1; !! ok; no topic dependency required, because same topic
+			END c2;
+			CLASS c5 =
+				struct : model.topic5.c2; !! ok; no topic dependency required because of local ref in extended c2
+			END c5;
+		END topic5;
+		TOPIC topic6 =
+			CLASS c1 EXTENDS model.topic1.c1 =
+			END c1;
+			STRUCTURE c2 EXTENDS model.topic1.c2 =
+				extref (EXTENDED) : REFERENCE TO model.topic6.c1; !! ok; no topic dependency required, because same topic
+			END c2;
+			STRUCTURE c3 EXTENDS model.topic1.c2 =
+				extref (EXTENDED) : REFERENCE TO (EXTERNAL) model.topic6.c1; !! ok; no topic dependency required, because same topic
+			END c3;
+		END topic6;
+		TOPIC topic7 =
+			CLASS c7 =
+				struct : model.topic6.c2; !! illegal; requires an EXTERNAL in c2
+				struct2 : model.topic6.c3; !! illegal; requires a topic dependency because of extref in c3
+			END c7;
+			
+		END topic7;
+		TOPIC topic8 =
+			CLASS c1 EXTENDS model.topic1.c1 =
+			END c1;
+			STRUCTURE c2 EXTENDS model.topic1.c2 =
+				extref (EXTENDED) : REFERENCE TO model.topic1.c1 RESTRICTION ( model.topic8.c1) ; !! ok; no topic dependency required, because same topic
+			END c2;
+			
+			CLASS c7 =
+				struct : model.topic1.c2 RESTRICTION (model.topic8.c2) ; !! ok
+			END c7;
+		END topic8;
+		STRUCTURE cM  =
+			extref : REFERENCE TO (EXTERNAL) model.topic1.c1; !! ok; no topic dependency required, because not in a topic
+		END cM;
+		TOPIC topic9 =
+			CLASS c9 =
+				struct : model.cM; !! !! illegal; requires a topic dependency because of extref in cM
+			END c9;
+		END topic9;
+		
+	END model.

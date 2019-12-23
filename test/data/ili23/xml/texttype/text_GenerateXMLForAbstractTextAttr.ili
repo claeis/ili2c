@@ -1,0 +1,9 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic (ABSTRACT) =
+	  STRUCTURE ClassA(ABSTRACT) =
+	    Text (ABSTRACT) : MANDATORY TEXT;
+	  END ClassA;
+	END topic;
+END model.

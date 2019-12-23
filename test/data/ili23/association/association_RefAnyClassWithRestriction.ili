@@ -1,0 +1,21 @@
+INTERLIS 2.3;
+
+MODEL Model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC TopicA =
+
+		CLASS a =
+		END a;
+
+		CLASS c =
+		END c;
+
+		ASSOCIATION a2c=
+			a --a; 
+			c -- ANYCLASS RESTRICTION(c); 
+		END a2c;
+
+	END TopicA;
+
+
+END Model.

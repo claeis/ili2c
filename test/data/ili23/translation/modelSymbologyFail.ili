@@ -1,0 +1,13 @@
+INTERLIS 2.3;
+
+CONTRACTED SYMBOLOGY MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	
+
+END ModelA.
+
+
+CONTRACTED MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	
+END ModelB.

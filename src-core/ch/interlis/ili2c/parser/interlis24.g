@@ -1212,7 +1212,7 @@ protected classDef[Container container]
 						reportError (formatMessage ("err_topic_domainnotanoid",classOid.toString()),oid.getLine());
 					}
 			}
-		| "NO" "OID" {classOid=new NoOid();}) 
+		| "NO" "OID" {classOid=NoOid.createNoOid();}) 
 			{
 				table.setOid(classOid);
 			} 
@@ -1658,6 +1658,8 @@ protected restrictedClassOrAssRef[Container scope]
 		}
 	}
 	)
+	{ rt.setSourceLine(refto);
+	}
     	("RESTRICTION" LPAREN restrictedTo=classOrAssociationRef[scope]
 			{ rt.addRestrictedTo(restrictedTo); }
 		(SEMI restrictedTo=classOrAssociationRef[scope]
@@ -1798,7 +1800,7 @@ protected associationDef[Container scope]
 						reportError (formatMessage ("err_topic_domainnotanoid",assocOid.toString()),oid.getLine());
 					}
 				}
-			| "NO" "OID" {assocOid=new NoOid();}) 
+			| "NO" "OID" {assocOid=NoOid.createNoOid();}) 
 			SEMI 
 				{ 
 					def.setOid(assocOid); 
@@ -2075,6 +2077,7 @@ protected domainDef[Container container]
 		dd.setName (n.getText());
 		dd.setDocumentation(ilidoc);
 		dd.setMetaValues(metaValues);
+		dd.setSourceLine(n.getLine());
 		try {
 		  if ((mods & ch.interlis.ili2c.metamodel.Properties.eABSTRACT) != 0)
 		    dd.setAbstract (true);
@@ -3404,13 +3407,13 @@ protected unitDef[Container scope]
   Unit extending = null;
   Unit u = null;
   boolean _abstract = false;
-
+  int unitSourceLine=0;
   String docName = null, idName = null;
 	  String ilidoc=null;
 	  Settings metaValues=null;
 }
 	:	{ ilidoc=getIliDoc();metaValues=getMetaValues();}
-		n:NAME { docName = idName = n.getText(); }
+		n:NAME { docName = idName = n.getText(); unitSourceLine=n.getLine();}
 			(	LBRACE idn:NAME RBRACE  {idName = idn.getText ();}
 			|	LPAREN "ABSTRACT" RPAREN {_abstract=true;}
 			|
@@ -3451,6 +3454,7 @@ protected unitDef[Container scope]
 
     {
       try {
+        u.setSourceLine(unitSourceLine);
       	u.setDocumentation(ilidoc);
 	u.setMetaValues(metaValues);
         scope.add(u);
@@ -6438,17 +6442,42 @@ protected property [int acceptable, int encountered]
                 reportWarning (rsrc.getString("err_multipleTransient"),
                                t.getLine());
             }
-	|	"OID"     
-		{ // TODO property OID
-		mod=ch.interlis.ili2c.metamodel.Properties.eOID;
-		}
-	|	"HIDING"
-		{ // TODO property HIDING
-		}
-	|	g2:"GENERIC"
-		{ // FIXME24 property GENERIC
-		mod=ch.interlis.ili2c.metamodel.Properties.eGENERIC;
-		}
+	|	oidTok:"OID"     
+            {
+              if ((acceptable & ch.interlis.ili2c.metamodel.Properties.eOID) == 0)
+                reportError(rsrc.getString ("err_cantBeOid"),
+                            oidTok.getLine());
+               else
+                 mod = ch.interlis.ili2c.metamodel.Properties.eOID;
+
+              if ((encountered & mod) != 0)
+                reportWarning (rsrc.getString("err_multipleOid"),
+                               oidTok.getLine());
+            }
+	|	hidTok:"HIDING"
+            {
+              if ((acceptable & ch.interlis.ili2c.metamodel.Properties.eHIDING) == 0)
+                reportError(rsrc.getString ("err_cantBeHiding"),
+                            hidTok.getLine());
+               else
+                 mod = ch.interlis.ili2c.metamodel.Properties.eHIDING;
+
+              if ((encountered & mod) != 0)
+                reportWarning (rsrc.getString("err_multipleHiding"),
+                               hidTok.getLine());
+            }
+	|	genTok:"GENERIC"
+            {
+              if ((acceptable & ch.interlis.ili2c.metamodel.Properties.eGENERIC) == 0)
+                reportError(rsrc.getString ("err_cantBeGeneric"),
+                            genTok.getLine());
+               else
+                 mod = ch.interlis.ili2c.metamodel.Properties.eGENERIC;
+
+              if ((encountered & mod) != 0)
+                reportWarning (rsrc.getString("err_multipleGeneric"),
+                               genTok.getLine());
+            }
 	;
 
 

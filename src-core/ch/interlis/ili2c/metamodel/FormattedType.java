@@ -358,5 +358,82 @@ public void setPrefix(String prefix) {
         }
         return cloned;
     }
+    @Override
+    protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+    {
+        super.checkTranslationOf(errs,name,baseName);
+        FormattedType   origin=(FormattedType)getTranslationOf();
+
+        if (origin == null){
+            return;
+        }
+
+        if(minimum==null && origin.minimum==null) {
+        }else {
+            if(minimum==null || origin.minimum==null) {
+                throw new Ili2cSemanticException();
+            }
+            if (!minimum.equals(origin.minimum)) {
+                throw new Ili2cSemanticException();
+            }
+        }
+        if(maximum==null && origin.maximum==null) {
+        }else {
+            if(maximum==null || origin.maximum==null) {
+                throw new Ili2cSemanticException();
+            }
+            if (!maximum.equals(origin.maximum)) {
+                throw new Ili2cSemanticException();
+            }
+        }
+        if(prefix==null && origin.prefix==null) {
+        }else {
+            if(prefix==null || origin.prefix==null) {
+                throw new Ili2cSemanticException();
+            }
+            if (!prefix.equals(origin.prefix)) {
+                throw new Ili2cSemanticException();
+            }
+        }
+        if(!Element.equalElementRef(baseDomain,origin.baseDomain)) {
+            throw new Ili2cSemanticException();
+        }
+        if(!Element.equalElementRef(baseClass,origin.baseClass)) {
+            throw new Ili2cSemanticException();
+        }
+        if(baseAttrRef==null && origin.baseAttrRef==null) {
+            
+        }else {
+            if(baseAttrRef==null || origin.baseAttrRef==null) {
+                throw new Ili2cSemanticException();
+            }
+            if(baseAttrRef.size()!=origin.baseAttrRef.size()) {
+                throw new Ili2cSemanticException();
+            }
+            for(int i=0;i<baseAttrRef.size();i++) {
+                FormattedTypeBaseAttrRef attr = baseAttrRef.get(i);
+                FormattedTypeBaseAttrRef originAttr = origin.baseAttrRef.get(i);
+                if(!Element.equalElementRef(attr.getAttr(),originAttr.getAttr())){
+                    throw new Ili2cSemanticException();
+                }
+                if(!Element.equalElementRef(attr.getFormatted(),originAttr.getFormatted())){
+                    throw new Ili2cSemanticException();
+                }
+                if(attr.getIntPos()!=originAttr.getIntPos()){
+                    throw new Ili2cSemanticException();
+                }
+                if(attr.getPostfix()==null && originAttr.getPostfix()==null){
+                }else {
+                    if(attr.getPostfix()==null || originAttr.getPostfix()==null){
+                        throw new Ili2cSemanticException();
+                    }
+                    if(!attr.getPostfix().equals(originAttr.getPostfix())){
+                        throw new Ili2cSemanticException();
+                    }
+                }
+                
+            }
+        }
+    }
 
 }

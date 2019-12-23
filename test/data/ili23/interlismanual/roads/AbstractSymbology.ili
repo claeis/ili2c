@@ -1,0 +1,59 @@
+!! File AbstractSymbology.ili Release 2005-06-16
+
+INTERLIS 2.3;
+
+CONTRACTED SYMBOLOGY MODEL AbstractSymbology (en)
+  AT "http://www.interlis.ch/models"
+  VERSION "2005-06-16" =
+
+  UNIT
+    Millimeter [mm] = 0.001 [INTERLIS.m];
+    Angle_Degree = 180 / PI [INTERLIS.rad];
+
+  DOMAIN
+    Style_COORD2 (ABSTRACT)   = COORD NUMERIC, NUMERIC;
+    Style_COORD3 (ABSTRACT)   = COORD NUMERIC, NUMERIC, NUMERIC;
+    Style_POLYLINE (ABSTRACT) = POLYLINE WITH (STRAIGHTS, ARCS)
+                                VERTEX Style_COORD2;  !! {Planar}?
+    Style_SURFACE (ABSTRACT)  = SURFACE WITH (STRAIGHTS, ARCS)
+                                VERTEX Style_COORD2;
+    Style_INT (ABSTRACT)      = NUMERIC; !! [Units?]
+    Style_FLOAT (ABSTRACT)    = NUMERIC; !! [Units?]
+    Style_ANGLE (ABSTRACT)    = 0.000 .. 359.999 CIRCULAR [Angle_Degree]
+                                COUNTERCLOCKWISE;  !! RefSystem?
+
+
+  TOPIC Signs =
+
+    !! Graphic interface
+
+    CLASS TextSign (ABSTRACT) EXTENDS INTERLIS.SIGN =
+    PARAMETER
+      Txt      : MANDATORY TEXT;
+      Geometry : MANDATORY Style_COORD2;
+      Rotation : Style_ANGLE; !! Default 0.0
+      HAli     : HALIGNMENT;  !! Default Center
+      VAli     : VALIGNMENT;  !! Default Half
+    END TextSign;
+
+    CLASS SymbolSign (ABSTRACT) EXTENDS INTERLIS.SIGN =
+    PARAMETER
+      Geometry : MANDATORY Style_COORD2;
+      Scale    : Style_FLOAT;
+      Rotation : Style_ANGLE; !! Default 0.0
+    END SymbolSign;
+
+    CLASS PolylineSign (ABSTRACT) EXTENDS INTERLIS.SIGN =
+    PARAMETER
+      Geometry : MANDATORY Style_POLYLINE;
+    END PolylineSign;
+
+    CLASS SurfaceSign (ABSTRACT) EXTENDS INTERLIS.SIGN =
+    PARAMETER
+      Geometry : MANDATORY Style_SURFACE;
+    END SurfaceSign;
+
+  END Signs;
+
+END AbstractSymbology.
+

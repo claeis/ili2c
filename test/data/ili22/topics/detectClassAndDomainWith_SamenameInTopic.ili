@@ -1,0 +1,12 @@
+INTERLIS 2.2;
+
+MODEL model =
+	TOPIC topic =
+		DOMAIN
+			class = TEXT*3;
+
+		!! illegal; class and domain have the same namespace
+		CLASS class =
+		END class;
+	END topic;
+END model.

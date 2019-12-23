@@ -1,0 +1,15 @@
+INTERLIS 2.2;
+
+MODEL model =
+	TOPIC basictopic =
+		DOMAIN
+			domain = TEXT*3;
+	END basictopic;
+
+	TOPIC topic EXTENDS basictopic =
+		!! illegal; types are inherited from base topic
+		DOMAIN
+			domain = TEXT*3; 
+	END topic;
+
+END model.

@@ -1,0 +1,16 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic =
+
+		CLASS aclass =
+			attr : TEXT*10;
+		END aclass;
+		
+		CONSTRAINTS OF aclass =
+			UNIQUE attr;
+		END;
+
+	END topic;
+
+END model.

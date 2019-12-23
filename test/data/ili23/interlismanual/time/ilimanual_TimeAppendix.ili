@@ -1,0 +1,88 @@
+!! File Time.ili Release 2005-06-16
+
+INTERLIS 2.3;
+
+CONTRACTED REFSYSTEM MODEL Time (en) AT "http://www.interlis.ch/models"
+  VERSION "2005-06-16" =
+
+  IMPORTS Units;
+
+  STRUCTURE DayOfYear =
+    Month: 1 .. 12 [INTERLIS.M];
+    SUBDIVISION Day: 1 .. 31 [INTERLIS.d];
+  END DayOfYear;
+
+  STRUCTURE HMDiffWithinDay =
+    Hours: -23 .. 23 CIRCULAR [INTERLIS.h];
+    CONTINUOUS SUBDIVISION Minutes: 0 .. 59 [INTERLIS.min];
+  END HMDiffWithinDay;
+
+  DOMAIN
+    WeekDay = (WorkingDay (Monday, Tuesday, Wednesday,
+                           Thursday, Friday, Saturday),
+               Sunday) CIRCULAR;
+
+    HMDiffWDay = FORMAT BASED ON HMDiffWithinDay (Hours ":" Minutes);
+    DifferenceToUTC EXTENDS HMDiffWDay = MANDATORY "-13:00" .. "13:00";
+                                         !! UTC := LocTime + Diff
+
+  FUNCTION AppropriateDate (dayOfYear: MANDATORY DayOfYear;
+                            weekDay: WeekDay): DayOfYear
+    // returns first parameter if second is undefined,
+       returns first day from (incl) first parameter being the
+       requested weekday //;
+
+  FUNCTION DSTOrdered (day1: DayOfYear; day2: DayOfYear) : BOOLEAN
+    // returns TRUE if the second parameter comes after the
+       first parameter or if both parameters are equal //;
+
+  STRUCTURE DSTransition =
+    TransitionDSTime: MANDATORY HMDiffWDay;
+    FirstDate: MANDATORY DayOfYear;
+    DayOfWeek: WeekDay;
+    TransitionDate: DayOfYear := AppropriateDate (FirstDate, DayOfWeek);
+  END DSTransition;
+
+  STRUCTURE DaylightSavingPeriod =
+    DSToUTC: DifferenceToUTC;
+    From: MANDATORY INTERLIS.GregorianYear;
+    To:   MANDATORY INTERLIS.GregorianYear;
+    DSStart: MANDATORY DSTransition;
+    DSEnd: MANDATORY DSTransition;
+  MANDATORY CONSTRAINT
+    DSTOrdered (DSStart, DSEnd);
+  MANDATORY CONSTRAINT
+    To >= From;
+  END DaylightSavingPeriod;
+
+  FUNCTION DSPOverlaps (periods: BAG {1..*} OF DaylightSavingPeriod) : BOOLEAN
+    // returns TRUE if any one of the periods overlap //;
+
+
+  TOPIC TimeZone =
+
+    CLASS TimeZone (ABSTRACT) EXTENDS INTERLIS.SCALSYSTEM =
+    PARAMETER
+      Unit (EXTENDED): NUMERIC [INTERLIS.TIME];
+    END TimeZone;
+
+    CLASS BaseTimeZone EXTENDS INTERLIS.TIMESYSTEMS.TIMEOFDAYSYS =
+                               !! TimeZone without daylight saving
+      DiffToUTC: DifferenceToUTC;
+    END BaseTimeZone;
+
+    CLASS DaylightSavingTZ EXTENDS INTERLIS.TIMESYSTEMS.TIMEOFDAYSYS =
+      Periods: BAG {1..*} OF DaylightSavingPeriod;
+    MANDATORY CONSTRAINT
+      NOT ( DSPOverlaps (Periods) );
+    END DaylightSavingTZ;
+
+    ASSOCIATION DaylightSavingTZOf =
+      BaseTZ -<> BaseTimeZone;
+      DSTZ -- DaylightSavingTZ;
+    END DaylightSavingTZOf;
+
+  END TimeZone;
+
+END Time.
+

@@ -1,0 +1,31 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC TopicA =
+
+		DOMAIN
+		
+		CoordA1 = COORD
+		  460000.000 .. 870000.000 [INTERLIS.m],
+		   45000.000 .. 310000.000 [INTERLIS.m];
+
+	END TopicA;
+
+END ModelA.
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+
+	TOPIC TopicB =
+
+		DOMAIN
+		
+		CoordB1 = COORD
+		  460000.000 .. 870000.000 [INTERLIS.s],
+		   45000.000 .. 310000.000 [INTERLIS.m];
+		
+	END TopicB;
+
+END ModelB.

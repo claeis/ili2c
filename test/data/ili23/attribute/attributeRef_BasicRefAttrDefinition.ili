@@ -1,0 +1,11 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic =
+		CLASS class1 =
+		END class1;
+		STRUCTURE class2 =
+			attr : REFERENCE TO class1;
+		END class2;
+	END topic;
+END model.

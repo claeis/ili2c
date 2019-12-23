@@ -1,0 +1,30 @@
+INTERLIS 2.3;
+
+MODEL Test  AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"=
+
+  TOPIC Base = 
+
+    CLASS C1 =
+      Attr1: TEXT*10;
+    END C1;
+
+    CLASS C2 =
+      Attr2: TEXT*30;
+    END C2;
+
+  END Base;
+
+  TOPIC Union =
+
+    DEPENDS ON Test.Base;
+
+    VIEW CC 
+      UNION OF C1 ~ Test.Base.C1,C2 ~ Test.Base.C2;
+	=
+      ATTRIBUTE
+        Attr1 : TEXT*30 := C1->Attr1,C2->Attr2;
+    END CC;
+
+  END Union;
+
+END Test.

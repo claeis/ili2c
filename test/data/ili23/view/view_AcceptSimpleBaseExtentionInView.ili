@@ -1,0 +1,31 @@
+INTERLIS 2.3;
+
+MODEL Test AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC Base = 
+
+    CLASS B =
+      Attr1: TEXT*20;
+    END B;
+
+    CLASS C EXTENDS B =
+      Attr2: TEXT*30;
+    END C;
+
+  END Base;
+
+  TOPIC SelectionView =
+
+    DEPENDS ON Test.Base;
+     
+    VIEW VB
+      PROJECTION OF Test.Base.B;
+      BASE B EXTENDED BY Test.Base.C
+	=
+      ATTRIBUTE
+	a := C->Attr2;
+    END VB;
+
+  END SelectionView;
+
+END Test.

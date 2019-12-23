@@ -9,6 +9,9 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /** An abstract class that groups the INTERLIS line types such as
@@ -208,9 +211,9 @@ public abstract class LineType extends Type
   }
 
   @Override
-  protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
   {
-      super.checkTranslationOf(errs);
+      super.checkTranslationOf(errs,name,baseName);
       LineType origin=(LineType)getTranslationOf();
       if(origin==null) {
           return;
@@ -227,8 +230,17 @@ public abstract class LineType extends Type
           if(lineForms.length!=origin.lineForms.length) {
               throw new Ili2cSemanticException();
           }
+          ArrayList<LineForm> lf=new ArrayList<LineForm>(lineForms.length);
+          Collections.addAll(lf, lineForms);
+          ArrayList<LineForm> originLf=new ArrayList<LineForm>(origin.lineForms.length);
+          Collections.addAll(originLf, origin.lineForms);
+          Collections.sort(lf,new TranslatedElementNameComparator());
+          Collections.sort(originLf,new TranslatedElementNameComparator());
           for(int i=0;i<lineForms.length;i++) {
-              if(lineForms[i]!=origin.lineForms[i]) {
+              if(!Element.equalElementRef(lf.get(i),originLf.get(i))) {
+                  throw new Ili2cSemanticException();
+              }
+              if(!Element.equalElementRef(lf.get(i).getSegmentStructure(),originLf.get(i).getSegmentStructure())) {
                   throw new Ili2cSemanticException();
               }
           }

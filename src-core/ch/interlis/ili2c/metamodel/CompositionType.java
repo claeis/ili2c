@@ -125,21 +125,33 @@ public class CompositionType extends Type
     checkCardinalityExtension(general);
   }
   @Override
-  protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
   {
-      super.checkTranslationOf(errs);
-      CompositionType origin=(CompositionType)getTranslationOf();
-      if(origin==null) {
+      super.checkTranslationOf(errs,name,baseName);
+      CompositionType baseElement=(CompositionType)getTranslationOf();
+      if(baseElement==null) {
           return;
       }
-      if(this.componentType == origin.componentType) {
-          // ok
-      }else {
-          if(this.componentType==null || origin.componentType==null) {
-              throw new Ili2cSemanticException();
+      
+      Ili2cSemanticException err=null;
+      err=checkElementRef(getComponentType(),baseElement.getComponentType(),getSourceLine(),"err_diff_referencedClassMismatch");
+      if(err!=null) {
+          errs.add(err);
+      }
+      Iterator<Table> depIt=iteratorRestrictedTo();
+      Iterator<Table> baseDepIt=baseElement.iteratorRestrictedTo();
+      while(true) {
+          if(!depIt.hasNext() || !baseDepIt.hasNext()) {
+              if(depIt.hasNext()!=baseDepIt.hasNext()) {
+                  errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_referencedClassMismatch")));
+              }
+              break;
           }
-          if(componentType.getTranslationOfOrSame()!=origin.componentType.getTranslationOfOrSame()) {
-              throw new Ili2cSemanticException();
+          Table dep=depIt.next();
+          Table baseDep=baseDepIt.next();
+          err=checkElementRef(dep,baseDep,getSourceLine(),"err_diff_referencedClassMismatch");
+          if(err!=null) {
+              errs.add(err);
           }
       }
   }

@@ -1,0 +1,19 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic =
+
+
+		CLASS Other =
+			otherAttr : TEXT*10;
+		END Other;
+
+		CLASS aclass =
+			attr : TEXT*10;
+			EXISTENCE CONSTRAINT attr REQUIRED IN Other:otherAttr;
+		END aclass;
+		
+
+	END topic;
+
+END model.

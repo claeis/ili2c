@@ -1,0 +1,24 @@
+INTERLIS 2.2;
+
+MODEL model =
+
+  TOPIC topic =
+    DOMAIN
+    Farbe = (rot,
+           gelb,
+           gruen);
+    FarbePlus EXTENDS Farbe = (rot (dunkel, karmin, orange),
+                             gruen (hell, dunkel: FINAL),
+                             blau);
+    FarbePlusPlus EXTENDS FarbePlus = (rot (FINAL),
+                                     blau (hell, dunkel));
+
+    CLASS a =
+      farbe : Farbe;
+    END a;
+    CLASS b EXTENDS a=
+      farbe (EXTENDED): FarbePlus;
+      farbePlusPlus : FarbePlusPlus;
+    END b;
+  END topic;
+END model.

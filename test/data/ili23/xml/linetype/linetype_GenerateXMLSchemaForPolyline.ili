@@ -1,0 +1,19 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC topic =
+
+  DOMAIN
+    Point2D = COORD 
+      0.000 .. 200.000 [INTERLIS.m], !! Min_East  Max_East
+      0.000 .. 200.000 [INTERLIS.m], !! Min_North Max_North
+      ROTATION 2 -> 1;
+  
+    CLASS LandCover =
+      Geometry: MANDATORY POLYLINE WITH (STRAIGHTS) VERTEX Point2D;
+    END LandCover; 
+
+	END topic;
+
+END model.

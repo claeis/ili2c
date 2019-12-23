@@ -1,0 +1,12 @@
+INTERLIS 2.3;
+
+MODEL ModelDef3 AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  DOMAIN
+    Koord = COORD 480000.00 .. 870000.00 [INTERLIS.m],
+                      60000.00 .. 320000.00 [INTERLIS.m],
+               ROTATION 2 -> 1;
+
+    GonAzimut = 0.0000 .. 399.9999 CIRCULAR <Koord>;
+
+END ModelDef3.

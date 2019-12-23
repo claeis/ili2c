@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<TRANSFER xmlns="http://www.interlis.ch/INTERLIS2.2">
+	<HEADERSECTION VERSION="2.2" SENDER="ch.ehi">
+		<ALIAS/>
+	</HEADERSECTION>
+	<DATASECTION>
+		<model.topic BID="ch.ehi.1" TOPICS="">
+			<model.topic.a TID="ch.ehi.2">
+				<texta1>refsysA</texta1>
+				<texta2>refsysB</texta2>
+			</model.topic.a>
+			<model.topic.b TID="ch.ehi.3">
+				<textb>refsysA</textb>
+			</model.topic.b>
+			<model.topic.b TID="ch.ehi.4">
+				<textb>refsysA</textb>
+			</model.topic.b>
+			<model.topic.a TID="ch.ehi.5">
+				<texta1>refsysA</texta1>
+				<texta2>refsysB</texta2>
+			</model.topic.a>
+		</model.topic>
+	</DATASECTION>
+</TRANSFER>

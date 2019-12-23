@@ -1,0 +1,7 @@
+INTERLIS 2.2;
+
+MODEL Test (de) =
+
+
+  /* dies ist geschachtelter /* Kommentar */ */
+END Test.

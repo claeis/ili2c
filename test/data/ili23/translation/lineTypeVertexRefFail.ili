@@ -1,0 +1,33 @@
+INTERLIS 2.3;
+
+CONTRACTED MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	DOMAIN
+		DomainA1 = COORD 1.0 .. 10.0,1.0 .. 10.0 ;
+		DomainA2 = COORD 1.0 .. 10.0,1.0 .. 10.0 ;
+		
+	TOPIC TopicA =
+
+		CLASS ClassA =
+			attrA1 : POLYLINE WITH (STRAIGHTS) VERTEX DomainA1;
+		END ClassA;
+
+	END TopicA;
+
+END ModelA.
+
+CONTRACTED MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	DOMAIN
+		DomainB1 = COORD 1.0 .. 10.0,1.0 .. 10.0 ;
+		DomainB2 = COORD 1.0 .. 10.0,1.0 .. 10.0 ;
+		
+	TOPIC TopicB =
+
+		CLASS ClassB =
+			attrB1 : POLYLINE WITH (STRAIGHTS) VERTEX DomainB2;
+		END ClassB;
+
+	END TopicB;
+
+END ModelB.

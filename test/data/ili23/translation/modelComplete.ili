@@ -1,0 +1,17 @@
+INTERLIS 2.3;
+
+MODEL Model0 (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+END Model0.
+
+CONTRACTED TYPE MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	IMPORTS Model0;
+
+END ModelA.
+
+
+CONTRACTED TYPE MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	IMPORTS Model0;
+	
+END ModelB.

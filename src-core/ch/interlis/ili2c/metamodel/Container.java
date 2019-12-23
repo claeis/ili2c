@@ -561,7 +561,7 @@ public abstract class Container<E extends Element>
     	}
   	}
 	  @Override
-	  public void checkTranslationOf(List<Ili2cSemanticException> errs)
+	  public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
 	    throws java.lang.IllegalStateException
 	  {
 	        Container baseElement=(Container)getTranslationOf();
@@ -569,10 +569,10 @@ public abstract class Container<E extends Element>
 	            return;
 	        }
 	    if(isAlias()){
-	        ((Container)getReal()).checkTranslationOf(errs);
+	        ((Container)getReal()).checkTranslationOf(errs,name,baseName);
 	        return;
 	    }else{
-	        super.checkTranslationOf(errs);
+	        super.checkTranslationOf(errs,name,baseName);
 
 
 	        Iterator iter = iterator();
@@ -580,7 +580,7 @@ public abstract class Container<E extends Element>
 	        {
 	          Object obj = iter.next();
 	          if (obj instanceof ch.interlis.ili2c.metamodel.Element) {
-	            ((ch.interlis.ili2c.metamodel.Element) obj).checkTranslationOf(errs);
+	            ((ch.interlis.ili2c.metamodel.Element) obj).checkTranslationOf(errs,name,baseName);
 	        }
 	        }
 	    }

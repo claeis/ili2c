@@ -1,0 +1,22 @@
+TRANSFER INTERLIS1;
+
+MODEL Model
+
+
+TOPIC Topic =
+
+	TABLE Table =
+		ref : -> Table;
+	NO IDENT
+	END Table;
+
+END Topic.
+
+END Model.
+
+FORMAT FREE;
+
+CODE
+BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+TID = ANY;
+END.

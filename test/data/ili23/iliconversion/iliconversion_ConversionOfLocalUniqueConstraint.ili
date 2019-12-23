@@ -1,0 +1,19 @@
+INTERLIS 2.3;
+
+MODEL ModelDef3 AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC TopicDef4 =
+
+    STRUCTURE SubEle =
+      attr1 : TEXT*30;
+      attr2 : BOOLEAN;
+    END SubEle;
+    
+    CLASS ClassDef6 =
+      attr : BAG {1..*} OF SubEle;
+      UNIQUE (LOCAL) attr:attr1,attr2;
+    END ClassDef6;
+
+  END TopicDef4;
+
+END ModelDef3.

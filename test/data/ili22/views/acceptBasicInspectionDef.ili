@@ -1,0 +1,33 @@
+INTERLIS 2.2;
+
+MODEL Test =
+
+  TOPIC Base = 
+
+    STRUCTURE A =
+      Attr1: TEXT*20;
+    END A;
+
+    CLASS B =
+      Attr1: TEXT*20;
+      Attr2: BAG OF A;
+    UNIQUE
+      Attr1;
+    END B;
+
+  END Base;
+
+  TOPIC Inspection =
+
+    DEPENDS ON Test.Base;
+
+    VIEW VB 
+      INSPECTION OF Test.Base.B->Attr2;
+	=
+      ATTRIBUTE
+        ALL OF B;
+    END VB;
+
+  END Inspection;
+
+END Test.

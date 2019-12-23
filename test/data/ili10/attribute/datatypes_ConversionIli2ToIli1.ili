@@ -1,0 +1,50 @@
+INTERLIS 2.2;
+
+MODEL Model =
+	TOPIC Topic=
+		UNIT
+	    		Year [Y] EXTENDS INTERLIS.TIME;
+			Month [M] EXTENDS INTERLIS.TIME;
+			YearMonth [YM] = {Y:M[1..12]};
+
+		DOMAIN 
+			Lkoord = COORD 1.00 .. 9.99 [INTERLIS.m],
+				100.0 .. 999.9 [INTERLIS.m],
+				ROTATION 2 -> 1;
+	       	STRUCTURE linattr =
+			attr : TEXT*30;
+		END linattr;
+		
+		CLASS Class =
+		   !! TextType
+		   text : TEXT*10;
+		   !! EnumerationType
+		   aufzaehlung : (null, eins, zwei, drei, mehr ( vier, fuenf, sechs, sieben, acht ,neun, zehn)); !! == zwei Stellen
+		   !! AlignmentType
+		   horizAlignment : HALIGNMENT;
+		   vertAlignment : VALIGNMENT;
+		   !! BooleanType
+		   boolean : BOOLEAN;
+		   !! NumericType
+		   numeric : 0.0 .. 10.0;
+		   !! StructuredUnitType
+		   structured : 1582:10 .. 2999:12 [YM];
+		   !! CoordinateType
+		   coord : COORD 1.00 .. 9.99 [INTERLIS.m],
+				100.0 .. 999.9 [INTERLIS.m],
+				ROTATION 2 -> 1;
+		   !! OIDType
+		   oid : OID TEXT*30;
+		   !! BasketType
+		   basket : BASKET;
+		   !! ClassType
+		   class : CLASS;
+		   !! Linientyp
+		   linientyp : POLYLINE WITH (STRAIGHTS) VERTEX Lkoord;
+		   !! Flaechentyp
+		   surface : SURFACE WITH (STRAIGHTS,ARCS) VERTEX Lkoord;
+		   area : AREA WITH (STRAIGHTS,ARCS) VERTEX Lkoord WITHOUT OVERLAPS > 0.0
+					LINE ATTRIBUTES linattr;
+		END Class;
+	END Topic;
+END Model.

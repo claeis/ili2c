@@ -11,6 +11,7 @@
 
 package ch.interlis.ili2c.metamodel;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import ch.ehi.basics.logging.EhiLogger;
@@ -410,6 +411,25 @@ public class EnumerationType extends BaseType {
 	@Override
   	protected void linkTranslationOf(Element baseElement)
   	{
+	    super.linkTranslationOf(baseElement);
 		enumeration.linkTranslationOf(((EnumerationType)baseElement).enumeration);
   	}  
+	  @Override
+    protected void checkTranslationOf(List<Ili2cSemanticException> errs, String name, String baseName) {
+        super.checkTranslationOf(errs, name, baseName);
+        EnumerationType baseElement = (EnumerationType) getTranslationOf();
+        if (baseElement == null) {
+            return;
+        }
+
+        if (isCircular() != baseElement.isCircular()) {
+            throw new Ili2cSemanticException();
+        }
+        if (isOrdered() != baseElement.isOrdered()) {
+            throw new Ili2cSemanticException();
+        }
+        if (enumeration.isFinal() != baseElement.enumeration.isFinal()) {
+            throw new Ili2cSemanticException();
+        }
+    }
 }

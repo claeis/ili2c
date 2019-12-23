@@ -1,0 +1,10 @@
+INTERLIS 2.3;
+	MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+		DOMAIN 
+			topic = TEXT*10;
+
+		!! illegal; same name
+		TOPIC topic =
+		END topic;
+
+	END model.

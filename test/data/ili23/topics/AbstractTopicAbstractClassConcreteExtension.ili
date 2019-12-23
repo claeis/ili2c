@@ -1,0 +1,13 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic = !! must not be abstract, because of concrete class cclass
+		CLASS aclass (ABSTRACT) =
+		END aclass;
+		CLASS bclass (ABSTRACT) EXTENDS aclass =
+		END bclass;
+		CLASS cclass EXTENDS bclass =
+		END cclass;
+		
+	END topic;
+END model.

@@ -1,0 +1,10 @@
+INTERLIS 2.3;
+	MODEL Meta AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+		TOPIC Refsystem =
+		END Refsystem;
+	END Meta.
+
+	MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+		REFSYSTEM BASKET Basket ~ Meta.Refsystem; !! illegal; meta should be imported
+
+	END model.

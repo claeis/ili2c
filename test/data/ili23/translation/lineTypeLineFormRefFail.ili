@@ -1,0 +1,43 @@
+INTERLIS 2.3;
+
+CONTRACTED MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	DOMAIN
+		DomainA1 = COORD 1.0 .. 10.0,1.0 .. 10.0 ;
+		
+	STRUCTURE LineFormStructA EXTENDS INTERLIS.LineSegment =
+	END LineFormStructA;
+	
+	LINE FORM LineFormA1 : LineFormStructA;
+	LINE FORM LineFormA2 : LineFormStructA;
+	
+	TOPIC TopicA =
+
+		CLASS ClassA =
+			attrA4 : SURFACE WITH (STRAIGHTS, LineFormA1) VERTEX DomainA1 WITHOUT OVERLAPS > 0.1 ;
+		END ClassA;
+
+	END TopicA;
+
+END ModelA.
+
+CONTRACTED MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	DOMAIN
+		DomainB1 = COORD 1.0 .. 10.0,1.0 .. 10.0 ;
+		
+	STRUCTURE LineFormStructB EXTENDS INTERLIS.LineSegment =
+	END LineFormStructB;
+	
+	LINE FORM LineFormB1 : LineFormStructB;
+	LINE FORM LineFormB2 : LineFormStructB;
+	
+	TOPIC TopicB =
+
+		CLASS ClassB =
+			attrB4 : SURFACE WITH (STRAIGHTS, LineFormB2) VERTEX DomainB1 WITHOUT OVERLAPS > 0.1 ;
+		END ClassB;
+
+	END TopicB;
+
+END ModelB.

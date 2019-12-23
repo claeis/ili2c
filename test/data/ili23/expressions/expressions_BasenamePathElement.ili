@@ -1,0 +1,24 @@
+INTERLIS 2.3;
+
+
+MODEL Test AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+
+  TOPIC Base = 
+
+
+    CLASS B =
+      Attr1: TEXT*20;
+      Attr2: TEXT*10;
+    END B;
+
+    VIEW VB 
+      PROJECTION OF BaseName ~ Test.Base.B;
+      =
+      ATTRIBUTE
+        a : TEXT*20 := BaseName->Attr1;
+    END VB;
+
+  END Base;
+
+END Test.

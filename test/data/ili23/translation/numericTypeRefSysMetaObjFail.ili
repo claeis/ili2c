@@ -1,0 +1,44 @@
+INTERLIS 2.3;
+
+MODEL Model0 (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	
+   TOPIC Topic0 =
+		CLASS ScalSys0 EXTENDS INTERLIS.SCALSYSTEM =
+		END ScalSys0;
+	END Topic0;
+
+END Model0.
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	IMPORTS Model0;
+
+	TOPIC TopicA =
+	
+		REFSYSTEM BASKET BasketA ~ Model0.Topic0
+			OBJECTS OF ScalSys0 : MetaObject0;
+			
+		CLASS ClassA1 =
+			attrA1 : 1 .. 10 {MetaObject0};
+		END ClassA1;
+		
+	END TopicA;
+
+END ModelA.
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	IMPORTS Model0;
+
+	TOPIC TopicB =
+	
+		REFSYSTEM BASKET BasketA ~ Model0.Topic0
+			OBJECTS OF ScalSys0 : MetaObject0;
+
+		CLASS ClassB1 =
+			attrB1 : 1 .. 10;
+		END ClassB1;
+		
+	END TopicB;
+
+END ModelB.

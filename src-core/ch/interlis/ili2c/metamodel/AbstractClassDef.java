@@ -228,6 +228,9 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
 		  return ret;
 	  }
 
+	  if(context instanceof Viewable) {
+	      context=context.getContainer();
+	  }
 	  if(!(context instanceof Topic || context instanceof Model)){
 		  throw new IllegalArgumentException("illegal context "+context.getScopedName());
 	  }
@@ -329,4 +332,31 @@ public Domain getDefinedOid() {
 public void setOid(Domain oid) {
 	this.oid = oid;
 }
+@Override
+public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+  throws java.lang.IllegalStateException
+{
+    super.checkTranslationOf(errs,name,baseName);
+    AbstractClassDef baseElement=(AbstractClassDef)getTranslationOf();
+    if(baseElement==null) {
+        return;
+    }
+    
+    if(isAbstract()!=baseElement.isAbstract()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInAbstractness",getScopedName(),baseElement.getScopedName())));
+    }
+    if(isFinal()!=baseElement.isFinal()) {
+        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInFinality",getScopedName(),baseElement.getScopedName())));
+    }
+    Ili2cSemanticException err=null;
+    err=checkElementRef(getDefinedOid(),baseElement.getDefinedOid(),getSourceLine(),"err_diff_oidMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+    err=checkElementRef(getExtending(),baseElement.getExtending(),getSourceLine(),"err_diff_baseClassMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+}
+
 }

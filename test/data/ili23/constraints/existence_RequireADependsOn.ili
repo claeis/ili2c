@@ -1,0 +1,21 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topicA =
+
+		CLASS Other =
+			otherAttr : TEXT*10;
+		END Other;
+
+	END topicA;
+
+	TOPIC topicB =
+        !! DEPENDS ON topicA; !! commented out to trigger error message
+		CLASS aclass =
+			attr : TEXT*10;
+			EXISTENCE CONSTRAINT attr REQUIRED IN model.topicA.Other:otherAttr;  !! error about missing DEPENDS ON
+		END aclass;
+
+	END topicB;
+	
+END model.

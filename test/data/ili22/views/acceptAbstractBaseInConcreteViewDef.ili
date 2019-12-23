@@ -1,0 +1,36 @@
+INTERLIS 2.2;
+
+MODEL Test =
+
+  TOPIC Base = 
+
+    CLASS B (ABSTRACT) =
+      Attr1(ABSTRACT): TEXT*20;
+      Attr2: TEXT*10;
+    END B;
+
+    CLASS B2 EXTENDS B =
+      Attr1(EXTENDED): TEXT*20;
+    END B2;
+    
+    CLASS C =
+      Attr3: TEXT*30;
+    END C;
+
+  END Base;
+
+  TOPIC Join =
+
+    DEPENDS ON Test.Base;
+
+    VIEW BC
+      JOIN OF B ~ Test.Base.B,C ~ Test.Base.C;
+	=
+      ATTRIBUTE
+        Attr2 := B->Attr2;
+        ALL OF C;
+    END BC;
+
+  END Join;
+
+END Test.

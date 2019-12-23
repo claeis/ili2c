@@ -1,0 +1,32 @@
+
+INTERLIS 2.3;
+
+MODEL DomainsA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+
+  DOMAIN
+    Colour = (red, yellow, green);
+
+END DomainsA.
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  IMPORTS DomainsA;
+
+
+  CLASS ClassA (ABSTRACT) =
+    attr: DomainsA.Colour;
+  END ClassA;
+
+END ModelA.
+
+MODEL ModelB AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  IMPORTS UNQUALIFIED DomainsA;
+
+
+  CLASS ClassA (ABSTRACT) =
+    attr: Colour;
+  END ClassA;
+
+END ModelB.

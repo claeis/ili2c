@@ -1,0 +1,6 @@
+INTERLIS 2.3;
+
+!! illegal; DATA is not valid in Ili 2.2
+DATA MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+END model.

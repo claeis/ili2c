@@ -1,0 +1,24 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+  DOMAIN
+    Coord = COORD 470000.000 .. 840000.000,
+                     30000.000 .. 320000.000,
+                    ROTATION 2 -> 1;
+    Coord3 EXTENDS Coord =
+               COORD 470000.000 .. 840000.000,
+                      30000.000 .. 320000.000,
+		          0.000 .. 10000.000,
+                    ROTATION 2 -> 1;
+
+    Hoehe = 0.000 .. 10000.000;
+    Text = TEXT*30;
+	TOPIC topic =
+		CLASS ClassA  =
+			attr  : Hoehe;
+		END ClassA;
+		CLASS ClassB EXTENDS ClassA =
+			attr (EXTENDED) : Coord;
+		END ClassB;
+	END topic;
+END model.

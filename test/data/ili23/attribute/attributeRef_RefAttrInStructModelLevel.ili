@@ -1,0 +1,32 @@
+INTERLIS 2.3;
+
+MODEL Basis (de)  AT "mailto:ceis@localhost" VERSION "8.3.06do"  =
+
+    TOPIC Kataloge =
+
+      CLASS KatalogElem (ABSTRACT) =
+      END KatalogElem;
+
+      CLASS KatalogElement EXTENDS KatalogElem =
+      END KatalogElement;
+      
+      ASSOCIATION Hierarchie =
+	Parent -<> {1} KatalogElem;
+	Child -- {0..*} KatalogElem;
+      END Hierarchie;
+
+    END Kataloge;
+
+    TOPIC Witterung EXTENDS Kataloge =
+
+      CLASS WitterungsElem EXTENDS KatalogElem =
+      END WitterungsElem;
+
+
+    END Witterung;
+
+    STRUCTURE WitterungsRef =
+      Ref: MANDATORY REFERENCE TO Basis.Witterung.WitterungsElem;
+    END WitterungsRef;
+
+END Basis.

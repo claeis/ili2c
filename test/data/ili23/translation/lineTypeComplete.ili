@@ -1,0 +1,57 @@
+INTERLIS 2.3;
+
+CONTRACTED MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	DOMAIN
+		DomainA1 = COORD 1.0 .. 10.0,1.0 .. 10.0 ;
+		
+	STRUCTURE LinAttrA =
+	END LinAttrA;
+	
+	STRUCTURE LineFormStructA EXTENDS INTERLIS.LineSegment =
+	END LineFormStructA;
+	
+	LINE FORM LineFormA : LineFormStructA;
+	
+	TOPIC TopicA =
+
+		CLASS ClassA =
+			attrA1 : POLYLINE WITH (STRAIGHTS) VERTEX DomainA1;
+			attrA2 : DIRECTED POLYLINE WITH (STRAIGHTS) VERTEX DomainA1;
+			attrA3 : SURFACE WITH (STRAIGHTS, ARCS) VERTEX DomainA1 WITHOUT OVERLAPS > 0.1 ;
+			attrA4 : SURFACE WITH (STRAIGHTS, LineFormA) VERTEX DomainA1 WITHOUT OVERLAPS > 0.1 ;
+			attrA5 : SURFACE WITH (STRAIGHTS, ARCS) VERTEX DomainA1 WITHOUT OVERLAPS > 0.1 LINE ATTRIBUTES LinAttrA;
+			attrA6 : AREA WITH (STRAIGHTS, ARCS) VERTEX DomainA1 WITHOUT OVERLAPS > 0.1 ;
+		END ClassA;
+
+	END TopicA;
+
+END ModelA.
+
+CONTRACTED MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	DOMAIN
+		DomainB1 = COORD 1.0 .. 10.0,1.0 .. 10.0 ;
+		
+	STRUCTURE LinAttrB =
+	END LinAttrB;
+	
+	STRUCTURE LineFormStructB EXTENDS INTERLIS.LineSegment =
+	END LineFormStructB;
+	
+	LINE FORM LineFormB : LineFormStructB;
+	
+	TOPIC TopicB =
+
+		CLASS ClassB =
+			attrB1 : POLYLINE WITH (STRAIGHTS) VERTEX DomainB1;
+			attrB2 : DIRECTED POLYLINE WITH (STRAIGHTS) VERTEX DomainB1;
+			attrB3 : SURFACE WITH (STRAIGHTS, ARCS) VERTEX DomainB1 WITHOUT OVERLAPS > 0.1 ;
+			attrB4 : SURFACE WITH (STRAIGHTS, LineFormB) VERTEX DomainB1 WITHOUT OVERLAPS > 0.1 ;
+			attrB5 : SURFACE WITH (STRAIGHTS, ARCS) VERTEX DomainB1 WITHOUT OVERLAPS > 0.1 LINE ATTRIBUTES LinAttrB;
+			attrB6 : AREA WITH (STRAIGHTS, ARCS) VERTEX DomainB1 WITHOUT OVERLAPS > 0.1 ;
+		END ClassB;
+
+	END TopicB;
+
+END ModelB.

@@ -1,0 +1,18 @@
+INTERLIS 2.2;
+
+MODEL model =
+
+	TOPIC topic =
+
+		CLASS a =
+			texta1 : TEXT*10;
+			texta2 : TEXT*10;
+		END a;
+
+		CLASS b =
+			textb : TEXT*10;
+		END b;
+
+	END topic;
+
+END model.

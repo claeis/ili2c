@@ -1,0 +1,39 @@
+INTERLIS 2.2;
+
+MODEL Model =
+
+	TOPIC Topic =
+		DOMAIN
+		CharacterString = TEXT*30;
+		CharacterStringShort EXTENDS CharacterString = TEXT*20;
+
+		CLASS A =
+			attrib1 : CharacterString;
+		END A;
+
+ 
+		CLASS B =
+		END B;
+
+		ASSOCIATION =
+			a -- {0..*} A;
+			RoleB_embeddedInA_beforeAttrib2 -- {0..1} B;
+		END;
+
+		CLASS A1 EXTENDS A =
+			attrib1 (EXTENDED) : CharacterStringShort;
+			attrib2 : CharacterStringShort;
+		END A1;
+
+		CLASS C =
+		END C;
+
+		ASSOCIATION =
+			a -- {0..*} A1;
+			RoleC_embeddedInA1_afterAttrib2 -- {0..1} C;
+		END;
+
+	END Topic;
+
+END Model.
+

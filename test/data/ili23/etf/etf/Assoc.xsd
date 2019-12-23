@@ -1,0 +1,105 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://www.interlis.ch/INTERLIS2.3/GML32/Assoc" targetNamespace="http://www.interlis.ch/INTERLIS2.3/GML32/Assoc" elementFormDefault="qualified" attributeFormDefault="unqualified"
+  xmlns:esd="http://esd.ehi.ch/etf/1"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace"
+  >
+<xsd:element name="ClassA1" type="ClassA1Type"/>
+<xsd:complexType  name="ClassA1Type">
+  <xsd:sequence>
+    <xsd:element name="b" minOccurs="0" maxOccurs="unbounded">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <esd:targetElement>ClassB1</esd:targetElement>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+        <xsd:sequence/>
+        <xsd:attribute name="ref" type="xsd:IDREF"/>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:sequence>
+  <xsd:attribute name="id" type="xsd:ID"/>
+</xsd:complexType>
+<xsd:element name="ClassA2" type="ClassA2Type"/>
+<xsd:complexType  name="ClassA2Type">
+  <xsd:sequence>
+    <xsd:element name="b">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <esd:targetElement>ClassB2</esd:targetElement>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+        <xsd:sequence/>
+        <xsd:attribute name="ref" type="xsd:IDREF"/>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:sequence>
+  <xsd:attribute name="id" type="xsd:ID"/>
+</xsd:complexType>
+<xsd:element name="ClassB1" type="ClassB1Type"/>
+<xsd:complexType  name="ClassB1Type">
+  <xsd:sequence>
+    <xsd:element name="a" minOccurs="0" maxOccurs="unbounded">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <esd:targetElement>ClassA1</esd:targetElement>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+        <xsd:sequence/>
+        <xsd:attribute name="ref" type="xsd:IDREF"/>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:sequence>
+  <xsd:attribute name="id" type="xsd:ID"/>
+</xsd:complexType>
+<xsd:element name="ClassB2" type="ClassB2Type"/>
+<xsd:complexType  name="ClassB2Type">
+  <xsd:sequence>
+    <xsd:element name="a">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <esd:targetElement>ClassA2</esd:targetElement>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType>
+        <xsd:sequence/>
+        <xsd:attribute name="ref" type="xsd:IDREF"/>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:sequence>
+  <xsd:attribute name="id" type="xsd:ID"/>
+</xsd:complexType>
+<xsd:element name="Part" type="PartType"/>
+<xsd:complexType  name="PartType">
+  <xsd:sequence>
+  </xsd:sequence>
+  <xsd:attribute name="id" type="xsd:ID"/>
+</xsd:complexType>
+<xsd:element name="SharedPart" type="SharedPartType"/>
+<xsd:complexType  name="SharedPartType">
+  <xsd:sequence>
+  </xsd:sequence>
+  <xsd:attribute name="id" type="xsd:ID"/>
+</xsd:complexType>
+<xsd:element name="Whole" type="WholeType"/>
+<xsd:complexType  name="WholeType">
+  <xsd:sequence>
+    <xsd:element name="part" minOccurs="0" maxOccurs="unbounded">
+      <xsd:complexType>
+        <xsd:sequence>
+        <xsd:element ref="Part"/>
+        </xsd:sequence>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:sequence>
+  <xsd:attribute name="id" type="xsd:ID"/>
+</xsd:complexType>
+<xsd:element name="WholeOfSharedPart" type="WholeOfSharedPartType"/>
+<xsd:complexType  name="WholeOfSharedPartType">
+  <xsd:sequence>
+  </xsd:sequence>
+  <xsd:attribute name="id" type="xsd:ID"/>
+</xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,28 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC TopicA =
+
+		CLASS ClassA1 =
+			attrA3 : (a1,a2(a21,a22)) CIRCULAR;
+		END ClassA1;
+
+	END TopicA;
+
+END ModelA.
+
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+
+	TOPIC TopicB =
+
+		CLASS ClassB1 =
+			attrB3 : (b1,b2(b21,b22));
+		END ClassB1;
+
+	END TopicB;
+
+END ModelB.

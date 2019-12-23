@@ -1,0 +1,35 @@
+!! File CoordSysEx.ili Release 2002-07-02
+
+INTERLIS 2.2;
+
+MODEL Beispiel (de) =  !! 2-letter code (ISO 639)
+
+  IMPORTS CoordSys;
+
+  REFSYSTEM BASKET BCoordSys ~ CoordSys.CoordsysTopic;
+
+  DOMAIN
+    LKoord = COORD
+      480000.000 .. 850000.000 [INTERLIS.m] {CHLV03[1]},
+       60000.000 .. 320000.000 [INTERLIS.m] {CHLV03[2]},
+      ROTATION 2 -> 1;
+    Hoehe = COORD
+      -200.000 .. 5000.000 [INTERLIS.m] {SwissOrthometricAlt[1]};
+    HKoord = COORD
+      480000.000 .. 850000.000 [INTERLIS.m] {CHLV03[1]},
+       60000.000 .. 320000.000 [INTERLIS.m] {CHLV03[2]},
+        -200.000 ..   5000.000 [INTERLIS.m] {SwissOrthometricAlt[1]},
+      ROTATION 2 -> 1;
+
+
+  TOPIC T =
+
+    CLASS Fixpunkt =
+      Name: TEXT*20;
+      Position: LKoord;
+    END Fixpunkt;
+
+  END T;
+
+END Beispiel.
+

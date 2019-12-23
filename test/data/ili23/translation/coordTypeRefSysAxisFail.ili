@@ -1,0 +1,52 @@
+INTERLIS 2.3;
+
+MODEL Model0 (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	
+   TOPIC Topic0 =
+		CLASS RefSys0 EXTENDS INTERLIS.COORDSYSTEM =
+		END RefSys0;
+	END Topic0;
+
+END Model0.
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	IMPORTS Model0;
+
+	TOPIC TopicA =
+
+		REFSYSTEM BASKET BasketA ~ Model0.Topic0
+			OBJECTS OF RefSys0 : CHLV03;
+
+		DOMAIN
+		
+		!!@CRS=EPSG:21781
+		CoordA1 = COORD
+		  460000.000 .. 870000.000 [INTERLIS.m] {CHLV03[1]},
+		   45000.000 .. 310000.000 [INTERLIS.m] {CHLV03[2]},
+			  ROTATION 2 -> 1;			
+
+	END TopicA;
+
+END ModelA.
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	IMPORTS Model0;
+
+	TOPIC TopicB =
+
+		REFSYSTEM BASKET BasketB ~ Model0.Topic0
+			OBJECTS OF RefSys0 : CHLV03;
+
+		DOMAIN
+		
+		!!@CRS=EPSG:21781
+		CoordA1 = COORD
+		  460000.000 .. 870000.000 [INTERLIS.m] {CHLV03[2]},
+		   45000.000 .. 310000.000 [INTERLIS.m] {CHLV03[1]},
+			  ROTATION 2 -> 1;			
+		
+	END TopicB;
+
+END ModelB.

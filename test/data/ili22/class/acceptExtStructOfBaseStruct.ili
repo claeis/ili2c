@@ -1,0 +1,25 @@
+INTERLIS 2.2;
+
+MODEL ModelA =
+
+  STRUCTURE Base =
+  END Base;
+
+  TOPIC BaseTopic =
+
+  END BaseTopic;
+
+END ModelA.
+
+MODEL ModelB =
+  IMPORTS ModelA;
+  
+  TOPIC Topic
+  EXTENDS ModelA.BaseTopic =
+
+    STRUCTURE Base EXTENDS ModelA.Base = 
+    END Base;
+
+  END Topic;
+
+END ModelB.

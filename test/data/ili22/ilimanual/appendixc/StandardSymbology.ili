@@ -1,0 +1,322 @@
+!! File StandardSymbology.ili Release 2003-03-18
+
+INTERLIS 2.2;
+
+SYMBOLOGY MODEL StandardSymbology (en) =
+
+  !! Extended symbology model with symbol libraries and priorities.
+
+  CONTRACT ISSUED BY Unknown;  !! Contractor(s) have to be defined!
+
+  IMPORTS AbstractSymbology;
+
+  UNIT
+    Angle_Degree = 180 / PI [INTERLIS.rad];
+
+  DOMAIN
+    SS_Priority = 0 .. 9999;
+    SS_Float    = -2000000000.000 .. 2000000000.000;
+    SS_Angle    = 0.000 .. 359.999
+                  CIRCULAR [Angle_Degree] COUNTERCLOCKWISE;
+    SS_Coord2   = COORD -2000000000.000 .. 2000000000.000 [INTERLIS.m],
+                        -2000000000.000 .. 2000000000.000 [INTERLIS.m],
+                  ROTATION 2 -> 1;
+    SS_Polyline = POLYLINE WITH (STRAIGHTS, ARCS)
+                  VERTEX SS_Coord2;
+    SS_Surface  = SURFACE WITH (STRAIGHTS, ARCS)
+                  VERTEX SS_Coord2;
+
+
+  TOPIC StandardSigns EXTENDS AbstractSymbology.Signs =
+
+    !! StandardSigns contains symbol libraries and symbol interfaces.
+    !! The libraries (colors, fonts/symbols and line patterns) form the
+    !! base for the construction of concrete symbols. The symbol interfaces
+    !! extend the symbol interfaces of AbstractSymbology by priorites.
+
+    !! Library section
+    !! +++++++++++++++
+
+    !! Color library
+    !! =============
+    !! Colors are defined by LCh values with transparency.
+
+    CLASS Color =
+      Name: TEXT*40; !! name of color, i.e. "light green"
+      L: MANDATORY 0.0 .. 100.0; !! Luminance
+      C: MANDATORY 0.0 .. 181.1; !! Chroma
+      H: MANDATORY 0.0 .. 359.9 CIRCULAR [Angle_Degree] COUNTERCLOCKWISE; !! Hue
+      T: MANDATORY 0.000 .. 1.000; !! Transparency: 0=totally transparent, 1=opaque
+    END Color;
+
+    !! Polyline attributes
+    !! +++++++++++++++++++
+    !! Presentation parameters for simple continuous lines. Polyline attributes
+    !! are used by all other polyline definitions (see also below).
+
+    CLASS PolylineAttrs =
+      Width       : SS_Float;
+      Join        : ( !! connection form for line segments
+        bevel,
+        round,
+        miter
+      );
+      MiterLimit  : 1.0 .. 1000.0; !! only for Join = miter
+      Caps        : (  !! termination form at end of line
+        round,
+        butt
+      );
+    END PolylineAttrs;
+
+    !! Font- and symbol library
+    !! ========================
+    !! Symbols are a collection of lines and surfaces. Symbols are
+    !! organized in fonts. A font can be either a text font or a symbol
+    !! font. If the font is a text font (Type = #text), every symbol
+    !! (Character) has an UCS4 code (Unicode) and a spacing parameter assigned.
+
+    STRUCTURE FontSymbol_Geometry (ABSTRACT) =
+      !! Basic structure for uniform treatment of all symbol geometries.
+    END FontSymbol_Geometry;
+
+    STRUCTURE FontSymbol_Polyline EXTENDS FontSymbol_Geometry =
+      Color       : REFERENCE TO Color; !! only for symbols
+      LineAttrs   : MANDATORY REFERENCE TO PolylineAttrs;
+      Geometry    : MANDATORY SS_Polyline;
+    END FontSymbol_Polyline;
+
+    STRUCTURE FontSymbol_Surface EXTENDS FontSymbol_Geometry =
+      FillColor   : REFERENCE TO Color; !! only for symbols
+      Geometry    : MANDATORY SS_Surface;
+      !! Remark: Has no line symbology, because the boundary is *not* part
+      !! of the surface. With FillColor you define only the color of the
+      !! surface filling.
+    END FontSymbol_Surface;
+
+    CLASS FontSymbol =
+      !! All font symbols are defined for size 1.0 and scale 1.0.
+      !! The value is measured in user units (i.e. normally [m]).
+      Name        : TEXT*40; !! Symbol name, if known
+      UCS4        : 0 .. 4000000000; !! only for text symbols (characters)
+      Spacing     : SS_Float; !! only for text symbols (characters)
+      Geometry    : LIST OF FontSymbol_Geometry;
+    END FontSymbol;
+
+    CLASS Font =
+      Name        : MANDATORY TEXT*40; !! Font name or name of external font
+      Internal    : MANDATORY BOOLEAN; !! Internal or external font
+                                       !! Only for internal fonts the geometric
+                                       !! definitions of the symbols is contained
+                                       !! in FontSymbol.
+      Type        : MANDATORY (
+        symbol,
+        text
+      );
+      BottomBase  : SS_Float; !! Only for text fonts, measured relative to text
+                              !! height 1.0
+    END Font;
+
+    ASSOCIATION FontAssoc =
+      Font -<#> Font;
+      Symbol -- FontSymbol;
+    END FontAssoc;
+
+    !! Line symbology library
+    !! ======================
+    !! With the line sybology library the user can define continuos, dashed or
+    !! patterned lines. It is also possible to define multi line symbologies.
+    !! Each line in a multi line symbology can be continuous, dashed or patterned
+    !! for itself. The offset indicates the distance from the middle axis. All
+    !! are stored in the library relative to the width 1.0. The width can be over
+    !! written by the symbology parameter With in the symbology interface. For
+    !! continuous lines the With parameter defines the total width of the line,
+    !! for multi lines the parameter With scales the attribute value offset.
+
+    CLASS LineStyle (ABSTRACT) =
+      Name        : MANDATORY TEXT*40;
+    END LineStyle;
+
+    CLASS LineStyle_Solid EXTENDS LineStyle =
+    END LineStyle_Solid;
+
+    ASSOCIATION LineStyle_SolidColorAssoc =
+      Color -- {0 .. 1} Color;
+      LineStyle -- {1} LineStyle_Solid;
+    END LineStyle_SolidColorAssoc;
+
+    ASSOCIATION LineStyle_SolidPolylineAttrsAssoc =
+      LineAttrs -- {0 .. 1} PolylineAttrs;
+      LineStyle -- {1} LineStyle_Solid;
+    END LineStyle_SolidPolylineAttrsAssoc;
+
+    STRUCTURE DashRec =
+      DLength     : SS_Float; !! Length of dash
+    END DashRec;
+
+    CLASS LineStyle_Dashed EXTENDS LineStyle =
+      Dashes      : LIST OF DashRec; !! 1. dash is continuous
+                                     !! 2. dash is not visible
+                                     !! 3. dash is continuous
+                                     !! etc.
+    END LineStyle_Dashed;
+
+    ASSOCIATION LineStyle_DashedColorAssoc =
+      Color -- {0 .. 1} Color;
+      LineStyle_Dashed -- {1} LineStyle_Dashed;
+    END LineStyle_DashedColorAssoc;
+
+    ASSOCIATION LineStyle_DashedLineAttrsAssoc =
+      LineAttrs -- {0 .. 1} PolylineAttrs;
+      LineStyle_Dashed -- {1} LineStyle_Dashed;
+    END LineStyle_DashedLineAttrsAssoc;
+
+    STRUCTURE Pattern_Symbol =
+      FontSymbRef : MANDATORY REFERENCE TO FontSymbol;
+      ColorRef    : REFERENCE TO Color;
+      Weight      : SS_Float; !! Width for symbol lines
+      Scale       : SS_Float; !! Default: 1.0
+      Dist        : MANDATORY SS_Float; !! Distance along polyline
+      Offset      : MANDATORY SS_Float; !! Vertical distance to polyline axis
+    END Pattern_Symbol;
+
+    CLASS LineStyle_Pattern EXTENDS LineStyle =
+      PLength     : MANDATORY SS_Float;
+      Symbols     : LIST OF Pattern_Symbol;
+      !! after PLength the pattern is repeated
+    END LineStyle_Pattern;
+
+    !! Symbology interface
+    !! +++++++++++++++++++
+
+    !! Text interface
+    !! ==============
+
+    CLASS TextSign (EXTENDED) =
+      Height      : MANDATORY SS_Float;
+      Weight      : SS_Float; !! line width for line fonts
+      Slanted     : BOOLEAN;
+      Underlined  : BOOLEAN;
+      Striked     : BOOLEAN;
+      ClipBox     : SS_Float; !! Defines a rectangular surface around the text
+                              !! with distance ClipBox from text.
+    PARAMETER
+      Priority    : MANDATORY SS_Priority;
+    END TextSign;
+
+    ASSOCIATION TextSignFontAssoc =
+      Font -- {1} Font;
+      TextSign -- {1} TextSign;
+    MANDATORY CONSTRAINT
+      Font -> Type == #text;
+    END TextSignFontAssoc;
+
+    ASSOCIATION TextSignColorAssoc =
+      Color -- {0 .. 1} Color;
+      TextSign -- {1} TextSign;
+    END TextSignColorAssoc;
+
+    ASSOCIATION TextSignClipFontAssoc =
+      ClipFont -- {0 .. 1} Font;
+      TextSign2 -- {1} TextSign;
+    END TextSignClipFontAssoc;
+
+    !! Symbol interface
+    !! ================
+
+    CLASS SymbolSign (EXTENDED) =
+      Scale       : SS_Float;
+      Rotation    : SS_Angle;
+    PARAMETER
+      Priority    : MANDATORY SS_Priority;
+    END SymbolSign;
+
+    ASSOCIATION SymbolSignSymbolAssoc =
+      Symbol -- {1} FontSymbol;
+      SymbolSign -- {1} SymbolSign;
+    END SymbolSignSymbolAssoc;
+
+    ASSOCIATION SymbolSignClipSymbolAssoc =
+      ClipSymbol -- {0 .. 1} FontSymbol;
+      SymbolSign2 -- {1} SymbolSign;
+    END SymbolSignClipSymbolAssoc;
+
+    ASSOCIATION SymbolSignColorAssoc =
+      Color -- {0 .. 1} Color;
+      SymbolSign -- {1} SymbolSign;
+    END SymbolSignColorAssoc;
+
+    !! Polyline interface
+    !! ==================
+
+    CLASS PolylineSign (EXTENDED) =
+      !! The parameter Width of the interface influences the width *and*
+      !! the scale of start- and endsymbols.
+    PARAMETER
+      Priority    : MANDATORY SS_Priority;
+      Width       : SS_Float; !! Width of line symbology, default = 1.0
+    END PolylineSign;
+
+    ASSOCIATION PolylineSignLineStyleAssoc =
+      Style -- {1 .. *} LineStyle;
+      PolylineSign -- {1} PolylineSign;
+    ATTRIBUTE
+      Offset      : SS_Float; !! Default 0.0
+    END PolylineSignLineStyleAssoc;
+
+    ASSOCIATION PolylineSignColorAssoc =
+      Color -- {0 .. 1}Color;
+      PolylineSign -- {1} PolylineSign;
+    END PolylineSignColorAssoc;
+
+    ASSOCIATION PolylineSignClipStyleAssoc =
+      ClipStyle -- {0 .. 1} LineStyle; !! Used as a mask for clipping
+      PolylineSign2 -- {1} PolylineSign;
+    END PolylineSignClipStyleAssoc;
+
+    ASSOCIATION PolylineSignStartSymbolAssoc =
+      StartSymbol -- {0 .. 1} SymbolSign; !! Symbol at start of line in opposite
+                                          !! direction of line
+      PolylineSign -- {1} PolylineSign;
+    END PolylineSignStartSymbolAssoc;
+
+    ASSOCIATION PolylineSignEndSymbolAssoc =
+      EndSymbol -- {0 .. 1} SymbolSign; !! Symbol at end of line in same
+                                        !! direction as line
+      PolylineSign3 -- {1} PolylineSign;
+    END PolylineSignEndSymbolAssoc;
+
+    !! Surface interface
+    !! =================
+
+    CLASS SurfaceSign (EXTENDED) =
+      Clip        : (
+        inside,
+        outside
+      );
+      HatchOffset : SS_Float;
+    PARAMETER
+      Priority    : MANDATORY SS_Priority;
+      HatchAng    : SS_Angle;  !! Default 0.0
+      HatchOrg    : SS_Coord2; !! Default 0.0/0.0, Anchor point for hatching
+                               !! or filling
+    END SurfaceSign;
+
+    ASSOCIATION SurfaceSignColorAssoc =
+      FillColor -- {0 .. 1} Color; !! Fill color
+      SurfaceSign -- {1} SurfaceSign;
+    END SurfaceSignColorAssoc;
+
+    ASSOCIATION SurfaceSignBorderAssoc =
+      Border -- {0 .. 1} PolylineSign; !! Border symbology
+      SurfaceSign -- {1} SurfaceSign;
+    END SurfaceSignBorderAssoc;
+
+    ASSOCIATION SurfaceSignHatchSymbAssoc =
+      HatchSymb -- {0 .. 1} PolylineSign; !! Hatch symbology
+      SurfaceSign2 -- {1} SurfaceSign;
+    END SurfaceSignHatchSymbAssoc;
+
+  END StandardSigns;
+
+END StandardSymbology.
+

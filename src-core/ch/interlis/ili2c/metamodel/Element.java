@@ -74,6 +74,21 @@ public abstract class Element implements BeanContextChild,ElementAlias {
       return "Internal compiler error [" + ex.getLocalizedMessage() + "]";
     }
   }
+  static Ili2cSemanticException checkElementRef(Element ele1, Element ele2, int sourceLine, String msg) {
+      if(!equalElementRef(ele1,ele2)) {
+          return new Ili2cSemanticException (sourceLine,formatMessage(msg));
+      }
+      return null;
+  }
+  static boolean equalElementRef(Element ele1, Element ele2) {
+      if(ele1==null && ele2==null) {
+      }else if(ele1==null || ele2==null) {
+          return false;
+      }else if(ele1.getTranslationOfOrSame()!=ele2.getTranslationOfOrSame()) {
+          return false;
+      }
+      return true;
+  }
 
 
   static final String formatMessage(String msg)
@@ -940,7 +955,7 @@ public void setDocumentation(String string) {
   	    }
   		this.baseLanguageElement=baseElement;
   	}
-    protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+    protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
     {
     }
 

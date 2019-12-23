@@ -1,0 +1,23 @@
+INTERLIS 2.2;
+
+
+MODEL Test =
+
+
+  TOPIC Base = 
+
+    CLASS A =
+    END A;
+
+
+    CLASS B =
+    END B;
+
+    ASSOCIATION  =
+      embeddedInB -<#> A; !! assume cardinality 1; therefore embedded in B
+      b -- B;
+    END;
+
+  END Base;
+
+END Test.

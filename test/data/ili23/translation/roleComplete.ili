@@ -1,0 +1,164 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	
+	TOPIC TopicA1 =
+	
+		CLASS ClassA0 =
+		END ClassA0;
+
+		CLASS ClassA1 =
+		END ClassA1;
+		
+		CLASS ClassA2 =
+		END ClassA2;
+
+		CLASS ClassA2p EXTENDS ClassA2 =
+		END ClassA2p;
+
+		CLASS ClassA2q EXTENDS ClassA2 =
+		END ClassA2q;
+
+		ASSOCIATION assocA1 =
+			a1_0 -- {1} ClassA0;
+			a1_1 -- {1..3} ClassA1;
+		END assocA1;
+
+		ASSOCIATION assocA2 (ABSTRACT)=
+			a2_0 (ABSTRACT) -- ClassA0;
+			a2_1 (FINAL) -- ClassA1;
+		END assocA2;
+
+		ASSOCIATION assocA2p EXTENDS assocA2 =
+			a2_0 (EXTENDED) -- ClassA0;
+		END assocA2p;
+		
+		ASSOCIATION assocA2q EXTENDS assocA2 =
+			a2_0 (EXTENDED, HIDING) -- ClassA0;
+		END assocA2q;
+		
+		ASSOCIATION assocA3 =
+			a3_0 (EXTERNAL) -- ClassA0;
+			a3_1 -- ClassA1;
+		END assocA3;
+
+		ASSOCIATION assocA4 =
+			a4_0 (ORDERED) -- ClassA0;
+			a4_1 -- ClassA1;
+		END assocA4;
+
+		ASSOCIATION assocA5 =
+			a5_0 -- ClassA0;
+			a5_1 -- ClassA1;
+		END assocA5;
+		ASSOCIATION assocA6 =
+			a6_0 -<> ClassA0;
+			a6_1 -- ClassA1;
+		END assocA6;
+		ASSOCIATION assocA7 =
+			a7_0 -<#> {1} ClassA0;
+			a7_1 -- ClassA1;
+		END assocA7;
+
+		ASSOCIATION assocA8 =
+			a8_0 -- ClassA0;
+			a8_1 -- ClassA1 OR ClassA2 RESTRICTION (ClassA2p);
+		END assocA8;
+		
+		VIEW IntersectionA
+			JOIN OF A0~ClassA0,A1~ClassA1;
+			=
+		END IntersectionA;
+
+		ASSOCIATION assocA9
+			DERIVED FROM IntersectionA =
+			a9_0 -- ClassA0 := IntersectionA -> A0;
+			a9_1 -- ClassA1 := IntersectionA -> A1;
+		END assocA9;
+
+	END TopicA1;
+
+END ModelA.
+
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+
+	TOPIC TopicB1 =
+	
+		CLASS ClassB0 =
+		END ClassB0;
+
+		CLASS ClassB1 =
+		END ClassB1;
+		
+		CLASS ClassB2 =
+		END ClassB2;
+
+		CLASS ClassB2p EXTENDS ClassB2 =
+		END ClassB2p;
+
+		CLASS ClassB2q EXTENDS ClassB2 =
+		END ClassB2q;
+
+		ASSOCIATION assocB1 =
+			b1_0 -- {1} ClassB0;
+			b1_1 -- {1..3} ClassB1;
+		END assocB1;
+
+		ASSOCIATION assocB2 (ABSTRACT)=
+			b2_0 (ABSTRACT) -- ClassB0;
+			b2_1 (FINAL) -- ClassB1;
+		END assocB2;
+
+		ASSOCIATION assocB2p EXTENDS assocB2 =
+			b2_0 (EXTENDED) -- ClassB0;
+		END assocB2p;
+		
+		ASSOCIATION assocB2q EXTENDS assocB2 =
+			b2_0 (EXTENDED, HIDING) -- ClassB0;
+		END assocB2q;
+		
+		ASSOCIATION assocB3 =
+			b3_0 (EXTERNAL) -- ClassB0;
+			b3_1 -- ClassB1;
+		END assocB3;
+
+		ASSOCIATION assocB4 =
+			b4_0 (ORDERED) -- ClassB0;
+			b4_1 -- ClassB1;
+		END assocB4;
+
+		ASSOCIATION assocB5 =
+			b5_0 -- ClassB0;
+			b5_1 -- ClassB1;
+		END assocB5;
+		ASSOCIATION assocB6 =
+			b6_0 -<> ClassB0;
+			b6_1 -- ClassB1;
+		END assocB6;
+		ASSOCIATION assocB7 =
+			b7_0 -<#> {1} ClassB0;
+			b7_1 -- ClassB1;
+		END assocB7;
+
+		ASSOCIATION assocB8 =
+			b8_0 -- ClassB0;
+			b8_1 -- ClassB1 OR ClassB2 RESTRICTION (ClassB2p);
+		END assocB8;
+		
+		VIEW IntersectionB
+			JOIN OF B0~ClassB0,B1~ClassB1;
+			=
+		END IntersectionB;
+
+		ASSOCIATION assocB9
+			DERIVED FROM IntersectionB =
+			b9_0 -- ClassB0 := IntersectionB -> B0;
+			b9_1 -- ClassB1 := IntersectionB -> B1;
+		END assocB9;
+
+	END TopicB1;
+
+END ModelB.

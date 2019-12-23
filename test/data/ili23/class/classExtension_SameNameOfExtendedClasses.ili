@@ -1,0 +1,12 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC basetopic =
+		CLASS class =
+		END class;
+	END basetopic;
+	TOPIC topic =
+		CLASS class EXTENDS model.basetopic.class =
+		END class;
+	END topic;
+END model.

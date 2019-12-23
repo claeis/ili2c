@@ -1,0 +1,40 @@
+INTERLIS 2.2;
+
+MODEL model =
+	CONTRACT ISSUED BY ce;
+	DOMAIN
+	     Coord2 = COORD
+	      480000.000 .. 850000.000, 
+	      60000.000 .. 320000.000;
+	     CHSurface= SURFACE WITH (STRAIGHTS,ARCS) VERTEX Coord2;
+	
+	FUNCTION Intersect (Surface1: CHSurface;
+			    Surface2: CHSurface): BOOLEAN;
+
+	TOPIC topic =
+
+		CLASS A =
+		  a1: CHSurface;
+		END A;
+		
+		CLASS B =
+		  b1: CHSurface;
+		END B;
+		
+		VIEW ABIntersection
+		  JOIN OF A,B;
+		  WHERE Intersect (A->a1,B->b1);
+		  =
+		END ABIntersection;
+		
+		ASSOCIATION IntersectedAB
+		  DERIVED FROM ABIntersection
+		  =
+		  ARole -- A := ABIntersection->A;
+		  BRole -- B := ABIntersection->B;
+		END IntersectedAB;
+
+
+	END topic;
+
+END model.

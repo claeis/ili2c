@@ -1,0 +1,31 @@
+INTERLIS 2.3;
+
+CONTRACTED MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	DOMAIN
+		DomainA1 = COORD 1.0 .. 10.0,1.0 .. 10.0 ;
+		
+	TOPIC TopicA =
+
+		CLASS ClassA =
+			attrA3 : SURFACE WITH (STRAIGHTS, ARCS) VERTEX DomainA1 WITHOUT OVERLAPS > 0.1 ;
+		END ClassA;
+
+	END TopicA;
+
+END ModelA.
+
+CONTRACTED MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	DOMAIN
+		DomainB1 = COORD 1.0 .. 10.0,1.0 .. 10.0 ;
+		
+	TOPIC TopicB =
+
+		CLASS ClassB =
+			attrB3 : AREA WITH (STRAIGHTS, ARCS) VERTEX DomainB1 WITHOUT OVERLAPS > 0.1 ;
+		END ClassB;
+
+	END TopicB;
+
+END ModelB.

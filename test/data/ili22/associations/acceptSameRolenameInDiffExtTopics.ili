@@ -1,0 +1,36 @@
+INTERLIS 2.2;
+
+MODEL Model =
+
+	TOPIC TopicA =
+
+		CLASS a =
+		END a;
+
+	END TopicA;
+
+	TOPIC TopicB EXTENDS TopicA = 
+
+		CLASS B_B =
+		END B_B;
+
+		ASSOCIATION a2b=
+			a --a;
+			b --B_B;
+		END a2b;
+
+	END TopicB;
+
+	TOPIC TopicC EXTENDS TopicA = 
+
+		CLASS C_B =
+		END C_B;
+
+		ASSOCIATION a2b=
+			a --a;
+			b --C_B;
+		END a2b;
+
+	END TopicC;
+
+END Model.

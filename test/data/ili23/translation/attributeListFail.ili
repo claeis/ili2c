@@ -1,0 +1,32 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC TopicA =
+
+		STRUCTURE StructA1 =
+		END StructA1;
+		
+		CLASS ClassA4 =
+			attrA20 : BAG OF StructA1;
+		END ClassA4;
+
+	END TopicA;
+	
+END ModelA.
+
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	TOPIC TopicB =
+	
+		STRUCTURE StructB1 =
+		END StructB1;
+		
+		CLASS ClassB4 =
+			attrB20 : LIST OF StructB1;
+		END ClassB4;
+
+	END TopicB;
+
+END ModelB.

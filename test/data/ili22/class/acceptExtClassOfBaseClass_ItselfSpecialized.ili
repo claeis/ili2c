@@ -1,0 +1,24 @@
+INTERLIS 2.2;
+
+MODEL Model =
+
+  TOPIC BaseTopic =
+
+    CLASS Base =
+    END Base;
+    
+    CLASS Extends
+    EXTENDS Base = 
+    END Extends;
+
+  END BaseTopic;
+
+  TOPIC Topic
+  EXTENDS Model.BaseTopic =
+
+    CLASS Extends(EXTENDED) = 
+    END Extends;
+
+  END Topic;
+
+END Model.

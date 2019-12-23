@@ -713,7 +713,14 @@ public abstract class AttributeDef
 		}
 		return false;
 	}
-	
+	  @Override
+	    public void setSourceLine(int sourceLine) {
+	        super.setSourceLine(sourceLine);
+	        if(domain!=null){
+	            domain.setSourceLine(sourceLine);
+	        }
+	    }
+
 	@Override
   	protected void linkTranslationOf(Element baseElement)
   	{
@@ -723,13 +730,14 @@ public abstract class AttributeDef
 			return; // FIXME type should not be null; fix in parser/viewAttributes() (near attrib.setTypeProxy(true))
 		}
 		Type baseType=((AttributeDef) baseElement).getDomain();
-		type.linkTranslationOf(baseType);
-	    
+		if(type.getClass().equals(baseType.getClass())) {
+	        type.linkTranslationOf(baseType);
+		}
   	}
     @Override
-    protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+    protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
     {
-        super.checkTranslationOf(errs);
+        super.checkTranslationOf(errs,name,baseName);
         Type type=getDomain();
         if(type==null){
             return; // FIXME type should not be null; fix in parser/viewAttributes() (near attrib.setTypeProxy(true))
@@ -738,9 +746,20 @@ public abstract class AttributeDef
         if(baseElement==null) {
             return;
         }
-        Type baseType=((AttributeDef) baseElement).getDomain();
+        if(isAbstract()!=baseElement.isAbstract()) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInAbstractness",getScopedName(),baseElement.getScopedName())));
+        }
+        if(isFinal()!=baseElement.isFinal()) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInFinality",getScopedName(),baseElement.getScopedName())));
+        }
+        if(isTransient()!=baseElement.isTransient()) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInTransientness",getScopedName(),baseElement.getScopedName())));
+        }
+        
+        
+        Type baseType=baseElement.getDomain();
         if(type.getClass()!=baseType.getClass()){
-            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName())));
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),baseElement.getScopedName())));
             return;
         }
         if (type instanceof TypeAlias){
@@ -750,9 +769,23 @@ public abstract class AttributeDef
             }
         }
         try {
-            type.checkTranslationOf(errs);
+            type.checkTranslationOf(errs,getScopedName(),baseElement.getScopedName());
+            if(type instanceof AbstractCoordType) {
+                String crs=((AbstractCoordType) type).getCrs(this);
+                String originCrs=((AbstractCoordType) baseType).getCrs(baseElement);
+                if(crs==null && originCrs==null) {
+                    
+                }else {
+                    if(crs==null || originCrs==null) {
+                        throw new Ili2cSemanticException();
+                    }
+                    if(!crs.equals(originCrs)) {
+                        throw new Ili2cSemanticException();
+                    }
+                }
+            }
         }catch(Ili2cSemanticException ex) {
-            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),((AttributeDef) baseElement).getScopedName())));
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),baseElement.getScopedName())));
         }
     }
 }

@@ -1,0 +1,6 @@
+INTERLIS 2.3;
+
+MODEL ModelA AT "mailto:ce@local" VERSION "2009-08-19"=
+DOMAIN AnOid = OID TEXT*10;
+
+END ModelA.

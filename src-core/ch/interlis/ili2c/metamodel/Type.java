@@ -247,9 +247,9 @@ public abstract class Type
 	          this.cardinality.toString(), general.cardinality.toString()));
   }
   @Override
-  protected void checkTranslationOf(List<Ili2cSemanticException> errs)
+  protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
   {
-      super.checkTranslationOf(errs);
+      super.checkTranslationOf(errs,name,baseName);
       Type   origin=(Type)getTranslationOf();
 
       if (origin == null){

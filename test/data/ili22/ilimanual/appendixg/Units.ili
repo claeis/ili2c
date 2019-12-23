@@ -1,0 +1,97 @@
+!! File Units.ili Release 2003-03-18
+
+INTERLIS 2.2;
+
+TYPE MODEL Units (en) =
+
+  IMPORTS UNQUALIFIED INTERLIS;
+
+  UNIT
+    !! abstract Units
+    Area (ABSTRACT) = (LENGTH*LENGTH);
+    Volume (ABSTRACT) = (LENGTH*LENGTH*LENGTH);
+    Velocity (ABSTRACT) = (LENGTH/TIME);
+    Acceleration (ABSTRACT) = (Velocity/TIME);
+    Force (ABSTRACT) = (MASS*LENGTH/TIME/TIME);
+    Pressure (ABSTRACT) = (Force/Area);
+    Energy (ABSTRACT) = (Force*LENGTH);
+    Power (ABSTRACT) = (Energy/TIME);
+    Electric_Potential (ABSTRACT) = (Power/ELECTRIC_CURRENT);
+    Frequency (ABSTRACT) = (DIMENSIONLESS/TIME);
+
+    Millimeter [mm] = 0.001 [m];
+    Centimeter [cm] = 0.01 [m];
+    Decimeter [dm] = 0.1 [m];
+    Kilometer [km] = 1000 [m];
+
+    Square_Meter [m2] EXTENDS Area   = (m*m);
+    Cubic_Meter  [m3] EXTENDS Volume = (m*m*m);
+
+    Minute [min] = 60 [s];
+    Hour   [h]   = 60 [min];
+    Day    [d]   = 24 [h];
+
+    Kilometer_per_Hour [kmh] EXTENDS Velocity = (km/h);
+    Meter_per_Second [ms] = 3.6 [kmh];
+    Newton [N]  EXTENDS Force = (kg*m/s/s);
+    Pascal [Pa] EXTENDS Pressure = (N/m2);
+    Joule  [J]  EXTENDS Energy = (N*m);
+    Watt   [W]  EXTENDS Power = (J/s);
+    Volt   [V]  EXTENDS Electric_Potential = (W/A);
+
+    Inch [in] = 2.54 [cm];
+    Foot [ft] = 0.3048 [m];
+    Mile [mi] = 1.609344 [km];
+
+    Are [a] = 100 [m2];
+    Hectare [ha] = 100 [a];
+    Square_Kilometer [km2] = 100 [ha];
+    Acre [acre] = 4046.873 [m2];
+
+    Liter [L] = 1 / 1000 [m3];
+    US_Gallon [USgal] = 3.785412 [L];
+
+    Angle_Degree = 180 / PI [rad];
+    Angle_Minute = 1 / 60 [Angle_Degree];
+    Angle_Second = 1 / 60 [Angle_Minute];
+    Angle_DMS = {Angle_Degree:Angle_Minute[0 .. 59]:Angle_Second[0 .. 59]}
+                CONTINUOUS;
+
+    Gon = 200 / PI [rad];
+
+    Gram [g] = 1 / 1000 [kg];
+    Ton [t] = 1000 [kg];
+    Pound [lb] = 0.4535924 [kg];
+
+    Calorie [cal] = 4.1868 [J];
+    Kilowatt_Hour [kWh] = 0.36E7 [J];
+
+    Horsepower = 746 [W];
+
+    Techn_Atmosphere [at] = 98066.5 [Pa];
+    Atmosphere [atm] = 101325 [Pa];
+    Bar [bar] = 10000 [Pa];
+    Millimeter_Mercury [mmHg] = 133.3224 [Pa];
+    Torr = 133.3224 [Pa]; !! Torr = [mmHg]
+
+    Decibel [dB] = FUNCTION // 10**(dB/20) * 0.00002 // [Pa];
+
+    Degree_Celsius [oC] = FUNCTION // oC+273.15 // [K];
+    Degree_Fahrenheit [oF] = FUNCTION // (oF+459.67)/1.8 // [K];
+
+    CountedObjects EXTENDS DIMENSIONLESS;
+
+    Hertz [Hz] EXTENDS Frequency = (CountedObjects/s);
+    KiloHertz [KHz] = 1000 [Hz];
+    MegaHertz [MHz] = 1000 [KHz];
+
+    Percent = 0.01 [CountedObjects];
+    Permille = 0.001 [CountedObjects];
+
+    !! ISO 4217 Currency Abbreviation
+    USDollar    [USD] EXTENDS MONEY;
+    Euro        [EUR] EXTENDS MONEY;
+    SwissFrancs [CHF] EXTENDS MONEY;
+
+END Units.
+

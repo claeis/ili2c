@@ -1,0 +1,13 @@
+INTERLIS 2.3;
+
+MODEL Test (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"  =
+
+  STRUCTURE Name =
+    Name : MANDATORY TEXT;
+  END Name;
+
+  STRUCTURE ShortName EXTENDS Name =
+    Name (EXTENDED) : MANDATORY TEXT*20;
+  END ShortName;
+
+END Test.

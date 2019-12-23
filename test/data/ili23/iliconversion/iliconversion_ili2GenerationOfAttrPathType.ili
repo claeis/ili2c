@@ -1,0 +1,19 @@
+INTERLIS 2.3;
+
+CONTRACTED MODEL model 
+	AT "http://www.interlis.ch/ili2c/tests/" 
+	VERSION "1" =
+	
+	FUNCTION func( Objects : OBJECTS OF ANYCLASS; attrPath : ATTRIBUTE OF @ Objects) : BOOLEAN;
+
+	TOPIC topic =
+
+		CLASS a =
+			objClass : CLASS;
+			attrPath : ATTRIBUTE OF objClass;
+			attrPath2 : ATTRIBUTE RESTRICTION ( TEXT*10 );
+		END a;
+
+	END topic;
+
+END model.
