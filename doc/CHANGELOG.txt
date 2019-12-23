@@ -3,6 +3,9 @@ Known Issues:
 
 LATEST
 ---------------------------
+
+ili2c 5.0.4 (2019-12-23)
+---------------------------
 - fix TOPIC must be ABSTRACT if it contains abstract classes without concrete extensions
 - fix validation of ModelDef translation (#13)
 - fix validation of TopicDef translation (#13)
@@ -25,6 +28,7 @@ LATEST
 - fix validation of ClassType translation (#13)
 - fix validation of AttributePathType translation (#13)
 - fix extended RoleDef
+- iox-ili-1.20.15
 
 ili2c 5.0.3 (2019-11-08)
 ---------------------------

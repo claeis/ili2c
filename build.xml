@@ -36,7 +36,7 @@
 		<artifact:pom id="pomE-tool" groupId="${groupId}" artifactId="ili2c-tool" version="${buildnr}" name="ili2c-tool">
 			<artifact:dependency groupId="ch.interlis" artifactId="ili2c-core" version="${buildnr}"/>
 			<artifact:dependency groupId="ch.interlis" artifactId="iox-api" version="1.0.3"/>
-			<artifact:dependency groupId="ch.interlis" artifactId="iox-ili" version="1.20.14"/>
+			<artifact:dependency groupId="ch.interlis" artifactId="iox-ili" version="1.20.15"/>
 			<artifact:dependency groupId="antlr" artifactId="antlr" version="2.7.7"/>
 			<!-- artifact:dependency groupId="org.antlr" artifactId="antlr4" version="4.7.2"/ -->
 		</artifact:pom>
