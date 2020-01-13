@@ -755,7 +755,14 @@ public abstract class AttributeDef
         if(isTransient()!=baseElement.isTransient()) {
             errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInTransientness",getScopedName(),baseElement.getScopedName())));
         }
-        
+        if(ili1Explanation==null && baseElement.ili1Explanation==null){
+        }else {
+            if(ili1Explanation==null || baseElement.ili1Explanation==null){
+                errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),baseElement.getScopedName())));
+            }else if(ili1Explanation.equals(baseElement.ili1Explanation)){
+                errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),baseElement.getScopedName())));
+            }
+        }
         
         Type baseType=baseElement.getDomain();
         if(type.getClass()!=baseType.getClass()){

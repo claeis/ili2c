@@ -1,0 +1,21 @@
+TRANSFER INTERLIS1;
+
+MODEL ModelB
+	TOPIC TopicB =
+
+		TABLE ClassB1 =
+			attrB1 : TEXT*20;
+			attrB2 : TEXT*20 // explB //;
+			NO IDENT
+		END ClassB1;
+		
+	END TopicB.
+	
+END ModelB.
+
+FORMAT FREE;  
+
+CODE
+  BLANK = DEFAULT, UNDEFINED = DEFAULT, CONTINUE = DEFAULT;
+  TID = ANY;
+END.
