@@ -4,6 +4,7 @@ Known Issues:
 LATEST
 ---------------------------
 - fix validation of ili1:AttributeDef/Explanation translation
+- iox-ili-1.20.16
 
 ili2c 5.0.4 (2019-12-23)
 ---------------------------
