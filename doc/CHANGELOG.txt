@@ -4,6 +4,11 @@ Known Issues:
 LATEST
 ---------------------------
 
+ili2c 5.0.5 (2020-01-31)
+---------------------------
+- fix validation of ili1:AttributeDef/Explanation translation
+- iox-ili-1.20.16
+
 ili2c 5.0.4 (2019-12-23)
 ---------------------------
 - fix TOPIC must be ABSTRACT if it contains abstract classes without concrete extensions
