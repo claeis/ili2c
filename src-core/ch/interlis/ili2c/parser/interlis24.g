@@ -1389,9 +1389,6 @@ protected attributeDef[Viewable container]
 		{
                     if(type!=null){
 		    	if(type instanceof ReferenceType){
-				if(!(container instanceof Table) || ((Table)container).isIdentifiable()){
-					reportError(formatMessage("err_attributeDef_refattrInClass",n.getText()),n.getLine());
-				}
 				ReferenceType rt=(ReferenceType)type;
 				if(!((Table)rt.getReferred()).isIdentifiable()){
 					reportError(formatMessage("err_attributeDef_refattrToStruct",n.getText()),n.getLine());

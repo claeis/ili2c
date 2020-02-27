@@ -157,6 +157,25 @@ public class Attributes23Test {
 		assertEquals(8, compilerLogEvent.getLine());
 		assertEquals("A reference attribute (attr) is only allowed to reference a class.", compilerLogEvent.getRawEventMsg());
 	}
+    @Test
+    public void attributeRef_RefAttrInClass_Fail() {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"attributeRef_RefAttrInClass_Fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+        }
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
+        assertEquals(8, compilerLogEvent.getLine());
+        assertEquals("A reference attribute (attr) is only allowed in a STRUCTURE.", compilerLogEvent.getRawEventMsg());
+    }
 	
 	// This test checks if the compiler accepts a reference attribute to ANYCLASS.
 	@Ignore

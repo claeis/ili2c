@@ -3,6 +3,7 @@ Known Issues:
 
 LATEST
 ---------------------------
+- ili24: support REFERENCE TO in CLASS (#42)
 
 ili2c 5.0.5 (2020-01-31)
 ---------------------------
