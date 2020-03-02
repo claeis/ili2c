@@ -4,6 +4,11 @@ Known Issues:
 LATEST
 ---------------------------
 
+ili2c 5.0.6 (2020-02-02)
+---------------------------
+- ili24: support REFERENCE TO in CLASS (#42)
+- iox-ili-1.20.17
+
 ili2c 5.0.5 (2020-01-31)
 ---------------------------
 - fix validation of ili1:AttributeDef/Explanation translation
