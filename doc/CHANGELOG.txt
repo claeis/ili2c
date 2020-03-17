@@ -3,6 +3,7 @@ Known Issues:
 
 LATEST
 ---------------------------
+- fix SignAttribute.iterator() (ilivalidator#231)
 
 ili2c 5.0.6 (2020-03-02)
 ---------------------------
