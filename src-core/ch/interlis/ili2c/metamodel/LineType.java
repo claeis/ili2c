@@ -52,7 +52,7 @@ public abstract class LineType extends Type
   public PrecisionDecimal getMaxOverlap ()
   {
 	if(maxOverlap==null && extending!=null){
-		return ((LineType)extending).getMaxOverlap();
+		return ((LineType)extending.resolveAliases()).getMaxOverlap();
 	}
     return maxOverlap;
   }
@@ -84,7 +84,7 @@ public abstract class LineType extends Type
   public LineForm[] getLineForms()
   {
 		if(lineForms.length==0 && extending!=null){
-			return ((LineType)extending).getLineForms();
+			return ((LineType)extending.resolveAliases()).getLineForms();
 		}
     return lineForms;
   }
@@ -118,7 +118,7 @@ public abstract class LineType extends Type
   public Domain getControlPointDomain()
   {
 		if(controlPointDomain==null && extending!=null){
-			return ((LineType)extending).getControlPointDomain();
+			return ((LineType)(extending.resolveAliases())).getControlPointDomain();
 		}
     return controlPointDomain;
   }
