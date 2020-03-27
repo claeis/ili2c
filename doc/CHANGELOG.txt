@@ -1,6 +1,3 @@
-Known Issues:
-- "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
-
 LATEST
 ---------------------------
 - fix SignAttribute.iterator() (ilivalidator#231)
