@@ -6,13 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import ch.ehi.basics.logging.EhiLogger;
-import ch.ehi.iox.ilisite.ILIREPOSITORY09;
-import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata;
+import ch.interlis.models.ILIREPOSITORY20;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ilirepository.impl.RepositoryVisitor;
+import ch.interlis.ilirepository.impl.ModelMetadata;
 import ch.interlis.ilirepository.impl.ModelLister;
 import ch.interlis.ilirepository.impl.RepositoryAccess;
 import ch.interlis.ilirepository.impl.RepositoryAccessException;
@@ -25,8 +25,7 @@ import ch.interlis.iox_j.ObjectEvent;
 import ch.interlis.iox_j.StartBasketEvent;
 import ch.interlis.iox_j.StartTransferEvent;
 
-@Deprecated
-public class ListModels {
+public class ListModels2 {
 
 	public boolean listModels(Configuration config,
 			UserSettings settings, boolean onlyLatestVersions) {
@@ -57,9 +56,9 @@ public class ListModels {
             EhiLogger.logError(ex);
             return false;
         }
-        List<ModelMetadata> mergedModelMetadatav=modelLister.getResult();
+        List<ModelMetadata> mergedModelMetadatav=modelLister.getResult2();
         if(onlyLatestVersions) {
-            mergedModelMetadatav=RepositoryAccess.getLatestVersions(mergedModelMetadatav);
+            mergedModelMetadatav=RepositoryAccess.getLatestVersions2(mergedModelMetadatav);
         }
 		
 				
@@ -75,17 +74,18 @@ public class ListModels {
 	            outStream=new java.io.FileOutputStream(destFile);
 	        }
 			
-			ioxWriter = new XtfWriterBase( outStream,  ILIREPOSITORY09.getIoxMapping(),"2.3");
-			ioxWriter.setModels(new XtfModel[]{ILIREPOSITORY09.getXtfModel()});
+			ioxWriter = new XtfWriterBase( outStream,  ILIREPOSITORY20.getIoxMapping(),"2.3");
+			ioxWriter.setModels(new XtfModel[]{ILIREPOSITORY20.getXtfModel()});
 			StartTransferEvent startTransferEvent = new StartTransferEvent();
 			startTransferEvent.setSender( Main.APP_NAME+"-"+Main.getVersion() );
 			ioxWriter.write( startTransferEvent );
-			StartBasketEvent startBasketEvent = new StartBasketEvent( ILIREPOSITORY09.RepositoryIndex, "b1");
+			StartBasketEvent startBasketEvent = new StartBasketEvent( ILIREPOSITORY20.RepositoryIndex, "b1");
 			ioxWriter.write( startBasketEvent );
 			int tid=1;
 			for(ModelMetadata model:mergedModelMetadatav){
-			    model.setobjectoid(Integer.toString(tid));
-				ioxWriter.write(new ObjectEvent(model));
+			    ch.interlis.models.IliRepository20.RepositoryIndex.ModelMetadata iomModel=RepositoryAccess.mapToIom20(model);
+			    iomModel.setobjectoid(Integer.toString(tid));
+				ioxWriter.write(new ObjectEvent(iomModel));
 				tid++;
 			}
 			

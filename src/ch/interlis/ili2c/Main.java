@@ -137,6 +137,8 @@ public class Main {
 	boolean doCloneRepos = false;
     boolean doListModels = false;
     boolean doListAllModels = false;
+    boolean doListModels2 = false;
+    boolean doListAllModels2 = false;
     boolean doListData = false;
 	boolean withWarnings = true;
 	int numErrorsWhileGenerating = 0;
@@ -190,8 +192,10 @@ public class Main {
 	    System.err.println("-oIOM                 (deprecated) Generate Model as INTERLIS-Transfer (XTF).");
 	    System.err.println("--check-repo-ilis uri   check all ili files in the given repository.");
 	    System.err.println("--clone-repos         clones the given repositories to the --out folder.");
-        System.err.println("--listModels uri      list all models starting in the given repository.");
-        System.err.println("--listAllModels uri   list all models (without removing old entries) starting in the given repository.");
+        System.err.println("--listModels uri      list all models starting in the given repository. (IliRepository09)");
+        System.err.println("--listAllModels uri   list all models (without removing old entries) starting in the given repository. (IliRepository09)");
+        System.err.println("--listModels2 uri     list all models starting in the given repository. (IliRepository20)");
+        System.err.println("--listAllModels2 uri  list all models (without removing old entries) starting in the given repository. (IliRepository20)");
         System.err.println("--listData uri        list all data starting in the given repository.");
 	    System.err.println("--translation translatedModel=originModel assigns a translated model to its orginal language equivalent.");
 	    System.err.println("--out file/dir        file or folder for output (folder must exist).");
@@ -254,12 +258,20 @@ public class Main {
             doListModels = true;
             continue;
         }
+        if (args[i].equals("--listModels2")) {
+            doListModels2 = true;
+            continue;
+        }
         if (args[i].equals("--listData")) {
             doListData = true;
             continue;
         }
         if (args[i].equals("--listAllModels")) {
             doListAllModels = true;
+            continue;
+        }
+        if (args[i].equals("--listAllModels2")) {
+            doListAllModels2 = true;
             continue;
         }
 		if (args[i].equals("--out")) {
@@ -386,7 +398,10 @@ public class Main {
 		    continue;
 		} else {
 			String filename = args[i];
-			if (doCheckRepoIlis  || doCloneRepos || doListModels || doListAllModels || doListData || new File(filename).isFile()) {
+			if (doCheckRepoIlis  || doCloneRepos 
+			        || doListModels || doListAllModels 
+                    || doListModels2 || doListAllModels2 
+			        || doListData || new File(filename).isFile()) {
 				ilifilev.add(filename);
 			} else {
 				EhiLogger.logError(args[i] + ": There is no such file.");
@@ -417,7 +432,10 @@ public class Main {
 		config.setLanguage(language);
 		config.setNlsxmlFilename(nlsxmlFilename);
 		config.setParams(params);
-	    if (doCloneRepos || doListModels || doListAllModels || doListData || outputKind != GenerateOutputKind.NOOUTPUT) {
+	    if (doCloneRepos 
+	            || doListModels || doListAllModels 
+                || doListModels2 || doListAllModels2 
+	            || doListData || outputKind != GenerateOutputKind.NOOUTPUT) {
 			if (outfile != null) {
 			    config.setOutputFile(outfile);
 			} else {
@@ -440,6 +458,12 @@ public class Main {
 					}
             }else if (doListModels || doListAllModels) {
                 boolean failed = new ListModels().listModels(config, settings,doListModels==true);
+                if (failed) {
+                    EhiLogger.logError("list of models failed");
+                    System.exit(1);
+                }
+            }else if (doListModels2 || doListAllModels2) {
+                boolean failed = new ListModels2().listModels(config, settings,doListModels2==true);
                 if (failed) {
                     EhiLogger.logError("list of models failed");
                     System.exit(1);
