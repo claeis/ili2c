@@ -12,7 +12,10 @@ public class LogCollector implements  ch.ehi.basics.logging.LogListener {
 	}
 
 	public void logEvent(LogEvent event) {
-		events.add(event);
+	    final int eventKind = event.getEventKind();
+        if(eventKind!=LogEvent.DEBUG_TRACE && eventKind!=LogEvent.STATE_TRACE) {
+            events.add(event);
+	    }
 	}
 	
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TRANSFER xmlns="http://www.interlis.ch/INTERLIS2.3">
+  <HEADERSECTION SENDER="KOGIS-20200115" VERSION="2.3">
+    <MODELS>
+      <MODEL NAME="IliRepository09" VERSION="2009-12-01" URI="mailto:ce@eisenhutinformatik.ch"/>
+    </MODELS>
+  </HEADERSECTION>
+  <DATASECTION>
+    <IliRepository09.RepositoryIndex BID="ch.interlis.ilimodels.b1">
+
+      <IliRepository09.RepositoryIndex.ModelMetadata TID="1">
+        <Name>IliRepository09</Name>
+        <SchemaLanguage>ili2_3</SchemaLanguage>
+        <File>obsolete/IliRepository09_o0.ili</File>
+        <Version>2009-11-19</Version>
+        <technicalContact>mailto:info@interlis.ch</technicalContact>
+        <furtherInformation>https://www.interlis.ch</furtherInformation>
+        <md5>b2bd836d761de6a1324e3a6c3f7d3650</md5>
+      </IliRepository09.RepositoryIndex.ModelMetadata>
+
+      <IliRepository09.RepositoryIndex.ModelMetadata TID="2">
+        <Name>IliRepository09</Name>
+        <SchemaLanguage>ili2_3</SchemaLanguage>
+        <File>obsolete/IliRepository09_o1.ili</File>
+        <Version>2009-12-01</Version>
+        <precursorVersion>2009-11-19</precursorVersion>
+        <technicalContact>mailto:info@interlis.ch</technicalContact>
+        <furtherInformation>https://www.interlis.ch</furtherInformation>
+        <md5>d4ca2847fee23bcc4332918394e4830b</md5>
+      </IliRepository09.RepositoryIndex.ModelMetadata>
+    </IliRepository09.RepositoryIndex>
+  </DATASECTION>
+</TRANSFER>

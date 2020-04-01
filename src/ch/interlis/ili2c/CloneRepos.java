@@ -1,47 +1,23 @@
 package ch.interlis.ili2c;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-
 import ch.ehi.basics.logging.EhiLogger;
-import ch.ehi.iox.ilisite.ILIREPOSITORY09;
-import ch.ehi.iox.ilisite.IliRepository09.ModelName_;
-import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata;
-import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage;
+import ch.interlis.models.ILIREPOSITORY20;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.gui.UserSettings;
-import ch.interlis.ili2c.metamodel.Model;
-import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.modelscan.IliFile;
 import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ilirepository.IliFiles;
 import ch.interlis.ilirepository.IliManager;
 import ch.interlis.ilirepository.impl.RepositoryAccess;
 import ch.interlis.ilirepository.impl.RepositoryAccessException;
+import ch.interlis.ilirepository.impl.ModelMetadata;
 import ch.interlis.iom_j.xtf.XtfModel;
 import ch.interlis.iom_j.xtf.XtfWriterBase;
 import ch.interlis.iox.IoxException;
@@ -61,7 +37,7 @@ public class CloneRepos {
 			EhiLogger.logError("no output folder given");
 			return true;
 		}
-		ArrayList<ModelMetadata> mergedModelMetadatav = new ArrayList<ModelMetadata>();
+		ArrayList<ch.interlis.models.IliRepository20.RepositoryIndex.ModelMetadata> mergedModelMetadatav = new ArrayList<ch.interlis.models.IliRepository20.RepositoryIndex.ModelMetadata>();
 		Iterator reposi = config.iteratorFileEntry();
 		File destFolder=new File(config.getOutputFile());
 		destFolder.mkdir();
@@ -90,9 +66,9 @@ public class CloneRepos {
 				IliFiles files=null;
 				List<ModelMetadata> modelMetadatav = null;
 				try {
-					modelMetadatav = RepositoryAccess.readIliModelsXml(ilimodelsFile);
-					modelMetadatav = RepositoryAccess.getLatestVersions(modelMetadatav);
-					files = RepositoryAccess.createIliFiles(repos, modelMetadatav);
+					modelMetadatav = RepositoryAccess.readIliModelsXml2(ilimodelsFile);
+					modelMetadatav = RepositoryAccess.getLatestVersions2(modelMetadatav);
+					files = RepositoryAccess.createIliFiles2(repos, modelMetadatav);
 				} catch (RepositoryAccessException e2) {
 					EhiLogger.logError(e2);
 					failed=true;
@@ -119,7 +95,7 @@ public class CloneRepos {
 				for(ModelMetadata md:modelMetadatav) {
 					String file=md.getFile();
 					md.setFile(new File(localReposPath,file).getPath());
-					mergedModelMetadatav.add(md);
+					mergedModelMetadatav.add(RepositoryAccess.mapToIom20(md));
 				}
 			}
 		}
@@ -128,14 +104,14 @@ public class CloneRepos {
 		XtfWriterBase ioxWriter=null;
 		try{
 			outStream=new java.io.FileOutputStream(new File(destFolder,IliManager.ILIMODELS_XML));
-			ioxWriter = new XtfWriterBase( outStream,  ILIREPOSITORY09.getIoxMapping(),"2.3");
-			ioxWriter.setModels(new XtfModel[]{ILIREPOSITORY09.getXtfModel()});
+			ioxWriter = new XtfWriterBase( outStream,  ILIREPOSITORY20.getIoxMapping(),"2.3");
+			ioxWriter.setModels(new XtfModel[]{ILIREPOSITORY20.getXtfModel()});
 			StartTransferEvent startTransferEvent = new StartTransferEvent();
 			startTransferEvent.setSender( Main.APP_NAME+"-"+Main.getVersion() );
 			ioxWriter.write( startTransferEvent );
-			StartBasketEvent startBasketEvent = new StartBasketEvent( ILIREPOSITORY09.RepositoryIndex, "b1");
+			StartBasketEvent startBasketEvent = new StartBasketEvent( ILIREPOSITORY20.RepositoryIndex, "b1");
 			ioxWriter.write( startBasketEvent );
-			for(ModelMetadata model:mergedModelMetadatav){
+			for(ch.interlis.models.IliRepository20.RepositoryIndex.ModelMetadata model:mergedModelMetadatav){
 				ioxWriter.write(new ObjectEvent(model));
 			}
 			

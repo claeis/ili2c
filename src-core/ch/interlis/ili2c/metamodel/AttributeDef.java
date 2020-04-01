@@ -142,6 +142,21 @@ public abstract class AttributeDef
   {
     return extending;
   }
+  public AttributeDef getRootExtending ()
+  {
+      AttributeDef ret=(AttributeDef)getExtending();
+      if(ret!=null){
+          while(true){
+              Element ret1=ret.getExtending();
+              if(ret1==null){
+                  break;
+              }
+              ret=(AttributeDef)ret1;
+          }
+      }
+      return ret;
+  }
+  
 	public Element getRealExtending()
 	{
 		Element ext=getExtending();

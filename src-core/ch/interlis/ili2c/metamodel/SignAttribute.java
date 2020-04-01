@@ -20,10 +20,9 @@ public class SignAttribute extends ExtendableContainer<Element>
 {
   protected String            name = "";
   protected Table             generating = null;
-  protected SignInstruction[] instructions = new SignInstruction[0];
 
   protected Collection<Element> createElements(){
-    return null;
+      return new ArrayList<Element>();
   }
   @Override
   public void checkIntegrity(List<Ili2cSemanticException> errs){
@@ -137,7 +136,7 @@ public class SignAttribute extends ExtendableContainer<Element>
 
   public SignInstruction[] getInstructions ()
   {
-    return instructions;
+    return (SignInstruction[]) toArray(new SignInstruction[size()]);
   }
 
 	/** defines the set of SignInstructions to be used to assign values to
@@ -146,14 +145,9 @@ public class SignAttribute extends ExtendableContainer<Element>
   public void setInstructions (SignInstruction[] instructions)
     throws java.beans.PropertyVetoException
   {
-    SignInstruction[] oldValue = this.instructions;
-    SignInstruction[] newValue = instructions;
-
-    if (oldValue == newValue)
-      return;
-
-    fireVetoableChange ("instructions", oldValue, newValue);
-    this.instructions = newValue;
-    firePropertyChange ("instructions", oldValue, newValue);
+    clear();
+    for(SignInstruction i: instructions) {
+        add(i);
+    }
   }
 }

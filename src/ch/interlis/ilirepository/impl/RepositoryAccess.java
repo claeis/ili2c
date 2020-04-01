@@ -26,12 +26,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,13 +37,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import ch.ehi.basics.logging.EhiLogger;
-import ch.ehi.iox.ilisite.IliRepository09.ModelName_;
-import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata;
-import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage;
 import ch.ehi.iox.ilisite.IliSite09.RepositoryLocation_;
 import ch.interlis.ili2c.modelscan.IliFile;
 import ch.interlis.ili2c.modelscan.IliModel;
-import ch.interlis.ilirepository.Dataset;
 import ch.interlis.ilirepository.IliFiles;
 import ch.interlis.ilirepository.IliResolver;
 import ch.interlis.ilirepository.IliSite;
@@ -186,7 +179,7 @@ public class RepositoryAccess {
 			reposIliFiles.put(uri, null);
 		}
 	}
-	private String toString(Throwable ex)
+	public static String toString(Throwable ex)
 	{
 		StringBuilder ret=new StringBuilder();
 		String msg=ex.getLocalizedMessage();
@@ -235,20 +228,21 @@ public class RepositoryAccess {
 		}
 		return true;
 	}
-	public static IliFiles createIliFiles(String uri,java.util.Collection<ModelMetadata> modelv)
+	@Deprecated
+	public static IliFiles createIliFiles(String uri,java.util.Collection<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelv)
 	throws RepositoryAccessException
 	{
 		
 		// read "file"
 		
 		// build map of model-names to model-metadata
-		HashMap<String,ArrayList<ModelMetadata>> models=new HashMap<String,ArrayList<ModelMetadata>>(); // map<String modelName,array<ModelMetadata>>
-		for(ModelMetadata model:modelv){
+		HashMap<String,ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata>> models=new HashMap<String,ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata>>(); // map<String modelName,array<ModelMetadata>>
+		for(ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata model:modelv){
 			 String name=model.getName();
 			 if(!models.containsKey(name)){
-				 models.put(name,new ArrayList<ModelMetadata>());
+				 models.put(name,new ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata>());
 			 }
-			 ArrayList<ModelMetadata> versions=models.get(name);
+			 ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> versions=models.get(name);
 			 versions.add(model);
 		}
 
@@ -257,13 +251,13 @@ public class RepositoryAccess {
 		Iterator<String> modeli=models.keySet().iterator();
 		while(modeli.hasNext()){
 			String name=modeli.next();
-			ArrayList<ModelMetadata> modelVersions=models.get(name);
+			ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelVersions=models.get(name);
 			if(modelVersions==null){
 				continue;
 			}
-			ModelMetadata_SchemaLanguage cslv[]=new ModelMetadata_SchemaLanguage[]{ModelMetadata_SchemaLanguage.ili1,ModelMetadata_SchemaLanguage.ili2_2,ModelMetadata_SchemaLanguage.ili2_3};  
+			ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage cslv[]=new ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage[]{ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage.ili1,ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage.ili2_2,ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage.ili2_3};  
 			for(int csli=0;csli<cslv.length;csli++){
-				ModelMetadata model=getCslVersion(modelVersions,cslv[csli]);
+			    ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata model=getCslVersion(modelVersions,cslv[csli]);
 				if(model==null){
 					continue;
 				}
@@ -279,12 +273,12 @@ public class RepositoryAccess {
 					ilifile=files.get(filename);
 				}
 				IliModel iliModel=new IliModel();
-				ModelMetadata_SchemaLanguage csl=model.getSchemaLanguage();
-				if(csl==ModelMetadata_SchemaLanguage.ili1){
+				ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage csl=model.getSchemaLanguage();
+				if(csl==ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage.ili1){
 					iliModel.setIliVersion(1.0);
-				}else if(csl==ModelMetadata_SchemaLanguage.ili2_2){
+				}else if(csl==ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage.ili2_2){
 					iliModel.setIliVersion(2.2);
-				}else if(csl==ModelMetadata_SchemaLanguage.ili2_3){
+				}else if(csl==ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage.ili2_3){
 					iliModel.setIliVersion(2.3);
 				}
 				iliModel.setName(model.getName());
@@ -302,6 +296,75 @@ public class RepositoryAccess {
 		}
 		return ret;
 	}
+    public static IliFiles createIliFiles2(String uri,java.util.Collection<ModelMetadata> modelv)
+    throws RepositoryAccessException
+    {
+        
+        // read "file"
+        
+        // build map of model-names to model-metadata
+        HashMap<String,ArrayList<ModelMetadata>> models=new HashMap<String,ArrayList<ModelMetadata>>(); // map<String modelName,array<ModelMetadata>>
+        for(ModelMetadata model:modelv){
+             String name=model.getName();
+             if(!models.containsKey(name)){
+                 models.put(name,new ArrayList<ModelMetadata>());
+             }
+             ArrayList<ModelMetadata> versions=models.get(name);
+             versions.add(model);
+        }
+
+        IliFiles ret=new IliFiles();
+        HashMap<String,IliFile> files=new HashMap<String,IliFile>();
+        Iterator<String> modeli=models.keySet().iterator();
+        while(modeli.hasNext()){
+            String name=modeli.next();
+            ArrayList<ModelMetadata> modelVersions=models.get(name);
+            if(modelVersions==null){
+                continue;
+            }
+            String cslv[]=ModelMetadata.all;  
+            for(int csli=0;csli<cslv.length;csli++){
+                ModelMetadata model=getCslVersion2(modelVersions,cslv[csli]);
+                if(model==null){
+                    continue;
+                }
+                String filename=model.getFile();
+                IliFile ilifile=null;
+                if(!files.containsKey(filename)){
+                    ilifile=new IliFile();
+                    ilifile.setPath(filename);
+                    ilifile.setRepositoryUri(uri);
+                    files.put(filename, ilifile);
+                    ret.addFile(ilifile);
+                }else{
+                    ilifile=files.get(filename);
+                }
+                IliModel iliModel=new IliModel();
+                String csl=model.getSchemaLanguage();
+                if(csl.equals(ModelMetadata.ili1)){
+                    iliModel.setIliVersion(1.0);
+                }else if(csl.equals(ModelMetadata.ili2_2)){
+                    iliModel.setIliVersion(2.2);
+                }else if(csl.equals(ModelMetadata.ili2_3)){
+                    iliModel.setIliVersion(2.3);
+                }else if(csl.equals(ModelMetadata.ili2_4)){
+                    iliModel.setIliVersion(2.4);
+                }
+                iliModel.setName(model.getName());
+                String deps[]=model.getDependsOnModel();
+                for(int depi=0;depi<deps.length;depi++){
+                    String depName=ch.ehi.basics.tools.StringUtility.purge(deps[depi]);
+                    // empty? (e.g. because of invalid xml)
+                    if(depName!=null){
+                        //EhiLogger.debug("depName "+depName);
+                        iliModel.addDepenedency(depName);
+                    }
+                }
+                ilifile.addModel(iliModel);
+            }
+        }
+        return ret;
+    }
 	/** read an ilimodels.xml file
 	 * 
 	 * @param uri uri of the repository without ilimodels.xml
@@ -310,20 +373,30 @@ public class RepositoryAccess {
 	private IliFiles readIlimodelsXmlAsIliFiles(String uri)
 	throws RepositoryAccessException
 	{
-		List<ModelMetadata> modelv =  readIlimodelsXml(uri);
+		List<ModelMetadata> modelv =  readIlimodelsXml2(uri);
 		if(modelv==null) {
 		    return null;
 		}
-		modelv=getLatestVersions(modelv);
-		return createIliFiles(uri, modelv);
+		modelv=getLatestVersions2(modelv);
+		return createIliFiles2(uri, modelv);
 	}
-    public List<ModelMetadata> readIlimodelsXml(String uri) throws RepositoryAccessException {
+    @Deprecated
+    public List<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> readIlimodelsXml(String uri) throws RepositoryAccessException {
         File file=getLocalFileLocation(uri,IliManager.ILIMODELS_XML,metaMaxTTL,null);
 		if(file==null){
 			return null;
 		}
 		// read file
-		List<ModelMetadata> modelv = readIliModelsXml(file);
+		List<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelv = readIliModelsXml(file);
+        return modelv;
+    }
+    public List<ModelMetadata> readIlimodelsXml2(String uri) throws RepositoryAccessException {
+        File file=getLocalFileLocation(uri,IliManager.ILIMODELS_XML,metaMaxTTL,null);
+        if(file==null){
+            return null;
+        }
+        // read file
+        List<ModelMetadata> modelv = readIliModelsXml2(file);
         return modelv;
     }
 
@@ -369,19 +442,29 @@ public class RepositoryAccess {
     }
     
 	static private final String REGEX_ILI_NAME="[a-zA-Z]([a-zA-Z0-9_]*)";
-	static public List<ModelMetadata> readIliModelsXml(File file) 
+    @Deprecated
+	static public List<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> readIliModelsXml(File file) 
 	throws RepositoryAccessException
 	{
-		ArrayList<ModelMetadata> modelv=new ArrayList<ModelMetadata>();
+		ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelv=new ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata>();
 		ch.interlis.iom_j.xtf.XtfReader reader=null;
 		try {
 			reader=new ch.interlis.iom_j.xtf.XtfReader(file);
 			reader.getFactory().registerFactory(ch.ehi.iox.ilisite.ILIREPOSITORY09.getIoxFactory());
+            reader.getFactory().registerFactory(ch.interlis.models.ILIREPOSITORY20.getIoxFactory());
 			ch.interlis.iox.IoxEvent event=null;
 			do{
 				 event=reader.read();
 				 if(event instanceof ch.interlis.iox.ObjectEvent){
 					 ch.interlis.iom.IomObject iomObj=((ch.interlis.iox.ObjectEvent)event).getIomObject();
+                     if(iomObj instanceof ch.interlis.models.IliRepository20.RepositoryIndex.ModelMetadata){
+                         ch.interlis.models.IliRepository20.RepositoryIndex.ModelMetadata model20=(ch.interlis.models.IliRepository20.RepositoryIndex.ModelMetadata)iomObj;
+                         iomObj=mapToIom09(mapFromIom20(model20));
+                         if(iomObj==null) {
+                             EhiLogger.logAdaption("TID="+model20.getobjectoid()+": ignored; failed to migrate");
+                             continue;
+                         }
+                     }
 					 if(iomObj instanceof ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata){
 						 ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata model=(ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata)iomObj;
 						 {
@@ -394,7 +477,7 @@ public class RepositoryAccess {
 								 EhiLogger.logAdaption("TID="+iomObj.getobjectoid()+": ignored; <"+mName+"> is not a valid modelname");
 								 continue;
 							 }
-							 ModelMetadata_SchemaLanguage mCsl=model.getSchemaLanguage();
+							 ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage mCsl=model.getSchemaLanguage();
 							 if(mCsl==null){
 								 EhiLogger.logAdaption("TID="+iomObj.getobjectoid()+": ignored; no schemalanguage");
 								 continue;
@@ -425,6 +508,341 @@ public class RepositoryAccess {
 		}
 		return modelv;
 	}
+    static public List<ModelMetadata> readIliModelsXml2(File file) 
+    throws RepositoryAccessException
+    {
+        ArrayList<ModelMetadata> modelv=new ArrayList<ModelMetadata>();
+        ch.interlis.iom_j.xtf.XtfReader reader=null;
+        try {
+            reader=new ch.interlis.iom_j.xtf.XtfReader(file);
+            reader.getFactory().registerFactory(ch.ehi.iox.ilisite.ILIREPOSITORY09.getIoxFactory());
+            reader.getFactory().registerFactory(ch.interlis.models.ILIREPOSITORY20.getIoxFactory());
+            ch.interlis.iox.IoxEvent event=null;
+            do{
+                 event=reader.read();
+                 if(event instanceof ch.interlis.iox.ObjectEvent){
+                     ch.interlis.iom.IomObject iomObj=((ch.interlis.iox.ObjectEvent)event).getIomObject();
+                     ModelMetadata model=null;
+                     if(iomObj instanceof ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata){
+                         ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata model09=(ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata)iomObj;
+                         model=mapFromIom09(model09);
+                         if(model==null) {
+                             EhiLogger.logAdaption("TID="+model09.getobjectoid()+": ignored; failed to map");
+                             continue;
+                         }
+                     }else if(iomObj instanceof ch.interlis.models.IliRepository20.RepositoryIndex.ModelMetadata) {
+                         ch.interlis.models.IliRepository20.RepositoryIndex.ModelMetadata model20=(ch.interlis.models.IliRepository20.RepositoryIndex.ModelMetadata)iomObj;
+                         model=mapFromIom20(model20);
+                         if(model==null) {
+                             EhiLogger.logAdaption("TID="+model20.getobjectoid()+": ignored; failed to map");
+                             continue;
+                         }
+                     }else {
+                         EhiLogger.logAdaption("TID="+iomObj.getobjectoid()+": ignored; unknown class <"+iomObj.getobjecttag()+">");
+                         continue;
+                     }
+                     String mName=model.getName();
+                     if(mName==null || mName.trim().length()==0){
+                         EhiLogger.logAdaption("TID="+iomObj.getobjectoid()+": ignored; no modelname");
+                         continue;
+                     }
+                     if(!mName.matches(REGEX_ILI_NAME)){
+                         EhiLogger.logAdaption("TID="+iomObj.getobjectoid()+": ignored; <"+mName+"> is not a valid modelname");
+                         continue;
+                     }
+                     String mCsl=model.getSchemaLanguage();
+                     if(mCsl==null){
+                         EhiLogger.logAdaption("TID="+iomObj.getobjectoid()+": ignored; no schemalanguage");
+                         continue;
+                     }
+                     String mFilename=model.getFile();
+                     if(mFilename==null || mFilename.trim().length()==0){
+                         EhiLogger.logAdaption("TID="+iomObj.getobjectoid()+": ignored; no filename");
+                         continue;
+                     }
+                     modelv.add(model);
+                 }
+            }while(!(event instanceof ch.interlis.iox.EndTransferEvent));
+        } catch (IoxException e) {
+            throw new RepositoryAccessException("failed to read "+IliManager.ILIMODELS_XML,e);
+        }finally{
+            if(reader!=null){
+                try {
+                    reader.close();
+                } catch (IoxException e) {
+                    throw new RepositoryAccessException(e);
+                }
+                reader=null;
+            }
+        }
+        return modelv;
+    }
+    public static ch.interlis.models.IliRepository20.RepositoryIndex.ModelMetadata mapToIom20(ModelMetadata model) {
+        if(model==null) {
+            return null;
+        }
+        ch.interlis.models.IliRepository20.RepositoryIndex.ModelMetadata model20=new ch.interlis.models.IliRepository20.RepositoryIndex.ModelMetadata(model.getOid()); 
+        final boolean browseOnly = model.isBrowseOnly();
+        model20.setbrowseOnly(browseOnly);
+        final String furtherInformation = model.getFurtherInformation();
+        if(furtherInformation!=null)model20.setfurtherInformation(furtherInformation);
+        final String furtherMetadata = model.getFurtherMetadata();
+        if(furtherMetadata!=null)model20.setfurtherMetadata(furtherMetadata);
+        final String file = model.getFile();
+        if(file!=null)model20.setFile(file);
+        final String issuer = model.getIssuer();
+        if(issuer!=null)model20.setIssuer(issuer);
+        final String md5 = model.getMd5();
+        if(md5!=null)model20.setmd5(md5);
+        final String name = model.getName();
+        if(name!=null)model20.setName(name);
+        final String original = model.getOriginal();
+        if(original!=null)model20.setOriginal(original);
+        final String precursorVersion = model.getPrecursorVersion();
+        if(precursorVersion!=null)model20.setprecursorVersion(precursorVersion);
+        final String publishingDate = model.getPublishingDate();
+        if(publishingDate!=null)model20.setpublishingDate(publishingDate);
+        String csl=model.getSchemaLanguage();
+        if(csl!=null)model20.setSchemaLanguage(csl);
+        final String shortDescription = model.getShortDescription();
+        if(shortDescription!=null)model20.setshortDescription(shortDescription);
+        final String tags = model.getTags();
+        if(tags!=null)model20.setTags(tags);
+        final String technicalContact = model.getTechnicalContact();
+        if(technicalContact!=null)model20.settechnicalContact(technicalContact);
+        final String title = model.getTitle();
+        if(title!=null)model20.setTitle(title);
+        final String version = model.getVersion();
+        if(version!=null)model20.setVersion(version);
+        final String versionComment = model.getVersionComment();
+        if(versionComment!=null)model20.setVersionComment(versionComment);
+        for(String dep:model.getDependsOnModel()) {
+            ch.interlis.models.IliRepository20.ModelName_ dep20=new ch.interlis.models.IliRepository20.ModelName_();
+            dep20.setvalue(dep);
+            model20.adddependsOnModel(dep20);
+        }
+        for(String dep:model.getDerivedModel()) {
+            ch.interlis.models.IliRepository20.ModelName_ dep20=new ch.interlis.models.IliRepository20.ModelName_();
+            dep20.setvalue(dep);
+            model20.addderivedModel(dep20);
+        }
+        for(String dep:model.getFollowupModel()) {
+            ch.interlis.models.IliRepository20.ModelName_ dep20=new ch.interlis.models.IliRepository20.ModelName_();
+            dep20.setvalue(dep);
+            model20.addfollowupModel(dep20);
+        }
+        for(String dep:model.getKnownPortal()) {
+            ch.interlis.models.IliRepository20.WebSite_ dep20=new ch.interlis.models.IliRepository20.WebSite_();
+            dep20.setvalue(dep);
+            model20.addknownPortal(dep20);
+        }
+        for(String dep:model.getKnownWFS()) {
+            ch.interlis.models.IliRepository20.WebService_ dep20=new ch.interlis.models.IliRepository20.WebService_();
+            dep20.setvalue(dep);
+            model20.addknownWFS(dep20);
+        }
+        for(String dep:model.getKnownWMS()) {
+            ch.interlis.models.IliRepository20.WebService_ dep20=new ch.interlis.models.IliRepository20.WebService_();
+            dep20.setvalue(dep);
+            model20.addknownWMS(dep20);
+        }
+        return model20;
+    }
+    public static ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata mapToIom09(ModelMetadata model) {
+        if(model==null) {
+            return null;
+        }
+        ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata model09=new ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata(model.getOid()); 
+        final boolean browseOnly = model.isBrowseOnly();
+        model09.setbrowseOnly(browseOnly);
+        final String furtherInformation = model.getFurtherInformation();
+        if(furtherInformation!=null)model09.setfurtherInformation(furtherInformation);
+        final String furtherMetadata = model.getFurtherMetadata();
+        if(furtherMetadata!=null)model09.setfurtherMetadata(furtherMetadata);
+        final String file = model.getFile();
+        if(file!=null)model09.setFile(file);
+        final String issuer = model.getIssuer();
+        if(issuer!=null)model09.setIssuer(issuer);
+        final String md5 = model.getMd5();
+        if(md5!=null)model09.setmd5(md5);
+        final String name = model.getName();
+        if(name!=null)model09.setName(name);
+        final String original = model.getOriginal();
+        if(original!=null)model09.setOriginal(original);
+        final String precursorVersion = model.getPrecursorVersion();
+        if(precursorVersion!=null)model09.setprecursorVersion(precursorVersion);
+        final String publishingDate = model.getPublishingDate();
+        if(publishingDate!=null)model09.setpublishingDate(publishingDate);
+        ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage csl=ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage.parseXmlCode(model.getSchemaLanguage());
+        if(csl==null) {
+            return null;
+        }
+        model09.setSchemaLanguage(csl);
+        final String shortDescription = model.getShortDescription();
+        if(shortDescription!=null)model09.setshortDescription(shortDescription);
+        final String tags = model.getTags();
+        if(tags!=null)model09.setTags(tags);
+        final String technicalContact = model.getTechnicalContact();
+        if(technicalContact!=null)model09.settechnicalContact(technicalContact);
+        final String title = model.getTitle();
+        if(title!=null)model09.setTitle(title);
+        final String version = model.getVersion();
+        if(version!=null)model09.setVersion(version);
+        final String versionComment = model.getVersionComment();
+        if(versionComment!=null)model09.setVersionComment(versionComment);
+        for(String dep:model.getDependsOnModel()) {
+            ch.ehi.iox.ilisite.IliRepository09.ModelName_ dep09=new ch.ehi.iox.ilisite.IliRepository09.ModelName_();
+            dep09.setvalue(dep);
+            model09.adddependsOnModel(dep09);
+        }
+        for(String dep:model.getDerivedModel()) {
+            ch.ehi.iox.ilisite.IliRepository09.ModelName_ dep09=new ch.ehi.iox.ilisite.IliRepository09.ModelName_();
+            dep09.setvalue(dep);
+            model09.addderivedModel(dep09);
+        }
+        for(String dep:model.getFollowupModel()) {
+            ch.ehi.iox.ilisite.IliRepository09.ModelName_ dep09=new ch.ehi.iox.ilisite.IliRepository09.ModelName_();
+            dep09.setvalue(dep);
+            model09.addfollowupModel(dep09);
+        }
+        for(String dep:model.getKnownPortal()) {
+            ch.ehi.iox.ilisite.IliRepository09.WebSite_ dep09=new ch.ehi.iox.ilisite.IliRepository09.WebSite_();
+            dep09.setvalue(dep);
+            model09.addknownPortal(dep09);
+        }
+        for(String dep:model.getKnownWFS()) {
+            ch.ehi.iox.ilisite.IliRepository09.WebService_ dep09=new ch.ehi.iox.ilisite.IliRepository09.WebService_();
+            dep09.setvalue(dep);
+            model09.addknownWFS(dep09);
+        }
+        for(String dep:model.getKnownWMS()) {
+            ch.ehi.iox.ilisite.IliRepository09.WebService_ dep09=new ch.ehi.iox.ilisite.IliRepository09.WebService_();
+            dep09.setvalue(dep);
+            model09.addknownWMS(dep09);
+        }
+        return model09;
+    }
+    public static ModelMetadata mapFromIom20(ch.interlis.models.IliRepository20.RepositoryIndex.ModelMetadata model20) {
+        if(model20==null) {
+            return null;
+        }
+        ModelMetadata model=new ModelMetadata();
+        model.setOid(model20.getobjectoid());
+        final boolean browseOnly = model20.getbrowseOnly();
+        model.setBrowseOnly(browseOnly);
+        final String furtherInformation = model20.getfurtherInformation();
+        if(furtherInformation!=null)model.setFurtherInformation(furtherInformation);
+        final String furtherMetadata = model20.getfurtherMetadata();
+        if(furtherMetadata!=null)model.setFurtherMetadata(furtherMetadata);
+        final String file = model20.getFile();
+        if(file!=null)model.setFile(file);
+        final String issuer = model20.getIssuer();
+        if(issuer!=null)model.setIssuer(issuer);
+        final String md5 = model20.getmd5();
+        if(md5!=null)model.setMd5(md5);
+        final String name = model20.getName();
+        if(name!=null)model.setName(name);
+        final String original = model20.getOriginal();
+        if(original!=null)model.setOriginal(original);
+        final String precursorVersion = model20.getprecursorVersion();
+        if(precursorVersion!=null)model.setPrecursorVersion(precursorVersion);
+        final String publishingDate = model20.getpublishingDate();
+        if(publishingDate!=null)model.setPublishingDate(publishingDate);
+        String csl=model20.getSchemaLanguage();
+        model.setSchemaLanguage(csl);
+        final String shortDescription = model20.getshortDescription();
+        if(shortDescription!=null)model.setShortDescription(shortDescription);
+        final String tags = model20.getTags();
+        if(tags!=null)model.setTags(tags);
+        final String technicalContact = model20.gettechnicalContact();
+        if(technicalContact!=null)model.setTechnicalContact(technicalContact);
+        final String title = model20.getTitle();
+        if(title!=null)model.setTitle(title);
+        final String version = model20.getVersion();
+        if(version!=null)model.setVersion(version);
+        final String versionComment = model20.getVersionComment();
+        if(versionComment!=null)model.setVersionComment(versionComment);
+        for(ch.interlis.models.IliRepository20.ModelName_ dep:model20.getdependsOnModel()) {
+            model.addDependsOnModel(dep.getvalue());
+        }
+        for(ch.interlis.models.IliRepository20.ModelName_ dep:model20.getderivedModel()) {
+            model.addDerivedModel(dep.getvalue());
+        }
+        for(ch.interlis.models.IliRepository20.ModelName_ dep:model20.getfollowupModel()) {
+            model.addFollowupModel(dep.getvalue());
+        }
+        for(ch.interlis.models.IliRepository20.WebSite_ dep:model20.getknownPortal()) {
+            model.addKnownPortal(dep.getvalue());
+        }
+        for(ch.interlis.models.IliRepository20.WebService_ dep:model20.getknownWFS()) {
+            model.addKnownWFS(dep.getvalue());
+        }
+        for(ch.interlis.models.IliRepository20.WebService_ dep:model20.getknownWMS()) {
+            model.addKnownWMS(dep.getvalue());
+        }
+        return model;
+    }
+    public static ModelMetadata mapFromIom09(ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata model09) {
+        if(model09==null) {
+            return null;
+        }
+        ModelMetadata model=new ModelMetadata();
+        model.setOid(model09.getobjectoid());
+        final boolean browseOnly = model09.getbrowseOnly();
+        model.setBrowseOnly(browseOnly);
+        final String furtherInformation = model09.getfurtherInformation();
+        if(furtherInformation!=null)model.setFurtherInformation(furtherInformation);
+        final String furtherMetadata = model09.getfurtherMetadata();
+        if(furtherMetadata!=null)model.setFurtherMetadata(furtherMetadata);
+        final String file = model09.getFile();
+        if(file!=null)model.setFile(file);
+        final String issuer = model09.getIssuer();
+        if(issuer!=null)model.setIssuer(issuer);
+        final String md5 = model09.getmd5();
+        if(md5!=null)model.setMd5(md5);
+        final String name = model09.getName();
+        if(name!=null)model.setName(name);
+        final String original = model09.getOriginal();
+        if(original!=null)model.setOriginal(original);
+        final String precursorVersion = model09.getprecursorVersion();
+        if(precursorVersion!=null)model.setPrecursorVersion(precursorVersion);
+        final String publishingDate = model09.getpublishingDate();
+        if(publishingDate!=null)model.setPublishingDate(publishingDate);
+        String csl=ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage.toXmlCode(model09.getSchemaLanguage());
+        model.setSchemaLanguage(csl);
+        final String shortDescription = model09.getshortDescription();
+        if(shortDescription!=null)model.setShortDescription(shortDescription);
+        final String tags = model09.getTags();
+        if(tags!=null)model.setTags(tags);
+        final String technicalContact = model09.gettechnicalContact();
+        if(technicalContact!=null)model.setTechnicalContact(technicalContact);
+        final String title = model09.getTitle();
+        if(title!=null)model.setTitle(title);
+        final String version = model09.getVersion();
+        if(version!=null)model.setVersion(version);
+        final String versionComment = model09.getVersionComment();
+        if(versionComment!=null)model.setVersionComment(versionComment);
+        for(ch.ehi.iox.ilisite.IliRepository09.ModelName_ dep:model09.getdependsOnModel()) {
+            model.addDependsOnModel(dep.getvalue());
+        }
+        for(ch.ehi.iox.ilisite.IliRepository09.ModelName_ dep:model09.getderivedModel()) {
+            model.addDerivedModel(dep.getvalue());
+        }
+        for(ch.ehi.iox.ilisite.IliRepository09.ModelName_ dep:model09.getfollowupModel()) {
+            model.addFollowupModel(dep.getvalue());
+        }
+        for(ch.ehi.iox.ilisite.IliRepository09.WebSite_ dep:model09.getknownPortal()) {
+            model.addKnownPortal(dep.getvalue());
+        }
+        for(ch.ehi.iox.ilisite.IliRepository09.WebService_ dep:model09.getknownWFS()) {
+            model.addKnownWFS(dep.getvalue());
+        }
+        for(ch.ehi.iox.ilisite.IliRepository09.WebService_ dep:model09.getknownWMS()) {
+            model.addKnownWMS(dep.getvalue());
+        }
+        return model;
+    }
+
     static public List<DatasetMetadata> readIliDataXmlLocalFile(File file) 
     throws RepositoryAccessException
     {
@@ -526,27 +944,28 @@ public class RepositoryAccess {
 		}
 		return null;
 	}
-	public static List<ModelMetadata> getLatestVersions(List<ModelMetadata> modelVersions1)
+    @Deprecated
+	public static List<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> getLatestVersions(List<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelVersions1)
 	{
-		HashMap<String,ArrayList<ModelMetadata>> models=new HashMap<String,ArrayList<ModelMetadata>>(); // map<String modelName,array<ModelMetadata>>
-		for(ModelMetadata model:modelVersions1){
+		HashMap<String,ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata>> models=new HashMap<String,ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata>>(); // map<String modelName,array<ModelMetadata>>
+		for(ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata model:modelVersions1){
 			 String name=model.getName();
 			 if(!models.containsKey(name)){
-				 models.put(name,new ArrayList<ModelMetadata>());
+				 models.put(name,new ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata>());
 			 }
-			 ArrayList<ModelMetadata> versions=models.get(name);
+			 ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> versions=models.get(name);
 			 versions.add(model);
 		}
 
-		ArrayList<ModelMetadata> ret=new ArrayList<ModelMetadata>();
+		ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> ret=new ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata>();
 		HashMap<String,IliFile> files=new HashMap<String,IliFile>();
 		Iterator<String> modeli=models.keySet().iterator();
 		while(modeli.hasNext()){
 			String name=modeli.next();
-			ArrayList<ModelMetadata> modelVersions=models.get(name);
-			ModelMetadata_SchemaLanguage cslv[]=new ModelMetadata_SchemaLanguage[]{ModelMetadata_SchemaLanguage.ili1,ModelMetadata_SchemaLanguage.ili2_2,ModelMetadata_SchemaLanguage.ili2_3};  
+			ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelVersions=models.get(name);
+			ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage cslv[]=new ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage[]{ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage.ili1,ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage.ili2_2,ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage.ili2_3};  
 			for(int csli=0;csli<cslv.length;csli++){
-				ModelMetadata model=getLatestVersion(modelVersions,cslv[csli]);
+			    ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata model=getLatestVersion(modelVersions,cslv[csli]);
 				if(model==null){
 					continue;
 				}
@@ -556,8 +975,39 @@ public class RepositoryAccess {
 		return ret;
 		
 	}
+    public static List<ModelMetadata> getLatestVersions2(List<ModelMetadata> modelVersions1)
+    {
+        HashMap<String,ArrayList<ModelMetadata>> models=new HashMap<String,ArrayList<ModelMetadata>>(); // map<String modelName,array<ModelMetadata>>
+        for(ModelMetadata model:modelVersions1){
+             String name=model.getName();
+             if(!models.containsKey(name)){
+                 models.put(name,new ArrayList<ModelMetadata>());
+             }
+             ArrayList<ModelMetadata> versions=models.get(name);
+             versions.add(model);
+        }
+
+        ArrayList<ModelMetadata> ret=new ArrayList<ModelMetadata>();
+        HashMap<String,IliFile> files=new HashMap<String,IliFile>();
+        Iterator<String> modeli=models.keySet().iterator();
+        while(modeli.hasNext()){
+            String name=modeli.next();
+            ArrayList<ModelMetadata> modelVersions=models.get(name);
+            String cslv[]=ModelMetadata.all;  
+            for(int csli=0;csli<cslv.length;csli++){
+                ModelMetadata model=getLatestVersion2(modelVersions,cslv[csli]);
+                if(model==null){
+                    continue;
+                }
+                ret.add(model);
+            }
+        }
+        return ret;
+        
+    }
 	
-	private static ModelMetadata getCslVersion(List<ModelMetadata> modelVersions1,ModelMetadata_SchemaLanguage csl)
+    @Deprecated
+	private static ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata getCslVersion(List<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelVersions1,ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage csl)
 	{
 		ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelVersions=new ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata>();
 		ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata model=null;
@@ -579,7 +1029,30 @@ public class RepositoryAccess {
 		}
 		return modelVersions.get(0);
 	}
-	private static ModelMetadata getLatestVersion(List<ModelMetadata> modelVersions1,ModelMetadata_SchemaLanguage csl)
+    private static ModelMetadata getCslVersion2(List<ModelMetadata> modelVersions1,String csl)
+    {
+        ArrayList<ModelMetadata> modelVersions=new ArrayList<ModelMetadata>();
+        ModelMetadata model=null;
+
+        // remove different csl
+        for(Iterator<ModelMetadata> i=modelVersions1.iterator();i.hasNext();){
+            model=i.next();
+            if(model.getSchemaLanguage().equals(csl)){
+                modelVersions.add(model);
+            }
+        }
+        if(modelVersions.isEmpty()){
+            // not a model with given csl
+            return null;
+        }
+        if(modelVersions.size()!=1){
+            EhiLogger.logAdaption("model "+model.getName()+": multiple versions; use version "+modelVersions.get(0).getVersion());
+            return null;
+        }
+        return modelVersions.get(0);
+    }
+    @Deprecated
+	private static ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata getLatestVersion(List<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelVersions1,ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage csl)
 	{
 		ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelVersions=new ArrayList<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata>();
 		ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata model=null;
@@ -651,6 +1124,79 @@ public class RepositoryAccess {
 		}
 		return lastVersion;
 	}
+    private static ModelMetadata getLatestVersion2(List<ModelMetadata> modelVersions1,String csl)
+    {
+        ArrayList<ModelMetadata> modelVersions=new ArrayList<ModelMetadata>();
+        ModelMetadata model=null;
+
+        // remove different csl
+        for(Iterator<ModelMetadata> i=modelVersions1.iterator();i.hasNext();){
+            model=i.next();
+            if(model.getSchemaLanguage().equals(csl)){
+                modelVersions.add(model);
+            }
+        }
+        if(modelVersions.isEmpty()){
+            // not a model with given csl
+            return null;
+        }
+        
+        // find first version and eliminate other versions without duplicate
+        ModelMetadata first=null;
+        for(Iterator<ModelMetadata> i=modelVersions.iterator();i.hasNext();){
+            model=i.next();
+            if(model.getPrecursorVersion()==null){
+                if(first==null){
+                    if(!model.isBrowseOnly()){
+                        first=model;
+                    }
+                    i.remove();
+                }else{
+                    if(!model.isBrowseOnly()){
+                        EhiLogger.logAdaption("model "+model.getName()+": duplicate version without precursor; version "+model.getVersion()+" ignored");
+                    }
+                    i.remove();
+                }
+            }
+        }
+        if(first==null){
+            EhiLogger.logAdaption("model "+model.getName()+": no version without precursor; model ignored");
+            return null;
+        }
+        ModelMetadata lastVersion=first;
+        ModelMetadata current=first;
+        while(!modelVersions.isEmpty()){
+            // find next version
+            ModelMetadata next=null;
+            for(Iterator<ModelMetadata> i=modelVersions.iterator();i.hasNext();){
+                model=i.next();
+                if(current.getVersion().equals(model.getPrecursorVersion())){
+                    if(next==null){
+                        // next version found
+                        next=model;
+                        i.remove();
+                    }else{
+                        // another next version found; ignore it
+                        EhiLogger.logAdaption("model "+model.getName()+": duplicate version with same precursor; version "+model.getVersion()+" ignored");
+                        i.remove();
+                    }
+                }
+            }
+            if(next==null){
+                // no next version found
+                break;
+            }
+            current=next;
+            if(!current.isBrowseOnly()){
+                lastVersion=current;
+            }
+        }
+        if(!modelVersions.isEmpty()){
+            EhiLogger.logAdaption("model "+lastVersion.getName()+": broken version chain; use version "+lastVersion.getVersion()+"; others ignored");
+        }
+        return lastVersion;
+    }
+    @Deprecated
     private static DatasetMetadata getLatestVersion(List<DatasetMetadata> datasetVersions1)
     {
         ArrayList<DatasetMetadata> datasetVersions=new ArrayList<DatasetMetadata>(datasetVersions1);
@@ -955,19 +1501,41 @@ public class RepositoryAccess {
 	}
 	return ret;
 }
-	public static ModelMetadata findModelMetadata(
-    		List<ModelMetadata> modelMetadatav, String name,
-    		ModelMetadata_SchemaLanguage csl) {
-    	for(ModelMetadata modelMetadata :  modelMetadatav){
+    @Deprecated
+	public static ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata findModelMetadata(
+    		List<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelMetadatav, String name,
+    		ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage csl) {
+    	for(ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata modelMetadata :  modelMetadatav){
     		if(modelMetadata.getName().equals(name) && modelMetadata.getSchemaLanguage().equals(csl)){
     			return modelMetadata;
     		}
     	}
     	return null;
     }
-    public static ModelMetadata findModelMetadata(
+    public static ModelMetadata findModelMetadata2(
             List<ModelMetadata> modelMetadatav, String name,
-            ModelMetadata_SchemaLanguage csl,String version) {
+            String csl) {
+        for(ModelMetadata modelMetadata :  modelMetadatav){
+            if(modelMetadata.getName().equals(name) && modelMetadata.getSchemaLanguage().equals(csl)){
+                return modelMetadata;
+            }
+        }
+        return null;
+    }
+    @Deprecated
+    public static ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata findModelMetadata(
+            List<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelMetadatav, String name,
+            ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage csl,String version) {
+        for(ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata modelMetadata :  modelMetadatav){
+            if(modelMetadata.getName().equals(name) && modelMetadata.getSchemaLanguage().equals(csl) && modelMetadata.getVersion().equals(version)){
+                return modelMetadata;
+            }
+        }
+        return null;
+    }
+    public static ModelMetadata findModelMetadata2(
+            List<ModelMetadata> modelMetadatav, String name,
+            String csl,String version) {
         for(ModelMetadata modelMetadata :  modelMetadatav){
             if(modelMetadata.getName().equals(name) && modelMetadata.getSchemaLanguage().equals(csl) && modelMetadata.getVersion().equals(version)){
                 return modelMetadata;

@@ -1,10 +1,15 @@
-Known Issues:
-- "java.io.IOException: Could not get shell folder ID list" is a known JAVA bug (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6544857)
-
 LATEST
 ---------------------------
 
-ili2c 5.0.6 (2020-02-02)
+ili2c 5.0.7 (2020-04-01)
+---------------------------
+- fix SignAttribute.iterator() (ilivalidator#231)
+- added AttributeDef.getRootExtending() (ilivalidator#235)
+- fix ClassCastException: TypeAlias cannot be cast to LineType (umleditor#28)
+- implement IliRepository20 (#44)
+- ehibasics-1.3.0
+
+ili2c 5.0.6 (2020-03-02)
 ---------------------------
 - ili24: support REFERENCE TO in CLASS (#42)
 - iox-ili-1.20.17

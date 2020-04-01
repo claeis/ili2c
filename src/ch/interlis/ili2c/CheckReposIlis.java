@@ -26,9 +26,6 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import ch.ehi.basics.logging.EhiLogger;
-import ch.ehi.iox.ilisite.IliRepository09.ModelName_;
-import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata;
-import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata_SchemaLanguage;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
@@ -41,6 +38,7 @@ import ch.interlis.ilirepository.IliFiles;
 import ch.interlis.ilirepository.IliManager;
 import ch.interlis.ilirepository.impl.RepositoryAccess;
 import ch.interlis.ilirepository.impl.RepositoryAccessException;
+import ch.interlis.ilirepository.impl.ModelMetadata;
 
 public class CheckReposIlis {
 	private class MetaEntryProblem {
@@ -95,6 +93,7 @@ public class CheckReposIlis {
 					try{
 				    javax.xml.transform.Source schemaFiles2[] =  {
 					    		new StreamSource(getClass().getResource( "/IliRepository09.xsd" ).toString())
+                                ,new StreamSource(getClass().getResource( "/IliRepository20.xsd" ).toString())
 					    };
 						schemaFiles=schemaFiles2;
 					}catch(java.lang.NullPointerException ex){
@@ -152,9 +151,9 @@ public class CheckReposIlis {
 				IliFiles files=null;
 				List<ModelMetadata> modelMetadatav = null;
 				try {
-					modelMetadatav = RepositoryAccess.readIliModelsXml(ilimodelsFile);
-					modelMetadatav = RepositoryAccess.getLatestVersions(modelMetadatav);
-					files = RepositoryAccess.createIliFiles(repos, modelMetadatav);
+					modelMetadatav = RepositoryAccess.readIliModelsXml2(ilimodelsFile);
+					modelMetadatav = RepositoryAccess.getLatestVersions2(modelMetadatav);
+					files = RepositoryAccess.createIliFiles2(repos, modelMetadatav);
 				} catch (RepositoryAccessException e2) {
 					EhiLogger.logError(e2);
 					continue;
@@ -191,40 +190,40 @@ public class CheckReposIlis {
 									}
 									if(model.getFileName()!=null && model.getFileName().equals(iliFile.getAbsolutePath())){
 										EhiLogger.logState("check model "+model.getFileName());
-										ModelMetadata_SchemaLanguage csl=null;
+										String csl=null;
 										if(model.getIliVersion().equals(Model.ILI1)){
-											csl=ModelMetadata_SchemaLanguage.ili1;
+											csl=ModelMetadata.ili1;
 										}else if(model.getIliVersion().equals(Model.ILI2_2)){
-											csl=ModelMetadata_SchemaLanguage.ili2_2;
+											csl=ModelMetadata.ili2_2;
 										}else if(model.getIliVersion().equals(Model.ILI2_3)){
-											csl=ModelMetadata_SchemaLanguage.ili2_3;
-										}else if(model.getIliVersion().equals(Model.ILI2_4)){ // TODO
-											throw new IllegalStateException("unexpected ili version");
+											csl=ModelMetadata.ili2_3;
+										}else if(model.getIliVersion().equals(Model.ILI2_4)){
+                                            csl=ModelMetadata.ili2_4;
 										}else{
 											throw new IllegalStateException("unexpected ili version");
 										}
-										ModelMetadata modelMetadata=RepositoryAccess.findModelMetadata(modelMetadatav,model.getName(),csl);
+										ModelMetadata modelMetadata=RepositoryAccess.findModelMetadata2(modelMetadatav,model.getName(),csl);
 										if(modelMetadata==null){
 											inconsistentMetaEntry.add(new MetaEntryProblem(null,model.getName(),"entry missing or wrong model name in ilimodels.xml for "+file.getPath()));
 										}else{
-											if(modelMetadata.getmd5()!=null && !modelMetadata.getmd5().equalsIgnoreCase(md5)){
-												inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getobjectoid(),model.getName(),"wrong md5 value; correct would be "+md5));
+											if(modelMetadata.getMd5()!=null && !modelMetadata.getMd5().equalsIgnoreCase(md5)){
+												inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong md5 value; correct would be "+md5));
 											}
-											if(model.getIliVersion().equals(Model.ILI2_3)){
+											if(model.getIliVersion().equals(Model.ILI2_3) || model.getIliVersion().equals(Model.ILI2_4)){
 												if(modelMetadata.getVersion()!=null && !modelMetadata.getVersion().equals(model.getModelVersion())){
-													inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getobjectoid(),model.getName(),"wrong version value; correct would be "+model.getModelVersion()));
+													inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong version value; correct would be "+model.getModelVersion()));
 												}
 												if(modelMetadata.getVersionComment()!=null && !modelMetadata.getVersionComment().equals(model.getModelVersionExpl())){
-													inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getobjectoid(),model.getName(),"wrong versionComment value; correct would be "+model.getModelVersionExpl()));
+													inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong versionComment value; correct would be "+model.getModelVersionExpl()));
 												}
 												if(modelMetadata.getIssuer()!=null && !modelMetadata.getIssuer().equals(model.getIssuer())){
-													inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getobjectoid(),model.getName(),"wrong issuer value; correct would be "+model.getIssuer()));											
+													inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong issuer value; correct would be "+model.getIssuer()));											
 												}
 											}
 											HashSet<String> depsMeta=new HashSet<String>();
 											HashSet<String> depsIli=new HashSet<String>();
-											for(ModelName_ dep : modelMetadata.getdependsOnModel()){
-												depsMeta.add(dep.getvalue());
+											for(String dep : modelMetadata.getDependsOnModel()){
+												depsMeta.add(dep);
 											}
 											String sep="";
 											StringBuilder missingDeps=new StringBuilder();
@@ -238,7 +237,7 @@ public class CheckReposIlis {
 												}
 											}
 											if(missingDeps.length()>0){
-												inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getobjectoid(),model.getName(),"wrong depends list; misssing models "+missingDeps.toString()));
+												inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong depends list; misssing models "+missingDeps.toString()));
 											}
 										}
 									}
