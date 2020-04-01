@@ -92,8 +92,7 @@ public class CheckReposIlis {
 				    javax.xml.transform.Source schemaFiles[] =  null;
 					try{
 				    javax.xml.transform.Source schemaFiles2[] =  {
-					    		new StreamSource(getClass().getResource( "/IliRepository09.xsd" ).toString())
-                                ,new StreamSource(getClass().getResource( "/IliRepository20.xsd" ).toString())
+					    		new StreamSource(getClass().getResource( "/IliRepository.xsd" ).toString())
 					    };
 						schemaFiles=schemaFiles2;
 					}catch(java.lang.NullPointerException ex){

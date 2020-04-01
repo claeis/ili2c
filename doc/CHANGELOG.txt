@@ -1,5 +1,6 @@
 LATEST
 ---------------------------
+- fixed --check-repo-ilis reports IliRepository20.RepositoryIndex as invalid content (#45)
 
 ili2c 5.0.8 (2020-04-01)
 ---------------------------
