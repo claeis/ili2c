@@ -1,6 +1,7 @@
 package ch.interlis.ilirepository.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ModelMetadata{
@@ -81,6 +82,13 @@ public class ModelMetadata{
     }
     public void setOriginal(String original) {
         this.original = original;
+    }
+    public void setDependsOnModel(String deps[]) {
+        if(deps==null) {
+            dependsOnModel=new ArrayList<String>();
+        }else {
+            dependsOnModel=new ArrayList<String>(Arrays.asList(deps));
+        }
     }
     public String[] getDependsOnModel() {
         return dependsOnModel.toArray(new String[dependsOnModel.size()]);
