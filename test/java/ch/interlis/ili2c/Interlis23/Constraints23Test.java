@@ -151,9 +151,7 @@ public class Constraints23Test {
         assertNull(td);
         assertEquals(1,errs.getErrs().size());
         CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
-        CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
-        assertEquals(21, compilerLogEvent.getLine());
-        assertEquals("CLASS Model.Topic.Base can not extend CLASS Model.BaseTopic.Base without changing its name.  TOPIC Model.Topic extends TOPIC Model.BaseTopic.", compilerLogEvent.getException().getMessage());
+        assertEquals("There can not be a SET CONSTRAINT in a STRUCTURE model.topic.StructA.", logEvent.getRawEventMsg());
         
     }
 	
