@@ -43,16 +43,20 @@ public class Main {
      * name of application as shown to user.
      */
     public static final String APP_NAME = "ili2c";
-    public static final String ILI_DIR = "%ILI_DIR";
-    public static final String JAR_DIR = "%JAR_DIR";
-    public static final String JAR_MODELS = "standard";
-    public static final String ILI_REPOSITORY = "http://models.interlis.ch/";
-    public static final String ILIDIR_SEPARATOR = ";";
-    public static final String MODELS_SEPARATOR = ";";
-    public static final String DEFAULT_ILIDIRS = ILI_DIR + ILIDIR_SEPARATOR + ILI_REPOSITORY + ILIDIR_SEPARATOR + JAR_DIR;
-    
-    private static String version = null;
-
+    @Deprecated
+    public static final String ILI_DIR = UserSettings.ILI_DIR;
+    @Deprecated
+    public static final String JAR_DIR = UserSettings.JAR_DIR;
+    @Deprecated
+    public static final String JAR_MODELS = UserSettings.JAR_MODELS;
+    @Deprecated
+    public static final String ILI_REPOSITORY = UserSettings.ILI_REPOSITORY;
+    @Deprecated
+    public static final String ILIDIR_SEPARATOR = UserSettings.ILIDIR_SEPARATOR;
+    @Deprecated
+    public static final String MODELS_SEPARATOR = UserSettings.MODELS_SEPARATOR;
+    @Deprecated
+    public static final String DEFAULT_ILIDIRS = UserSettings.DEFAULT_ILIDIRS;
 
     protected static boolean hasArg(String v1, String v2, String[] args) {
 	for (int i = 0; i < args.length; i++) {
@@ -64,7 +68,7 @@ public class Main {
 
 
     protected static void printVersion() {
-	System.err.println("INTERLIS Compiler, Version " + getVersion());
+	System.err.println("INTERLIS Compiler, Version " + TransferDescription.getVersion());
 	System.err.println("  Distributed by the Coordination of Geographic Information");
 	System.err.println("  and Geographic Information Systems Group (COSIG), CH-3084 Wabern");
 	System.err.println("  Developed by Adasys AG, CH-8005 Zurich");
@@ -121,10 +125,10 @@ public class Main {
     System.err.println("    java -jar " + progName + " -o2 --out file_LV95.ili --trafoNewModel model_LV95 --trafoDiff 2000000,1000000 --trafoFactor 1,1 --trafoEpsg 2056 --trafoImports  GeometryCHLV95_V1=GeometryCHLV03_V1 file.ili");
     System.err.println();
     System.err.println("List all models starting in the given repository:");
-    System.err.println("    java -jar " + progName + " --listModels "+ILI_REPOSITORY);
+    System.err.println("    java -jar " + progName + " --listModels "+UserSettings.ILI_REPOSITORY);
     System.err.println();
     System.err.println("List all data starting in the given repository:");
-    System.err.println("    java -jar " + progName + " --listData "+ILI_REPOSITORY);
+    System.err.println("    java -jar " + progName + " --listData "+UserSettings.ILI_REPOSITORY);
     System.err.println();
     }
 
@@ -143,7 +147,7 @@ public class Main {
 	boolean withWarnings = true;
 	int numErrorsWhileGenerating = 0;
 	String notifyOnError = "compiler@interlis.ch";
-	String ilidirs = DEFAULT_ILIDIRS;
+	String ilidirs = UserSettings.DEFAULT_ILIDIRS;
 	String httpProxyHost = null;
 	String httpProxyPort = null;
 	String translationDef=null;
@@ -443,7 +447,7 @@ public class Main {
 			}
 	    }
 
-		EhiLogger.logState(APP_NAME+"-"+getVersion());
+		EhiLogger.logState(APP_NAME+"-"+TransferDescription.getVersion());
 			if (doCheckRepoIlis) {
 				boolean failed = new CheckReposIlis().checkRepoIlis(config, settings);
 				if (failed) {
@@ -507,7 +511,7 @@ public class Main {
 	}
 	String ili2cHome = getIli2cHome();
 	if (ili2cHome != null) {
-	    ilipathv.add(ili2cHome + File.separator + JAR_MODELS);
+	    ilipathv.add(ili2cHome + File.separator + UserSettings.JAR_MODELS);
 	}
 	return ilipathv;
     }
@@ -537,9 +541,9 @@ public class Main {
 
 	String ili2cHome = getIli2cHome();
 	if (ili2cHome != null) {
-		pathmap.put(JAR_DIR, ili2cHome + File.separator + JAR_MODELS);
+		pathmap.put(UserSettings.JAR_DIR, ili2cHome + File.separator + UserSettings.JAR_MODELS);
 	}
-	pathmap.put(ILI_DIR, null);
+	pathmap.put(UserSettings.ILI_DIR, null);
 	settings.setTransientObject(UserSettings.ILIDIRS_PATHMAP, pathmap);
     }
 
@@ -828,14 +832,14 @@ public class Main {
 		    break;
 		case GenerateOutputKind.IMD:
 		    ch.interlis.ili2c.generator.ImdGenerator.generate(new java.io.File(config.getOutputFile()), desc, APP_NAME +
-			    "-" + getVersion());
+			    "-" + TransferDescription.getVersion());
 		    break;
 		case GenerateOutputKind.XMLNLS:
 			generateXML(config, desc);
 			break;
 		case GenerateOutputKind.IMD16:
 		    ch.interlis.ili2c.generator.Imd16Generator.generate(new java.io.File(config.getOutputFile()), desc, APP_NAME +
-			    "-" + getVersion());
+			    "-" + TransferDescription.getVersion());
 		    break;
 		case GenerateOutputKind.UML21:
 			  ch.interlis.ili2c.generator.Uml21Generator.generate(new java.io.File(config.getOutputFile()),desc);
@@ -892,13 +896,13 @@ public class Main {
 		}
 
 		String ilidirs = settings.getValue(UserSettings.ILIDIRS);
-		String modeldirs[] = ilidirs.split(ILIDIR_SEPARATOR);
+		String modeldirs[] = ilidirs.split(UserSettings.ILIDIR_SEPARATOR);
 		HashSet ilifiledirs = new HashSet();
 
 		for (int modeli = 0; modeli < modeldirs.length; modeli++) {
 			String m = modeldirs[modeli];
 
-			if (m.equals(ILI_DIR) && pathmap.containsKey(ILI_DIR)) {
+			if (m.equals(UserSettings.ILI_DIR) && pathmap.containsKey(UserSettings.ILI_DIR)) {
 				for (int filei = 0; filei < ilifilev.size(); filei++) {
 					String ilifile = ilifilev.get(filei);
 
@@ -958,30 +962,9 @@ public class Main {
 	return dialog.showDialog();
     }
 
-
+    @Deprecated
     public static String getVersion() {
-	if (version == null) {
-	    java.util.ResourceBundle resVersion = java.util.ResourceBundle.getBundle("ch.interlis.ili2c.Version");
-	    // Major version numbers identify significant functional changes.
-	    // Minor version numbers identify smaller extensions to the
-	    // functionality.
-	    // Micro versions are even finer grained versions.
-	    StringBuilder ret = new StringBuilder(20);
-	    ret.append(resVersion.getString("versionMajor"));
-	    ret.append('.');
-	    ret.append(resVersion.getString("versionMinor"));
-	    ret.append('.');
-	    ret.append(resVersion.getString("versionMicro"));
-	    ret.append('-');
-	    String branch = ch.ehi.basics.tools.StringUtility.purge(resVersion.getString("versionBranch"));
-	    if (branch != null) {
-		ret.append(branch);
-		ret.append('-');
-	    }
-	    ret.append(resVersion.getString("versionDate"));
-	    version = ret.toString();
-	}
-	return version;
+	return TransferDescription.getVersion();
     }
 
 

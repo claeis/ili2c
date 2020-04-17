@@ -41,7 +41,7 @@ import ch.interlis.models.ILIREPOSITORY20;
  * @author ceis
  */
 public class MakeIliModelsXml2 {
-	public static final String DEFAULT_ILIDIRS="http://models.interlis.ch/;"+ch.interlis.ili2c.Main.JAR_DIR;
+	public static final String DEFAULT_ILIDIRS="http://models.interlis.ch/;"+UserSettings.JAR_DIR;
 	/** name of application as shown to user.
 	 */
 	public static final String APP_NAME="mkilimodelsxml";
@@ -449,7 +449,7 @@ public class MakeIliModelsXml2 {
 	 */
 	public String getVersion() {
 		  if(version==null){
-		      version=Main.getVersion();
+		      version=TransferDescription.getVersion();
 		  }
 		  return version;
 	}

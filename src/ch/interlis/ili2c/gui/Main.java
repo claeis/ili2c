@@ -85,7 +85,7 @@ public class Main {
         //frame.addWindowListener(...);
         frame.addWindowListener(new WindowAdapter() {
           public void windowClosing(WindowEvent e) {
-            settings.save();
+            settings.save(ch.interlis.ili2c.Main.APP_NAME);
 	    	System.exit(0);
           }
         });
@@ -104,7 +104,7 @@ public class Main {
   private void runCompiler(){
 	  TransferDescription td=null;
 	  try{
-		  EhiLogger.logState(ch.interlis.ili2c.Main.APP_NAME+"-"+ch.interlis.ili2c.Main.getVersion());
+		  EhiLogger.logState(ch.interlis.ili2c.Main.APP_NAME+"-"+TransferDescription.getVersion());
 		  td=ch.interlis.ili2c.Main.runCompiler(config,settings);
 	  }catch(Throwable e){
 		  EhiLogger.logError(e);
@@ -247,7 +247,7 @@ public class Main {
 			if(dlg.showDialog()==RepositoriesDialog.OK_OPTION){
 				String ilidirs=dlg.getIlidirs();
 				if(ilidirs==null){
-					ilidirs=ch.interlis.ili2c.Main.DEFAULT_ILIDIRS;
+					ilidirs=UserSettings.DEFAULT_ILIDIRS;
 				}
 				settings.setIlidirs(ilidirs);
 				settings.setHttpProxyHost(dlg.getHttpProxyHost());

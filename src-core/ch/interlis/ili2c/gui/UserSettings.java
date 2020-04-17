@@ -15,6 +15,14 @@ public class UserSettings extends ch.ehi.basics.settings.Settings {
 	public final static String CUSTOM_ILI_RESOLVER = "ch.interlis.ili2c.customIliResolver";
 	public final static String ILIDIRS_PATHMAP = "ch.interlis.ili2c.pathMap";
     public final static String CUSTOM_ILI_MANAGER = "ch.interlis.ili2c.customIliManager";
+    
+    public static final String ILI_DIR = "%ILI_DIR";
+    public static final String JAR_DIR = "%JAR_DIR";
+    public static final String JAR_MODELS = "standard";
+    public static final String ILI_REPOSITORY = "http://models.interlis.ch/";
+    public static final String ILIDIR_SEPARATOR = ";";
+    public static final String MODELS_SEPARATOR = ";";
+    public static final String DEFAULT_ILIDIRS = ILI_DIR + ILIDIR_SEPARATOR + ILI_REPOSITORY + ILIDIR_SEPARATOR + JAR_DIR;
 
 
 	public static UserSettings load() 
@@ -28,7 +36,7 @@ public class UserSettings extends ch.ehi.basics.settings.Settings {
 		}
 		String ilidirs=userSettings.getIlidirs();
 		if(ilidirs==null){
-			userSettings.setIlidirs(ch.interlis.ili2c.Main.DEFAULT_ILIDIRS);
+			userSettings.setIlidirs(DEFAULT_ILIDIRS);
 		}
 		String wd=userSettings.getWorkingDirectory();
 		if(wd==null){
@@ -42,9 +50,9 @@ public class UserSettings extends ch.ehi.basics.settings.Settings {
 /**
  * Saves the UserSettings.
  */
-public void save() {
+public void save(String appName) {
 	try {
-	    store(new java.io.File(SETTINGS_FILE),ch.interlis.ili2c.Main.APP_NAME);
+	    store(new java.io.File(SETTINGS_FILE),appName);
 	} catch(IOException e) {
 		ch.ehi.basics.logging.EhiLogger.logError("failed to save settings",e);
 	}

@@ -23,8 +23,9 @@ public class Ili2c {
 		  }
 		  return ret;
 	  }
+	  @Deprecated
 	  public static String getVersion() {
-		  return Main.getVersion();
+		  return TransferDescription.getVersion();
 	  }
 	  static public TransferDescription compileIliModels(ArrayList modelv,ArrayList modeldirv)
 	  throws Ili2cFailure

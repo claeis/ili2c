@@ -107,7 +107,7 @@ public class CloneRepos {
 			ioxWriter = new XtfWriterBase( outStream,  ILIREPOSITORY20.getIoxMapping(),"2.3");
 			ioxWriter.setModels(new XtfModel[]{ILIREPOSITORY20.getXtfModel()});
 			StartTransferEvent startTransferEvent = new StartTransferEvent();
-			startTransferEvent.setSender( Main.APP_NAME+"-"+Main.getVersion() );
+			startTransferEvent.setSender( Main.APP_NAME+"-"+ch.interlis.ili2c.metamodel.TransferDescription.getVersion() );
 			ioxWriter.write( startTransferEvent );
 			StartBasketEvent startBasketEvent = new StartBasketEvent( ILIREPOSITORY20.RepositoryIndex, "b1");
 			ioxWriter.write( startBasketEvent );

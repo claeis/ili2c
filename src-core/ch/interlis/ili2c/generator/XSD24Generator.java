@@ -1,12 +1,7 @@
 package ch.interlis.ili2c.generator;
 
 
-import ch.interlis.ili2c.config.Configuration;
-import ch.interlis.ili2c.config.FileEntry;
-import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.metamodel.*;
-import ch.interlis.iom_j.itf.ModelUtilities;
-
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -68,32 +63,6 @@ public final class XSD24Generator
 		gen.td=td;
 		gen.setupNameMapping();
 		gen.printXSD(td);
-  }
-  public static void main(String args[])
-  {
-		Configuration config=new Configuration();
-		java.io.File out=null;
-		for(int i=0;i<args.length;i++){
-			if(args[i].equals("--trace")){
-				EhiLogger.getInstance().setTraceFilter(false);
-			}else if(args[i].equals("--out")){
-				i++;
-				out=new java.io.File(args[i]);
-			}else if(args[i].startsWith("-")){
-				EhiLogger.logError("unkonwn option "+args[i]);
-				break;
-			}else{
-				config.addFileEntry(new FileEntry(args[i],FileEntryKind.ILIMODELFILE));				
-			}
-		}
-		if(out==null){
-			EhiLogger.logError("ili2xsd --out folder file.ili");
-			return;
-		}
-		config.setOutputKind(ch.interlis.ili2c.config.GenerateOutputKind.NOOUTPUT);
-		config.setGenerateWarnings(false);
-		TransferDescription td=ch.interlis.ili2c.Main.runCompiler(config);
-		generate(td,out);
   }
 
   /** Returns the name used in the transfer for a given INTERLIS Element.
@@ -292,7 +261,7 @@ public final class XSD24Generator
 	ipw.println ("<xsd:annotation>");
 	ipw.indent ();
 	ipw.print("<xsd:appinfo source=\"http://www.interlis.ch/ili2c/ili2cversion\">");
-	ipw.print(ch.interlis.ili2c.Main.getVersion());
+	ipw.print(TransferDescription.getVersion());
 	ipw.println ("</xsd:appinfo>");
 	
 	// ilimodel info
