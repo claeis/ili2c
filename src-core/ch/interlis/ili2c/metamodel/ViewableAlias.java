@@ -43,6 +43,11 @@ public class ViewableAlias extends Evaluable
     this.aliasing = aliasing;
     this.name = name;
   }
+  
+  @Override
+  public boolean isLogical() {
+      return false;
+  }
 
   /** Returns the alias name, or the name of the aliased Viewable.
   */

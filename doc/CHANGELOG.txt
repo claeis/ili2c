@@ -1,5 +1,6 @@
 LATEST
 ---------------------------
+- verifiy that mandatory constraint has logical expression (#17)
 - fixed --check-repo-ilis reports IliRepository20.RepositoryIndex as invalid content (#45)
 - fails to detect a SET CONSTRAINT defined in a STRUCTURE (#47)
 - improve core/tool separation

@@ -14,6 +14,7 @@ public class Ili2c {
 	  {
 		  return Main.getIli2cHome();
 	  }
+	  @Deprecated
 	  static public TransferDescription runCompiler(Configuration config)
 	  throws Ili2cFailure
 	  {

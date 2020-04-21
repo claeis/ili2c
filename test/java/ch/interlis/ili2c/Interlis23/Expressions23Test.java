@@ -16,6 +16,83 @@ import ch.interlis.ili2c.metamodel.TransferDescription;
 public class Expressions23Test {
 	
 	private static final String TEST_OUT="test/data/ili23/expressions/";
+
+    @Test
+    public void logical_simple() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "logical_simple.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+        assertEquals(0, errs.getErrs().size());
+    }
+    @Test
+    public void logical_simple_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "logical_simple_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("MANDATORY CONSTRAINT requires a logical expression.", logEvent.getRawEventMsg());
+    }
+    @Test
+    public void logical_boolean() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "logical_boolean.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+        assertEquals(0, errs.getErrs().size());
+    }
+    @Test
+    public void logical_defined() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "logical_defined.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+        assertEquals(0, errs.getErrs().size());
+    }
+    @Test
+    public void logical_function() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "logical_function.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+        assertEquals(0, errs.getErrs().size());
+    }
+    @Test
+    public void logical_function_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "logical_function_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("MANDATORY CONSTRAINT requires a logical expression.", logEvent.getRawEventMsg());
+    }
 	
 	// This test checks THISAREA, THATAREA
 	@Test
@@ -26,10 +103,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_ThisAreaThatArea.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}
@@ -43,10 +117,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_CompositionRoleWithoutCard.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}
@@ -60,10 +131,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_ThatAreaInNonAreaView.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNull(td);
 		assertEquals(1,errs.getErrs().size());
 		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
@@ -81,10 +149,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_ThisAreaInNonAreaView.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNull(td);
 		assertEquals(1,errs.getErrs().size());
 		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
@@ -102,10 +167,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_ParentElementInAreaView.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNull(td);
 		assertEquals(1,errs.getErrs().size());
 		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
@@ -124,10 +186,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_ParentPathInNonInspectionView.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNull(td);
 		assertEquals(1,errs.getErrs().size());
 		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
@@ -146,10 +205,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_ParentPathEleOfSubStruct.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}
@@ -163,10 +219,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_ParentPathElement.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}	
@@ -180,10 +233,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_BasenameToUnrenamedViewable.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}
@@ -197,10 +247,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_BasenamePathElement.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}
@@ -214,10 +261,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_AcceptTHISElement.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}
@@ -231,10 +275,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_ChecksRolenameOfAssociation.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}
@@ -249,10 +290,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_DetectRoleToMultiObjects.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNull(td);
 		assertEquals(1,errs.getErrs().size());
 		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
@@ -270,10 +308,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_AcceptingBasicObjectWithRoleOfClass.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}
@@ -288,10 +323,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_DetectAssocPathToMultiObjects.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNull(td);
 		assertEquals(1,errs.getErrs().size());
 		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
@@ -309,10 +341,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_AcceptingObjectsWithAssocPathEle.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}
@@ -326,10 +355,7 @@ public class Expressions23Test {
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_AcceptBasicObjectWithRefAttrname.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
-		try{
-			td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
-		}catch(Ili2cFailure ex){
-		}
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}

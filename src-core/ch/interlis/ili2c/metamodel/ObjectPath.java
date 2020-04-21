@@ -12,6 +12,14 @@ public class ObjectPath extends Evaluable
 		root=start;
 		path=explicit;
 	}
+    @Override
+    public boolean isLogical() {
+        if(getType().isBoolean()) {
+            return true;
+        }
+        return false;
+    }
+	
 	public Viewable getRoot(){
 		return root;
 	}

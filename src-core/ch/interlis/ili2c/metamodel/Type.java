@@ -36,6 +36,16 @@ public abstract class Type
   {
   }
 
+    public boolean isBoolean() {
+        while (this instanceof TypeAlias) {
+            Domain domain = ((TypeAlias) this).getAliasing();
+            TransferDescription td = (TransferDescription) domain.getContainer(TransferDescription.class);
+            if (domain == td.INTERLIS.BOOLEAN) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public Type clone() {
         Type cloned = null;

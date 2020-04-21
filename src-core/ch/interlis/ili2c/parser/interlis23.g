@@ -4178,8 +4178,13 @@ protected mandatoryConstraint [Viewable v,Container context]
 
     {
       try {
-        constr = new MandatoryConstraint();
-        constr.setCondition(condition);
+		constr = new MandatoryConstraint();
+      	if(!condition.isLogical()){
+			reportError (formatMessage ("err_constraint_noLogical",(String)null),
+                     mand.getLine());
+      	}else{
+			constr.setCondition(condition);
+      	}
       } catch (Exception ex) {
         reportError(ex, mand.getLine());
       }

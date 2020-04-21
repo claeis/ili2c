@@ -9,13 +9,16 @@
 
 
 package ch.interlis.ili2c.metamodel;
-import java.util.*;
 
 
 /** An abstract class that groups together all kinds of expressions.
 */
 public abstract class Expression extends Evaluable
 {
+    @Override
+    public boolean isLogical() {
+        return true;
+    }
   /** Denotes a negated Expression. A negated
       expression evaluates to <code>true</code>
       if the negated expression evaluates to
@@ -36,6 +39,7 @@ public abstract class Expression extends Evaluable
     {
       return negated;
     }
+    
   }
 
 

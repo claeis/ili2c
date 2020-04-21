@@ -4,6 +4,8 @@ import java.util.List;
 
 public abstract class Evaluable
 {
+    abstract public boolean isLogical();
+
   /** Checks whether it is possible to assign this Evaluable to
       the Element <code>target</code>, whose type is <code>targetType</code>.
       If so, nothing happens.

@@ -44,6 +44,10 @@ public class ConditionalExpression extends Evaluable
     this.conditions = conditions;
   }
 
+  @Override
+  public boolean isLogical() {
+      return false;
+  }
 
   public ObjectPath getAttribute ()
   {
