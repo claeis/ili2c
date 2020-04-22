@@ -24,6 +24,7 @@ import ch.interlis.ili2c.generator.TransformationParameter;
 import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
 import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.gui.UserSettings;
+import ch.interlis.ili2c.metamodel.Element;
 import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
 import ch.interlis.ili2c.metamodel.ObjectPath;
 import ch.interlis.ili2c.metamodel.PathEl;
@@ -706,11 +707,13 @@ public class Main {
 								0,metaAttrs)) {
 							return null;
 						}
+                    } else if (version == 2.3) {
+                        if (!Ili23Parser.parseIliFile(desc, streamName, stream,
+                                checkMetaObjs, 0,metaAttrs)) {
+                            return null;
+                        }
 					} else {
-						if (!Ili23Parser.parseIliFile(desc, streamName, stream,
-								checkMetaObjs, 0,metaAttrs)) {
-							return null;
-						}
+					    EhiLogger.logError(Element.formatMessage("err_wrongInterlisVersion",Double.toString(version)));
 					}
 		    if (tracker.hasSeenErrors()) {
 			return null;

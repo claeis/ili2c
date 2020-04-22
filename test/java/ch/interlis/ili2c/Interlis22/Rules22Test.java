@@ -3,6 +3,7 @@ package ch.interlis.ili2c.Interlis22;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import ch.ehi.basics.logging.EhiLogger;
+import ch.ehi.basics.logging.LogEvent;
 import ch.interlis.ili2c.CompilerLogEvent;
 import ch.interlis.ili2c.Ili2cFailure;
 import ch.interlis.ili2c.LogCollector;
@@ -47,10 +48,8 @@ public class Rules22Test {
 		}
 		assertNull(td);
 		assertEquals(1,errs.getErrs().size());
-		CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
-		CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
-		assertEquals(1, compilerLogEvent.getLine());
-		assertEquals("Only INTERLIS version 1 and 2.3 can be read by this version of the compiler.", compilerLogEvent.getRawEventMsg());
+		LogEvent logEvent=  errs.getErrs().get(0);
+		assertEquals("Only INTERLIS version 1, 2.2, 2.3 and 2.4 can be read by this version of the compiler.", logEvent.getEventMsg());
 	}
 	
 	// This test checks if the compiler ensures model name uniqueness.

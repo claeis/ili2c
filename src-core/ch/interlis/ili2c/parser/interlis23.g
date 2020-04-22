@@ -852,7 +852,7 @@ protected interlis2Def
 	:	ili:"INTERLIS" version=decimal
 	    {
 	      if (version.doubleValue()!=2.3) {
-	        reportError(rsrc.getString("err_wrongInterlisVersion"),
+	        reportError(formatMessage("err_wrongInterlisVersion",version.toString()),
 	                    ili.getLine());
 	        panic();
 	      }

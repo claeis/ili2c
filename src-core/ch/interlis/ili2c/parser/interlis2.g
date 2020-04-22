@@ -508,7 +508,7 @@ protected interlis2Def [TransferDescription td]
     version = decimal
     {
       if (version.floatValue() != 2.0) {
-        reportError(rsrc.getString("err_wrongInterlisVersion"),
+        reportError(formatMessage("err_wrongInterlisVersion",version.toString()),
                     ili.getLine());
         panic();
       }
