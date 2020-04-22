@@ -41,7 +41,7 @@ public class Expressions23Test {
         assertNull(td);
         assertEquals(1, errs.getErrs().size());
         CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
-        assertEquals("MANDATORY CONSTRAINT requires a logical expression.", logEvent.getRawEventMsg());
+        assertEquals("logical expression required.", logEvent.getRawEventMsg());
     }
     @Test
     public void logical_boolean() throws Exception {
@@ -71,6 +71,7 @@ public class Expressions23Test {
     public void logical_function() throws Exception {
         LogCollector errs = new LogCollector();
         EhiLogger.getInstance().addListener(errs);
+        EhiLogger.getInstance().setTraceFilter(false);
         Configuration ili2cConfig = new Configuration();
         FileEntry fileEntry = new FileEntry(TEST_OUT + "logical_function.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
@@ -91,7 +92,82 @@ public class Expressions23Test {
         assertNull(td);
         assertEquals(1, errs.getErrs().size());
         CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
-        assertEquals("MANDATORY CONSTRAINT requires a logical expression.", logEvent.getRawEventMsg());
+        assertEquals("logical expression required.", logEvent.getRawEventMsg());
+    }
+    @Test
+    public void logical_not() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "logical_not.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
+    @Test
+    public void logical_not_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "logical_not_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("logical expression required.", logEvent.getRawEventMsg());
+    }
+    @Test
+    public void logical_and() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "logical_and.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
+    @Test
+    public void logical_and_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "logical_and_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("logical expression required.", logEvent.getRawEventMsg());
+    }
+    @Test
+    public void logical_or() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "logical_or.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
+    @Test
+    public void logical_or_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "logical_or_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("logical expression required.", logEvent.getRawEventMsg());
     }
 	
 	// This test checks THISAREA, THATAREA

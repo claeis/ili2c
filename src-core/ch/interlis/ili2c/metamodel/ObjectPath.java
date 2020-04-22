@@ -14,7 +14,7 @@ public class ObjectPath extends Evaluable
 	}
     @Override
     public boolean isLogical() {
-        if(getType().isBoolean()) {
+        if(isAttributePath() && getType().isBoolean()) {
             return true;
         }
         return false;
@@ -43,6 +43,14 @@ public class ObjectPath extends Evaluable
 		}
 		return ((AbstractAttributeRef)last).getDomain();
 	}
+    public boolean isAttributePath()
+    {
+        PathEl last=getLastPathEl();
+        if(last instanceof AbstractAttributeRef){
+            return true;
+        }
+        return false;
+    }
 	/** Returns the objectpath as string, as specified by the INTERLIS 2
 	*   syntax.
 	*/

@@ -4179,12 +4179,12 @@ protected mandatoryConstraint [Viewable v,Container context]
     {
       try {
 		constr = new MandatoryConstraint();
-      	if(!condition.isLogical()){
-			reportError (formatMessage ("err_constraint_noLogical",(String)null),
+      	if(!condition.isDirty() && !condition.isLogical()){
+			reportError (formatMessage ("err_expr_noLogical",(String)null),
                      mand.getLine());
-      	}else{
-			constr.setCondition(condition);
+            constr.setDirty(true);
       	}
+		constr.setCondition(condition);
       } catch (Exception ex) {
         reportError(ex, mand.getLine());
       }
@@ -4448,8 +4448,10 @@ protected term[Container ns, Type expectedType, Container functionNs]
   List disjoined = null;
   expr = null;
   int lineNumber = 0;
+  boolean dirty=false;
 }
-  : expr=term1 [ns, expectedType, functionNs]
+  : {lineNumber=LT(1).getLine();} 
+  expr=term1 [ns, expectedType, functionNs]
     {
       disjoined = new LinkedList ();
       disjoined.add(expr);
@@ -4461,17 +4463,32 @@ protected term[Container ns, Type expectedType, Container functionNs]
       {
         disjoined.add (expr);
         lineNumber = o.getLine();
+		if(!dirty && !expr.isDirty() && !expr.isLogical()){
+			reportError (formatMessage ("err_expr_noLogical",(String)null),
+					 lineNumber);
+			dirty=true;
+		}
       }
     )*
 
     {
-      if (disjoined.size() == 1)
+      if (disjoined.size() == 1){
         expr = (Evaluable) disjoined.get(0);
-      else
+        if(dirty){
+          expr.setDirty(dirty);
+        }
+      }else
       {
         try {
+			expr = (Evaluable) disjoined.get(0);
+			if(!dirty && !expr.isDirty() && !expr.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 lineNumber);
+				dirty=true;
+			}
           expr = new Expression.Disjunction (
             (Evaluable[]) disjoined.toArray (new Evaluable[disjoined.size()]));
+            expr.setDirty(dirty);
         } catch (Exception ex) {
           reportError (ex, lineNumber);
         }
@@ -4486,8 +4503,10 @@ protected term1 [Container ns, Type expectedType,Container functionNs]
   List conjoined = null;
   expr = null;
   int lineNumber = 0;
+  boolean dirty=false;
 }
-  : expr=term2 [ns, expectedType, functionNs]
+  : {lineNumber=LT(1).getLine();}
+  expr=term2 [ns, expectedType, functionNs]
     {
       conjoined = new LinkedList ();
       conjoined.add(expr);
@@ -4499,17 +4518,34 @@ protected term1 [Container ns, Type expectedType,Container functionNs]
       {
         conjoined.add (expr);
         lineNumber = an.getLine();
+		if(!dirty && !expr.isDirty() && !expr.isLogical()){
+			reportError (formatMessage ("err_expr_noLogical",(String)null),
+					 lineNumber);
+			dirty=true;
+		}
       }
     )*
 
     {
-      if (conjoined.size() == 1)
+      if (conjoined.size() == 1){
         expr = (Evaluable) conjoined.get(0);
-      else
+        if(dirty){
+          expr.setDirty(dirty);
+        }
+      } else
       {
         try {
-          expr = new Expression.Conjunction(
-            (Evaluable[]) conjoined.toArray(new Evaluable[conjoined.size()]));
+        
+			expr = (Evaluable) conjoined.get(0);
+			if(!dirty && !expr.isDirty() && !expr.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 lineNumber);
+				dirty=true;
+			}
+        
+			expr = new Expression.Conjunction(
+            	(Evaluable[]) conjoined.toArray(new Evaluable[conjoined.size()]));
+            expr.setDirty(dirty);
         } catch (Exception ex) {
           reportError (ex, lineNumber);
         }
@@ -4584,10 +4620,17 @@ protected predicate[Container ns, Type expectedType,Container functionNs]
 	}
  	: (nt:"NOT" {negation=true;})? LPAREN expr=expression[ns,expectedType,functionNs] RPAREN
 		    { if(negation){
+		    	boolean dirty=false;
+				if(!expr.isDirty() && !expr.isLogical()){
+					reportError (formatMessage ("err_expr_noLogical",(String)null),
+							 nt.getLine());
+					dirty=true;
+				}
 			      try {
-				expr = new Expression.Negation (expr);
+			      	expr = new Expression.Negation (expr);
+			      	expr.setDirty(dirty);
 			      } catch (Exception ex) {
-				reportError (ex, nt.getLine());
+			      	reportError (ex, nt.getLine());
 			      }
 			}
 		    }

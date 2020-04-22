@@ -1,0 +1,17 @@
+INTERLIS 2.3;
+
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+
+  TOPIC TopicA = 
+
+    CLASS ClassA =
+      attr1 : BOOLEAN;
+      attr2 : TEXT;
+      MANDATORY CONSTRAINT attr1 AND attr2;
+    END ClassA;
+
+  END TopicA;
+
+END ModelA.

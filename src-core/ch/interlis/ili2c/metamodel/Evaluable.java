@@ -1,9 +1,10 @@
 package ch.interlis.ili2c.metamodel;
 
-import java.util.List;
-
 public abstract class Evaluable
 {
+    /** true, if definition somewhat incomplete due to (compile) errors.
+     */
+    private boolean dirty=false;
     abstract public boolean isLogical();
 
   /** Checks whether it is possible to assign this Evaluable to
@@ -35,4 +36,12 @@ public abstract class Evaluable
       }
       return ele1.checkTranslation(ele2);
   }
+
+public boolean isDirty() {
+    return dirty;
+}
+
+public void setDirty(boolean dirty) {
+    this.dirty = dirty;
+}
 }
