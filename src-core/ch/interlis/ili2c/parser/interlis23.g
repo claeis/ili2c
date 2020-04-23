@@ -236,6 +236,8 @@ options
 					if(expr1Type!=null && expr2Type!=null){
 						if(expr1Type.resolveAliases() instanceof TextType && expr2Type.resolveAliases() instanceof TextType){
 							// text
+						}else if(expr1Type.resolveAliases() instanceof CompositionType && expr2Type.resolveAliases() instanceof CompositionType){
+							// structs
 						}else if(expr1Type.resolveAliases() instanceof NumericType && expr2Type.resolveAliases() instanceof NumericType){
 							// numeric
 						}else if(expr1Type.resolveAliases() instanceof FormattedType && expr2Type.resolveAliases() instanceof FormattedType){
