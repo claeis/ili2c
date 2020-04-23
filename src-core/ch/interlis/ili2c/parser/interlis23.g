@@ -299,6 +299,14 @@ options
 					if(expr1Type!=null && expr2Type!=null){
 						if(expr1Type.resolveAliases() instanceof NumericType && expr2Type.resolveAliases() instanceof NumericType){
 							// numeric
+						}else if(expr1Type.resolveAliases() instanceof FormattedType && expr2Type.resolveAliases() instanceof FormattedType){
+							// formatted
+						}else if(expr1Type.resolveAliases() instanceof FormattedType && comparedWith instanceof Constant.Text){
+							// formatted
+							validateFormattedConst((FormattedType)expr1Type.resolveAliases(),((Constant.Text)comparedWith).getValue(),srcLine);
+						}else if(expr instanceof Constant.Text && expr2Type.resolveAliases() instanceof FormattedType){
+							// formatted
+							validateFormattedConst((FormattedType)expr2Type.resolveAliases(),((Constant.Text)expr).getValue(),srcLine);
 						}else if(expr1Type.resolveAliases() instanceof EnumerationType && expr2Type.resolveAliases() instanceof EnumerationType){
 							// enum
 							if(expr instanceof Constant.Enumeration && comparedWith instanceof Constant.Enumeration){
