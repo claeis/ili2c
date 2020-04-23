@@ -345,6 +345,31 @@ public class Expressions23Test {
         assertEquals("incompatible datatypes", logEvent.getRawEventMsg());
     }
     @Test
+    public void equals_struct() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "equals_struct.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
+    @Test
+    public void equals_struct_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "equals_struct_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("incompatible datatypes", logEvent.getRawEventMsg());
+    }
+    @Test
     public void notEquals_coord() throws Exception {
         LogCollector errs = new LogCollector();
         EhiLogger.getInstance().addListener(errs);
