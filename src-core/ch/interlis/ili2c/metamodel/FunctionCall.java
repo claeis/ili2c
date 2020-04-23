@@ -45,6 +45,10 @@ public class FunctionCall extends Evaluable
       }
       return false;
   }
+  @Override
+  public Type getType() {
+      return function.getDomain();
+  }
   
 
 /** Returns the function that gets called when executing this
