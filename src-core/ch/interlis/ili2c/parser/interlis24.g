@@ -4292,7 +4292,7 @@ protected uniquenessConstraint[Viewable v,Container context]
 		Iterator attri=elements.iteratorAttribute();
 		while(attri.hasNext()){
 			ObjectPath attr=(ObjectPath)attri.next();
-			if(attr.getLastPathEl() instanceof AbstractAttributeRef && attr.getType() instanceof CompositionType){
+			if(attr.isAttributePath() && attr.getType() instanceof CompositionType){
 				reportError(formatMessage ("err_uniqueness_StructNoAllowed",attr.toString()),u.getLine());
 			}
 		}

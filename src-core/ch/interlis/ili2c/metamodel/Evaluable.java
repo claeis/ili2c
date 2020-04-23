@@ -6,6 +6,9 @@ public abstract class Evaluable
      */
     private boolean dirty=false;
     abstract public boolean isLogical();
+    public Type getType() {
+        return null;
+    }
 
   /** Checks whether it is possible to assign this Evaluable to
       the Element <code>target</code>, whose type is <code>targetType</code>.

@@ -102,6 +102,10 @@ public abstract class Constant extends Evaluable
   {
     String value;
 
+    @Override
+    public Type getType() {
+        return new TextType();
+    }
 
     /** Constructs a new text constant.
     */
@@ -239,6 +243,11 @@ public abstract class Constant extends Evaluable
     {
       return value;
     }
+    @Override 
+    public Type getType()
+    {
+        return new NumericType();
+    }
 
 
 
@@ -331,6 +340,10 @@ public abstract class Constant extends Evaluable
             }
         }
         return false;
+    }
+    @Override
+    public Type getType() {
+        return new EnumerationType();
     }
 
 

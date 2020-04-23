@@ -34,14 +34,14 @@ public class ObjectPath extends Evaluable
 	*   by following all elements of
 	*   the path.
 	*/
+	@Override
 	public Type getType()
 	{
 		PathEl last=getLastPathEl();
-		if(!(last instanceof AbstractAttributeRef)){
-			throw new IllegalArgumentException(Element.formatMessage(
-				"err_objectPath_notAnAttributePath",toString()));
+		if(last instanceof AbstractAttributeRef){
+	        return ((AbstractAttributeRef)last).getDomain();
 		}
-		return ((AbstractAttributeRef)last).getDomain();
+		return new ObjectType(last.getViewable());
 	}
     public boolean isAttributePath()
     {

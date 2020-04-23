@@ -215,7 +215,16 @@ options
 			}
 		return true;
 	}
-
+	protected void validateFormattedConst(FormattedType ft,String value, int srcLine)
+	{
+			try{
+				if(!ft.isValueInRange(value)){
+					reportError(formatMessage("err_formattedType_valueOutOfRange",value),srcLine);
+				}
+			}catch(NumberFormatException ex){
+				reportError(formatMessage("err_formattedType_illegalFormat",value),srcLine);
+			}
+	}
 	protected Domain resolveDomainRef(Container scope,String[] nams, int lin)
 	{
 	      Model model;
@@ -2832,20 +2841,8 @@ protected formattedType[Container scope, Type extending]
 		( min:STRING DOTDOT max:STRING )?
 		{ 
 			if(min!=null){
-				try{
-					if(!ft.isValueInRange(min.getText())){
-						reportError(formatMessage("err_formattedType_valueOutOfRange",min.getText()),min.getLine());
-					}
-				}catch(NumberFormatException ex){
-					reportError(formatMessage("err_formattedType_illegalFormat",min.getText()),min.getLine());
-				}
-				try{
-					if(!ft.isValueInRange(max.getText())){
-						reportError(formatMessage("err_formattedType_valueOutOfRange",max.getText()),max.getLine());
-					}
-				}catch(NumberFormatException ex){
-					reportError(formatMessage("err_formattedType_illegalFormat",max.getText()),max.getLine());
-				}
+				validateFormattedConst(ft,min.getText(),min.getLine());
+				validateFormattedConst(ft,max.getText(),max.getLine());
 				ft.setMinimum(min.getText());
 				ft.setMaximum(max.getText());
 			}
@@ -2864,20 +2861,8 @@ protected formattedType[Container scope, Type extending]
 					reportError(ex,line);
 				}
 			}
-			try{
-				if(!ft.isValueInRange(min2.getText())){
-					reportError(formatMessage("err_formattedType_valueOutOfRange",min2.getText()),min2.getLine());
-				}
-			}catch(NumberFormatException ex){
-				reportError(formatMessage("err_formattedType_illegalFormat",min2.getText()),min2.getLine());
-			}
-			try{
-				if(!ft.isValueInRange(max2.getText())){
-					reportError(formatMessage("err_formattedType_valueOutOfRange",max2.getText()),max2.getLine());
-				}
-			}catch(NumberFormatException ex){
-				reportError(formatMessage("err_formattedType_illegalFormat",max2.getText()),max2.getLine());
-			}
+			validateFormattedConst(ft,min2.getText(),min2.getLine());
+			validateFormattedConst(ft,max2.getText(),max2.getLine());
 			ft.setMinimum(min2.getText());
 			ft.setMaximum(max2.getText());
 		}
@@ -4269,7 +4254,7 @@ protected uniquenessConstraint[Viewable v,Container context]
 		Iterator attri=elements.iteratorAttribute();
 		while(attri.hasNext()){
 			ObjectPath attr=(ObjectPath)attri.next();
-			if(attr.getLastPathEl() instanceof AbstractAttributeRef && attr.getType() instanceof CompositionType){
+			if(attr.isAttributePath() && attr.getType() instanceof CompositionType){
 				reportError(formatMessage ("err_uniqueness_StructNoAllowed",attr.toString()),u.getLine());
 			}
 		}
@@ -4558,6 +4543,7 @@ protected term2 [Container ns, Type expectedType,Container functionNs]
   returns [Evaluable expr]
 {
   expr = null;
+  Evaluable exprRet = null;
   Evaluable comparedWith = null;
   char op = '=';
   int[] lineNumberPar = null;
@@ -4576,34 +4562,111 @@ protected term2 [Container ns, Type expectedType,Container functionNs]
           {
           /* EQUALSEQUALS */
           case '=':
-            expr = new Expression.Equality (expr, comparedWith);
+            exprRet = new Expression.Equality (expr, comparedWith);
+            if(!expr.isDirty() && !comparedWith.isDirty()){
+            	if(expr instanceof Constant.Undefined || comparedWith instanceof Constant.Undefined){
+            		// UNDEFINED is always == or !=
+            	}else{
+					Type expr1Type=expr.getType();
+					Type expr2Type=comparedWith.getType();
+					if(expr1Type!=null && expr2Type!=null){
+						if(expr1Type.resolveAliases() instanceof TextType && expr2Type.resolveAliases() instanceof TextType){
+							// text
+						}else if(expr1Type.resolveAliases() instanceof NumericType && expr2Type.resolveAliases() instanceof NumericType){
+							// numeric
+						}else if(expr1Type.resolveAliases() instanceof FormattedType && expr2Type.resolveAliases() instanceof FormattedType){
+							// formatted
+						}else if(expr1Type.resolveAliases() instanceof FormattedType && comparedWith instanceof Constant.Text){
+							// formatted
+							validateFormattedConst((FormattedType)expr1Type.resolveAliases(),((Constant.Text)comparedWith).getValue(),lineNumberPar[0]);
+						}else if(expr instanceof Constant.Text && expr2Type.resolveAliases() instanceof FormattedType){
+							// formatted
+							validateFormattedConst((FormattedType)expr2Type.resolveAliases(),((Constant.Text)expr).getValue(),lineNumberPar[0]);
+						}else if(expr1Type.resolveAliases() instanceof CoordType && expr2Type.resolveAliases() instanceof CoordType){
+							// coord
+						}else if(expr1Type.resolveAliases() instanceof EnumerationType && expr2Type.resolveAliases() instanceof EnumerationType){
+							// enum
+							if(expr instanceof Constant.Enumeration && comparedWith instanceof Constant.Enumeration){
+								// both factors are constants of unknown enumerations
+							}else if(expr instanceof Constant.Enumeration){
+								// validate that constant is a member of the enumeration type
+								String value=((Constant.Enumeration)expr).toString();
+								List<String> values=((EnumerationType)expr2Type.resolveAliases()).getValues();
+								if(!values.contains(value.substring(1))){
+									reportError (formatMessage ("err_enumerationType_MissingEle",value),
+										lineNumberPar[0]);
+								}
+							}else if(comparedWith instanceof Constant.Enumeration){
+								// validate that constant is a member of the enumeration type
+								String value=((Constant.Enumeration)comparedWith).toString();
+								List<String> values=((EnumerationType)expr1Type.resolveAliases()).getValues();
+								if(!values.contains(value.substring(1))){
+									reportError (formatMessage ("err_enumerationType_MissingEle",value),
+										lineNumberPar[0]);
+								}
+							}else{
+							 if(expr1Type.resolveAliases()!=expr2Type.resolveAliases()){
+								reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+										 lineNumberPar[0]);
+								exprRet.setDirty(true);
+							 }
+							}
+						}else if(expr1Type.resolveAliases() instanceof ObjectType && expr2Type.resolveAliases() instanceof ObjectType){
+							// object
+						}else{
+							reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+									 lineNumberPar[0]);
+							exprRet.setDirty(true);
+						}
+					}else{
+							reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+									 lineNumberPar[0]);
+							exprRet.setDirty(true);
+					}
+            	}
+            }
             break;
 
           /* LESSGREATER, BANGEQUALS */
           case '!':
-            expr = new Expression.Inequality (expr, comparedWith);
+            exprRet = new Expression.Inequality (expr, comparedWith);
+            // text
+            // numeric
+			// formatted
+            // coord
+            // enum
+            // object
             break;
 
           /* LESSEQUAL */
           case 'l':
-            expr = new Expression.LessThanOrEqual (expr, comparedWith);
+            exprRet = new Expression.LessThanOrEqual (expr, comparedWith);
+            // numeric
+            // enum
             break;
 
           /* GREATEREQUAL */
           case 'g':
-            expr = new Expression.GreaterThanOrEqual (expr, comparedWith);
+            exprRet = new Expression.GreaterThanOrEqual (expr, comparedWith);
+            // numeric
+            // enum
             break;
 
           /* LESS */
           case '<':
-            expr = new Expression.LessThan (expr, comparedWith);
+            exprRet = new Expression.LessThan (expr, comparedWith);
+            // numeric
+            // enum
             break;
 
           /* GREATER */
           case '>':
-            expr = new Expression.GreaterThan (expr, comparedWith);
+            exprRet = new Expression.GreaterThan (expr, comparedWith);
+            // numeric
+            // enum
             break;
           }
+          expr=exprRet;
         } catch (Exception ex) {
           reportError (ex, lineNumberPar[0]);
         }
