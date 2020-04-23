@@ -290,6 +290,78 @@ options
             	}
             }
     }
+    protected void validateCompareArgumentTypes(Evaluable exprRet, Evaluable expr, Evaluable comparedWith,int srcLine)
+    {
+            if(!expr.isDirty() && !comparedWith.isDirty()){
+            	{
+					Type expr1Type=expr.getType();
+					Type expr2Type=comparedWith.getType();
+					if(expr1Type!=null && expr2Type!=null){
+						if(expr1Type.resolveAliases() instanceof NumericType && expr2Type.resolveAliases() instanceof NumericType){
+							// numeric
+						}else if(expr1Type.resolveAliases() instanceof EnumerationType && expr2Type.resolveAliases() instanceof EnumerationType){
+							// enum
+							if(expr instanceof Constant.Enumeration && comparedWith instanceof Constant.Enumeration){
+								// both factors are constants of unknown enumerations
+							}else if(expr instanceof Constant.Enumeration){
+								// validate that constant is a member of the enumeration type
+								EnumerationType enumType=(EnumerationType)expr2Type.resolveAliases();
+								if(enumType.isOrdered() && !enumType.isCircular()){
+									String value=((Constant.Enumeration)expr).toString();
+									List<String> values=enumType.getValues();
+									if(!values.contains(value.substring(1))){
+										reportError (formatMessage ("err_enumerationType_MissingEle",value),
+											srcLine);
+									}
+								}else{
+									reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+											 srcLine);
+									exprRet.setDirty(true);
+								}
+							}else if(comparedWith instanceof Constant.Enumeration){
+								// validate that constant is a member of the enumeration type
+								EnumerationType enumType=(EnumerationType)expr1Type.resolveAliases();
+								if(enumType.isOrdered() && !enumType.isCircular()){
+									String value=((Constant.Enumeration)comparedWith).toString();
+									List<String> values=enumType.getValues();
+									if(!values.contains(value.substring(1))){
+										reportError (formatMessage ("err_enumerationType_MissingEle",value),
+											srcLine);
+									}
+								}else{
+									reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+											 srcLine);
+									exprRet.setDirty(true);
+								}
+							}else{
+							 if(expr1Type.resolveAliases()!=expr2Type.resolveAliases()){
+								reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+										 srcLine);
+								exprRet.setDirty(true);
+							 }else{
+								EnumerationType enumType=(EnumerationType)expr1Type.resolveAliases();
+								if(enumType.isOrdered() && !enumType.isCircular()){
+									// ok
+								}else{
+									reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+											 srcLine);
+									exprRet.setDirty(true);
+								}
+							 }
+							}
+						}else{
+							reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+									 srcLine);
+							exprRet.setDirty(true);
+						}
+					}else{
+							reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+									 srcLine);
+							exprRet.setDirty(true);
+					}
+            	}
+            }
+    }
     
 	protected Domain resolveDomainRef(Container scope,String[] nams, int lin)
 	{
@@ -4641,29 +4713,25 @@ protected term2 [Container ns, Type expectedType,Container functionNs]
           /* LESSEQUAL */
           case 'l':
             exprRet = new Expression.LessThanOrEqual (expr, comparedWith);
-            // numeric
-            // enum
+            validateCompareArgumentTypes(exprRet,expr,comparedWith,lineNumberPar[0]);
             break;
 
           /* GREATEREQUAL */
           case 'g':
             exprRet = new Expression.GreaterThanOrEqual (expr, comparedWith);
-            // numeric
-            // enum
+            validateCompareArgumentTypes(exprRet,expr,comparedWith,lineNumberPar[0]);
             break;
 
           /* LESS */
           case '<':
             exprRet = new Expression.LessThan (expr, comparedWith);
-            // numeric
-            // enum
+            validateCompareArgumentTypes(exprRet,expr,comparedWith,lineNumberPar[0]);
             break;
 
           /* GREATER */
           case '>':
             exprRet = new Expression.GreaterThan (expr, comparedWith);
-            // numeric
-            // enum
+            validateCompareArgumentTypes(exprRet,expr,comparedWith,lineNumberPar[0]);
             break;
           }
           expr=exprRet;
