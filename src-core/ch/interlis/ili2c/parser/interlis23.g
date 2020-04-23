@@ -4335,6 +4335,12 @@ protected plausibilityConstraint [Viewable v,Container context]
     {
       try {
         constr = new PlausibilityConstraint();
+      	if(!condition.isDirty() && !condition.isLogical()){
+			reportError (formatMessage ("err_expr_noLogical",(String)null),
+                     tok.getLine());
+            constr.setDirty(true);
+      	}
+        
         constr.setDirection(direction);
         constr.setCondition(condition);
         constr.setPercentage(percentage.doubleValue());
@@ -4385,6 +4391,11 @@ protected uniquenessConstraint[Viewable v,Container context]
 	)
 	{
 		if(preCond!=null){ 
+			if(!preCond.isDirty() && !preCond.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 u.getLine());
+				constr.setDirty(true);
+			}
 			constr.setPreCondition(preCond);
 		}
 		// check that all attrPaths do not point to a struct
@@ -4518,6 +4529,11 @@ protected setConstraint [Viewable v,Container context]
   : tok:"SET" "CONSTRAINT" 
   	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,context] COLON
 		{
+			if(!preCond.isDirty() && !preCond.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 tok.getLine());
+				constr.setDirty(true);
+			}
 	        constr.setPreCondition(preCond);
 		}
 	)?
@@ -4528,6 +4544,11 @@ protected setConstraint [Viewable v,Container context]
 			reportError (formatMessage ("err_constraint_illegalSetInStruct",
 				v.getScopedName(null)), tok.getLine());
 	  }else{
+			if(!condition.isDirty() && !condition.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 tok.getLine());
+				constr.setDirty(true);
+			}
 		  try {
 			constr.setCondition(condition);
 		  } catch (Exception ex) {
@@ -5810,9 +5831,14 @@ protected selection [Viewable view,Container functionNs]
 		Viewable ref;
 		LinkedList base=new LinkedList();
 	}
-	: "WHERE"
+	: tok:"WHERE"
 	logex = expression [view, /* expectedType */ predefinedBooleanType,functionNs]
 		{
+			if(!logex.isDirty() && !logex.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 tok.getLine());
+				logex.setDirty(true);
+			}
 			sel = new ExpressionSelection(view, logex);
 		}
 	SEMI
@@ -6241,8 +6267,15 @@ protected condSigParamAssignment [Graphic graph,  Table signTab]
   instruct = null;
 }
   : (
-      "WHERE"
+      tok:"WHERE"
       restrictor = expression [basedOn, /* expectedType */ predefinedBooleanType,graph]
+      {
+			if(!restrictor.isDirty() && !restrictor.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 tok.getLine());
+				restrictor.setDirty(true);
+			}
+      }
     )?
 
     LPAREN
