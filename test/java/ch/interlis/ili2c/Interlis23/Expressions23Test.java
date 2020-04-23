@@ -344,6 +344,181 @@ public class Expressions23Test {
         CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
         assertEquals("incompatible datatypes", logEvent.getRawEventMsg());
     }
+    @Test
+    public void notEquals_coord() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "notEquals_coord.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
+    @Test
+    public void notEquals_coord_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "notEquals_coord_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("incompatible datatypes", logEvent.getRawEventMsg());
+    }
+    @Test
+    public void notEquals_enum() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "notEquals_enum.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
+    @Test
+    public void notEquals_enum_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "notEquals_enum_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("incompatible datatypes", logEvent.getRawEventMsg());
+    }
+    @Test
+    public void notEquals_enum_const() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "notEquals_enum_const.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
+    @Test
+    public void notEquals_enum_const_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "notEquals_enum_const_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("\"#r\" is not a member of the EnumerationType.", logEvent.getRawEventMsg());
+    }
+    @Test
+    public void notEquals_formatted() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "notEquals_formatted.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
+    @Test
+    public void notEquals_formatted_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "notEquals_formatted_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("Unexpected format of formatted value \"15\".", logEvent.getRawEventMsg());
+    }
+    @Test
+    public void notEquals_numeric() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "notEquals_numeric.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
+    @Test
+    public void notEquals_numeric_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "notEquals_numeric_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("incompatible datatypes", logEvent.getRawEventMsg());
+    }
+    @Test
+    public void notEquals_object() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "notEquals_object.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
+    @Test
+    public void notEquals_object_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "notEquals_object_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("incompatible datatypes", logEvent.getRawEventMsg());
+    }
+    @Test
+    public void notEquals_text() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "notEquals_text.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
+    @Test
+    public void notEquals_text_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "notEquals_text_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("incompatible datatypes", logEvent.getRawEventMsg());
+    }
 	
 	// This test checks THISAREA, THATAREA
 	@Test

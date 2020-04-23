@@ -1,0 +1,20 @@
+INTERLIS 2.3;
+
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+
+  TOPIC TopicA = 
+  	DOMAIN
+  		LKoordA = COORD 10..20,30..40;
+  		LKoordB = COORD 10..20,30..40;
+  		
+    CLASS ClassA =
+      attr1 : LKoordA;
+      attr2 : TEXT;
+      MANDATORY CONSTRAINT attr1!=attr2;
+    END ClassA;
+
+  END TopicA;
+
+END ModelA.
