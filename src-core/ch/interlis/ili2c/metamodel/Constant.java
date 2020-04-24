@@ -193,6 +193,10 @@ public abstract class Constant extends Evaluable
 	  {
 		  return value;
 	  }
+      @Override
+      public Type getType() {
+          return new ClassType();
+      }
 
   }
   public static class AttributePath extends Constant
@@ -205,6 +209,10 @@ public abstract class Constant extends Evaluable
 	  public AttributeDef getValue()
 	  {
 		  return value;
+	  }
+	  @Override
+	  public Type getType() {
+	      return new AttributePathType();
 	  }
 
   }

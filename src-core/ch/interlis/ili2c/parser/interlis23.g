@@ -238,6 +238,9 @@ options
 							// text
 						}else if(expr1Type.resolveAliases() instanceof CompositionType && expr2Type.resolveAliases() instanceof CompositionType){
 							// structs
+						}else if(expr1Type.resolveAliases() instanceof OIDType && expr2Type.resolveAliases() instanceof OIDType){
+						}else if(expr1Type.resolveAliases() instanceof ClassType && expr2Type.resolveAliases() instanceof ClassType){
+						}else if(expr1Type.resolveAliases() instanceof AttributePathType && expr2Type.resolveAliases() instanceof AttributePathType){
 						}else if(expr1Type.resolveAliases() instanceof NumericType && expr2Type.resolveAliases() instanceof NumericType){
 							// numeric
 						}else if(expr1Type.resolveAliases() instanceof FormattedType && expr2Type.resolveAliases() instanceof FormattedType){
