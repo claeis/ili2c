@@ -280,6 +280,28 @@ options
 								exprRet.setDirty(true);
 							 }
 							}
+						}else if(expr1Type.resolveAliases() instanceof EnumTreeValueType && expr2Type.resolveAliases() instanceof EnumTreeValueType){
+							 if(expr1Type.resolveAliases()!=expr2Type.resolveAliases()){
+								reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+										 srcLine);
+								exprRet.setDirty(true);
+							 }
+						}else if(expr instanceof Constant.Enumeration && expr2Type.resolveAliases() instanceof EnumTreeValueType){
+								// validate that constant is a member of the enumeration type
+								String value=((Constant.Enumeration)expr).toString();
+								List<String> values=((EnumTreeValueType)expr2Type.resolveAliases()).getValues();
+								if(!values.contains(value.substring(1))){
+									reportError (formatMessage ("err_enumerationType_MissingEle",value),
+										srcLine);
+								}
+						}else if(expr1Type.resolveAliases() instanceof EnumTreeValueType && comparedWith instanceof Constant.Enumeration){
+								// validate that constant is a member of the enumeration type
+								String value=((Constant.Enumeration)comparedWith).toString();
+								List<String> values=((EnumTreeValueType)expr1Type.resolveAliases()).getValues();
+								if(!values.contains(value.substring(1))){
+									reportError (formatMessage ("err_enumerationType_MissingEle",value),
+										srcLine);
+								}
 						}else if(expr1Type.resolveAliases() instanceof ObjectType && expr2Type.resolveAliases() instanceof ObjectType){
 							// object
 						}else{
@@ -362,6 +384,51 @@ options
 								}
 							 }
 							}
+						}else if(expr1Type.resolveAliases() instanceof EnumTreeValueType && expr2Type.resolveAliases() instanceof EnumTreeValueType){
+							 if(expr1Type.resolveAliases()!=expr2Type.resolveAliases()){
+								reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+										 srcLine);
+								exprRet.setDirty(true);
+							 }else{
+								EnumerationType enumType=(EnumerationType)((EnumTreeValueType)expr1Type.resolveAliases()).getEnumType().getType().resolveAliases();
+								if(enumType.isOrdered() && !enumType.isCircular()){
+									// ok
+								}else{
+									reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+											 srcLine);
+									exprRet.setDirty(true);
+								}
+							 }
+						}else if(expr instanceof Constant.Enumeration && expr2Type.resolveAliases() instanceof EnumTreeValueType){
+								// validate that constant is a member of the enumeration type
+								EnumerationType enumType=(EnumerationType)((EnumTreeValueType)expr2Type.resolveAliases()).getEnumType().getType().resolveAliases();
+								if(enumType.isOrdered() && !enumType.isCircular()){
+									String value=((Constant.Enumeration)expr).toString();
+									List<String> values=((EnumTreeValueType)expr2Type.resolveAliases()).getValues();
+									if(!values.contains(value.substring(1))){
+										reportError (formatMessage ("err_enumerationType_MissingEle",value),
+											srcLine);
+									}
+								}else{
+									reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+											 srcLine);
+									exprRet.setDirty(true);
+								}
+						}else if(expr1Type.resolveAliases() instanceof EnumTreeValueType && comparedWith instanceof Constant.Enumeration){
+								// validate that constant is a member of the enumeration type
+								EnumerationType enumType=(EnumerationType)((EnumTreeValueType)expr1Type.resolveAliases()).getEnumType().getType().resolveAliases();
+								if(enumType.isOrdered() && !enumType.isCircular()){
+									String value=((Constant.Enumeration)comparedWith).toString();
+									List<String> values=((EnumTreeValueType)expr1Type.resolveAliases()).getValues();
+									if(!values.contains(value.substring(1))){
+										reportError (formatMessage ("err_enumerationType_MissingEle",value),
+											srcLine);
+									}
+								}else{
+									reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+											 srcLine);
+									exprRet.setDirty(true);
+								}
 						}else{
 							reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
 									 srcLine);

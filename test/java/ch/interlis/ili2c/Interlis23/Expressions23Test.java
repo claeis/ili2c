@@ -245,6 +245,56 @@ public class Expressions23Test {
         assertEquals("\"#r\" is not a member of the EnumerationType.", logEvent.getRawEventMsg());
     }
     @Test
+    public void equals_enumExtended_const() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "equals_enumExtended_const.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
+    @Test
+    public void equals_enumExtended_const_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "equals_enumExtended_const_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("\"#b\" is not a member of the EnumerationType.", logEvent.getRawEventMsg());
+    }
+    @Test
+    public void equals_enumAllOf_const() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "equals_enumAllOf_const.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
+    @Test
+    public void equals_enumAllOf_const_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "equals_enumAllOf_const_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("\"#r\" is not a member of the EnumerationType.", logEvent.getRawEventMsg());
+    }
+    @Test
     public void equals_formatted() throws Exception {
         LogCollector errs = new LogCollector();
         EhiLogger.getInstance().addListener(errs);
@@ -643,6 +693,31 @@ public class Expressions23Test {
         assertEquals(1, errs.getErrs().size());
         CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
         assertEquals("incompatible datatypes", logEvent.getRawEventMsg());
+    }
+    @Test
+    public void less_enumAllOf_const() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "less_enumAllOf_const.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
+    @Test
+    public void less_enumAllOf_const_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "less_enumAllOf_const_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(1, errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("\"#r\" is not a member of the EnumerationType.", logEvent.getRawEventMsg());
     }
     @Test
     public void less_enum_domain() throws Exception {

@@ -1,0 +1,33 @@
+INTERLIS 2.3;
+
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+
+  TOPIC TopicA = 
+  	DOMAIN
+  		DomainA1 = ( 
+  			a
+  			,b (
+  				b1
+  				,b2
+  			)
+  			,c
+  		) ORDERED;
+  		DomainA2 EXTENDS DomainA1 = ( 
+  			b (
+  				b3 (
+  					b31
+  					,b32
+  				)
+  			)
+  		) ORDERED;
+  		DomainA3 = ALL OF DomainA2;
+    CLASS ClassA =
+      attr1 : DomainA3;
+      MANDATORY CONSTRAINT attr1<#b.b3;
+    END ClassA;
+
+  END TopicA;
+
+END ModelA.
