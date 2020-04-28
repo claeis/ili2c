@@ -37,12 +37,14 @@ public abstract class Type
   }
 
     public boolean isBoolean() {
-        while (this instanceof TypeAlias) {
-            Domain domain = ((TypeAlias) this).getAliasing();
+        Type type=this;
+        while (type instanceof TypeAlias) {
+            Domain domain = ((TypeAlias) type).getAliasing();
             TransferDescription td = (TransferDescription) domain.getContainer(TransferDescription.class);
             if (domain == td.INTERLIS.BOOLEAN) {
                 return true;
             }
+            type=domain.getType();
         }
         return false;
     }

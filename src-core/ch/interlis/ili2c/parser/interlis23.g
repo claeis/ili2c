@@ -4681,20 +4681,24 @@ protected term[Container ns, Type expectedType, Container functionNs]
   expr=term1 [ns, expectedType, functionNs]
     {
       disjoined = new LinkedList ();
-      disjoined.add(expr);
+      if(expr!=null){
+	      disjoined.add(expr);
+      }
     }
 
     (
       o:"OR"
       expr = term1 [ns, expectedType, functionNs]
       {
-        disjoined.add (expr);
-        lineNumber = o.getLine();
-		if(!dirty && !expr.isDirty() && !expr.isLogical()){
-			reportError (formatMessage ("err_expr_noLogical",(String)null),
-					 lineNumber);
-			dirty=true;
-		}
+      	if(expr!=null){
+			disjoined.add (expr);
+			lineNumber = o.getLine();
+			if(!dirty && !expr.isDirty() && !expr.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 lineNumber);
+				dirty=true;
+			}
+      	}
       }
     )*
 
@@ -4704,8 +4708,7 @@ protected term[Container ns, Type expectedType, Container functionNs]
         if(dirty){
           expr.setDirty(dirty);
         }
-      }else
-      {
+      }else if (disjoined.size() > 1){
         try {
 			expr = (Evaluable) disjoined.get(0);
 			if(!dirty && !expr.isDirty() && !expr.isLogical()){
@@ -4719,6 +4722,8 @@ protected term[Container ns, Type expectedType, Container functionNs]
         } catch (Exception ex) {
           reportError (ex, lineNumber);
         }
+      }else{
+      	expr=null;
       }
     }
   ;
@@ -4738,11 +4743,6 @@ protected term1 [Container ns, Type expectedType,Container functionNs]
       conjoined = new LinkedList ();
       if(expr!=null){
 	    conjoined.add(expr);
-	    if(!dirty && !expr.isDirty() && !expr.isLogical()){
-				reportError (formatMessage ("err_expr_noLogical",(String)null),
-						 lineNumber);
-				dirty=true;
-		}
 	  }
     }
 
@@ -4772,6 +4772,11 @@ protected term1 [Container ns, Type expectedType,Container functionNs]
         try {
         
 			expr = (Evaluable) conjoined.get(0);        
+			if(!dirty && !expr.isDirty() && !expr.isLogical()){
+					reportError (formatMessage ("err_expr_noLogical",(String)null),
+							 lineNumber);
+					dirty=true;
+			}
 			expr = new Expression.Conjunction(
             	(Evaluable[]) conjoined.toArray(new Evaluable[conjoined.size()]));
             expr.setDirty(dirty);
