@@ -4363,8 +4363,11 @@ protected constraintDef[Viewable constrained,Container context]
 	| constr=uniquenessConstraint[constrained,context]
 	| constr=setConstraint[constrained,context]
 	)
-	{constr.setDocumentation(ilidoc);
-	constr.setMetaValues(metaValues);
+	{
+		if(constr!=null){
+			constr.setDocumentation(ilidoc);
+			constr.setMetaValues(metaValues);
+		}
 	}
 	;
 
@@ -4733,19 +4736,28 @@ protected term1 [Container ns, Type expectedType,Container functionNs]
   expr=term2 [ns, expectedType, functionNs]
     {
       conjoined = new LinkedList ();
-      conjoined.add(expr);
+      if(expr!=null){
+	    conjoined.add(expr);
+	    if(!dirty && !expr.isDirty() && !expr.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 lineNumber);
+				dirty=true;
+		}
+	  }
     }
 
     (
       an:"AND"
       expr = term2 [ns, expectedType, functionNs]
       {
-        conjoined.add (expr);
-        lineNumber = an.getLine();
-		if(!dirty && !expr.isDirty() && !expr.isLogical()){
-			reportError (formatMessage ("err_expr_noLogical",(String)null),
-					 lineNumber);
-			dirty=true;
+      	if(expr!=null){
+			conjoined.add (expr);
+			lineNumber = an.getLine();
+			if(!dirty && !expr.isDirty() && !expr.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 lineNumber);
+				dirty=true;
+			}
 		}
       }
     )*
@@ -4756,23 +4768,18 @@ protected term1 [Container ns, Type expectedType,Container functionNs]
         if(dirty){
           expr.setDirty(dirty);
         }
-      } else
-      {
+      } else if (conjoined.size() > 1){
         try {
         
-			expr = (Evaluable) conjoined.get(0);
-			if(!dirty && !expr.isDirty() && !expr.isLogical()){
-				reportError (formatMessage ("err_expr_noLogical",(String)null),
-						 lineNumber);
-				dirty=true;
-			}
-        
+			expr = (Evaluable) conjoined.get(0);        
 			expr = new Expression.Conjunction(
             	(Evaluable[]) conjoined.toArray(new Evaluable[conjoined.size()]));
             expr.setDirty(dirty);
         } catch (Exception ex) {
           reportError (ex, lineNumber);
         }
+      }else{
+      	expr=null;
       }
     }
   ;
