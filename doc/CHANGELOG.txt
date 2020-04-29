@@ -7,6 +7,7 @@ LATEST
 - fails to detect a SET CONSTRAINT defined in a STRUCTURE (#47)
 - improve core/tool separation
 - adjust error message to 2.4 (#48)
+- added UserSettings.ILI_LANGUAGE_VERSION to force language version
 
 ili2c 5.0.8 (2020-04-01)
 ---------------------------

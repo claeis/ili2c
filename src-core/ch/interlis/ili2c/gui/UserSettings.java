@@ -7,6 +7,7 @@ public class UserSettings extends ch.ehi.basics.settings.Settings {
 	public final static String SETTINGS_FILE = System.getProperty("user.home") + "/.ili2c";
 
 	public final static String WORKING_DIRECTORY = "WORKING_DIRECTORY";
+    public static final String ILI_LANGUAGE_VERSION = "ch.interlis.ili2c.iliLangVersion";
 	public final static String ILIDIRS = "ch.interlis.ili2c.ilidirs";
 	public final static String HTTP_PROXY_HOST = "ch.interlis.ili2c.http_proxy_host";
 	public final static String HTTP_PROXY_PORT = "ch.interlis.ili2c.http_proxy_port";

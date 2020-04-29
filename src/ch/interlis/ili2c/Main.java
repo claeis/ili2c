@@ -556,100 +556,106 @@ public class Main {
 	ArrayList<FileEntry> filev = new ArrayList<FileEntry>();
 	boolean doAutoCompleteModelList = config.isAutoCompleteModelList();
 
-	if (doAutoCompleteModelList) {
-	    if (settings != null) {
-		String ilidirs = settings.getValue(UserSettings.ILIDIRS);
-		if (ilidirs == null) {
-		    doAutoCompleteModelList = false;
-		}
-	    }
-	}
-	if (doAutoCompleteModelList) {
+    if (doAutoCompleteModelList) {
+        if (settings != null) {
+            String ilidirs = settings.getValue(UserSettings.ILIDIRS);
+            if (ilidirs == null) {
+                doAutoCompleteModelList = false;
+            }
+        }
+    }
+    if (doAutoCompleteModelList) {
 	    if (settings == null) {
-		ArrayList ilifilev = new ArrayList();
-		Iterator filei = config.iteratorFileEntry();
-		while (filei.hasNext()) {
-		    FileEntry e = (FileEntry) filei.next();
-		    if (e.getKind() == FileEntryKind.ILIMODELFILE) {
-			String fileName = e.getFilename();
-			ilifilev.add(fileName);
-		    }
-		}
-		ArrayList modeldirv = getIliLookupPaths(ilifilev);
-		ch.interlis.ili2c.config.Configuration files;
-		try {
-		    files = ModelScan.getConfigWithFiles(modeldirv, ilifilev);
-		} catch (Ili2cException ex) {
-		    EhiLogger.logError("ili-file scan failed", ex);
-		    return null;
-		}
-		if (files == null) {
-		    EhiLogger.logError("ili-file scan failed");
-		    return null;
-		}
-		logIliFiles(files);
-		// copy result of scan to original config
-		filei = files.iteratorFileEntry();
-		while (filei.hasNext()) {
-		    FileEntry e = (FileEntry) filei.next();
-		    filev.add(e);
-		}
+    		ArrayList ilifilev = new ArrayList();
+    		Iterator filei = config.iteratorFileEntry();
+    		while (filei.hasNext()) {
+    		    FileEntry e = (FileEntry) filei.next();
+    		    if (e.getKind() == FileEntryKind.ILIMODELFILE) {
+    			String fileName = e.getFilename();
+    			ilifilev.add(fileName);
+    		    }
+    		}
+    		ArrayList modeldirv = getIliLookupPaths(ilifilev);
+    		ch.interlis.ili2c.config.Configuration files;
+    		try {
+    		    files = ModelScan.getConfigWithFiles(modeldirv, ilifilev);
+    		} catch (Ili2cException ex) {
+    		    EhiLogger.logError("ili-file scan failed", ex);
+    		    return null;
+    		}
+    		if (files == null) {
+    		    EhiLogger.logError("ili-file scan failed");
+    		    return null;
+    		}
+    		logIliFiles(files);
+    		// copy result of scan to original config
+    		filei = files.iteratorFileEntry();
+    		while (filei.hasNext()) {
+    		    FileEntry e = (FileEntry) filei.next();
+    		    filev.add(e);
+    		}
 	    } else {
-		ArrayList<String> ilifilev = new ArrayList<String>();
+	        String iliVersion=settings.getValue(UserSettings.ILI_LANGUAGE_VERSION);
+            double version=0.0;
+            if(iliVersion!=null) {
+                version=Double.parseDouble(iliVersion);
+            }
 
-		for (Iterator filei = config.iteratorFileEntry(); filei.hasNext();) {
-		    FileEntry e = (FileEntry) filei.next();
+    		ArrayList<String> ilifilev = new ArrayList<String>();
+    
+    		for (Iterator filei = config.iteratorFileEntry(); filei.hasNext();) {
+    		    FileEntry e = (FileEntry) filei.next();
+    
+    		    if (e.getKind() == FileEntryKind.ILIMODELFILE) {
+    		        ilifilev.add(e.getFilename());
+    		    }
+    		}
 
-		    if (e.getKind() == FileEntryKind.ILIMODELFILE) {
-			ilifilev.add(e.getFilename());
-		    }
-		}
+    		setHttpProxySystemProperties(settings);
+    		
+    		HashMap pathmap = (HashMap) settings.getTransientObject(UserSettings.ILIDIRS_PATHMAP);
+    
+    		ArrayList modeldirv = getModelRepos(settings, ilifilev, pathmap);
+    
+    		// get/create repository manager
+    		ch.interlis.ilirepository.IliManager manager = (ch.interlis.ilirepository.IliManager) settings
+                    .getTransientObject(UserSettings.CUSTOM_ILI_MANAGER);
+    		if(manager==null) {
+    		    manager=new ch.interlis.ilirepository.IliManager();
+    		}
+    		ch.interlis.ilirepository.IliResolver resolver = (ch.interlis.ilirepository.IliResolver) settings
+    		        .getTransientObject(UserSettings.CUSTOM_ILI_RESOLVER);
+    		if (resolver != null) {
+    		    manager.setResolver(resolver);
+    		}
+    		// set list of repositories to search
+    		manager.setRepositories((String[]) modeldirv.toArray(new String[1]));
+    		String tempReposUri=settings.getTransientValue(UserSettings.TEMP_REPOS_URI);
+    		if(tempReposUri!=null) {
+    	        manager.setIliFiles(RepositoryVisitor.fixUri(tempReposUri),
+    	                (ch.interlis.ilirepository.IliFiles) settings
+    	                        .getTransientObject(UserSettings.TEMP_REPOS_ILIFILES));
+    		}
 
-		setHttpProxySystemProperties(settings);
-		
-		HashMap pathmap = (HashMap) settings.getTransientObject(UserSettings.ILIDIRS_PATHMAP);
-
-		ArrayList modeldirv = getModelRepos(settings, ilifilev, pathmap);
-
-		// get/create repository manager
-		ch.interlis.ilirepository.IliManager manager = (ch.interlis.ilirepository.IliManager) settings
-                .getTransientObject(UserSettings.CUSTOM_ILI_MANAGER);
-		if(manager==null) {
-		    manager=new ch.interlis.ilirepository.IliManager();
-		}
-		ch.interlis.ilirepository.IliResolver resolver = (ch.interlis.ilirepository.IliResolver) settings
-		        .getTransientObject(UserSettings.CUSTOM_ILI_RESOLVER);
-		if (resolver != null) {
-		    manager.setResolver(resolver);
-		}
-		// set list of repositories to search
-		manager.setRepositories((String[]) modeldirv.toArray(new String[1]));
-		String tempReposUri=settings.getTransientValue(UserSettings.TEMP_REPOS_URI);
-		if(tempReposUri!=null) {
-	        manager.setIliFiles(RepositoryVisitor.fixUri(tempReposUri),
-	                (ch.interlis.ilirepository.IliFiles) settings
-	                        .getTransientObject(UserSettings.TEMP_REPOS_ILIFILES));
-		}
-
-		// get complete list of required ili-files
-		try {
-		    Configuration fileconfig = manager.getConfigWithFiles(ilifilev,metaAttrs);
-		    ch.interlis.ili2c.Ili2c.logIliFiles(fileconfig);
-		    Iterator filei = fileconfig.iteratorFileEntry();
-		    while (filei.hasNext()) {
-			FileEntry e = (FileEntry) filei.next();
-			filev.add(e);
-		    }
-		} catch (Ili2cException ex) {
-		    EhiLogger.logError(ex);
-		    return null;
-		}
+    		// get complete list of required ili-files
+    		try {
+    		    Configuration fileconfig = manager.getConfigWithFiles(ilifilev,metaAttrs,version);
+    		    ch.interlis.ili2c.Ili2c.logIliFiles(fileconfig);
+    		    Iterator filei = fileconfig.iteratorFileEntry();
+    		    while (filei.hasNext()) {
+        			FileEntry e = (FileEntry) filei.next();
+        			filev.add(e);
+    		    }
+    		} catch (Ili2cException ex) {
+    		    EhiLogger.logError(ex);
+    		    return null;
+    		}
 	    }
 	} else {
 	    Iterator filei = config.iteratorFileEntry();
 	    while (filei.hasNext()) {
-		FileEntry e = (FileEntry) filei.next();
-		filev.add(e);
+    		FileEntry e = (FileEntry) filei.next();
+    		filev.add(e);
 	    }
 	}
 	TransferDescription desc = new TransferDescription();
