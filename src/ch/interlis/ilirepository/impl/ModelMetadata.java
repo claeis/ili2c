@@ -17,6 +17,7 @@ public class ModelMetadata{
     private String file=null;
     private String version=null;
     private String versionComment=null;
+    private String nameLanguage=null;
     private String publishingDate=null;
     private String original=null;
     private List<String> dependsOnModel=new ArrayList<String>();
@@ -70,6 +71,12 @@ public class ModelMetadata{
     }
     public void setVersionComment(String versionComment) {
         this.versionComment = versionComment;
+    }
+    public String getNameLanguage() {
+        return nameLanguage;
+    }
+    public void setNameLanguage(String nameLanguage) {
+        this.nameLanguage = nameLanguage;
     }
     public String getPublishingDate() {
         return publishingDate;

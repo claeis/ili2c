@@ -616,6 +616,8 @@ public class RepositoryAccess {
         if(version!=null)model20.setVersion(version);
         final String versionComment = model.getVersionComment();
         if(versionComment!=null)model20.setVersionComment(versionComment);
+        final String nameLanguage = model.getNameLanguage();
+        if(nameLanguage!=null)model20.setNameLanguage(nameLanguage);
         for(String dep:model.getDependsOnModel()) {
             ch.interlis.models.IliRepository20.ModelName_ dep20=new ch.interlis.models.IliRepository20.ModelName_();
             dep20.setvalue(dep);
@@ -762,6 +764,8 @@ public class RepositoryAccess {
         if(version!=null)model.setVersion(version);
         final String versionComment = model20.getVersionComment();
         if(versionComment!=null)model.setVersionComment(versionComment);
+        final String nameLanguage = model20.getNameLanguage();
+        if(nameLanguage!=null)model.setNameLanguage(nameLanguage);
         for(ch.interlis.models.IliRepository20.ModelName_ dep:model20.getdependsOnModel()) {
             model.addDependsOnModel(dep.getvalue());
         }

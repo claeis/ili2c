@@ -269,7 +269,10 @@ public class MakeIliModelsXml2 {
 										model.setVersionComment(versionExpl);
 									}
 								}
-								
+                                String lang=modelDef.getLanguage();
+                                if(lang!=null) {
+                                    model.setNameLanguage(lang);
+                                }
 							}
 						}
 					}
