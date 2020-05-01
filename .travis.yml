@@ -17,8 +17,8 @@ addons:
 install: true
 
 script: 
-  - [[ $TRAVIS_BRANCH == "stable-core" ]] && ant -f build.xml jar-core 
-  - [[ $TRAVIS_BRANCH != "stable-core" ]] && ant -f build.xml jar 
+  - if [ $TRAVIS_BRANCH == "stable-core" ]; then ant -f build.xml jar-core; fi 
+  - if [ $TRAVIS_BRANCH != "stable-core" ]; then ant -f build.xml jar ; fi
 
 deploy:
   - provider: script
