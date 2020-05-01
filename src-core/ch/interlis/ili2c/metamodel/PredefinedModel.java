@@ -23,6 +23,7 @@ import java.util.ArrayList;
 */
 public class PredefinedModel extends DataModel
 {
+  private static PredefinedModel instance=null;
   public final LineForm STRAIGHTS = new LineForm ("STRAIGHTS");
   public final LineForm ARCS = new LineForm ("ARCS");
 
@@ -215,7 +216,7 @@ public class PredefinedModel extends DataModel
   public final Table LINE_GEOMETRY = new Table ();
 
 
-  public PredefinedModel ()
+  private PredefinedModel ()
   {
     elements = new ElementDelegate() {
     };
@@ -225,7 +226,14 @@ public class PredefinedModel extends DataModel
 	setIssuer("http://www.interlis.ch");
 	setModelVersion("20060126");
   }
-  public void setupModel()
+  public static PredefinedModel getInstance() {
+      if(instance==null) {
+          instance=new PredefinedModel();
+          instance.setupModel();
+      }
+      return instance;
+  }
+  private void setupModel()
   {
     add (STRAIGHTS);
     add (ARCS);

@@ -1,6 +1,5 @@
 package ch.interlis.ili2c.config;
 
-import ch.interlis.ili2c.Main;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.generator.TransformationParameter;
 import ch.interlis.ili2c.config.BoidEntry;

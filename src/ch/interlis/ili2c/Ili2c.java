@@ -14,6 +14,7 @@ public class Ili2c {
 	  {
 		  return Main.getIli2cHome();
 	  }
+	  @Deprecated
 	  static public TransferDescription runCompiler(Configuration config)
 	  throws Ili2cFailure
 	  {
@@ -23,8 +24,9 @@ public class Ili2c {
 		  }
 		  return ret;
 	  }
+	  @Deprecated
 	  public static String getVersion() {
-		  return Main.getVersion();
+		  return TransferDescription.getVersion();
 	  }
 	  static public TransferDescription compileIliModels(ArrayList modelv,ArrayList modeldirv)
 	  throws Ili2cFailure

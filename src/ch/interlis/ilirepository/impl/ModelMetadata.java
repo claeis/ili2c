@@ -1,6 +1,7 @@
 package ch.interlis.ilirepository.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ModelMetadata{
@@ -16,6 +17,7 @@ public class ModelMetadata{
     private String file=null;
     private String version=null;
     private String versionComment=null;
+    private String nameLanguage=null;
     private String publishingDate=null;
     private String original=null;
     private List<String> dependsOnModel=new ArrayList<String>();
@@ -70,6 +72,12 @@ public class ModelMetadata{
     public void setVersionComment(String versionComment) {
         this.versionComment = versionComment;
     }
+    public String getNameLanguage() {
+        return nameLanguage;
+    }
+    public void setNameLanguage(String nameLanguage) {
+        this.nameLanguage = nameLanguage;
+    }
     public String getPublishingDate() {
         return publishingDate;
     }
@@ -81,6 +89,13 @@ public class ModelMetadata{
     }
     public void setOriginal(String original) {
         this.original = original;
+    }
+    public void setDependsOnModel(String deps[]) {
+        if(deps==null) {
+            dependsOnModel=new ArrayList<String>();
+        }else {
+            dependsOnModel=new ArrayList<String>(Arrays.asList(deps));
+        }
     }
     public String[] getDependsOnModel() {
         return dependsOnModel.toArray(new String[dependsOnModel.size()]);

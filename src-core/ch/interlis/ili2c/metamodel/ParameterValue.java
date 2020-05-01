@@ -12,6 +12,10 @@ public class ParameterValue extends Evaluable
   {
     this.param = param;
   }
+  @Override
+  public boolean isLogical() {
+      return param.getDomain().isBoolean();
+  }
   
   /** Returns the parameter whose value is being evaluated
       at run-time.

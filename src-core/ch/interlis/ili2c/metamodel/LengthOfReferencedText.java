@@ -22,5 +22,9 @@ package ch.interlis.ili2c.metamodel;
  * @version $Revision: 1.1 $ $Date: 2007-03-29 15:47:20 $
  */
 public class LengthOfReferencedText extends Evaluable {
+    @Override
+    public boolean isLogical() {
+        return false;
+    }
 
 }

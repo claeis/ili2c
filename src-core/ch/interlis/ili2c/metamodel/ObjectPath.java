@@ -12,6 +12,14 @@ public class ObjectPath extends Evaluable
 		root=start;
 		path=explicit;
 	}
+    @Override
+    public boolean isLogical() {
+        if(isAttributePath() && getType().isBoolean()) {
+            return true;
+        }
+        return false;
+    }
+	
 	public Viewable getRoot(){
 		return root;
 	}
@@ -26,15 +34,23 @@ public class ObjectPath extends Evaluable
 	*   by following all elements of
 	*   the path.
 	*/
+	@Override
 	public Type getType()
 	{
 		PathEl last=getLastPathEl();
-		if(!(last instanceof AbstractAttributeRef)){
-			throw new IllegalArgumentException(Element.formatMessage(
-				"err_objectPath_notAnAttributePath",toString()));
+		if(last instanceof AbstractAttributeRef){
+	        return ((AbstractAttributeRef)last).getDomain();
 		}
-		return ((AbstractAttributeRef)last).getDomain();
+		return new ObjectType(last.getViewable());
 	}
+    public boolean isAttributePath()
+    {
+        PathEl last=getLastPathEl();
+        if(last instanceof AbstractAttributeRef){
+            return true;
+        }
+        return false;
+    }
 	/** Returns the objectpath as string, as specified by the INTERLIS 2
 	*   syntax.
 	*/

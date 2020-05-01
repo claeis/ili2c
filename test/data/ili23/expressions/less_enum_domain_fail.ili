@@ -1,0 +1,20 @@
+INTERLIS 2.3;
+
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+
+  TOPIC TopicA = 
+
+  	DOMAIN
+  		EnumA = (a,b,c) ORDERED;
+  		EnumB = (a,b,c) ORDERED;
+    CLASS ClassA =
+      attr1 : EnumA;
+      attr2 : EnumB;
+      MANDATORY CONSTRAINT attr1<attr2;
+    END ClassA;
+
+  END TopicA;
+
+END ModelA.

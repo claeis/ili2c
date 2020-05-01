@@ -38,8 +38,20 @@ public class FunctionCall extends Evaluable
           Integer.toString (declaredParams.length)));
   }
   
+  @Override
+  public boolean isLogical() {
+      if(function.getDomain().isBoolean()){
+          return true;
+      }
+      return false;
+  }
+  @Override
+  public Type getType() {
+      return function.getDomain();
+  }
   
-  /** Returns the function that gets called when executing this
+
+/** Returns the function that gets called when executing this
       function call.
   */
   public Function getFunction ()

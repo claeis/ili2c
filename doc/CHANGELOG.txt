@@ -1,6 +1,18 @@
 LATEST
 ---------------------------
 
+ili2c 5.1.1 (2020-05-01)
+---------------------------
+- verifiy that mandatory constraint has logical expression (#17)
+- check datatype compatibility in constraints (#17)
+- test of expressions in MANDATORY CONSTRAINTs (#31)
+- fixed --check-repo-ilis reports IliRepository20.RepositoryIndex as invalid content (#45)
+- fails to detect a SET CONSTRAINT defined in a STRUCTURE (#47)
+- improve core/tool separation
+- adjust error message to 2.4 (#48)
+- added UserSettings.ILI_LANGUAGE_VERSION to force language version
+- iox-ili-1.21.0
+
 ili2c 5.0.8 (2020-04-01)
 ---------------------------
 - iox-ili-1.20.18

@@ -4,7 +4,11 @@ import static org.junit.Assert.*;
 
 import org.junit.Ignore;
 import org.junit.Test;
+
+import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.settings.Settings;
+import ch.interlis.ili2c.CompilerLogEvent;
+import ch.interlis.ili2c.LogCollector;
 import ch.interlis.ili2c.Main;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
@@ -134,6 +138,22 @@ public class Constraints23Test {
 		Table classB=(Table) topicB.getElement(Table.class, "aclass");
 		assertNotNull(classB);
 	}
+    @Test
+    public void setBasic_Fail() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Settings settings=new Settings();
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"setBasic_Fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("There can not be a SET CONSTRAINT in a STRUCTURE model.topic.StructA.", logEvent.getRawEventMsg());
+        
+    }
 	
 	// This test checks a local unique constraint defined in a structure.
 	@Test

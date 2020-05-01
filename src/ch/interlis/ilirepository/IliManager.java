@@ -113,7 +113,12 @@ public class IliManager implements ReposManager {
 	{
 		return getConfigWithFiles(requiredIliFileNames,null);
 	}
-	public Configuration getConfigWithFiles(ArrayList<String> requiredIliFileNames,Ili2cMetaAttrs metaAttrs)
+    public Configuration getConfigWithFiles(ArrayList<String> requiredIliFileNames,Ili2cMetaAttrs metaAttrs)
+    throws Ili2cException
+    {
+        return getConfigWithFiles(requiredIliFileNames,metaAttrs,0.0);
+    }
+	public Configuration getConfigWithFiles(ArrayList<String> requiredIliFileNames,Ili2cMetaAttrs metaAttrs,double version)
 	throws Ili2cException
 	{
 		if(requiredIliFileNames.isEmpty()){
@@ -126,7 +131,6 @@ public class IliManager implements ReposManager {
 		// scan given files and report about duplicate models
 		Iterator<String> reqFileIt=requiredIliFileNames.iterator();
 		HashSet<String> availablemodels=new HashSet<String>();
-		double version=0.0;
 		while(reqFileIt.hasNext()){
 			String fname=reqFileIt.next();
 			if(GenericFileFilter.getFileExtension(fname)!=null){

@@ -31,6 +31,11 @@ public class InspectionFactor extends Evaluable
   {
 	  
   }
+  @Override
+  public boolean isLogical() {
+      return false;
+  }
+  
 public boolean isAreaInspection() {
 	return areaInspection;
 }

@@ -26,7 +26,7 @@ public class AboutDialog extends JDialog {
 	public AboutDialog(java.awt.Frame owner) {
 		super(owner,true);
 		initialize();
-		getProgramVersion().setText(ch.interlis.ili2c.Main.getVersion());
+		getProgramVersion().setText(ch.interlis.ili2c.metamodel.TransferDescription.getVersion());
 		getJavaVersion().setText(System.getProperty("java.version"));
 		getJavaVMversion().setText(System.getProperty("java.vm.version"));
 	}

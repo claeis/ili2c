@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.interlis.ch/INTERLIS2.3" xmlns:ili2c="http://www.interlis.ch/ili2c" targetNamespace="http://www.interlis.ch/INTERLIS2.3" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xsd:annotation>
+    <xsd:appinfo source="http://www.interlis.ch/ili2c/ili2cversion">5.0.9-20200401</xsd:appinfo>
+    <xsd:appinfo source="http://www.interlis.ch/ili2c">
+      <ili2c:model>IliRepository09</ili2c:model>
+      <ili2c:modelVersion>2012-02-20</ili2c:modelVersion>
+      <ili2c:modelAt>mailto:ce@eisenhutinformatik.ch</ili2c:modelAt>
+      <ili2c:textMinimalCharset>ili23AnnexB</ili2c:textMinimalCharset>
+    </xsd:appinfo>
+    <xsd:appinfo source="http://www.interlis.ch/ili2c">
+      <ili2c:model>IliRepository20</ili2c:model>
+      <ili2c:modelVersion>2020-04-17</ili2c:modelVersion>
+      <ili2c:modelAt>http://models.interlis.ch/core</ili2c:modelAt>
+      <ili2c:textMinimalCharset>ili23AnnexB</ili2c:textMinimalCharset>
+    </xsd:appinfo>
+  </xsd:annotation>
+  <xsd:element name="TRANSFER" type="Transfer"/>
+  <xsd:simpleType name="IliID">
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="([a-zA-Z_][0-9a-zA-Z_\-\.]*:)?[0-9a-zA-Z_][0-9a-zA-Z_\-\.]*"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="Transfer">
+    <xsd:sequence>
+      <xsd:element name="HEADERSECTION" type="HeaderSection"/>
+      <xsd:element name="DATASECTION" type="DataSection"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Models">
+    <xsd:sequence>
+      <xsd:element name="MODEL" type="Model" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Model">
+    <xsd:attribute name="NAME" type="INTERLIS.NAME" use="required"/>
+    <xsd:attribute name="VERSION" type="xsd:string" use="required"/>
+    <xsd:attribute name="URI" type="xsd:anyURI" use="required"/>
+  </xsd:complexType>
+  <xsd:complexType name="RoleType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="REF" type="IliID" use="required"/>
+        <xsd:attribute name="BID" type="IliID"/>
+        <xsd:attribute name="ORDER_POS" type="xsd:positiveInteger"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="DataSection">
+    <xsd:sequence>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="IliRepository09.RepositoryIndex" type="IliRepository09.RepositoryIndex"/>
+        <xsd:element name="IliRepository20.RepositoryIndex" type="IliRepository20.RepositoryIndex"/>
+      </xsd:choice>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="IliRepository09.AbsoluteLocation">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:simpleType name="IliRepository09.ModelName">
+    <xsd:restriction base="xsd:normalizedString">
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="IliRepository09.ModelVersion">
+    <xsd:restriction base="xsd:normalizedString">
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="IliRepository09.RelativeFilePath">
+    <xsd:restriction base="xsd:normalizedString">
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="IliRepository09.WebService">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="IliRepository09.WebSite">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType  name="IliRepository09.ModelName_">
+    <xsd:sequence>
+      <xsd:element name="value" type="IliRepository09.ModelName"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType  name="IliRepository09.WebService_">
+    <xsd:sequence>
+      <xsd:element name="value" type="IliRepository09.WebService"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType  name="IliRepository09.WebSite_">
+    <xsd:sequence>
+      <xsd:element name="value" type="IliRepository09.WebSite"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType  name="IliRepository09.RepositoryIndex.ModelMetadata">
+    <xsd:sequence>
+      <xsd:element name="Name" type="IliRepository09.ModelName"/>
+      <xsd:element name="SchemaLanguage">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="ili1"/>
+            <xsd:enumeration value="ili2_2"/>
+            <xsd:enumeration value="ili2_3"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="File" type="IliRepository09.RelativeFilePath"/>
+      <xsd:element name="Version" type="IliRepository09.ModelVersion"/>
+      <xsd:element name="VersionComment" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="20"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="publishingDate" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:date">
+            <xsd:minInclusive value="1990-01-01"/>
+            <xsd:maxInclusive value="2100-12-31"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="Original" type="IliRepository09.AbsoluteLocation" minOccurs="0"/>
+      <xsd:element name="dependsOnModel" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="IliRepository09.ModelName_" type="IliRepository09.ModelName_" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="precursorVersion" type="IliRepository09.ModelVersion" minOccurs="0"/>
+      <xsd:element name="followupModel" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="IliRepository09.ModelName_" type="IliRepository09.ModelName_" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="derivedModel" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="IliRepository09.ModelName_" type="IliRepository09.ModelName_" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Title" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="150"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="shortDescription" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="Tags" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:normalizedString">
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="Issuer" type="INTERLIS.URI" minOccurs="0"/>
+      <xsd:element name="technicalContact" type="INTERLIS.URI" minOccurs="0"/>
+      <xsd:element name="furtherInformation" type="INTERLIS.URI" minOccurs="0"/>
+      <xsd:element name="furtherMetadata" type="INTERLIS.URI" minOccurs="0"/>
+      <xsd:element name="knownWMS" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="IliRepository09.WebService_" type="IliRepository09.WebService_" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="knownWFS" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="IliRepository09.WebService_" type="IliRepository09.WebService_" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="knownPortal" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="IliRepository09.WebSite_" type="IliRepository09.WebSite_" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="browseOnly" type="xsd:boolean" minOccurs="0"/>
+      <xsd:element name="md5" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="32"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="TID" type="IliID" use="required"/>
+  </xsd:complexType>
+  <xsd:complexType name="IliRepository09.RepositoryIndex">
+    <xsd:sequence>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="IliRepository09.RepositoryIndex.ModelMetadata" type="IliRepository09.RepositoryIndex.ModelMetadata"/>
+      </xsd:choice>
+    </xsd:sequence>
+    <xsd:attribute name="BID" type="IliID" use="required"/>
+  </xsd:complexType>
+  <xsd:complexType name="IliRepository20.AbsoluteLocation">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:simpleType name="IliRepository20.ModelName">
+    <xsd:restriction base="xsd:normalizedString">
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="IliRepository20.ModelVersion">
+    <xsd:restriction base="xsd:normalizedString">
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="IliRepository20.RelativeFilePath">
+    <xsd:restriction base="xsd:normalizedString">
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="IliRepository20.WebService">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="IliRepository20.WebSite">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string"/>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType  name="IliRepository20.ModelName_">
+    <xsd:sequence>
+      <xsd:element name="value" type="IliRepository20.ModelName"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType  name="IliRepository20.WebService_">
+    <xsd:sequence>
+      <xsd:element name="value" type="IliRepository20.WebService"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType  name="IliRepository20.WebSite_">
+    <xsd:sequence>
+      <xsd:element name="value" type="IliRepository20.WebSite"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType  name="IliRepository20.RepositoryIndex.ModelMetadata">
+    <xsd:sequence>
+      <xsd:element name="Name" type="IliRepository20.ModelName"/>
+      <xsd:element name="SchemaLanguage">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="12"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="File" type="IliRepository20.RelativeFilePath"/>
+      <xsd:element name="Version" type="IliRepository20.ModelVersion"/>
+      <xsd:element name="VersionComment" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="20"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="NameLanguage" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="20"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="publishingDate" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:date">
+            <xsd:minInclusive value="1990-01-01"/>
+            <xsd:maxInclusive value="2100-12-31"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="Original" type="IliRepository20.AbsoluteLocation" minOccurs="0"/>
+      <xsd:element name="dependsOnModel" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="IliRepository20.ModelName_" type="IliRepository20.ModelName_" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="precursorVersion" type="IliRepository20.ModelVersion" minOccurs="0"/>
+      <xsd:element name="followupModel" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="IliRepository20.ModelName_" type="IliRepository20.ModelName_" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="derivedModel" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="IliRepository20.ModelName_" type="IliRepository20.ModelName_" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Title" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="150"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="shortDescription" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="Tags" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:normalizedString">
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="Issuer" type="INTERLIS.URI" minOccurs="0"/>
+      <xsd:element name="technicalContact" type="INTERLIS.URI" minOccurs="0"/>
+      <xsd:element name="furtherInformation" type="INTERLIS.URI" minOccurs="0"/>
+      <xsd:element name="furtherMetadata" type="INTERLIS.URI" minOccurs="0"/>
+      <xsd:element name="knownWMS" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="IliRepository20.WebService_" type="IliRepository20.WebService_" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="knownWFS" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="IliRepository20.WebService_" type="IliRepository20.WebService_" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="knownPortal" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="IliRepository20.WebSite_" type="IliRepository20.WebSite_" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="browseOnly" type="xsd:boolean" minOccurs="0"/>
+      <xsd:element name="md5" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:normalizedString">
+            <xsd:maxLength value="32"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="TID" type="IliID" use="required"/>
+  </xsd:complexType>
+  <xsd:complexType name="IliRepository20.RepositoryIndex">
+    <xsd:sequence>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="IliRepository20.RepositoryIndex.ModelMetadata" type="IliRepository20.RepositoryIndex.ModelMetadata"/>
+      </xsd:choice>
+    </xsd:sequence>
+    <xsd:attribute name="BID" type="IliID" use="required"/>
+  </xsd:complexType>
+  <xsd:simpleType name="INTERLIS.NAME">
+    <xsd:restriction base="xsd:normalizedString">
+      <xsd:maxLength value="255"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="INTERLIS.URI">
+    <xsd:restriction base="xsd:normalizedString">
+      <xsd:maxLength value="1023"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="HeaderSection">
+    <xsd:sequence>
+      <xsd:element name="MODELS" type="Models"/>
+      <xsd:element name="COMMENT" type="xsd:string" minOccurs="0"/>
+    </xsd:sequence>
+    <xsd:attribute name="VERSION" type="xsd:decimal" use="required" fixed="2.3"/>
+    <xsd:attribute name="SENDER" type="xsd:string" use="required"/>
+  </xsd:complexType>
+</xsd:schema>

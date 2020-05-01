@@ -44,7 +44,7 @@ import ch.ehi.iox.ilisite.ILIREPOSITORY09;
  * @author ceis
  */
 public class MakeIliModelsXml {
-	public static final String DEFAULT_ILIDIRS="http://models.interlis.ch/;"+ch.interlis.ili2c.Main.JAR_DIR;
+	public static final String DEFAULT_ILIDIRS="http://models.interlis.ch/;"+UserSettings.JAR_DIR;
 	/** name of application as shown to user.
 	 */
 	public static final String APP_NAME="mkilimodelsxml";
@@ -451,7 +451,7 @@ public class MakeIliModelsXml {
 	 */
 	public String getVersion() {
 		  if(version==null){
-		      version=Main.getVersion();
+		      version=TransferDescription.getVersion();
 		  }
 		  return version;
 	}

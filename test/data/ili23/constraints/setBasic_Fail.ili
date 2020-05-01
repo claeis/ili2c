@@ -1,0 +1,17 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic =
+
+		STRUCTURE StructA =
+			attrA : TEXT*20;
+			SET CONSTRAINT #true;
+		END StructA;
+		
+		CLASS ClassA =
+			attr : TEXT*10;
+		END ClassA;
+
+	END topic;
+
+END model.

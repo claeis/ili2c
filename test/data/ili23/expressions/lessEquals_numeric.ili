@@ -1,0 +1,16 @@
+INTERLIS 2.3;
+
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+
+  TOPIC TopicA = 
+
+    CLASS ClassA =
+      attr : 10 .. 20 ;
+      MANDATORY CONSTRAINT attr<=15;
+    END ClassA;
+
+  END TopicA;
+
+END ModelA.

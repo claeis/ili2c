@@ -31,6 +31,7 @@ import java.util.Iterator;
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.tools.TopoSort;
 import ch.interlis.ili2c.config.Configuration;
+import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.modelscan.IliFile;
 import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ili2c.parser.Ili2ModelScan;
@@ -44,7 +45,7 @@ public class ModelScan {
 
     public static void main(String[] args) {
 	EhiLogger.getInstance().setTraceFilter(false);
-	ArrayList<String> dirName = new ArrayList<String>(Arrays.asList(args[0].split(Main.ILIDIR_SEPARATOR)));
+	ArrayList<String> dirName = new ArrayList<String>(Arrays.asList(args[0].split(UserSettings.ILIDIR_SEPARATOR)));
 	String model = args[1];
 	ArrayList<String> models = new ArrayList<String>();
 	models.add(model);

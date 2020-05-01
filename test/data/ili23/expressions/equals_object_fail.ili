@@ -1,0 +1,20 @@
+INTERLIS 2.3;
+
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+
+  TOPIC TopicA = 
+  
+    CLASS ClassA =
+    END ClassA;
+    
+    ASSOCIATION =
+    	a1 -- ClassA;
+    	a2 -- ClassA;
+    	MANDATORY CONSTRAINT a1=="a2";
+    END;
+
+  END TopicA;
+
+END ModelA.

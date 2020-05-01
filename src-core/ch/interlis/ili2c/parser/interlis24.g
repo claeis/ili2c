@@ -789,7 +789,7 @@ protected interlis2Def
 	:	ili:"INTERLIS" version=decimal
 	    {
 	      if (version.doubleValue()!=2.4) {
-	        reportError(rsrc.getString("err_wrongInterlisVersion"),
+	        reportError(formatMessage("err_wrongInterlisVersion",version.toString()),
 	                    ili.getLine());
 	        panic();
 	      }
@@ -4292,7 +4292,7 @@ protected uniquenessConstraint[Viewable v,Container context]
 		Iterator attri=elements.iteratorAttribute();
 		while(attri.hasNext()){
 			ObjectPath attr=(ObjectPath)attri.next();
-			if(attr.getLastPathEl() instanceof AbstractAttributeRef && attr.getType() instanceof CompositionType){
+			if(attr.isAttributePath() && attr.getType() instanceof CompositionType){
 				reportError(formatMessage ("err_uniqueness_StructNoAllowed",attr.toString()),u.getLine());
 			}
 		}
@@ -4424,12 +4424,17 @@ protected setConstraint [Viewable v,Container context]
 	condition=expression[v, /* expectedType */ predefinedBooleanType,context]
 	SEMI
 	{
-      try {
-	if(n!=null){constr.setName(n.getText());}
-        constr.setCondition(condition);
-      } catch (Exception ex) {
-        reportError(ex, tok.getLine());
-      }
+	  if(v instanceof Table && !((Table)v).isIdentifiable()){
+			reportError (formatMessage ("err_constraint_illegalSetInStruct",
+				v.getScopedName(null)), tok.getLine());
+	  }else{
+		try {
+			if(n!=null){constr.setName(n.getText());}
+			constr.setCondition(condition);
+		} catch (Exception ex) {
+			reportError(ex, tok.getLine());
+		}
+	  }
 	}
 ;
 protected constraintsDef[Container scope]

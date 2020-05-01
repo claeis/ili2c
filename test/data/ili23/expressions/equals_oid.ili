@@ -1,0 +1,19 @@
+INTERLIS 2.3;
+
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+
+  TOPIC TopicA = 
+  	DOMAIN
+  		OidA = OID TEXT*20;
+  	
+    CLASS ClassA =
+      attr1 : OidA;
+      attr2 : OidA;
+      MANDATORY CONSTRAINT attr1==attr2;
+    END ClassA;
+
+  END TopicA;
+
+END ModelA.

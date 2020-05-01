@@ -23,6 +23,11 @@ public abstract class Constant extends Evaluable
   Constant()
   {
   };
+  @Override
+  public boolean isLogical() {
+      return false;
+  }
+
 
   /** The constant for the <code>UNDEFINED</code> value.
   */
@@ -97,6 +102,10 @@ public abstract class Constant extends Evaluable
   {
     String value;
 
+    @Override
+    public Type getType() {
+        return new TextType();
+    }
 
     /** Constructs a new text constant.
     */
@@ -184,6 +193,10 @@ public abstract class Constant extends Evaluable
 	  {
 		  return value;
 	  }
+      @Override
+      public Type getType() {
+          return new ClassType();
+      }
 
   }
   public static class AttributePath extends Constant
@@ -196,6 +209,10 @@ public abstract class Constant extends Evaluable
 	  public AttributeDef getValue()
 	  {
 		  return value;
+	  }
+	  @Override
+	  public Type getType() {
+	      return new AttributePathType();
 	  }
 
   }
@@ -233,6 +250,11 @@ public abstract class Constant extends Evaluable
     public PrecisionDecimal getValue()
     {
       return value;
+    }
+    @Override 
+    public Type getType()
+    {
+        return new NumericType();
     }
 
 
@@ -317,6 +339,19 @@ public abstract class Constant extends Evaluable
     public String[] getValue ()
     {
       return value;
+    }
+    @Override
+    public boolean isLogical() {
+        if(value.length==1) {
+            if(value[0].equals("true") || value[0].equals("false")) {
+                return true;
+            }
+        }
+        return false;
+    }
+    @Override
+    public Type getType() {
+        return new EnumerationType();
     }
 
 

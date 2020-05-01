@@ -137,7 +137,7 @@ public final class XSDGenerator
 		ipw.println ("<xsd:annotation>");
 		ipw.indent ();
 		ipw.print("<xsd:appinfo source=\"http://www.interlis.ch/ili2c/ili2cversion\">");
-		ipw.print(ch.interlis.ili2c.Main.getVersion());
+		ipw.print(TransferDescription.getVersion());
 		ipw.println ("</xsd:appinfo>");
 		{
 			Iterator modeli=sortMetamodelElements(td.iterator()).iterator();

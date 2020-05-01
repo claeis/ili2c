@@ -1,7 +1,6 @@
 package ch.interlis.ili2c.generator;
 
 
-import ch.interlis.ili2c.Ili2c;
 import ch.interlis.ili2c.metamodel.*;
 import ch.interlis.ili2c.metamodel.RoleDef.Kind;
 
@@ -85,7 +84,7 @@ public class Uml21Generator
 			{
 				xout.writeStartElement(xmiNs,"Documentation"); 
 				xout.writeAttribute("exporter","ili2c"); //="Enterprise Architect" 
-				xout.writeAttribute("exporterVersion",Ili2c.getVersion()); // ="6.5"
+				xout.writeAttribute("exporterVersion",TransferDescription.getVersion());
 				xout.writeEndElement();
 			}
 			

@@ -37,7 +37,7 @@ public class ListModels {
 		List<String> repos=new ArrayList<String>();
 		if(config.getSizeFileEntry()==0) {
 		    // use default
-		    repos.add(Main.ILI_REPOSITORY);
+		    repos.add(UserSettings.ILI_REPOSITORY);
 		}else {
 	        Iterator reposi = config.iteratorFileEntry();
 	        while (reposi.hasNext()) {
@@ -78,7 +78,7 @@ public class ListModels {
 			ioxWriter = new XtfWriterBase( outStream,  ILIREPOSITORY09.getIoxMapping(),"2.3");
 			ioxWriter.setModels(new XtfModel[]{ILIREPOSITORY09.getXtfModel()});
 			StartTransferEvent startTransferEvent = new StartTransferEvent();
-			startTransferEvent.setSender( Main.APP_NAME+"-"+Main.getVersion() );
+			startTransferEvent.setSender( Main.APP_NAME+"-"+ch.interlis.ili2c.metamodel.TransferDescription.getVersion() );
 			ioxWriter.write( startTransferEvent );
 			StartBasketEvent startBasketEvent = new StartBasketEvent( ILIREPOSITORY09.RepositoryIndex, "b1");
 			ioxWriter.write( startBasketEvent );

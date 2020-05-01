@@ -96,7 +96,7 @@ public abstract class Element implements BeanContextChild,ElementAlias {
     return formatMessage(msg, "");
   }
 
-  static final String formatMessage(String msg, String arg)
+  public static final String formatMessage(String msg, String arg)
   {
     return formatMessage(msg, new Object[] { arg });
   }

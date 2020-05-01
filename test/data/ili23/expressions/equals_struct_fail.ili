@@ -1,0 +1,20 @@
+INTERLIS 2.3;
+
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+
+  TOPIC TopicA = 
+  
+  	STRUCTURE StructA = 
+  	END StructA;
+  	
+    CLASS ClassA =
+      attr1 : StructA;
+      attr2 : StructA;
+      MANDATORY CONSTRAINT attr1=="text";
+    END ClassA;
+
+  END TopicA;
+
+END ModelA.

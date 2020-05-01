@@ -215,7 +215,234 @@ options
 			}
 		return true;
 	}
-
+	protected void validateFormattedConst(FormattedType ft,String value, int srcLine)
+	{
+			try{
+				if(!ft.isValueInRange(value)){
+					reportError(formatMessage("err_formattedType_valueOutOfRange",value),srcLine);
+				}
+			}catch(NumberFormatException ex){
+				reportError(formatMessage("err_formattedType_illegalFormat",value),srcLine);
+			}
+	}
+    protected void validateEqualsArgumentTypes(Evaluable exprRet, Evaluable expr, Evaluable comparedWith,int srcLine)
+    {
+            if(!expr.isDirty() && !comparedWith.isDirty()){
+            	if(expr instanceof Constant.Undefined || comparedWith instanceof Constant.Undefined){
+            		// UNDEFINED is always == or !=
+            	}else{
+					Type expr1Type=expr.getType();
+					Type expr2Type=comparedWith.getType();
+					if(expr1Type!=null && expr2Type!=null){
+						if(expr1Type.resolveAliases() instanceof TextType && expr2Type.resolveAliases() instanceof TextType){
+							// text
+						}else if(expr1Type.resolveAliases() instanceof CompositionType && expr2Type.resolveAliases() instanceof CompositionType){
+							// structs
+						}else if(expr1Type.resolveAliases() instanceof OIDType && expr2Type.resolveAliases() instanceof OIDType){
+						}else if(expr1Type.resolveAliases() instanceof ClassType && expr2Type.resolveAliases() instanceof ClassType){
+						}else if(expr1Type.resolveAliases() instanceof AttributePathType && expr2Type.resolveAliases() instanceof AttributePathType){
+						}else if(expr1Type.resolveAliases() instanceof NumericType && expr2Type.resolveAliases() instanceof NumericType){
+							// numeric
+						}else if(expr1Type.resolveAliases() instanceof FormattedType && expr2Type.resolveAliases() instanceof FormattedType){
+							// formatted
+						}else if(expr1Type.resolveAliases() instanceof FormattedType && comparedWith instanceof Constant.Text){
+							// formatted
+							validateFormattedConst((FormattedType)expr1Type.resolveAliases(),((Constant.Text)comparedWith).getValue(),srcLine);
+						}else if(expr instanceof Constant.Text && expr2Type.resolveAliases() instanceof FormattedType){
+							// formatted
+							validateFormattedConst((FormattedType)expr2Type.resolveAliases(),((Constant.Text)expr).getValue(),srcLine);
+						}else if(expr1Type.resolveAliases() instanceof CoordType && expr2Type.resolveAliases() instanceof CoordType){
+							// coord
+						}else if(expr1Type.resolveAliases() instanceof EnumerationType && expr2Type.resolveAliases() instanceof EnumerationType){
+							// enum
+							if(expr instanceof Constant.Enumeration && comparedWith instanceof Constant.Enumeration){
+								// both factors are constants of unknown enumerations
+							}else if(expr instanceof Constant.Enumeration){
+								// validate that constant is a member of the enumeration type
+								String value=((Constant.Enumeration)expr).toString();
+								List<String> values=((EnumerationType)expr2Type.resolveAliases()).getValues();
+								if(!values.contains(value.substring(1))){
+									reportError (formatMessage ("err_enumerationType_MissingEle",value),
+										srcLine);
+								}
+							}else if(comparedWith instanceof Constant.Enumeration){
+								// validate that constant is a member of the enumeration type
+								String value=((Constant.Enumeration)comparedWith).toString();
+								List<String> values=((EnumerationType)expr1Type.resolveAliases()).getValues();
+								if(!values.contains(value.substring(1))){
+									reportError (formatMessage ("err_enumerationType_MissingEle",value),
+										srcLine);
+								}
+							}else{
+							 if(expr1Type.resolveAliases()!=expr2Type.resolveAliases()){
+								reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+										 srcLine);
+								exprRet.setDirty(true);
+							 }
+							}
+						}else if(expr1Type.resolveAliases() instanceof EnumTreeValueType && expr2Type.resolveAliases() instanceof EnumTreeValueType){
+							 if(expr1Type.resolveAliases()!=expr2Type.resolveAliases()){
+								reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+										 srcLine);
+								exprRet.setDirty(true);
+							 }
+						}else if(expr instanceof Constant.Enumeration && expr2Type.resolveAliases() instanceof EnumTreeValueType){
+								// validate that constant is a member of the enumeration type
+								String value=((Constant.Enumeration)expr).toString();
+								List<String> values=((EnumTreeValueType)expr2Type.resolveAliases()).getValues();
+								if(!values.contains(value.substring(1))){
+									reportError (formatMessage ("err_enumerationType_MissingEle",value),
+										srcLine);
+								}
+						}else if(expr1Type.resolveAliases() instanceof EnumTreeValueType && comparedWith instanceof Constant.Enumeration){
+								// validate that constant is a member of the enumeration type
+								String value=((Constant.Enumeration)comparedWith).toString();
+								List<String> values=((EnumTreeValueType)expr1Type.resolveAliases()).getValues();
+								if(!values.contains(value.substring(1))){
+									reportError (formatMessage ("err_enumerationType_MissingEle",value),
+										srcLine);
+								}
+						}else if(expr1Type.resolveAliases() instanceof ObjectType && expr2Type.resolveAliases() instanceof ObjectType){
+							// object
+						}else{
+							reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+									 srcLine);
+							exprRet.setDirty(true);
+						}
+					}else{
+							reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+									 srcLine);
+							exprRet.setDirty(true);
+					}
+            	}
+            }
+    }
+    protected void validateCompareArgumentTypes(Evaluable exprRet, Evaluable expr, Evaluable comparedWith,int srcLine)
+    {
+            if(!expr.isDirty() && !comparedWith.isDirty()){
+            	{
+					Type expr1Type=expr.getType();
+					Type expr2Type=comparedWith.getType();
+					if(expr1Type!=null && expr2Type!=null){
+						if(expr1Type.resolveAliases() instanceof NumericType && expr2Type.resolveAliases() instanceof NumericType){
+							// numeric
+						}else if(expr1Type.resolveAliases() instanceof FormattedType && expr2Type.resolveAliases() instanceof FormattedType){
+							// formatted
+						}else if(expr1Type.resolveAliases() instanceof FormattedType && comparedWith instanceof Constant.Text){
+							// formatted
+							validateFormattedConst((FormattedType)expr1Type.resolveAliases(),((Constant.Text)comparedWith).getValue(),srcLine);
+						}else if(expr instanceof Constant.Text && expr2Type.resolveAliases() instanceof FormattedType){
+							// formatted
+							validateFormattedConst((FormattedType)expr2Type.resolveAliases(),((Constant.Text)expr).getValue(),srcLine);
+						}else if(expr1Type.resolveAliases() instanceof EnumerationType && expr2Type.resolveAliases() instanceof EnumerationType){
+							// enum
+							if(expr instanceof Constant.Enumeration && comparedWith instanceof Constant.Enumeration){
+								// both factors are constants of unknown enumerations
+							}else if(expr instanceof Constant.Enumeration){
+								// validate that constant is a member of the enumeration type
+								EnumerationType enumType=(EnumerationType)expr2Type.resolveAliases();
+								if(enumType.isOrdered() && !enumType.isCircular()){
+									String value=((Constant.Enumeration)expr).toString();
+									List<String> values=enumType.getValues();
+									if(!values.contains(value.substring(1))){
+										reportError (formatMessage ("err_enumerationType_MissingEle",value),
+											srcLine);
+									}
+								}else{
+									reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+											 srcLine);
+									exprRet.setDirty(true);
+								}
+							}else if(comparedWith instanceof Constant.Enumeration){
+								// validate that constant is a member of the enumeration type
+								EnumerationType enumType=(EnumerationType)expr1Type.resolveAliases();
+								if(enumType.isOrdered() && !enumType.isCircular()){
+									String value=((Constant.Enumeration)comparedWith).toString();
+									List<String> values=enumType.getValues();
+									if(!values.contains(value.substring(1))){
+										reportError (formatMessage ("err_enumerationType_MissingEle",value),
+											srcLine);
+									}
+								}else{
+									reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+											 srcLine);
+									exprRet.setDirty(true);
+								}
+							}else{
+							 if(expr1Type.resolveAliases()!=expr2Type.resolveAliases()){
+								reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+										 srcLine);
+								exprRet.setDirty(true);
+							 }else{
+								EnumerationType enumType=(EnumerationType)expr1Type.resolveAliases();
+								if(enumType.isOrdered() && !enumType.isCircular()){
+									// ok
+								}else{
+									reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+											 srcLine);
+									exprRet.setDirty(true);
+								}
+							 }
+							}
+						}else if(expr1Type.resolveAliases() instanceof EnumTreeValueType && expr2Type.resolveAliases() instanceof EnumTreeValueType){
+							 if(expr1Type.resolveAliases()!=expr2Type.resolveAliases()){
+								reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+										 srcLine);
+								exprRet.setDirty(true);
+							 }else{
+								EnumerationType enumType=(EnumerationType)((EnumTreeValueType)expr1Type.resolveAliases()).getEnumType().getType().resolveAliases();
+								if(enumType.isOrdered() && !enumType.isCircular()){
+									// ok
+								}else{
+									reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+											 srcLine);
+									exprRet.setDirty(true);
+								}
+							 }
+						}else if(expr instanceof Constant.Enumeration && expr2Type.resolveAliases() instanceof EnumTreeValueType){
+								// validate that constant is a member of the enumeration type
+								EnumerationType enumType=(EnumerationType)((EnumTreeValueType)expr2Type.resolveAliases()).getEnumType().getType().resolveAliases();
+								if(enumType.isOrdered() && !enumType.isCircular()){
+									String value=((Constant.Enumeration)expr).toString();
+									List<String> values=((EnumTreeValueType)expr2Type.resolveAliases()).getValues();
+									if(!values.contains(value.substring(1))){
+										reportError (formatMessage ("err_enumerationType_MissingEle",value),
+											srcLine);
+									}
+								}else{
+									reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+											 srcLine);
+									exprRet.setDirty(true);
+								}
+						}else if(expr1Type.resolveAliases() instanceof EnumTreeValueType && comparedWith instanceof Constant.Enumeration){
+								// validate that constant is a member of the enumeration type
+								EnumerationType enumType=(EnumerationType)((EnumTreeValueType)expr1Type.resolveAliases()).getEnumType().getType().resolveAliases();
+								if(enumType.isOrdered() && !enumType.isCircular()){
+									String value=((Constant.Enumeration)comparedWith).toString();
+									List<String> values=((EnumTreeValueType)expr1Type.resolveAliases()).getValues();
+									if(!values.contains(value.substring(1))){
+										reportError (formatMessage ("err_enumerationType_MissingEle",value),
+											srcLine);
+									}
+								}else{
+									reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+											 srcLine);
+									exprRet.setDirty(true);
+								}
+						}else{
+							reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+									 srcLine);
+							exprRet.setDirty(true);
+						}
+					}else{
+							reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
+									 srcLine);
+							exprRet.setDirty(true);
+					}
+            	}
+            }
+    }
+    
 	protected Domain resolveDomainRef(Container scope,String[] nams, int lin)
 	{
 	      Model model;
@@ -852,7 +1079,7 @@ protected interlis2Def
 	:	ili:"INTERLIS" version=decimal
 	    {
 	      if (version.doubleValue()!=2.3) {
-	        reportError(rsrc.getString("err_wrongInterlisVersion"),
+	        reportError(formatMessage("err_wrongInterlisVersion",version.toString()),
 	                    ili.getLine());
 	        panic();
 	      }
@@ -2832,20 +3059,8 @@ protected formattedType[Container scope, Type extending]
 		( min:STRING DOTDOT max:STRING )?
 		{ 
 			if(min!=null){
-				try{
-					if(!ft.isValueInRange(min.getText())){
-						reportError(formatMessage("err_formattedType_valueOutOfRange",min.getText()),min.getLine());
-					}
-				}catch(NumberFormatException ex){
-					reportError(formatMessage("err_formattedType_illegalFormat",min.getText()),min.getLine());
-				}
-				try{
-					if(!ft.isValueInRange(max.getText())){
-						reportError(formatMessage("err_formattedType_valueOutOfRange",max.getText()),max.getLine());
-					}
-				}catch(NumberFormatException ex){
-					reportError(formatMessage("err_formattedType_illegalFormat",max.getText()),max.getLine());
-				}
+				validateFormattedConst(ft,min.getText(),min.getLine());
+				validateFormattedConst(ft,max.getText(),max.getLine());
 				ft.setMinimum(min.getText());
 				ft.setMaximum(max.getText());
 			}
@@ -2864,20 +3079,8 @@ protected formattedType[Container scope, Type extending]
 					reportError(ex,line);
 				}
 			}
-			try{
-				if(!ft.isValueInRange(min2.getText())){
-					reportError(formatMessage("err_formattedType_valueOutOfRange",min2.getText()),min2.getLine());
-				}
-			}catch(NumberFormatException ex){
-				reportError(formatMessage("err_formattedType_illegalFormat",min2.getText()),min2.getLine());
-			}
-			try{
-				if(!ft.isValueInRange(max2.getText())){
-					reportError(formatMessage("err_formattedType_valueOutOfRange",max2.getText()),max2.getLine());
-				}
-			}catch(NumberFormatException ex){
-				reportError(formatMessage("err_formattedType_illegalFormat",max2.getText()),max2.getLine());
-			}
+			validateFormattedConst(ft,min2.getText(),min2.getLine());
+			validateFormattedConst(ft,max2.getText(),max2.getLine());
 			ft.setMinimum(min2.getText());
 			ft.setMaximum(max2.getText());
 		}
@@ -4160,8 +4363,11 @@ protected constraintDef[Viewable constrained,Container context]
 	| constr=uniquenessConstraint[constrained,context]
 	| constr=setConstraint[constrained,context]
 	)
-	{constr.setDocumentation(ilidoc);
-	constr.setMetaValues(metaValues);
+	{
+		if(constr!=null){
+			constr.setDocumentation(ilidoc);
+			constr.setMetaValues(metaValues);
+		}
 	}
 	;
 
@@ -4178,8 +4384,13 @@ protected mandatoryConstraint [Viewable v,Container context]
 
     {
       try {
-        constr = new MandatoryConstraint();
-        constr.setCondition(condition);
+		constr = new MandatoryConstraint();
+      	if(!condition.isDirty() && !condition.isLogical()){
+			reportError (formatMessage ("err_expr_noLogical",(String)null),
+                     mand.getLine());
+            constr.setDirty(true);
+      	}
+		constr.setCondition(condition);
       } catch (Exception ex) {
         reportError(ex, mand.getLine());
       }
@@ -4207,6 +4418,12 @@ protected plausibilityConstraint [Viewable v,Container context]
     {
       try {
         constr = new PlausibilityConstraint();
+      	if(!condition.isDirty() && !condition.isLogical()){
+			reportError (formatMessage ("err_expr_noLogical",(String)null),
+                     tok.getLine());
+            constr.setDirty(true);
+      	}
+        
         constr.setDirection(direction);
         constr.setCondition(condition);
         constr.setPercentage(percentage.doubleValue());
@@ -4257,6 +4474,11 @@ protected uniquenessConstraint[Viewable v,Container context]
 	)
 	{
 		if(preCond!=null){ 
+			if(!preCond.isDirty() && !preCond.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 u.getLine());
+				constr.setDirty(true);
+			}
 			constr.setPreCondition(preCond);
 		}
 		// check that all attrPaths do not point to a struct
@@ -4264,7 +4486,7 @@ protected uniquenessConstraint[Viewable v,Container context]
 		Iterator attri=elements.iteratorAttribute();
 		while(attri.hasNext()){
 			ObjectPath attr=(ObjectPath)attri.next();
-			if(attr.getLastPathEl() instanceof AbstractAttributeRef && attr.getType() instanceof CompositionType){
+			if(attr.isAttributePath() && attr.getType() instanceof CompositionType){
 				reportError(formatMessage ("err_uniqueness_StructNoAllowed",attr.toString()),u.getLine());
 			}
 		}
@@ -4390,17 +4612,32 @@ protected setConstraint [Viewable v,Container context]
   : tok:"SET" "CONSTRAINT" 
   	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,context] COLON
 		{
+			if(!preCond.isDirty() && !preCond.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 tok.getLine());
+				constr.setDirty(true);
+			}
 	        constr.setPreCondition(preCond);
 		}
 	)?
 	condition=expression[v, /* expectedType */ predefinedBooleanType,context]
 	SEMI
 	{
-      try {
-        constr.setCondition(condition);
-      } catch (Exception ex) {
-        reportError(ex, tok.getLine());
-      }
+	  if(v instanceof Table && !((Table)v).isIdentifiable()){
+			reportError (formatMessage ("err_constraint_illegalSetInStruct",
+				v.getScopedName(null)), tok.getLine());
+	  }else{
+			if(!condition.isDirty() && !condition.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 tok.getLine());
+				constr.setDirty(true);
+			}
+		  try {
+			constr.setCondition(condition);
+		  } catch (Exception ex) {
+			reportError(ex, tok.getLine());
+		  }
+	  }
 	}
 ;
 protected constraintsDef[Container scope]
@@ -4438,33 +4675,55 @@ protected term[Container ns, Type expectedType, Container functionNs]
   List disjoined = null;
   expr = null;
   int lineNumber = 0;
+  boolean dirty=false;
 }
-  : expr=term1 [ns, expectedType, functionNs]
+  : {lineNumber=LT(1).getLine();} 
+  expr=term1 [ns, expectedType, functionNs]
     {
       disjoined = new LinkedList ();
-      disjoined.add(expr);
+      if(expr!=null){
+	      disjoined.add(expr);
+      }
     }
 
     (
       o:"OR"
       expr = term1 [ns, expectedType, functionNs]
       {
-        disjoined.add (expr);
-        lineNumber = o.getLine();
+      	if(expr!=null){
+			disjoined.add (expr);
+			lineNumber = o.getLine();
+			if(!dirty && !expr.isDirty() && !expr.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 lineNumber);
+				dirty=true;
+			}
+      	}
       }
     )*
 
     {
-      if (disjoined.size() == 1)
+      if (disjoined.size() == 1){
         expr = (Evaluable) disjoined.get(0);
-      else
-      {
+        if(dirty){
+          expr.setDirty(dirty);
+        }
+      }else if (disjoined.size() > 1){
         try {
+			expr = (Evaluable) disjoined.get(0);
+			if(!dirty && !expr.isDirty() && !expr.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 lineNumber);
+				dirty=true;
+			}
           expr = new Expression.Disjunction (
             (Evaluable[]) disjoined.toArray (new Evaluable[disjoined.size()]));
+            expr.setDirty(dirty);
         } catch (Exception ex) {
           reportError (ex, lineNumber);
         }
+      }else{
+      	expr=null;
       }
     }
   ;
@@ -4476,33 +4735,56 @@ protected term1 [Container ns, Type expectedType,Container functionNs]
   List conjoined = null;
   expr = null;
   int lineNumber = 0;
+  boolean dirty=false;
 }
-  : expr=term2 [ns, expectedType, functionNs]
+  : {lineNumber=LT(1).getLine();}
+  expr=term2 [ns, expectedType, functionNs]
     {
       conjoined = new LinkedList ();
-      conjoined.add(expr);
+      if(expr!=null){
+	    conjoined.add(expr);
+	  }
     }
 
     (
       an:"AND"
       expr = term2 [ns, expectedType, functionNs]
       {
-        conjoined.add (expr);
-        lineNumber = an.getLine();
+      	if(expr!=null){
+			conjoined.add (expr);
+			lineNumber = an.getLine();
+			if(!dirty && !expr.isDirty() && !expr.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 lineNumber);
+				dirty=true;
+			}
+		}
       }
     )*
 
     {
-      if (conjoined.size() == 1)
+      if (conjoined.size() == 1){
         expr = (Evaluable) conjoined.get(0);
-      else
-      {
+        if(dirty){
+          expr.setDirty(dirty);
+        }
+      } else if (conjoined.size() > 1){
         try {
-          expr = new Expression.Conjunction(
-            (Evaluable[]) conjoined.toArray(new Evaluable[conjoined.size()]));
+        
+			expr = (Evaluable) conjoined.get(0);        
+			if(!dirty && !expr.isDirty() && !expr.isLogical()){
+					reportError (formatMessage ("err_expr_noLogical",(String)null),
+							 lineNumber);
+					dirty=true;
+			}
+			expr = new Expression.Conjunction(
+            	(Evaluable[]) conjoined.toArray(new Evaluable[conjoined.size()]));
+            expr.setDirty(dirty);
         } catch (Exception ex) {
           reportError (ex, lineNumber);
         }
+      }else{
+      	expr=null;
       }
     }
   ;
@@ -4512,6 +4794,7 @@ protected term2 [Container ns, Type expectedType,Container functionNs]
   returns [Evaluable expr]
 {
   expr = null;
+  Evaluable exprRet = null;
   Evaluable comparedWith = null;
   char op = '=';
   int[] lineNumberPar = null;
@@ -4530,34 +4813,41 @@ protected term2 [Container ns, Type expectedType,Container functionNs]
           {
           /* EQUALSEQUALS */
           case '=':
-            expr = new Expression.Equality (expr, comparedWith);
+            exprRet = new Expression.Equality (expr, comparedWith);
+            validateEqualsArgumentTypes(exprRet,expr,comparedWith,lineNumberPar[0]);
             break;
 
           /* LESSGREATER, BANGEQUALS */
           case '!':
-            expr = new Expression.Inequality (expr, comparedWith);
+            exprRet = new Expression.Inequality (expr, comparedWith);
+            validateEqualsArgumentTypes(exprRet,expr,comparedWith,lineNumberPar[0]);
             break;
 
           /* LESSEQUAL */
           case 'l':
-            expr = new Expression.LessThanOrEqual (expr, comparedWith);
+            exprRet = new Expression.LessThanOrEqual (expr, comparedWith);
+            validateCompareArgumentTypes(exprRet,expr,comparedWith,lineNumberPar[0]);
             break;
 
           /* GREATEREQUAL */
           case 'g':
-            expr = new Expression.GreaterThanOrEqual (expr, comparedWith);
+            exprRet = new Expression.GreaterThanOrEqual (expr, comparedWith);
+            validateCompareArgumentTypes(exprRet,expr,comparedWith,lineNumberPar[0]);
             break;
 
           /* LESS */
           case '<':
-            expr = new Expression.LessThan (expr, comparedWith);
+            exprRet = new Expression.LessThan (expr, comparedWith);
+            validateCompareArgumentTypes(exprRet,expr,comparedWith,lineNumberPar[0]);
             break;
 
           /* GREATER */
           case '>':
-            expr = new Expression.GreaterThan (expr, comparedWith);
+            exprRet = new Expression.GreaterThan (expr, comparedWith);
+            validateCompareArgumentTypes(exprRet,expr,comparedWith,lineNumberPar[0]);
             break;
           }
+          expr=exprRet;
         } catch (Exception ex) {
           reportError (ex, lineNumberPar[0]);
         }
@@ -4574,10 +4864,17 @@ protected predicate[Container ns, Type expectedType,Container functionNs]
 	}
  	: (nt:"NOT" {negation=true;})? LPAREN expr=expression[ns,expectedType,functionNs] RPAREN
 		    { if(negation){
+		    	boolean dirty=false;
+				if(!expr.isDirty() && !expr.isLogical()){
+					reportError (formatMessage ("err_expr_noLogical",(String)null),
+							 nt.getLine());
+					dirty=true;
+				}
 			      try {
-				expr = new Expression.Negation (expr);
+			      	expr = new Expression.Negation (expr);
+			      	expr.setDirty(dirty);
 			      } catch (Exception ex) {
-				reportError (ex, nt.getLine());
+			      	reportError (ex, nt.getLine());
 			      }
 			}
 		    }
@@ -5626,9 +5923,14 @@ protected selection [Viewable view,Container functionNs]
 		Viewable ref;
 		LinkedList base=new LinkedList();
 	}
-	: "WHERE"
+	: tok:"WHERE"
 	logex = expression [view, /* expectedType */ predefinedBooleanType,functionNs]
 		{
+			if(!logex.isDirty() && !logex.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 tok.getLine());
+				logex.setDirty(true);
+			}
 			sel = new ExpressionSelection(view, logex);
 		}
 	SEMI
@@ -6057,8 +6359,15 @@ protected condSigParamAssignment [Graphic graph,  Table signTab]
   instruct = null;
 }
   : (
-      "WHERE"
+      tok:"WHERE"
       restrictor = expression [basedOn, /* expectedType */ predefinedBooleanType,graph]
+      {
+			if(!restrictor.isDirty() && !restrictor.isLogical()){
+				reportError (formatMessage ("err_expr_noLogical",(String)null),
+						 tok.getLine());
+				restrictor.setDirty(true);
+			}
+      }
     )?
 
     LPAREN

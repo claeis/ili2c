@@ -6,6 +6,7 @@ jdk:
 branches:
   only:
     - master
+    - stable-core
     - stable
 
 addons:
@@ -16,7 +17,8 @@ addons:
 install: true
 
 script: 
-  - ant -f build.xml jar 
+  - if [ $TRAVIS_BRANCH == "stable-core" ]; then ant -f build.xml jar-core; fi 
+  - if [ $TRAVIS_BRANCH != "stable-core" ]; then ant -f build.xml jar ; fi
 
 deploy:
   - provider: script
@@ -29,6 +31,11 @@ deploy:
     script: ant -Duser.repos_pwd=${repos_pwd} -Duser.repos_usr=jql_jars-INTE -Drelease=final -f build.xml bindist deploy
     on:
       branch: stable
+  - provider: script
+    skip_cleanup: true
+    script: ant -Duser.repos_pwd=${repos_pwd} -Duser.repos_usr=jql_jars-INTE -Drelease=final -f build.xml deploy-core
+    on:
+      branch: stable-core
 notifications:
   email:
     on_success: change # default: change

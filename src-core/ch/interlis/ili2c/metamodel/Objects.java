@@ -28,7 +28,10 @@ public class Objects extends Evaluable
   {
 	  this.context=context;
   }
-
+  @Override
+  public boolean isLogical() {
+      return false;
+  }
   public Viewable getContext()
   {
     return context;
