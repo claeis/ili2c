@@ -8,6 +8,7 @@ LATEST
 - improve core/tool separation
 - adjust error message to 2.4 (#48)
 - added UserSettings.ILI_LANGUAGE_VERSION to force language version
+- iox-ili-1.21.0
 
 ili2c 5.0.8 (2020-04-01)
 ---------------------------
