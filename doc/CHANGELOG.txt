@@ -1,5 +1,8 @@
 LATEST
 ---------------------------
+
+ili2c 5.1.1 (2020-05-01)
+---------------------------
 - verifiy that mandatory constraint has logical expression (#17)
 - check datatype compatibility in constraints (#17)
 - test of expressions in MANDATORY CONSTRAINTs (#31)
