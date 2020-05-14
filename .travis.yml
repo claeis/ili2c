@@ -14,9 +14,8 @@ branches:
     - stable
     
 install:
-  - echo ${interlis_key} >./deploy_key
-  - ssh-add ./deploy_key
-  - ssh -f -N -L 2120:ftp.interlis.ch:20 -L 2121:ftp.interlis.ch:21 interlis@test1.ehi.ch
+  - echo ${interlis_key} >./deploy_key ; chmod 600 ./deploy_key
+  - ssh -i ./deploy_key -f -N -L 2120:ftp.interlis.ch:20 -L 2121:ftp.interlis.ch:21 interlis@test1.ehi.ch
 
 script: 
   - if [ $TRAVIS_BRANCH == "stable-core" ]; then gradle :ili2c-core:jar ; fi 
