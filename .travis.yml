@@ -6,6 +6,7 @@ jdk:
 addons:
   ssh_known_hosts:
   - ftp.interlis.ch
+  - test1.ehi.ch
 
 branches:
   only:
