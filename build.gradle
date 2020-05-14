@@ -58,6 +58,7 @@ ext {
 	git = System.getProperty('git',properties.get('git','git'))
 	repos_pwd = System.getProperty('repos_pwd',properties.get('repos_pwd','repos_pwd'))
 	repos_usr = System.getProperty('repos_usr',properties.get('repos_usr','repos_usr'))
+	repos_url = System.getProperty('repos_url',properties.get('repos_url','ftp://ftp.interlis.ch'))
 }
 def downloads_pwd = System.getProperty('downloads_pwd',properties.get('downloads_pwd','downloads_pwd'))
 def downloads_usr = System.getProperty('downloads_usr',properties.get('downloads_usr','downloads_usr'))
@@ -140,7 +141,7 @@ uploadArchives {
     repositories {
         mavenDeployer {
         	configuration = configurations.deployerJars
-			repository(url: 'ftp://ftp.interlis.ch'){
+			repository(url: repos_url){
             	authentication(userName: repos_usr, password: repos_pwd)
             }
         }

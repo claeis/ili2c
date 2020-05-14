@@ -55,7 +55,7 @@ uploadArchives {
     repositories {
         mavenDeployer {
         	configuration = configurations.deployerJars
-			repository(url: 'ftp://ftp.interlis.ch'){
+			repository(url: rootProject.repos_url){
             	authentication(userName: rootProject.repos_usr, password: rootProject.repos_pwd)
             }
         }
