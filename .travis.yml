@@ -14,14 +14,15 @@ branches:
     - stable-core
     - stable
     
-install:
-  - echo ${interlis_key} >./deploy_key ; chmod 600 ./deploy_key
-  - ssh -i ./deploy_key -f -N -L 2120:ftp.interlis.ch:20 -L 2121:ftp.interlis.ch:21 interlis@test1.ehi.ch
-
 script: 
   - if [ $TRAVIS_BRANCH == "stable-core" ]; then gradle :ili2c-core:jar ; fi 
   - if [ $TRAVIS_BRANCH != "stable-core" ]; then gradle jar ; fi
 
+before_deploy:
+  - export SSHPASS=${interlis_pwd}
+  - sshpass -e ssh interlis@test1.ehi.ch  
+  - ssh -f -N -L 2120:ftp.interlis.ch:20 -L 2121:ftp.interlis.ch:21 interlis@test1.ehi.ch
+  
 deploy:
   - provider: script
     skip_cleanup: true
