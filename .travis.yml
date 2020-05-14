@@ -7,6 +7,9 @@ addons:
   ssh_known_hosts:
   - ftp.interlis.ch
   - test1.ehi.ch
+  apt:
+    packages:
+    - sshpass
 
 branches:
   only:
