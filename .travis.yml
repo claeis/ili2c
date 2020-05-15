@@ -22,8 +22,10 @@ script:
   - if [ $TRAVIS_BRANCH != "stable-core" ]; then gradle jar ; fi
 
 before_deploy:
+  - sudo netstat -tunlep
   - export SSHPASS=${interlis_pwd}
-  - sudo -E sshpass -e ssh -o StrictHostKeyChecking=no -f -N -L 2120:ftp.interlis.ch:20 -L 2121:ftp.interlis.ch:21 interlis@test1.ehi.ch
+  - sshpass -e ssh -o StrictHostKeyChecking=no -f -N -L 2120:ftp.interlis.ch:20 -L 2121:ftp.interlis.ch:21 interlis@test1.ehi.ch
+  - sudo netstat -tunlep
   
 deploy:
   - provider: script
