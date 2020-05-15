@@ -22,15 +22,13 @@ script:
   - if [ $TRAVIS_BRANCH != "stable-core" ]; then gradle jar ; fi
 
 before_deploy:
-  - sudo netstat -tunlep
   - export SSHPASS=${interlis_pwd}
   - sshpass -e ssh -v -4 -f -N -L 2120:ftp.interlis.ch:20 -L 2121:ftp.interlis.ch:21 interlis@test1.ehi.ch
-  - sudo netstat -tunlep
   
 deploy:
   - provider: script
     skip_cleanup: true
-    script: gradle -Duser.repos_url=ftp://localhost:2121 -Duser.repos_pwd=${repos_pwd} -Duser.repos_usr=jql_jars-INTE  bindist uploadArchives
+    script: gradle --info '-Duser.repos_url=ftp:2121//localhost' -Duser.repos_pwd=${repos_pwd} -Duser.repos_usr=jql_jars-INTE  bindist uploadArchives
     on:
       branch: master
   - provider: script
