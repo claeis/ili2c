@@ -201,28 +201,15 @@ public static final String MIMETYPE_XTF = "application/interlis+xml;version=2.3"
       }
   }
   public static String getVersion() {
-  if (version == null) {
-      java.util.ResourceBundle resVersion = java.util.ResourceBundle.getBundle("ch.interlis.ili2c.Version");
-      // Major version numbers identify significant functional changes.
-      // Minor version numbers identify smaller extensions to the
-      // functionality.
-      // Micro versions are even finer grained versions.
-      StringBuilder ret = new StringBuilder(20);
-      ret.append(resVersion.getString("versionMajor"));
-      ret.append('.');
-      ret.append(resVersion.getString("versionMinor"));
-      ret.append('.');
-      ret.append(resVersion.getString("versionMicro"));
-      ret.append('-');
-      String branch = ch.ehi.basics.tools.StringUtility.purge(resVersion.getString("versionBranch"));
-      if (branch != null) {
-      ret.append(branch);
-      ret.append('-');
-      }
-      ret.append(resVersion.getString("versionDate"));
-      version = ret.toString();
-  }
-  return version;
-  }
+        if (version == null) {
+            java.util.ResourceBundle resVersion = java.util.ResourceBundle.getBundle("ch.interlis.ili2c.Version");
+            StringBuilder ret = new StringBuilder(20);
+            ret.append(resVersion.getString("version"));
+            ret.append('-');
+            ret.append(resVersion.getString("versionCommit"));
+            version = ret.toString();
+        }
+        return version;
+    }
   
 }

@@ -23,10 +23,10 @@ def getGitHash = { ->
 
 sourceSets {
     main {
-    	//output.dir(generatedResources, builtBy: 'generateVersionFile')
+    	output.dir(generatedResources, builtBy: 'generateVersionFile')
         resources {
             srcDirs = ["src/main/resources"]
-            //exclude "ch/interlis/ili2c/Version.properties"
+            exclude "ch/interlis/ili2c/Version.properties"
         }
     }
 }
