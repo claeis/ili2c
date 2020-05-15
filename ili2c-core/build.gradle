@@ -55,7 +55,7 @@ uploadArchives {
     repositories {
         mavenDeployer {
         	configuration = configurations.deployerJars
-			repository(url: rootProject.repos_url){
+			repository(url: rootProject.repos_url+'/web/jars'){
             	authentication(userName: rootProject.repos_usr, password: rootProject.repos_pwd)
             }
         }

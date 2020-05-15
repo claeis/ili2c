@@ -27,7 +27,7 @@ allprojects {
 version '5.1.2'+System.getProperty('release','-SNAPSHOT')
 
 configurations {
-    ftpAntTask
+	scpAntTask
 }
 
 // to get the latest SNAPSHOT uncomment the following lines
@@ -43,7 +43,7 @@ dependencies {
     	exclude group: 'com.vividsolutions', module: 'jts-core'
     }
     
-    ftpAntTask "org.apache.ant:ant-commons-net:1.10.7"
+	scpAntTask "org.apache.ant:ant-jsch:1.10.7"
     
     implementation project('ili2c-core')
 }
@@ -58,10 +58,10 @@ ext {
 	git = System.getProperty('git',properties.get('git','git'))
 	repos_pwd = System.getProperty('repos_pwd',properties.get('repos_pwd','repos_pwd'))
 	repos_usr = System.getProperty('repos_usr',properties.get('repos_usr','repos_usr'))
-	repos_url = System.getProperty('repos_url',properties.get('repos_url','ftp://ftp.interlis.ch'))
+	repos_host = System.getProperty('repos_host',properties.get('repos_host','ftp.interlis.ch'))
+	repos_dir = System.getProperty('repos_dir',properties.get('repos_dir',''))
+	repos_url = 'scp://'+repos_host+'/'+repos_dir
 }
-def downloads_pwd = System.getProperty('downloads_pwd',properties.get('downloads_pwd','downloads_pwd'))
-def downloads_usr = System.getProperty('downloads_usr',properties.get('downloads_usr','downloads_usr'))
 
 sourceSets {
     test {
@@ -141,27 +141,27 @@ uploadArchives {
     repositories {
         mavenDeployer {
         	configuration = configurations.deployerJars
-			repository(url: repos_url){
+			repository(url: repos_url+'/web/jars'){
             	authentication(userName: repos_usr, password: repos_pwd)
             }
         }
     }
 }
 
-
+ant.taskdef(name: 'myscp',
+			classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
+			classpath: configurations.scpAntTask.asPath)
 
 task uploadBin(dependsOn: bindist) {
 	doLast {
-		ant.taskdef(name: 'ftp',
-					classname: 'org.apache.tools.ant.taskdefs.optional.net.FTP',
-					classpath: configurations.ftpAntTask.asPath)
 		def dist= bindist.archiveFile.get().asFile.parent
 		def name=bindist.archiveFile.get().asFile.name
 		def json = groovy.json.JsonOutput.toJson([filename: 'https://downloads.interlis.ch/ili2c/'+name, version: project.version ,date: new Date().format( 'yyyy-MM-dd' )])
 		def releaseFile = new File(dist,"ili2c-release.json")
 		releaseFile.write(json)
-		ant.ftp(server: "jql.ftp.infomaniak.com", userid: downloads_usr, password: downloads_pwd, 
-			remoteDir: "/ili2c", passive:"yes") {
+
+		ant.myscp(password: repos_pwd,
+			todir: repos_usr+'@'+repos_host+':'+repos_dir+"/web/downloads/ili2c") {
 				fileset(dir: dist ) {
 					include(name: name)
 					include(name: releaseFile.name)
@@ -169,3 +169,4 @@ task uploadBin(dependsOn: bindist) {
 		}
 	}
 }
+

@@ -6,10 +6,6 @@ jdk:
 addons:
   ssh_known_hosts:
   - ftp.interlis.ch
-  - test1.ehi.ch
-  apt:
-    packages:
-    - sshpass
 
 branches:
   only:
@@ -20,25 +16,21 @@ branches:
 script: 
   - if [ $TRAVIS_BRANCH == "stable-core" ]; then gradle :ili2c-core:jar ; fi 
   - if [ $TRAVIS_BRANCH != "stable-core" ]; then gradle jar ; fi
-
-before_deploy:
-  - export SSHPASS=${interlis_pwd}
-  - sshpass -e ssh -v -4 -f -N -L 2120:ftp.interlis.ch:20 -L 2121:ftp.interlis.ch:21 interlis@test1.ehi.ch
   
 deploy:
   - provider: script
     skip_cleanup: true
-    script: gradle --info -Drepos_url=ftp://localhost:2121 -Drepos_pwd=${repos_pwd} -Drepos_usr=jql_jars-INTE  bindist uploadArchives
+    script: gradle --info -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr}  bindist uploadArchives
     on:
       branch: master
   - provider: script
     skip_cleanup: true
-    script: gradle -Duser.repos_pwd=${repos_pwd} -Duser.repos_usr=jql_jars-INTE -Drelease=final bindist uploadArchives
+    script: gradle -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} -Drelease=final bindist uploadArchives uploadBindist
     on:
       branch: stable
   - provider: script
     skip_cleanup: true
-    script: gradle -Duser.repos_pwd=${repos_pwd} -Duser.repos_usr=jql_jars-INTE -Drelease=final :ili2c-core:uploadArchives
+    script: gradle -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} -Drelease=final :ili2c-core:uploadArchives
     on:
       branch: stable-core
 notifications:
