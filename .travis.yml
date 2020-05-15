@@ -24,7 +24,7 @@ script:
 before_deploy:
   - sudo netstat -tunlep
   - export SSHPASS=${interlis_pwd}
-  - sshpass -e ssh -v -f -N -L 2120:ftp.interlis.ch:20 -L 2121:ftp.interlis.ch:21 interlis@test1.ehi.ch
+  - sshpass -e ssh -v -4 -f -N -L 2120:ftp.interlis.ch:20 -L 2121:ftp.interlis.ch:21 interlis@test1.ehi.ch
   - sudo netstat -tunlep
   
 deploy:
