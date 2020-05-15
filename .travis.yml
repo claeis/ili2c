@@ -6,7 +6,6 @@ jdk:
 addons:
   ssh_known_hosts:
   - ftp.interlis.ch
-  - jql.ftp.infomaniak.com
   - test1.ehi.ch
   apt:
     packages:
@@ -23,10 +22,8 @@ script:
   - if [ $TRAVIS_BRANCH != "stable-core" ]; then gradle jar ; fi
 
 before_deploy:
-  - cat ~/.ssh/known_hosts
-  - sudo cat ~/.ssh/known_hosts
   - export SSHPASS=${interlis_pwd}
-  - sudo sshpass -e ssh -f -N -L 2120:ftp.interlis.ch:20 -L 2121:ftp.interlis.ch:21 interlis@test1.ehi.ch
+  - sudo -E sshpass -e ssh -f -N -L 2120:ftp.interlis.ch:20 -L 2121:ftp.interlis.ch:21 interlis@test1.ehi.ch
   
 deploy:
   - provider: script
