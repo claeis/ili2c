@@ -23,7 +23,7 @@ script:
 
 before_deploy:
   - export SSHPASS=${interlis_pwd}
-  - sshpass -e ssh -f -N -L 2120:ftp.interlis.ch:20 -L 2121:ftp.interlis.ch:21 interlis@test1.ehi.ch
+  - sudo sshpass -e ssh -f -N -L 2120:ftp.interlis.ch:20 -L 2121:ftp.interlis.ch:21 interlis@test1.ehi.ch
   
 deploy:
   - provider: script
