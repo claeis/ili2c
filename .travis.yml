@@ -28,7 +28,7 @@ before_deploy:
 deploy:
   - provider: script
     skip_cleanup: true
-    script: gradle --info -Drepos_url=ftp:2121//localhost -Drepos_pwd=${repos_pwd} -Drepos_usr=jql_jars-INTE  bindist uploadArchives
+    script: gradle --info -Drepos_url=ftp://localhost:2121 -Drepos_pwd=${repos_pwd} -Drepos_usr=jql_jars-INTE  bindist uploadArchives
     on:
       branch: master
   - provider: script
