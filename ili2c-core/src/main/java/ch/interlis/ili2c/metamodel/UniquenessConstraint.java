@@ -11,6 +11,7 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
 
 /** A constraint that is satisfied if and only if each instance of
     an attribute path has an unique value.
@@ -53,5 +54,41 @@ public Evaluable getPreCondition() {
 }
 public void setPreCondition(Evaluable preCondition) {
 	this.preCondition = preCondition;
+}
+@Override
+public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+  throws java.lang.IllegalStateException
+{
+    super.checkTranslationOf(errs,name,baseName);
+    UniquenessConstraint baseElement=(UniquenessConstraint)getTranslationOf();
+    if(baseElement==null) {
+        return;
+    }
+    
+    Ili2cSemanticException err=Evaluable.checkTranslation(preCondition, baseElement.preCondition, getSourceLine(), "err_diff_uniqueConstraintPreConditionMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+    err=Evaluable.checkTranslation(prefix, baseElement.prefix, getSourceLine(), "err_diff_uniqueConstraintPrefixMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+    if(local!=baseElement.local) {
+        err=new Ili2cSemanticException(getSourceLine(), Element.formatMessage("err_diff_uniqueConstraintLocalMismatch"));
+        errs.add(err);
+    }
+    ObjectPath[] elev=elements.getAttributes();
+    ObjectPath[] otherElev=baseElement.elements.getAttributes();
+    if(elev.length!=otherElev.length) {
+        err=new Ili2cSemanticException(getSourceLine(), Element.formatMessage("err_diff_uniqueConstraintUniqueElMismatch"));
+        errs.add(err);
+    }else {
+        for(int ri=0;ri<elev.length;ri++) {
+            err=Evaluable.checkTranslation(elev[ri], otherElev[ri], getSourceLine(), "err_diff_uniqueConstraintUniqueElMismatch");
+            if(err!=null) {
+                errs.add(err);
+            }
+        }
+    }
 }
 }
