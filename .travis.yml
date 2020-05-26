@@ -12,7 +12,9 @@ branches:
     - master
     - stable-core
     - stable
-    
+
+install: true
+
 script: 
   - if [ $TRAVIS_BRANCH == "stable-core" ]; then gradle :ili2c-core:jar ; fi 
   - if [ $TRAVIS_BRANCH != "stable-core" ]; then gradle jar ; fi
