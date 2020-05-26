@@ -2,6 +2,7 @@ LATEST
 ---------------------------
 - fix validation of MandatoryConstraint translation (#41)
 - fix validation of PlausibilityConstraint translation (#41)
+- fix validation of SetConstraint translation (#41)
 
 ili2c 5.1.1 (2020-05-01)
 ---------------------------
