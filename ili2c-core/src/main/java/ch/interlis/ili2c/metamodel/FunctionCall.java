@@ -67,4 +67,31 @@ public class FunctionCall extends Evaluable
   {
     return arguments;
   }
+  @Override
+  public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+  {
+      Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+      if(ret!=null) {
+          return ret;
+      }
+      FunctionCall other=(FunctionCall)otherEv;
+      if(!Element.equalElementRef(function, other.function)){
+          return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_functionRefMismatch",function.getScopedName(),other.function.getScopedName()));
+      }
+      
+      if(arguments.length!=other.arguments.length) {
+          return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_functionArgumentMismatch"));
+      }
+      for(int pathi=0;pathi<arguments.length;pathi++) {
+          if(arguments[pathi].getClass()!=other.arguments[pathi].getClass()) {
+              return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_functionArgumentMismatch"));
+          }
+          ret=arguments[pathi].checkTranslation(other.arguments[pathi],sourceLine);
+          if(ret!=null) {
+              return ret;
+          }
+      }
+      return null;
+  }
+  
 }

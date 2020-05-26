@@ -19,6 +19,18 @@ public class AssociationPath extends PathEl
 	public RoleDef getTargetRole(){
 		return targetRole;
 	}
+    @Override
+    public Ili2cSemanticException checkTranslation(PathEl otherPathEl,int sourceLine) {
+        Ili2cSemanticException ret=super.checkTranslation(otherPathEl,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        AssociationPath other=(AssociationPath)otherPathEl;
+        if(!Element.equalElementRef(targetRole, other.targetRole)) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_referencedRoleMismatch",getName(),other.getName()));
+        }
+        return null;
+    }
 
 }
 

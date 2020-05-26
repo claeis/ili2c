@@ -22,5 +22,16 @@ public class AttributeRef extends AbstractAttributeRef
     public Type getDomain(){
       return attr.getDomain();
     }
+    @Override
+    public Ili2cSemanticException checkTranslation(PathEl other,int sourceLine) {
+        Ili2cSemanticException ret=super.checkTranslation(other,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        if(!Element.equalElementRef(attr, ((AttributeRef)other).attr)) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_referencedAttributeMismatch",getName(),((AttributeRef)other).getName()));
+        }
+        return null;
+    }
 
 }

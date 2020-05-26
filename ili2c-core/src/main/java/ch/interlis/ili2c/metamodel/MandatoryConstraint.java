@@ -11,6 +11,8 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
+
 /** A constraint that must be fulfilled for all instances.
 
     @version   July 1, 1999

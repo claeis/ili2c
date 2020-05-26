@@ -73,4 +73,30 @@ public class ObjectPath extends Evaluable
         public PathEl getLastPathEl(){
             return path[path.length-1];
           }
+        @Override
+        public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+        {
+            Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+            if(ret!=null) {
+                return ret;
+            }
+            ObjectPath other=(ObjectPath)otherEv;
+            if(!Element.equalElementRef(getRoot(), other.getRoot())){
+                return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_objectPathMismatch"));
+            }
+            if(path.length!=other.path.length) {
+                return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_objectPathMismatch"));
+            }
+            for(int pathi=0;pathi<path.length;pathi++) {
+                if(path[pathi].getClass()!=other.path[pathi].getClass()) {
+                    return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_objectPathMismatch"));
+                }
+                ret=path[pathi].checkTranslation(other.path[pathi],sourceLine);
+                if(ret!=null) {
+                    return ret;
+                }
+            }
+            return null;
+        }
+        
 }

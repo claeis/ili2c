@@ -11,6 +11,8 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
+
 /** An abstract class that groups together all kinds of constraints
     that can be specified in INTERLIS.
 */
@@ -107,4 +109,20 @@ public abstract class Constraint extends AbstractLeafElement
 			    firePropertyChange("name", oldValue, newValue);
 			  }
 
+	  @Override
+	  public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+	    throws java.lang.IllegalStateException
+	  {
+	      super.checkTranslationOf(errs,name,baseName);
+	      Constraint baseElement=(Constraint)getTranslationOf();
+	      if(baseElement==null) {
+	          return;
+	      }
+	      
+	      Ili2cSemanticException err=Evaluable.checkTranslation(getCondition(), baseElement.getCondition(), getSourceLine(), "err_diff_constraintConditionMismatch");
+	      if(err!=null) {
+	          errs.add(err);
+	      }
+	      
+	  }
 }

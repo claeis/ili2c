@@ -1,0 +1,33 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC TopicA1 =
+	
+		CLASS ClassA1 =
+			attrA1 : BOOLEAN;
+			attrA2 : BOOLEAN;
+			attrA3 : BOOLEAN;
+			MANDATORY CONSTRAINT attrA1 == attrA3;
+		END ClassA1;
+		
+	END TopicA1;
+	
+END ModelA.
+
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	TOPIC TopicB1 =
+	
+		CLASS ClassB1 =
+			attrB1 : BOOLEAN;
+			attrB2 : BOOLEAN;
+			attrB3 : BOOLEAN;
+			MANDATORY CONSTRAINT attrB1 == #false;
+		END ClassB1;
+		
+	END TopicB1;
+
+END ModelB.

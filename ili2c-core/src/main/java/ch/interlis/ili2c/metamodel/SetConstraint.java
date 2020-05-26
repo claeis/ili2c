@@ -1,6 +1,9 @@
 
 package ch.interlis.ili2c.metamodel;
-public class SetConstraint extends Constraint
+
+import java.util.List;
+
+public class SetConstraint extends Constraint
 {
   public SetConstraint()
   {

@@ -41,6 +41,21 @@ public class AxisAttributeRef extends AbstractAttributeRef
       NumericalType[] dimv=((CoordType)attr.getDomain()).getDimensions();
       return dimv[axis];
     }
+    @Override
+    public Ili2cSemanticException checkTranslation(PathEl otherPathEl,int sourceLine) {
+        Ili2cSemanticException ret=super.checkTranslation(otherPathEl,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        AxisAttributeRef other=(AxisAttributeRef)otherPathEl;
+        if(!Element.equalElementRef(attr, other.attr)) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_referencedAttributeMismatch",getName(),other.getName()));
+        }
+        if(axis!= other.axis) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_referencedAttributeMismatch",getName(),other.getName()));
+        }
+        return null;
+    }
 }
 
 

@@ -27,6 +27,21 @@ public class StructAttributeRef extends AbstractAttributeRef
 	public long getIndex(){
 		return index;
 	}
+    @Override
+    public Ili2cSemanticException checkTranslation(PathEl otherPathEl,int sourceLine) {
+        Ili2cSemanticException ret=super.checkTranslation(otherPathEl,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        StructAttributeRef other=(StructAttributeRef)otherPathEl;
+        if(!Element.equalElementRef(attr, other.attr)) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_referencedAttributeMismatch",getName(),other.getName()));
+        }
+        if(index!= other.index) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_referencedAttributeMismatch",getName(),other.getName()));
+        }
+        return null;
+    }
 }
 
 

@@ -9,4 +9,5 @@ public abstract class PathEl
    */
   public Viewable<?> getViewable(){return null;};
   abstract public String getName();
+  public Ili2cSemanticException checkTranslation(PathEl other,int sourceLine) {return null;}
 }

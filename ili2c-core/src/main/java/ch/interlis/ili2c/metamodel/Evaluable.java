@@ -27,7 +27,7 @@ public abstract class Evaluable
   void checkAssignment (Element target, Type targetType)
   {
   }
-  public Ili2cSemanticException checkTranslation(Evaluable other)
+  public Ili2cSemanticException checkTranslation(Evaluable other,int sourceLine)
   {
       return null;
   }
@@ -37,7 +37,10 @@ public abstract class Evaluable
       }else if(ele1==null || ele2==null) {
           return new Ili2cSemanticException (sourceLine,Element.formatMessage(msg));
       }
-      return ele1.checkTranslation(ele2);
+      if(ele1.getClass()!=ele2.getClass()){
+          return new Ili2cSemanticException (sourceLine,Element.formatMessage(msg));
+      }
+      return ele1.checkTranslation(ele2,sourceLine);
   }
 
 public boolean isDirty() {

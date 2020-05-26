@@ -92,6 +92,11 @@ public abstract class Constant extends Evaluable
           "err_constUndefined_assignToMandatory", target.toString()));
       }
     }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        return null;
+    }
   } /* Constant.Undefined */
 
 
@@ -179,6 +184,19 @@ public abstract class Constant extends Evaluable
         throw new IllegalArgumentException (Element.formatMessage (
           "err_constText_assignOther", target.toString(), this.toString()));
     }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        Text other=(Text)otherEv;
+        if(!value.equals(other.value)) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_constantMismatch",toString(),other.toString()));
+        }
+        return null;
+    }
   }
 
 
@@ -197,6 +215,23 @@ public abstract class Constant extends Evaluable
       public Type getType() {
           return new ClassType();
       }
+      @Override
+      public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+      {
+          Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+          if(ret!=null) {
+              return ret;
+          }
+          Class other=(Class)otherEv;
+          if(!Element.equalElementRef(value, other.value)){
+              return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_constantMismatch",toString(),other.toString()));
+          }
+          return null;
+      }
+      public String toString ()
+      {
+        return ">"+value.getScopedName();
+      }
 
   }
   public static class AttributePath extends Constant
@@ -214,6 +249,23 @@ public abstract class Constant extends Evaluable
 	  public Type getType() {
 	      return new AttributePathType();
 	  }
+	    @Override
+	    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+	    {
+	        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+	        if(ret!=null) {
+	            return ret;
+	        }
+	        AttributePath other=(AttributePath)otherEv;
+	        if(!Element.equalElementRef(value, other.value)){
+	            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_constantMismatch",toString(),other.toString()));
+	        }
+	        return null;
+	    }
+	    public String toString ()
+	    {
+	      return ">>"+value.getName();
+	    }
 
   }
   /** A numeric constant.
@@ -298,6 +350,27 @@ public abstract class Constant extends Evaluable
           value.toString()));
       }
     }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        Numeric other=(Numeric)otherEv;
+        if(!value.equals(other.value)) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_constantMismatch",toString(),other.toString()));
+        }
+        if(!Element.equalElementRef(unit, other.unit)){
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_constantMismatch",toString(),other.toString()));
+        }
+        return null;
+    }
+    public String toString ()
+    {
+      return value.toString()+ (unit!=null ? "["+unit.getName()+"]" : "");
+    }
+    
   } /* Constant.Numeric */
 
 
@@ -321,6 +394,7 @@ public abstract class Constant extends Evaluable
   {
     public static final String OTHERS=new String("OTHERS");
     String[] value;
+    Type type=null;
 
 
     /** Constructs a new constant enumeration given the
@@ -351,7 +425,14 @@ public abstract class Constant extends Evaluable
     }
     @Override
     public Type getType() {
-        return new EnumerationType();
+        if(type==null) {
+            return new EnumerationType();
+        }
+        return type;
+    }
+    public void setType(Type type)
+    {
+        this.type=type;
     }
 
 
@@ -365,6 +446,17 @@ public abstract class Constant extends Evaluable
     {
       StringBuilder buf = new StringBuilder(100);
       buf.append ('#');
+      for (int i = 0; i < value.length; i++)
+      {
+        if (i > 0)
+          buf.append ('.');
+        buf.append (value[i]);
+      }
+      return buf.toString ();
+    }
+    public String getScopedName()
+    {
+      StringBuilder buf = new StringBuilder(100);
       for (int i = 0; i < value.length; i++)
       {
         if (i > 0)
@@ -401,6 +493,31 @@ public abstract class Constant extends Evaluable
         throw new IllegalArgumentException (Element.formatMessage (
           "err_enumConst_assignOther", target.toString(), this.toString()));
       }
+    }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        Enumeration other=(Enumeration)otherEv;
+        List<String> values=getTypeValues();
+        int thisIdx=values.indexOf(getScopedName());
+        List<String> otherValues=other.getTypeValues();
+        int otherIdx=otherValues.indexOf(other.getScopedName());
+        if(thisIdx!=otherIdx){
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_constantMismatch",toString(),other.toString()));
+        }
+        return null;
+    }
+    private List<String> getTypeValues(){
+        if(type instanceof EnumerationType) {
+            return ((EnumerationType) type).getValues();
+        }else if(type instanceof EnumTreeValueType) {
+            return ((EnumTreeValueType) type).getValues();
+        }
+        throw new IllegalStateException("unexpected type "+type.getScopedName());
     }
   } /* Constant.Enumeration */
 

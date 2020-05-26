@@ -43,6 +43,23 @@ public abstract class Expression extends Evaluable
     {
       return negated;
     }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        Negation other=(Negation)otherEv;
+        if(negated.getClass()!=other.negated.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_negationMismatch"));
+        }
+        ret=negated.checkTranslation(other.negated,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        return null;
+    }
     
   }
 
@@ -87,6 +104,28 @@ public abstract class Expression extends Evaluable
     public Evaluable[] getDisjoined() {
       return disjoined;
     }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        Disjunction other=(Disjunction)otherEv;
+        if(disjoined.length!=other.disjoined.length) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_disjunctionMismatch"));
+        }
+        for(int pathi=0;pathi<disjoined.length;pathi++) {
+            if(disjoined[pathi].getClass()!=other.disjoined[pathi].getClass()) {
+                return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_disjunctionMismatch"));
+            }
+            ret=disjoined[pathi].checkTranslation(other.disjoined[pathi],sourceLine);
+            if(ret!=null) {
+                return ret;
+            }
+        }
+        return null;
+    }
   }
 
 
@@ -130,6 +169,29 @@ public abstract class Expression extends Evaluable
     public Evaluable[] getConjoined() {
       return conjoined;
     }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        Conjunction other=(Conjunction)otherEv;
+        if(conjoined.length!=other.conjoined.length) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_conjunctionMismatch"));
+        }
+        for(int pathi=0;pathi<conjoined.length;pathi++) {
+            if(conjoined[pathi].getClass()!=other.conjoined[pathi].getClass()) {
+                return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_conjunctionMismatch"));
+            }
+            ret=conjoined[pathi].checkTranslation(other.conjoined[pathi],sourceLine);
+            if(ret!=null) {
+                return ret;
+            }
+        }
+        return null;
+    }
+    
   }
 
   /** Denotes logical equality of two expressions.
@@ -164,6 +226,30 @@ public abstract class Expression extends Evaluable
     public Evaluable getRight()
     {
       return right;
+    }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        Equality other=(Equality)otherEv;
+        if(left.getClass()!=other.left.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_equalityMismatch"));
+        }
+        ret=left.checkTranslation(other.left,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        if(right.getClass()!=other.right.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_equalityMismatch"));
+        }
+        ret=right.checkTranslation(other.right,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        return null;
     }
   }
 
@@ -205,6 +291,30 @@ public abstract class Expression extends Evaluable
     {
       return right;
     }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        Inequality other=(Inequality)otherEv;
+        if(left.getClass()!=other.left.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_inequalityMismatch"));
+        }
+        ret=left.checkTranslation(other.left,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        if(right.getClass()!=other.right.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_inequalityMismatch"));
+        }
+        ret=right.checkTranslation(other.right,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        return null;
+    }
   }
 
 
@@ -236,6 +346,30 @@ public abstract class Expression extends Evaluable
     {
       return right;
     }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        GreaterThan other=(GreaterThan)otherEv;
+        if(left.getClass()!=other.left.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_greaterThanMismatch"));
+        }
+        ret=left.checkTranslation(other.left,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        if(right.getClass()!=other.right.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_greaterThanMismatch"));
+        }
+        ret=right.checkTranslation(other.right,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        return null;
+    }
   }
 
 
@@ -266,6 +400,30 @@ public abstract class Expression extends Evaluable
     public Evaluable getRight()
     {
       return right;
+    }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        LessThan other=(LessThan)otherEv;
+        if(left.getClass()!=other.left.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_lessThanMismatch"));
+        }
+        ret=left.checkTranslation(other.left,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        if(right.getClass()!=other.right.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_lessThanMismatch"));
+        }
+        ret=right.checkTranslation(other.right,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        return null;
     }
   }
 
@@ -299,6 +457,30 @@ public abstract class Expression extends Evaluable
     {
       return right;
     }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        LessThanOrEqual other=(LessThanOrEqual)otherEv;
+        if(left.getClass()!=other.left.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_lessThanOrEqualMismatch"));
+        }
+        ret=left.checkTranslation(other.left,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        if(right.getClass()!=other.right.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_lessThanOrEqualMismatch"));
+        }
+        ret=right.checkTranslation(other.right,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        return null;
+    }
   }
 
 
@@ -331,6 +513,30 @@ public abstract class Expression extends Evaluable
     {
       return right;
     }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        GreaterThanOrEqual other=(GreaterThanOrEqual)otherEv;
+        if(left.getClass()!=other.left.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_greaterThanOrEqualMismatch"));
+        }
+        ret=left.checkTranslation(other.left,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        if(right.getClass()!=other.right.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_greaterThanOrEqualMismatch"));
+        }
+        ret=right.checkTranslation(other.right,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        return null;
+    }
   }
 
 
@@ -353,6 +559,23 @@ public abstract class Expression extends Evaluable
     public Evaluable getArgument ()
     {
       return argument;
+    }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        DefinedCheck other=(DefinedCheck)otherEv;
+        if(argument.getClass()!=other.argument.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_definedCheckMismatch"));
+        }
+        ret=argument.checkTranslation(other.argument,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        return null;
     }
   }
 }
