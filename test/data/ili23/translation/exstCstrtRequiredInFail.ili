@@ -1,0 +1,39 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC TopicA1 =
+	
+		CLASS ClassA1 =
+			attrA1a : BOOLEAN;
+			attrA1b : BOOLEAN;
+		END ClassA1;
+
+		CLASS ClassA2 =
+			attrA2 : BOOLEAN;
+			EXISTENCE CONSTRAINT attrA2 REQUIRED IN ClassA1:attrA1a;
+		END ClassA2;
+		
+	END TopicA1;
+	
+END ModelA.
+
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	TOPIC TopicB1 =
+	
+		CLASS ClassB1 =
+			attrB1a : BOOLEAN;
+			attrB1b : BOOLEAN;
+		END ClassB1;
+
+		CLASS ClassB2 =
+			attrB2 : BOOLEAN;
+			EXISTENCE CONSTRAINT attrB2 REQUIRED IN ClassB1:attrB1b;
+		END ClassB2;
+		
+	END TopicB1;
+
+END ModelB.

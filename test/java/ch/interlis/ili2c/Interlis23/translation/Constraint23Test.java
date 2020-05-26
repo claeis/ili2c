@@ -963,4 +963,68 @@ public class Constraint23Test {
         assertNull(td);
         assertEquals(1,errs.getErrs().size());
     }
+    @Test
+    public void exstCstrt() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/exstCstrt.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+            
+        }
+        assertNotNull(td);
+        assertEquals(0,errs.getErrs().size());
+    }
+    @Test
+    public void exstCstrtAttributePathFail() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/exstCstrtAttributePathFail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+            
+        }
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+    }
+    @Test
+    public void exstCstrtRequiredInFail() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/exstCstrtRequiredInFail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+            
+        }
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+    }
+    @Test
+    public void exstCstrtRequiredInOrFail() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry("test/data/ili23/translation/exstCstrtRequiredInOrFail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+            
+        }
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+    }
 }
