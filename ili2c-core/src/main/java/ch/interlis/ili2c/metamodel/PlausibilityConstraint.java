@@ -11,6 +11,8 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
+
 /** A constraint that does not have to be satisfied for every instance
     of a table, but only for a certain percentage.
 
@@ -131,4 +133,25 @@ public class PlausibilityConstraint extends Constraint
     this.percentage = percentage;
     firePropertyChange("percentage", oldValue, newValue);
   }
+  @Override
+  public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+    throws java.lang.IllegalStateException
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      PlausibilityConstraint baseElement=(PlausibilityConstraint)getTranslationOf();
+      if(baseElement==null) {
+          return;
+      }
+      
+      if(percentage!=baseElement.percentage) {
+          Ili2cSemanticException err=new Ili2cSemanticException( getSourceLine(), Element.formatMessage("err_diff_plausibilityConstraintPercentageMismatch",Double.toString(percentage),Double.toString(baseElement.percentage)));
+          errs.add(err);
+      }
+      if(direction!=baseElement.direction) {
+          Ili2cSemanticException err=new Ili2cSemanticException( getSourceLine(), Element.formatMessage("err_diff_plausibilityConstraintDirectionMismatch"));
+          errs.add(err);
+      }
+      
+  }
+  
 }
