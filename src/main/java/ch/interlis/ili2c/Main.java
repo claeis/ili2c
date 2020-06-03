@@ -204,7 +204,7 @@ public class Main {
         System.err.println("--listData uri        list all data starting in the given repository.");
 	    System.err.println("--translation translatedModel=originModel assigns a translated model to its orginal language equivalent.");
 	    System.err.println("--out file/dir        file or folder for output (folder must exist).");
-	    System.err.println("--ilidirs " + ilidirs + " list of directories with ili-files.");
+	    System.err.println("--modeldir " + ilidirs + " list of directories with ili-files.");
 	    System.err.println("--proxy host          proxy server to access model repositories.");
 	    System.err.println("--proxyPort port      proxy port to access model repositories.");
 	    System.err.println("--with-predefined     Include the predefined MODEL INTERLIS in");
@@ -349,7 +349,7 @@ public class Main {
 			nlsxmlFilename = args[i];
 			continue;
 		}
-		if (args[i].equals("--ilidirs")) {
+		if (args[i].equals("--ilidirs") || args[i].equals("--modeldir")) {
 		    i++;
 		    ilidirs = args[i];
 		    continue;
