@@ -6,6 +6,7 @@ LATEST
 - fix validation of ExistenceConstraint translation (#41)
 - fix validation of UniquenessConstraint translation (#41)
 - rename --ilidirs to --modeldir (#50)
+- iox-ili-1.21.1-SNAPSHOT
 
 ili2c 5.1.1 (2020-05-01)
 ---------------------------
