@@ -261,6 +261,18 @@ public abstract class AttributeDef
 	  if (newValue == null) {
         domain.setExtending (null);
     } else {
+        if(domain instanceof TypeAlias) {
+            if(!(newValue.getDomain() instanceof TypeAlias)) {
+                // not a base type
+                throw new Ili2cSemanticException(formatMessage("err_attributeDef_incompatibleTypeExtension",this.getScopedName(),newValue.getScopedName()));
+            }
+            if(!((TypeAlias)domain).getAliasing().isExtendingIndirectly(((TypeAlias) newValue.getDomain()).getAliasing())) {
+                // this is not extending wantDoExtend
+                throw new Ili2cSemanticException(formatMessage("err_attributeDef_wrongTypeExtension",((TypeAlias)domain).getAliasing().getScopedName(),((TypeAlias) newValue.getDomain()).getAliasing().getScopedName()));
+            }
+        }
+        
+        
         domain.setExtending (newValue.getDomain());
     }
 	}

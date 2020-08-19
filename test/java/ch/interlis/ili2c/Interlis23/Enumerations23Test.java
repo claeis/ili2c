@@ -39,7 +39,16 @@ public class Enumerations23Test {
 		td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
 		assertNull(td);
 	}
-	@Ignore("fails to report exteneded attribute without extended enumeration #53")
+    @Test
+    public void extendedAttr() throws Exception {
+        Settings settings=new Settings();
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"ExtendedAttr.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+        assertNotNull(td);
+    }
     @Test
     public void extendedAttrFail() throws Exception {
         Settings settings=new Settings();

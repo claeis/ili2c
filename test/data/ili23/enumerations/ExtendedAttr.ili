@@ -1,0 +1,37 @@
+INTERLIS 2.3;
+
+MODEL ExtendedAttr (en)
+AT "mailto:stefan@localhost"
+VERSION "2020-08-07"  =
+
+  DOMAIN
+
+    fubar = (
+      EnumVal_2,
+      EnumVal_1
+    );
+
+
+  TOPIC MyTopic  =
+
+    DOMAIN
+
+      fubarExt EXTENDS ExtendedAttr.fubar = (
+        EnumVal_101
+      );
+
+    CLASS ClassA (ABSTRACT) =
+      AttrA_1 : TEXT*20;
+      AttrA_2 : ExtendedAttr.fubar;
+    END ClassA;
+
+
+    CLASS ClassA1
+    EXTENDS ClassA =
+      AttrA1_1 : TEXT*20;
+      AttrA_2 (EXTENDED) : fubarExt;
+    END ClassA1;
+
+  END MyTopic;
+
+END ExtendedAttr.
