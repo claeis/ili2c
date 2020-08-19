@@ -279,4 +279,20 @@ public class Topics23Test {
         assertNotNull(td);
         assertEquals(0,errs.getErrs().size());
     }
+    @Ignore("fails to report topic with inherited abstract class without concrete class (#54)")
+    @Test
+    public void ExtendedAbstractTopicAbstractClass_fail() {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"ExtendedAbstractTopicAbstractClass_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+        }
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+    }
 }
