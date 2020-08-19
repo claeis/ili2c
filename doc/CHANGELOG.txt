@@ -5,6 +5,7 @@ LATEST
 - fix validation of SetConstraint translation (#41)
 - fix validation of ExistenceConstraint translation (#41)
 - fix validation of UniquenessConstraint translation (#41)
+- fix report topic with inherited abstract class without concrete class (#54)
 - rename --ilidirs to --modeldir (#50)
 - iox-ili-1.21.1-SNAPSHOT
 

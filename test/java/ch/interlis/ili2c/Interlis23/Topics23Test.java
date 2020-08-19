@@ -279,7 +279,6 @@ public class Topics23Test {
         assertNotNull(td);
         assertEquals(0,errs.getErrs().size());
     }
-    @Ignore("fails to report topic with inherited abstract class without concrete class (#54)")
     @Test
     public void ExtendedAbstractTopicAbstractClass_fail() {
         LogCollector errs=new LogCollector();

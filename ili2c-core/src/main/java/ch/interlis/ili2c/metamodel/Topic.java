@@ -310,7 +310,7 @@ private void checkIntegrityAbstract(List<Ili2cSemanticException> errs) {
     if(isAbstract()) {
         return;
     }
-    Iterator<Element> iter = iterator();
+    Iterator<Viewable<?>> iter = getViewables().iterator();
     while (iter.hasNext())
     {
         Element obj = iter.next();
