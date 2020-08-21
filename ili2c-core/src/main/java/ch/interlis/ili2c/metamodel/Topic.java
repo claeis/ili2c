@@ -249,7 +249,7 @@ public class Topic extends AbstractPatternDef<Element>
 
   boolean containsConcreteExtensionOfTable (Table abstractTable)
   {
-    Iterator<Element> iter = iterator();
+    Iterator<Viewable<?>> iter = getViewables().iterator();
     while (iter.hasNext())
     {
         Element obj = iter.next();
