@@ -317,7 +317,7 @@ private void checkIntegrityAbstract(List<Ili2cSemanticException> errs) {
           if (obj instanceof Table)
           {
             Table tab = (Table) obj;
-            if (tab.isAbstract()) {
+            if (tab.isIdentifiable() && tab.isAbstract()) {
                 // check that there is a concrete extension in this topic
                 if(!containsConcreteExtensionOfTable(tab)) {
                     errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_topic_abstractElement",getScopedName(),tab.getName())));
