@@ -152,7 +152,7 @@ ant.taskdef(name: 'myscp',
 			classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
 			classpath: configurations.scpAntTask.asPath)
 
-task uploadBin(dependsOn: bindist) {
+task uploadBindist(dependsOn: bindist) {
 	doLast {
 		def dist= bindist.archiveFile.get().asFile.parent
 		def name=bindist.archiveFile.get().asFile.name
