@@ -27,12 +27,12 @@ deploy:
       branch: master
   - provider: script
     skip_cleanup: true
-    script: gradle -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} -Drelease=final bindist uploadArchives uploadBindist
+    script: gradle -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} '-Drelease=' bindist uploadArchives uploadBindist
     on:
       branch: stable
   - provider: script
     skip_cleanup: true
-    script: gradle -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} -Drelease=final :ili2c-core:uploadArchives
+    script: gradle -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} '-Drelease=' :ili2c-core:uploadArchives
     on:
       branch: stable-core
 notifications:
