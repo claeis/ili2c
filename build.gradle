@@ -38,7 +38,7 @@ configurations {
 
 dependencies {
     implementation "ch.interlis:iox-api:1.0.3"
-    implementation("ch.interlis:iox-ili:1.21.1+") {
+    implementation("ch.interlis:iox-ili:1.21.1") {
     	exclude group: 'net.iharder', module: 'base64'
     	exclude group: 'com.vividsolutions', module: 'jts-core'
     }
