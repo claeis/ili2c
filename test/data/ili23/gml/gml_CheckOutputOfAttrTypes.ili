@@ -15,7 +15,7 @@ INTERLIS 2.3;
 
 	    TestInt = 1 .. 10;
 	    TestDec = 1.0 .. 10.0;
-	    TestDecPlus = 1.00 .. 10.04;
+	    TestDecPlus EXTENDS TestDec = 1.00 .. 10.04;
 	    TestDecPlusPlus = 0.000001 .. 1.040000;
 	    TestDouble = 0.123e1 .. 0.234e1;
 		

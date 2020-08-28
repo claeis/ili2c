@@ -1,0 +1,172 @@
+allprojects {
+	group 'ch.interlis'
+	apply plugin: "java"
+	apply plugin: "maven"
+	
+	sourceCompatibility = "1.6" 
+	targetCompatibility = "1.6"
+	compileJava.options.encoding = 'US-ASCII'
+	
+	configurations {
+		deployerJars
+	}
+	dependencies {
+		testCompile group: 'junit', name: 'junit', version: '4.12'
+		deployerJars "org.apache.maven.wagon:wagon-ftp:3.3.3"
+		deployerJars "org.apache.maven.wagon:wagon-ssh:3.3.3"
+	}
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		maven {
+			url "http://jars.interlis.ch"
+		}
+	}
+}
+
+version '5.1.2'+System.getProperty('release','-SNAPSHOT')
+
+configurations {
+	scpAntTask
+}
+
+// to get the latest SNAPSHOT uncomment the following lines
+//configurations.all {
+    // check for updates every build
+    // resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+//}
+
+dependencies {
+    implementation "ch.interlis:iox-api:1.0.3"
+    implementation("ch.interlis:iox-ili:1.21.1") {
+    	exclude group: 'net.iharder', module: 'base64'
+    	exclude group: 'com.vividsolutions', module: 'jts-core'
+    }
+    
+	scpAntTask "org.apache.ant:ant-jsch:1.10.7"
+    
+    implementation project('ili2c-core')
+}
+
+
+Properties properties = new Properties()
+File propFile=project.rootProject.file('user.properties')
+if(propFile.exists()){
+	properties.load(propFile.newDataInputStream())
+}
+ext {
+	git = System.getProperty('git',properties.get('git','git'))
+	repos_pwd = System.getProperty('repos_pwd',properties.get('repos_pwd','repos_pwd'))
+	repos_usr = System.getProperty('repos_usr',properties.get('repos_usr','repos_usr'))
+	repos_host = System.getProperty('repos_host',properties.get('repos_host','ftp.interlis.ch'))
+	repos_dir = System.getProperty('repos_dir',properties.get('repos_dir',''))
+	repos_url = 'scp://'+repos_host+'/'+repos_dir
+}
+
+sourceSets {
+    test {
+        java {
+            srcDirs = ['test/src']
+        }
+        resources {
+            srcDirs = ['test/data']
+        }
+    }
+}
+
+task fatjar(type: Jar) {
+	archiveFileName='ili2c.jar'
+  manifest {
+    attributes(
+      "Main-Class": "ch.interlis.ili2c.Main"
+    )
+  }
+  from sourceSets.main.output
+
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
+}
+
+
+task bindist(type: Zip, dependsOn: fatjar) {
+	baseName = project.name
+	destinationDir = file('dist')
+	from fatjar
+	from("doc"){
+		include "LICENSE.*"
+		include "CHANGELOG.txt"
+		include "README.txt"
+		include "index.html" 
+		into('doc')
+	}
+	from("standard") {
+		include("**/*.ili")
+		into('standard')
+	}
+	from ("xsd"){
+		include "**/*.xsd"
+		into "xsd"
+	}
+	from ("iliuml") {
+		include "*.uml"
+		into "iliuml"
+	}
+}
+
+artifacts {
+	archives(bindist.archivePath) {
+        type 'zip'
+        classifier 'bindist'
+        builtBy bindist
+    }
+    archives(jar.archivePath){
+    	builtBy jar
+    }
+}
+
+task printArchives {
+	doLast {
+		println jar.archivePath
+		println project(":ili2c-core").jar.archivePath
+	}
+}
+
+test {
+    testLogging.exceptionFormat = 'full'
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+        	configuration = configurations.deployerJars
+			repository(url: repos_url+'/web/jars'){
+            	authentication(userName: repos_usr, password: repos_pwd)
+            }
+        }
+    }
+}
+
+ant.taskdef(name: 'myscp',
+			classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
+			classpath: configurations.scpAntTask.asPath)
+
+task uploadBin(dependsOn: bindist) {
+	doLast {
+		def dist= bindist.archiveFile.get().asFile.parent
+		def name=bindist.archiveFile.get().asFile.name
+		def json = groovy.json.JsonOutput.toJson([filename: 'https://downloads.interlis.ch/ili2c/'+name, version: project.version ,date: new Date().format( 'yyyy-MM-dd' )])
+		def releaseFile = new File(dist,"ili2c-release.json")
+		releaseFile.write(json)
+
+		ant.myscp(password: repos_pwd,
+			todir: repos_usr+'@'+repos_host+':'+repos_dir+"/web/downloads/ili2c") {
+				fileset(dir: dist ) {
+					include(name: name)
+					include(name: releaseFile.name)
+				}
+		}
+	}
+}
+

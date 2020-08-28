@@ -1,0 +1,35 @@
+INTERLIS 2.3;
+
+CONTRACTED MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	FUNCTION endsWithA(val: TEXT; suffix: TEXT): BOOLEAN;
+	FUNCTION startsWithA(val: TEXT; prefix: TEXT): BOOLEAN;
+	
+	TOPIC TopicA1 =
+	
+		CLASS ClassA1 =
+			attrA1 : TEXT;
+			MANDATORY CONSTRAINT endsWithA(attrA1,"test");
+		END ClassA1;
+		
+	END TopicA1;
+	
+END ModelA.
+
+
+CONTRACTED MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+	FUNCTION endsWithB(val: TEXT; suffix: TEXT): BOOLEAN;
+	FUNCTION startsWithB(val: TEXT; prefix: TEXT): BOOLEAN;
+	
+	TOPIC TopicB1 =
+	
+		CLASS ClassB1 =
+			attrB1 : TEXT;
+			MANDATORY CONSTRAINT endsWithB(attrB1,"test");
+		END ClassB1;
+		
+	END TopicB1;
+
+END ModelB.

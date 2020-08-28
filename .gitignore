@@ -112,3 +112,6 @@ $RECYCLE.BIN/
 /bin/
 
 .svn
+.gradle
+build
+/user.properties
