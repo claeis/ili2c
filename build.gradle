@@ -66,7 +66,7 @@ ext {
 sourceSets {
     test {
         java {
-            srcDirs = ['test/src']
+            srcDirs = ['test/java']
         }
         resources {
             srcDirs = ['test/data']
