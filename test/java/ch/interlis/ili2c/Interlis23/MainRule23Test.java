@@ -6,7 +6,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import ch.ehi.basics.logging.EhiLogger;
 import ch.interlis.ili2c.CompilerLogEvent;
-import ch.interlis.ili2c.Ili2c;
 import ch.interlis.ili2c.Ili2cFailure;
 import ch.interlis.ili2c.LogCollector;
 import ch.interlis.ili2c.config.Configuration;
@@ -16,7 +15,7 @@ import ch.interlis.ili2c.metamodel.TransferDescription;
 
 public class MainRule23Test {
 	
-	private static final String TEST_OUT="test/data/ili23/mainRule/";
+	public static final String TEST_OUT="test/data/ili23/mainRule/";
 	
 	// This test checks if the compiler ensures model name uniqueness.
 	@Test
@@ -61,13 +60,13 @@ public class MainRule23Test {
 		assertEquals("Only INTERLIS version 1 and 2.2 can be read by this version of the compiler.", compilerLogEvent.getRawEventMsg());
 	}
 	
-	// This test checks the main syntax rule of INTERLIS 2.1.
+	// This test checks the main syntax rule of INTERLIS 2.3.
 	@Test
-	public void mainRules_SyntaxIli21() {
+	public void mainRules_SyntaxIli23() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
 		Configuration ili2cConfig=new Configuration();
-		FileEntry fileEntry=new FileEntry(TEST_OUT+"mainRules_SyntaxIli21.ili", FileEntryKind.ILIMODELFILE);
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"mainRules_SyntaxIli23.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
 		try{
@@ -77,4 +76,17 @@ public class MainRule23Test {
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}
+    @Test
+    @Ignore("see issue#55")
+    public void mainRules_eof_comment() {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        ili2cConfig.setAutoCompleteModelList(true);
+        FileEntry fileEntryB=new FileEntry(TEST_OUT+"mainRules_eof_commentB.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntryB);
+        TransferDescription td=null;
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+    }
 }

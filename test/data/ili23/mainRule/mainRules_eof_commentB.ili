@@ -1,0 +1,6 @@
+INTERLIS 2.3;
+
+MODEL modelB_eof AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+IMPORTS modelA_eof;
+
+END modelB_eof.
