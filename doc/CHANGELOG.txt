@@ -1,6 +1,10 @@
 LATEST
 ---------------------------
 
+ili2c 5.1.3 (2020-09-28)
+---------------------------
+- iox-ili-1.21.2
+
 ili2c 5.1.2 (2020-08-28)
 ---------------------------
 - fix validation of MandatoryConstraint translation (#41)
