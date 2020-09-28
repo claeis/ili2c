@@ -24,7 +24,7 @@ allprojects {
 	}
 }
 
-version '5.1.2'+System.getProperty('release','-SNAPSHOT')
+version '5.1.3'+System.getProperty('release','-SNAPSHOT')
 
 configurations {
 	scpAntTask
@@ -38,7 +38,7 @@ configurations {
 
 dependencies {
     implementation "ch.interlis:iox-api:1.0.3"
-    implementation("ch.interlis:iox-ili:1.21.1") {
+    implementation("ch.interlis:iox-ili:1.21.2") {
     	exclude group: 'net.iharder', module: 'base64'
     	exclude group: 'com.vividsolutions', module: 'jts-core'
     }
@@ -66,7 +66,7 @@ ext {
 sourceSets {
     test {
         java {
-            srcDirs = ['test/src']
+            srcDirs = ['test/java']
         }
         resources {
             srcDirs = ['test/data']
@@ -155,15 +155,19 @@ ant.taskdef(name: 'myscp',
 task uploadBindist(dependsOn: bindist) {
 	doLast {
 		def dist= bindist.archiveFile.get().asFile.parent
-		def name=bindist.archiveFile.get().asFile.name
-		def json = groovy.json.JsonOutput.toJson([filename: 'https://downloads.interlis.ch/ili2c/'+name, version: project.version ,date: new Date().format( 'yyyy-MM-dd' )])
-		def releaseFile = new File(dist,"ili2c-release.json")
+		def srcFileName=bindist.archiveFile.get().asFile.name
+		def targetFileName='ili2c-'+project.version+'.zip'
+		def json = groovy.json.JsonOutput.toJson([filename: 'https://downloads.interlis.ch/ili2c/'+targetFileName, version: project.version ,date: new Date().format( 'yyyy-MM-dd' )])
+		def releaseFile = new File(dist,"ili2c-release-x.json")
 		releaseFile.write(json)
 
 		ant.myscp(password: repos_pwd,
+			remoteTofile: repos_usr+'@'+repos_host+':'+repos_dir+"/web/downloads/ili2c/"+targetFileName,
+			localFile: bindist.archiveFile.get().asFile) 
+		
+		ant.myscp(password: repos_pwd,
 			todir: repos_usr+'@'+repos_host+':'+repos_dir+"/web/downloads/ili2c") {
 				fileset(dir: dist ) {
-					include(name: name)
 					include(name: releaseFile.name)
 				}
 		}

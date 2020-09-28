@@ -1,0 +1,5 @@
+INTERLIS 2.3;
+
+MODEL modelA_eof AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+END modelA_eof.  !! comment
