@@ -158,7 +158,7 @@ task uploadBindist(dependsOn: bindist) {
 		def srcFileName=bindist.archiveFile.get().asFile.name
 		def targetFileName='ili2c-'+project.version+'.zip'
 		def json = groovy.json.JsonOutput.toJson([filename: 'https://downloads.interlis.ch/ili2c/'+targetFileName, version: project.version ,date: new Date().format( 'yyyy-MM-dd' )])
-		def releaseFile = new File(dist,"ili2c-release-x.json")
+		def releaseFile = new File(dist,"ili2c-release.json")
 		releaseFile.write(json)
 
 		ant.myscp(password: repos_pwd,
