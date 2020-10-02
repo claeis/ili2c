@@ -1,6 +1,11 @@
 LATEST
 ---------------------------
 
+ili2c 5.1.4 (2020-10-02)
+---------------------------
+- info message if modelscan of local ili-file fails (ili2db#364)
+- iox-ili-1.21.3
+
 ili2c 5.1.3 (2020-09-28)
 ---------------------------
 - iox-ili-1.21.2

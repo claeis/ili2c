@@ -4,6 +4,7 @@ header
 	import ch.interlis.ili2c.modelscan.*;
 	import java.util.*;
 	import ch.ehi.basics.logging.EhiLogger;
+	import ch.interlis.ili2c.metamodel.Ili2cSemanticException;
 }
 
 class Ili2ModelScan extends Parser;
@@ -42,15 +43,11 @@ options
 			parser.iliFile.addModel(parser.model);
 		}
     }catch(RecognitionException ex){
-  		EhiLogger.logError(ex);
+  		throw new Ili2cSemanticException(ex); // not really a semantic exception; but avoid a new ili2c specific RuntimeExcpetion
     }catch(antlr.TokenStreamRecognitionException ex){
-    	if(ex.recog instanceof antlr.NoViableAltForCharException){
-		// ignore unexpected char's
-	}else{
-		EhiLogger.logError(ex);
-	}
+  		throw new Ili2cSemanticException(ex); // not really a semantic exception; but avoid a new ili2c specific RuntimeExcpetion
      }catch(TokenStreamException ex){
-		EhiLogger.logError(ex);
+  		throw new Ili2cSemanticException(ex); // not really a semantic exception; but avoid a new ili2c specific RuntimeExcpetion
      }
   }
   static public double getIliVersion(java.io.Reader stream)

@@ -27,11 +27,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.tools.TopoSort;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.gui.UserSettings;
+import ch.interlis.ili2c.metamodel.Ili2cSemanticException;
 import ch.interlis.ili2c.modelscan.IliFile;
 import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ili2c.parser.Ili2ModelScan;
@@ -69,7 +71,9 @@ public class ModelScan {
 	    stream.close();
 	    return iliFile;
 	} catch (FileNotFoundException fnfex) {
-	    EhiLogger.logError(streamName + ":" + "There is no such file.");
+	    EhiLogger.logError(streamName + ": " + "There is no such file.");
+	} catch(Ili2cSemanticException ex) {
+	    EhiLogger.logAdaption(streamName + ": " + "failed to scan file ("+ex.getCause().getMessage()+"); file ignored");
 	} catch (Exception ex) {
 	    EhiLogger.logError(ex);
 	}
@@ -105,7 +109,7 @@ public class ModelScan {
      * @return set<IliFile>
      */
     public static HashSet scanIliFileDir(File dir, HashSet skipFiles) throws IOException {
-	HashSet ret = new HashSet();
+	HashSet<IliFile> ret = new HashSet<IliFile>();
 	if (!dir.exists()) {
 	    EhiLogger.logAdaption("Folder " + dir.getAbsoluteFile() + " doesn't exist; ignored");
 	    return ret;
@@ -240,13 +244,13 @@ public class ModelScan {
 	if (requiredIliFileNames.isEmpty()) {
 	    throw new Ili2cException("no ili files given");
 	}
-	HashSet ilifiles = new HashSet();
-	HashSet toVisitFiles = new HashSet(); // set<IliFile>
-	HashSet requiredFiles = new HashSet(); // set<File>
+	HashSet<IliFile> ilifiles = new HashSet<IliFile>();
+	HashSet<IliFile> toVisitFiles = new HashSet<IliFile>(); // set<IliFile>
+	HashSet<File> requiredFiles = new HashSet<File>(); // set<File>
 
 	// scan given files and report about duplicate models
 	Iterator reqFileIt = requiredIliFileNames.iterator();
-	HashSet availablemodels = new HashSet();
+	HashSet<String> availablemodels = new HashSet<String>();
 	double version = 0.0;
 	while (reqFileIt.hasNext()) {
 	    String fname = (String) reqFileIt.next();
@@ -307,7 +311,7 @@ public class ModelScan {
 	}
 
 	// build map of modelname -> ilifile
-	HashMap models = new HashMap();
+	HashMap<String,IliFile> models = new HashMap<String,IliFile>();
 	Iterator it = ilifiles.iterator();
 	while (it.hasNext()) {
 	    IliFile ilifile = (IliFile) it.next();
@@ -323,10 +327,10 @@ public class ModelScan {
     }
 
 
-    static private boolean isFileSetComplete(HashSet ilifiles, HashSet availablemodels) {
-	Iterator it = ilifiles.iterator();
+    static private boolean isFileSetComplete(Set<IliFile> ilifiles, Set<String> availablemodels) {
+	Iterator<IliFile> it = ilifiles.iterator();
 	while (it.hasNext()) {
-	    IliFile ilifile = (IliFile) it.next();
+	    IliFile ilifile = it.next();
 	    Iterator modeli = ilifile.iteratorModel();
 	    while (modeli.hasNext()) {
 		IliModel model = (IliModel) modeli.next();
