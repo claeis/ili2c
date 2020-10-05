@@ -6882,17 +6882,21 @@ WS
 
 ILI_METAVALUE
   : "!!@"!
-    ( ~('\n'|'\r') )*
-    ( '\n' | '\r' ( '\n' )? )
+    ( ~('\n'|'\r'|'\uFFFF') )*
+    ( '\n' | ('\r' ( '\n' )?)|'\uFFFF')
     { newline(); }
   ;
 
 // Single Line comment -- ignored
+//  '\uFFFF' == EOF in antlr 2.7.7
 SL_COMMENT
   : "!!"!
-    ( ~('\n'|'\r') )*
-    ( '\n' | '\r' ( '\n' )? )
-    { $setType(Token.SKIP); newline(); }
+    (~'@')
+    ( ~('\n'|'\r'|'\uFFFF') )*
+    ( '\n' | ('\r' ( '\n' )?)|'\uFFFF')
+    { 
+    	$setType(Token.SKIP); newline(); 
+    }
   ;
 
   

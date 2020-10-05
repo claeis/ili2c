@@ -1,5 +1,6 @@
 LATEST
 ---------------------------
+- fix failing parser, if single line comment after end of model (#55)
 
 ili2c 5.1.4 (2020-10-02)
 ---------------------------
