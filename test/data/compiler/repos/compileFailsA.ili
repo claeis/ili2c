@@ -1,0 +1,5 @@
+INTERLIS 2.3;
+
+MODEL compileFailsA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+   TOPIC TopicA;
+END compileFailsA.
