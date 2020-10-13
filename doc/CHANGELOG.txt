@@ -1,6 +1,7 @@
 LATEST
 ---------------------------
 - fix failing parser, if single line comment after end of model (#55)
+- ehibasics-1.4.0-SNAPSHOT
 
 ili2c 5.1.4 (2020-10-02)
 ---------------------------
