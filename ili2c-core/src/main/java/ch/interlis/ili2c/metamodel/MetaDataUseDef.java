@@ -10,6 +10,35 @@ public class MetaDataUseDef extends ExtendableContainer<MetaObject>
   @Override
   public void checkIntegrity(List<Ili2cSemanticException> errs){
   }
+  @Override
+  public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+    throws java.lang.IllegalStateException
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      MetaDataUseDef baseElement=(MetaDataUseDef)getTranslationOf();
+      if(baseElement==null) {
+          return;
+      }
+      if(isFinal()!=baseElement.isFinal()) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInFinality",getScopedName(),baseElement.getScopedName())));
+      }
+      Ili2cSemanticException err=null;
+      err=checkElementRef(getExtending(),baseElement.getExtending(),getSourceLine(),"err_diff_referencedMetaDataBasketMismatch");
+      if(err!=null) {
+          errs.add(err);
+      }
+      err=checkElementRef(getTopic(),baseElement.getTopic(),getSourceLine(),"err_diff_referencedTopicMismatch");
+      if(err!=null) {
+          errs.add(err);
+      }
+      Iterator<MetaObject> iter = iterator();
+      while (iter.hasNext())
+      {
+        MetaObject mo = iter.next();
+        
+        // compare name, table
+      }
+  }  
 	/** concrete basket available by this MetaDataUseDef
 	*/
 	private DataContainer     dataContainer;
