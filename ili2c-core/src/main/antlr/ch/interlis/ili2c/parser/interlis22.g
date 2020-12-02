@@ -2842,6 +2842,7 @@ protected lineFormTypeDef[Model model]
           lf.setName (nam.getText ());
 	  lf.setDocumentation(ilidoc);
 	  lf.setMetaValues(metaValues);
+      lf.setSourceLine(nam.getLine());
 	  Table seg=(Table)model.getImportedElement(Table.class,lineStructure.getText());
 	  if(seg==null){
 	          reportError (formatMessage ("err_noSuchTable", lineStructure.getText(),

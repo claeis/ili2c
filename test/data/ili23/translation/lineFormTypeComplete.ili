@@ -1,0 +1,23 @@
+INTERLIS 2.3;
+
+CONTRACTED MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	STRUCTURE  KlothoideParamsA EXTENDS INTERLIS.LineSegment =
+	  a : MANDATORY 0.000 .. 1.000;
+	END KlothoideParamsA;
+	
+	LINE FORM KlothoideA : KlothoideParamsA;
+	
+END ModelA.
+
+CONTRACTED MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+
+	STRUCTURE  KlothoideParamsB EXTENDS INTERLIS.LineSegment =
+	  b : MANDATORY 0.000 .. 1.000;
+	END KlothoideParamsB;
+	
+	LINE FORM KlothoideB : KlothoideParamsB;
+
+END ModelB.

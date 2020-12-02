@@ -1,5 +1,6 @@
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
 
 /** A line form declaration, as expressed by the LINE FORM construct
     in INTERLIS-2.
@@ -25,6 +26,21 @@ public class LineForm extends AbstractLeafElement
     this.name = name;
   }
 
+  @Override
+  public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+    throws java.lang.IllegalStateException
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      LineForm baseElement=(LineForm)getTranslationOf();
+      if(baseElement==null) {
+          return;
+      }
+      Ili2cSemanticException err=null;
+      err=checkElementRef(getSegmentStructure(),baseElement.getSegmentStructure(),getSourceLine(),"err_diff_referencedStructureMismatch");
+      if(err!=null) {
+          errs.add(err);
+      }
+  }
 
   public String toString ()
   {
