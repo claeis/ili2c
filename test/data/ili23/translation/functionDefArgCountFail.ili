@@ -1,0 +1,15 @@
+INTERLIS 2.3;
+
+CONTRACTED MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+FUNCTION lenA (TextValA1: ENUMVAL; TextValA2: ENUMVAL): TEXT;
+
+END ModelA.
+
+CONTRACTED MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+
+FUNCTION lenB (TextValB: ENUMVAL): TEXT;
+
+END ModelB.

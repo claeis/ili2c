@@ -5372,6 +5372,7 @@ protected functionDef[Container container]
         f.setName(fn.getText());
 	f.setDocumentation(ilidoc);
 	f.setMetaValues(metaValues);
+    f.setSourceLine(fn.getLine());
       } catch (Exception ex) {
         reportError(ex, fn.getLine());
 	return;

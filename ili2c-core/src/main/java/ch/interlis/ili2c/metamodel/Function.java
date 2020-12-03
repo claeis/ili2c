@@ -11,6 +11,8 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
+
 /** A Function declaration, as expressed by the FUNCTION construct
     in INTERLIS-2.
 
@@ -33,6 +35,88 @@ public class Function extends AbstractLeafElement
   {
   }
 
+  @Override
+  protected void linkTranslationOf(Element baseElement)
+  {
+      super.linkTranslationOf(baseElement);
+      final FormalArgument[] args = getArguments();
+      final FormalArgument[] baseArgs = ((Function) baseElement).getArguments();
+      if(args.length==baseArgs.length) {
+          for(int i=0;i<args.length;i++) {
+              FormalArgument arg=args[i];
+              FormalArgument baseArg=baseArgs[i];
+              arg.linkTranslationOf(baseArg);
+              Type type=arg.getType();
+              Type baseType=baseArg.getType();
+              if(type.getClass().equals(baseType.getClass())){
+                  type.linkTranslationOf(baseType);
+              }
+          }
+      }
+      Type type=getDomain();
+      Type baseType=((Function) baseElement).getDomain();
+      if(type.getClass().equals(baseType.getClass())) {
+          type.linkTranslationOf(baseType);
+      }
+  }
+  @Override
+  public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+    throws java.lang.IllegalStateException
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      Function baseElement=(Function)getTranslationOf();
+      if(baseElement==null) {
+          return;
+      }
+      if(!(getExplanation()==null && baseElement.getExplanation()==null || getExplanation()!=null && baseElement.getExplanation()!=null)) {
+          errs.add(new Ili2cSemanticException(getSourceLine(),formatMessage("err_diff_explanationMismatch",getName(),baseElement.getName())));
+      }
+      
+      final FormalArgument[] args = getArguments();
+      final FormalArgument[] baseArgs = baseElement.getArguments();
+      if(args.length!=baseArgs.length) {
+          errs.add(new Ili2cSemanticException(getSourceLine(),formatMessage("err_diff_functionArgumentCountMismatch",getName(),baseElement.getName())));
+      }
+      for(int i=0;i<args.length;i++) {
+          FormalArgument arg=args[i];
+          FormalArgument baseArg=baseArgs[i];
+          Type type=arg.getType();
+          Type baseType=baseArg.getType();
+          if(type.getClass()!=baseType.getClass()){
+              errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_functionArgumentTypeMismatch",getScopedName(),baseElement.getScopedName())));
+              return;
+          }
+          if (type instanceof TypeAlias){
+              if(((TypeAlias)type).getAliasing().getTranslationOfOrSame()!=((TypeAlias)baseType).getAliasing().getTranslationOfOrSame()){
+                  errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_functionArgumentTypeMismatch",getScopedName(),baseElement.getScopedName())));
+                  return;
+              }
+          }
+          try {
+              type.checkTranslationOf(errs,getScopedName(),baseElement.getScopedName());
+          }catch(Ili2cSemanticException ex) {
+              errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_functionArgumentTypeMismatch",getScopedName(),baseElement.getScopedName())));
+          }      
+      }
+      
+      Type type=getDomain();
+      Type baseType=baseElement.getDomain();
+      if(type.getClass()!=baseType.getClass()){
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_functionType",getScopedName(),baseElement.getScopedName())));
+          return;
+      }
+      if (type instanceof TypeAlias){
+          if(((TypeAlias)type).getAliasing().getTranslationOfOrSame()!=((TypeAlias)baseType).getAliasing().getTranslationOfOrSame()){
+              errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_functionType",getScopedName(),baseElement.getScopedName())));
+              return;
+          }
+      }
+      try {
+          type.checkTranslationOf(errs,getScopedName(),baseElement.getScopedName());
+      }catch(Ili2cSemanticException ex) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_functionType",getScopedName(),baseElement.getScopedName())));
+      }      
+  }
 
   /** Determines the current value of the <code>name</code> property.
       Functions are identified and used by specifying their name.

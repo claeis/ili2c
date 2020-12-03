@@ -1,5 +1,6 @@
 LATEST
 ---------------------------
+- fix validation of FunctionDef translation (#41)
 - fix validation of LineFormTypeDef translation (#41)
 - fix validation of MetaDataBasketDef translation (#41)
 - fix validation of RuntimeParameterDef translation (#41)
