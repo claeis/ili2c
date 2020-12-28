@@ -5,7 +5,7 @@ LATEST
 - fix validation of MetaDataBasketDef translation (#41)
 - fix validation of RuntimeParameterDef translation (#41)
 - fix failing parser, if single line comment after end of model (#55)
-- ehibasics-1.4.0-SNAPSHOT
+- ehibasics-1.4.0
 - iox-ili-1.21.4
 
 ili2c 5.1.4 (2020-10-02)

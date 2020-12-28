@@ -5,7 +5,7 @@ plugins {
 version rootProject.version
 
 dependencies {
-	implementation 'ch.ehi:ehibasics:1.4.0+'
+	implementation 'ch.ehi:ehibasics:1.4.0'
 	implementation "antlr:antlr:2.7.7" 
 	antlr "antlr:antlr:2.7.7" 
 }
