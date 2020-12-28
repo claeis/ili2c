@@ -4,6 +4,7 @@ header
 	import ch.interlis.ili2c.metamodel.*;
 	import java.util.*;
 	import ch.ehi.basics.logging.EhiLogger;
+	import ch.ehi.basics.tools.StringUtility;
 }
 
 class MetaValue extends Parser;
@@ -36,12 +37,12 @@ metaValues
 : (n:VALUE EQUALS v=avalue
 	{ 
 	c=new ch.ehi.basics.settings.Settings(true);
-	c.setValue(n.getText(),v);
+	c.setValue(n.getText(),StringUtility.purge(v));
 	}
  (SEMI (
  		n2:VALUE EQUALS v=avalue
 		{ 
-		c.setValue(n2.getText(),v);
+		c.setValue(n2.getText(),StringUtility.purge(v));
 		}
 	)?
  )*

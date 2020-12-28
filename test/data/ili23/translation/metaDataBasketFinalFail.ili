@@ -1,0 +1,38 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC TopicA =
+     CLASS ClassA EXTENDS INTERLIS.COORDSYSTEM =
+     END ClassA;
+     
+  END TopicA;
+  
+  REFSYSTEM BASKET BasketA2 (FINAL) ~ TopicA
+    OBJECTS OF ClassA: ObjectA1;
+
+  DOMAIN
+    CoordA = COORD
+      460000.000 .. 870000.000 {BasketA2.ObjectA1[1]},
+       45000.000 .. 310000.000 {BasketA2.ObjectA1[2]};
+
+END ModelA.
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+  TOPIC TopicB =
+     CLASS ClassB EXTENDS INTERLIS.COORDSYSTEM =
+     END ClassB;
+     
+  END TopicB;
+  
+  REFSYSTEM BASKET BasketB2 ~ TopicB
+    OBJECTS OF ClassB: ObjectA1;
+
+  DOMAIN
+    CoordB = COORD
+      460000.000 .. 870000.000 {BasketB2.ObjectA1[1]},
+       45000.000 .. 310000.000 {BasketB2.ObjectA1[2]};
+
+END ModelB.

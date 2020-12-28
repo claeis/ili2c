@@ -2842,6 +2842,7 @@ protected lineFormTypeDef[Model model]
           lf.setName (nam.getText ());
 	  lf.setDocumentation(ilidoc);
 	  lf.setMetaValues(metaValues);
+      lf.setSourceLine(nam.getLine());
 	  Table seg=(Table)model.getImportedElement(Table.class,lineStructure.getText());
 	  if(seg==null){
 	          reportError (formatMessage ("err_noSuchTable", lineStructure.getText(),
@@ -4436,6 +4437,7 @@ protected functionDef[Container container]
         f.setName(fn.getText());
 	f.setDocumentation(ilidoc);
 	f.setMetaValues(metaValues);
+    f.setSourceLine(fn.getLine());
       } catch (Exception ex) {
         reportError(ex, fn.getLine());
       }
@@ -5900,17 +5902,21 @@ WS
 
 ILI_METAVALUE
   : "!!@"!
-    ( ~('\n'|'\r') )*
-    ( '\n' | '\r' ( '\n' )? )
+    ( ~('\n'|'\r'|'\uFFFF') )*
+    ( '\n' | ('\r' ( '\n' )?)|'\uFFFF')
     { newline(); }
   ;
 
 // Single Line comment -- ignored
+//  '\uFFFF' == EOF in antlr 2.7.7
 SL_COMMENT
   : "!!"!
-    ( ~('\n'|'\r') )*
-    ( '\n' | '\r' ( '\n' )? )
-    { $setType(Token.SKIP); newline(); }
+    (~'@')
+    ( ~('\n'|'\r'|'\uFFFF') )*
+    ( '\n' | ('\r' ( '\n' )?)|'\uFFFF')
+    { 
+    	$setType(Token.SKIP); newline(); 
+    }
   ;
 
 ILI_DOC

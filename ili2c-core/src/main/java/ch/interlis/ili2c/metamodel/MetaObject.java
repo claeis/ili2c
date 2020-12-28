@@ -11,6 +11,7 @@
 
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
 
 /** Proxy to the real metaobject
 */
@@ -28,8 +29,25 @@ public class MetaObject extends AbstractLeafElement
     this.name = name;
     this.table = table;
   }
-
-
+  @Override
+  public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+    throws java.lang.IllegalStateException
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      MetaObject baseElement=(MetaObject)getTranslationOf();
+      if(baseElement==null) {
+          return;
+      }
+      if(!getName().equals(baseElement.getName())) {
+          errs.add(new Ili2cSemanticException(getSourceLine(),formatMessage("err_diff_referencedMetaObjMismatch",getName(),baseElement.getName())));
+      }
+      Ili2cSemanticException err=null;
+      err=checkElementRef(getTable(),baseElement.getTable(),getSourceLine(),"err_diff_referencedClassMismatch");
+      if(err!=null) {
+          errs.add(err);
+      }
+      
+  }
   /** Returns a String useful for debugging and error messages.
 
       @return <code>METAOBJECT</code> followed by the fully scoped name

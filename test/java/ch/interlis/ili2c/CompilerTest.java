@@ -1,70 +1,133 @@
 package ch.interlis.ili2c;
 
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import ch.ehi.basics.logging.EhiLogger;
+import ch.ehi.basics.settings.Settings;
+import ch.interlis.ili2c.config.Configuration;
+import ch.interlis.ili2c.config.FileEntry;
+import ch.interlis.ili2c.config.FileEntryKind;
+import ch.interlis.ili2c.gui.UserSettings;
+import ch.interlis.ili2c.metamodel.TransferDescription;
+
 public class CompilerTest {
 	
-	private static final String TEST_OUT="test/data/compiler/";
+	private static final String TEST_REPOS="test/data/compiler/repos";
+    private static final String TEST_LOCAL="test/data/compiler/local";
 	
-	// This test checks the help text of the compiler (--quiet -h)
+    @Test
+    public void reposIliFileDependentModelFails() throws Exception {
+        LogCollector logs=new LogCollector();
+        try {
+            EhiLogger.getInstance().addListener(logs);
+            Configuration ili2cConfig=new Configuration();
+            Settings settings=new Settings();
+            settings.setValue(UserSettings.ILIDIRS,TEST_REPOS);
+            FileEntry fileEntry=new FileEntry(TEST_REPOS+"/compileFailsB.ili", FileEntryKind.ILIMODELFILE);
+            ili2cConfig.addFileEntry(fileEntry);
+            ili2cConfig.setAutoCompleteModelList(true);
+            TransferDescription td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+            assertNull(td);
+            assertTrue(logs.getErrs().get(0).getEventMsg().endsWith("unexpected token: ;"));
+        }finally {
+            EhiLogger.getInstance().removeListener(logs);
+        }
+        
+    }
+    @Test
+    public void reposIliFileMissingDependentModelFails() throws Exception {
+        LogCollector logs=new LogCollector();
+        try {
+            EhiLogger.getInstance().addListener(logs);
+            Configuration ili2cConfig=new Configuration();
+            Settings settings=new Settings();
+            settings.setValue(UserSettings.ILIDIRS,TEST_REPOS);
+            FileEntry fileEntry=new FileEntry(TEST_REPOS+"/compileFailsD.ili", FileEntryKind.ILIMODELFILE);
+            ili2cConfig.addFileEntry(fileEntry);
+            ili2cConfig.setAutoCompleteModelList(true);
+            TransferDescription td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+            assertNull(td);
+            assertTrue(LogCollector.getMessage(logs.getErrs().get(0)).endsWith("compileFailsC: model(s) not found"));
+        }finally {
+            EhiLogger.getInstance().removeListener(logs);
+        }
+        
+    }
+    @Test
+    public void reposModelNameDependentModelFails() throws Exception {
+        LogCollector logs=new LogCollector();
+        try {
+            EhiLogger.getInstance().addListener(logs);
+            Configuration ili2cConfig=new Configuration();
+            Settings settings=new Settings();
+            settings.setValue(UserSettings.ILIDIRS,TEST_REPOS);
+            FileEntry fileEntry=new FileEntry("compileFailsB", FileEntryKind.ILIMODELFILE);
+            ili2cConfig.addFileEntry(fileEntry);
+            ili2cConfig.setAutoCompleteModelList(true);
+            TransferDescription td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+            assertNull(td);
+            assertTrue(logs.getErrs().get(0).getEventMsg().endsWith("unexpected token: ;"));
+        }finally {
+            EhiLogger.getInstance().removeListener(logs);
+        }
+        
+    }
+    @Test
+    public void localIliFileDependentModelFails() throws Exception {
+        LogCollector logs=new LogCollector();
+        try {
+            EhiLogger.getInstance().addListener(logs);
+            Configuration ili2cConfig=new Configuration();
+            Settings settings=new Settings();
+            settings.setValue(UserSettings.ILIDIRS,TEST_LOCAL);
+            FileEntry fileEntry=new FileEntry(TEST_LOCAL+"/compileFailsB.ili", FileEntryKind.ILIMODELFILE);
+            ili2cConfig.addFileEntry(fileEntry);
+            ili2cConfig.setAutoCompleteModelList(true);
+            TransferDescription td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+            assertNull(td);
+            assertTrue(logs.getErrs().get(0).getEventMsg().endsWith("unexpected token: ;"));
+        }finally {
+            EhiLogger.getInstance().removeListener(logs);
+        }
+    }
+    @Test
+    public void localIliFileMissingDependentModelFails() throws Exception {
+        LogCollector logs=new LogCollector();
+        try {
+            EhiLogger.getInstance().addListener(logs);
+            Configuration ili2cConfig=new Configuration();
+            Settings settings=new Settings();
+            settings.setValue(UserSettings.ILIDIRS,TEST_LOCAL);
+            FileEntry fileEntry=new FileEntry(TEST_LOCAL+"/compileFailsD.ili", FileEntryKind.ILIMODELFILE);
+            ili2cConfig.addFileEntry(fileEntry);
+            ili2cConfig.setAutoCompleteModelList(true);
+            TransferDescription td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+            assertNull(td);
+            assertTrue(LogCollector.getMessage(logs.getErrs().get(0)).endsWith("compileFailsC: model(s) not found"));
+        }finally {
+            EhiLogger.getInstance().removeListener(logs);
+        }
+        
+    }
+    @Test
+    public void localModelNameDependentModelFails() throws Exception {
+        LogCollector logs=new LogCollector();
+        try {
+            EhiLogger.getInstance().addListener(logs);
+            Configuration ili2cConfig=new Configuration();
+            Settings settings=new Settings();
+            settings.setValue(UserSettings.ILIDIRS,TEST_LOCAL);
+            FileEntry fileEntry=new FileEntry("compileFailsB", FileEntryKind.ILIMODELFILE);
+            ili2cConfig.addFileEntry(fileEntry);
+            ili2cConfig.setAutoCompleteModelList(true);
+            TransferDescription td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+            assertNull(td);
+            assertTrue(logs.getErrs().get(0).getEventMsg().endsWith("unexpected token: ;"));
+        }finally {
+            EhiLogger.getInstance().removeListener(logs);
+        }
+    }
 	
-	//		INTERLIS Compiler, Version 2.5.0-20041202
-	//		  Distributed by the Coordination of Geographic Information
-	//		  and Geographic Information Systems Group (COSIG), CH-3084 Wabern
-	//		  Developed by Adasys AG, CH-8006 Zurich
-	//		  Maintained by Eisenhut Informatik AG, CH-3303 Jegenstorf
-	//		  See http://www.interlis.ch for information about INTERLIS
-	//		  Parts of this program have been generated by ANTLR; see http://www.antlr.org
-	//		  This product includes software developed by the
-	//		  Apache Software Foundation (http://www.apache.org/).
-	//
-	//		DESCRIPTION
-	//		  Parses and compiles INTERLIS Version 2.2 data model definitions.
-	//		  Other options include conversion from INTERLIS Version 1 and back
-	//		  (option -o1) and generation of an XML-Schema, released 2001 (option -oXSD).
-	//
-	//		USAGE
-	//		  ili2c [Options] file1.ili -m meta1.xml file2.ili ...
-	//
-	//		OPTIONS
-	//
-	//		-o0                   Generate no output (default).
-	//		-o1                   Generate INTERLIS-1 output.
-	//		-o2                   Generate INTERLIS-2 output.
-	//		-oXSD                 Generate an XML-Schema.
-	//		-oFMT                 Generate an INTERLIS-1 Format.
-	//		-oJAVA                Generate JAVA classes.
-	//		-oIOM                 Generate Model as INTERLIS-Transfer (XTF).
-	//		-c|--compare-with     Compare two or more model definitions.
-	//		--check-metaobj       Check if referenced metaobjects exist.
-	//		-boid Model.Basket=BOID  Define a mapping from a qualified basket
-	//		                      name to a BOID of a metadata container.
-	//		--with-predefined     Include the predefined MODEL INTERLIS in
-	//		                      the output. Usually, this is omitted.
-	//		--without-warnings    Report only errors, no warnings. Usually,
-	//		                      warnings are generated as well.
-	//		-h|--help             Display this help text.
-	//		-u|--usage            Display short information about usage.
-	//		-v|--version          Display the version of ili2c.
-	//
-	//		EXAMPLES
-	//
-	//		Check whether an INTERLIS definition in "file1.ili" is valid:
-	//		    ili2c file1.ili
-	//
-	//		Check whether a definition distributed over several files is valid:
-	//		    ili2c file1.ili file2.ili
-	//
-	//		Generate an INTERLIS-1 definition:
-	//		    ili2c -o1 file1.ili file2.ili
-	//
-	//		Generate an INTERLIS-2 definition:
-	//		    ili2c -o2 file1.ili file2.ili
-	//
-	//		Generate a definition of the predefined MODEL INTERLIS:
-	//		    ili2c -o2 --with-predefined
-	//
-	//		Generate an XML-Schema:
-	//		    ili2c -oXSD file1.ili file2.ili
-	//
-	//		Check whether two definitions are equivalent (e.g. de->fr):
-	//		    ili2c de_1.ili de_2.ili -c fr_1.ili fr_2.ili
 }

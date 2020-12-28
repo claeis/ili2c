@@ -75,7 +75,6 @@ public class MainRule23Test {
 		assertEquals(0,errs.getErrs().size());
 	}
     @Test
-    @Ignore("see issue#55")
     public void mainRules_eof_comment() {
         LogCollector errs=new LogCollector();
         EhiLogger.getInstance().addListener(errs);
@@ -84,6 +83,7 @@ public class MainRule23Test {
         FileEntry fileEntryB=new FileEntry(TEST_OUT+"mainRules_eof_commentB.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntryB);
         TransferDescription td=null;
+        EhiLogger.getInstance().setTraceFilter(false);
         td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNotNull(td);
     }
