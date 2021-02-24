@@ -20,7 +20,7 @@ public class AttributeRef extends AbstractAttributeRef
       return ((CompositionType)attr.getDomainResolvingAliases()).getComponentType();
     }
     public Type getDomain(){
-      return attr.getDomain();
+      return attr.getDomainOrDerivedDomain();
     }
     @Override
     public Ili2cSemanticException checkTranslation(PathEl other,int sourceLine) {

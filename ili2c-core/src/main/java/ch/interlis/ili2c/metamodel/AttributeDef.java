@@ -506,14 +506,16 @@ public abstract class AttributeDef
   }
   public Type getDomainResolvingAll()
   {
-	Type type=domain;
-	if(type==null && this instanceof LocalAttribute){
-		Evaluable[] ev = (((LocalAttribute)this).getBasePaths());
-		type=((ObjectPath)ev[0]).getType();
-	}
-    return Type.findReal (type);
+    return Type.findReal (getDomainOrDerivedDomain());
   }
-
+  public Type getDomainOrDerivedDomain() {
+      Type type = domain;
+      if ((type == null) && ((this instanceof LocalAttribute))) {
+          Evaluable[] ev = ((LocalAttribute) this).getBasePaths();
+          type = ((ObjectPath) ev[0]).getType();
+      }
+      return type;
+  }
 
   /* Documentation Note
      ------------------

@@ -1,6 +1,7 @@
 LATEST
 ---------------------------
-- fix EXTENDED ViewDef
+- fix validation of EXTENDED ViewDef
+- fix validation of datatype compatibility in constraints of ViewDef
 
 ili2c 5.1.5 (2020-12-28)
 ---------------------------
