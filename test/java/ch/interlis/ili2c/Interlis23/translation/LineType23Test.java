@@ -145,7 +145,7 @@ public class LineType23Test {
             
         }
         assertNull(td);
-        assertEquals(1,errs.getErrs().size());
+        assertEquals(2,errs.getErrs().size());
     }
     @Test
     public void lineTypeOverlapsFail() throws Exception {
