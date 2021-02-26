@@ -74,6 +74,41 @@ public abstract class View extends Viewable<AbstractLeafElement>
     };
   }
 
+  @Override
+  public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+    throws java.lang.IllegalStateException
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      View baseElement=(View)getTranslationOf();
+      if(baseElement==null) {
+          return;
+      }
+      
+      if(isAbstract()!=baseElement.isAbstract()) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInAbstractness",getScopedName(),baseElement.getScopedName())));
+      }
+      if(isFinal()!=baseElement.isFinal()) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInFinality",getScopedName(),baseElement.getScopedName())));
+      }
+      if(isTransient()!=baseElement.isTransient()) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInTransientness",getScopedName(),baseElement.getScopedName())));
+      }
+      if(selections.size()!=baseElement.selections.size()) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_expressionMismatch")));
+      }else {
+          for(int i=0;i<selections.size();i++) {
+              ExpressionSelection sel=(ExpressionSelection)selections.get(i);
+              ExpressionSelection baseSel=(ExpressionSelection)baseElement.selections.get(i);
+              Ili2cSemanticException err = Evaluable.checkTranslation(sel.getCondition(), baseSel.getCondition(), getSourceLine(), "err_diff_expressionMismatch");
+              if(err!=null) {
+                  errs.add(err);
+              }
+          }
+      }
+      
+      
+      
+  }
 
 
   /** Returns a String that designates this view. This is useful

@@ -20,7 +20,7 @@ import java.util.List;
 */
 public class LocalAttribute extends AttributeDef
 {
-	protected Evaluable[] basePaths;
+	protected Evaluable[] basePaths=null;
 	private boolean subdivision=false;
 	private boolean continuous=false;
 	private boolean generatedByAllOf=false;
@@ -174,5 +174,30 @@ public class LocalAttribute extends AttributeDef
         if(isContinuous()!=baseElement.isContinuous()) {
             errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchInContinuous",getScopedName(),baseElement.getScopedName())));
         }
+        
+        if(isGeneratedByAllOf()!=baseElement.isGeneratedByAllOf()) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeListMismatch")));
+        }else if(getBasePathsSize()!=baseElement.getBasePathsSize()) {
+            errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_factorMismatch")));
+        }else if(basePaths!=null){
+            for(int i=0;i<basePaths.length;i++) {
+                Evaluable sel=basePaths[i];
+                Evaluable baseSel=baseElement.basePaths[i];
+                Ili2cSemanticException err = Evaluable.checkTranslation(sel, baseSel, getSourceLine(), "err_diff_factorMismatch");
+                if(err!=null) {
+                    errs.add(err);
+                }
+            }
+        }
+        
+    }
+
+
+
+    private int getBasePathsSize() {
+        if(basePaths==null) {
+            return 0;
+        }
+        return basePaths.length;
     }
 }

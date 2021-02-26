@@ -12,7 +12,7 @@
 
 package ch.interlis.ili2c.metamodel;
 
-
+import java.util.List;
 
 /** @author Sascha Brawer, sb@adasys.ch
  */
@@ -151,4 +151,35 @@ public class JoinView extends UnextendableView
 
     super.setExtending(extending);
   }
+  
+  @Override
+  public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+    throws java.lang.IllegalStateException
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      JoinView baseElement=(JoinView)getTranslationOf();
+      if(baseElement==null) {
+          return;
+      }
+      
+      Ili2cSemanticException err=null;
+      ViewableAlias[] uv = getJoining();
+      ViewableAlias[] baseUv = baseElement.getJoining();
+      if(uv.length!=baseUv.length) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_baseViewMismatch")));
+      }else {
+          for(int i=0;i<uv.length;i++) {
+              err=checkElementRef(uv[i].getAliasing(),baseUv[i].getAliasing(),getSourceLine(),"err_diff_baseViewMismatch");
+              if(err==null) {
+                  if(uv[i].isIncludeNull()!=baseUv[i].isIncludeNull()) {
+                      errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_baseViewMismatch")));
+                  }
+              }
+              if(err!=null) {
+                  errs.add(err);
+              }
+          }
+      }
+  }
+  
 }
