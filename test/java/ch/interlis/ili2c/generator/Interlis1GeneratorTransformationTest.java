@@ -30,7 +30,7 @@ public class Interlis1GeneratorTransformationTest {
 
 	private static final String NEW_MODEL_NAME = "LineType_200";
 	private static final String OUTPUT_ILI_FILE = "out.ili";
-	private static final String ILI_FILE = "test\\data\\interlis1generator\\TrafoParam1.ili";
+	private static final String ILI_FILE = "test/data/interlis1generator/TrafoParam1.ili";
 
 	@Test
 	public void transforamtionIli1c() throws IOException {

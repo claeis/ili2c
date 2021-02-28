@@ -30,7 +30,7 @@ import ch.interlis.ili2c.metamodel.TransferDescription;
  * */
 public class Ili2TranslationXmlTest {
 	
-	private static final String FILEPATH = "test\\data\\ili2translationxml\\EnumOk.ili";
+	private static final String FILEPATH = "test/data/ili2translationxml/EnumOk.ili";
 	
 	/** Es ueberprueft, ob das MODEL korrekt in das xml file geschrieben wurde.
 	 * @throws Exception 
