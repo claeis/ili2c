@@ -4190,12 +4190,12 @@ protected pathEl[Viewable currentViewable]
 		}else if(refattr!=null && refattr.getDomainResolvingAliases() instanceof ObjectType){
 			ObjectType ref=(ObjectType)refattr.getDomainResolvingAliases();
 			el=new PathElBase(currentViewable,n.getText(),ref.getRef());
-		}else if(currentViewable instanceof AssociationDef && currentViewable.getRealElement(RoleDef.class,n.getText())!=null){
+		}else if(currentViewable.findRole(n.getText())!=null){
 			// currentView is an Association? -> role name
-			el=new PathElAssocRole((RoleDef)currentViewable.getRealElement(RoleDef.class,n.getText()));
-		}else if(currentViewable instanceof AbstractClassDef && ((AbstractClassDef)currentViewable).findOpposideRole(n.getText())!=null){
+			el=new PathElAssocRole(currentViewable.findRole(n.getText()));
+		}else if(currentViewable.findOpposideRole(n.getText())!=null){
 			// currentView is an AbstractClassDef -> role name
-			RoleDef oppend=((AbstractClassDef)currentViewable).findOpposideRole(n.getText());
+			RoleDef oppend=currentViewable.findOpposideRole(n.getText());
 			// check if only one link object
 			if(oppend.getCardinality().getMaximum()>1){
 				// rolename leads to multiple objects

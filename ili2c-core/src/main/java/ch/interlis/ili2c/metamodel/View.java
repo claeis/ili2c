@@ -190,4 +190,19 @@ public abstract class View extends Viewable<AbstractLeafElement>
   public boolean isTransient(){
 	  return propTransient;
   }
+  @Override
+  public RoleDef findOpposideRole(Container context,String roleName) {
+      return findOpposideRole(roleName);
+  }
+  @Override
+  public RoleDef findOpposideRole(String roleName)
+  {
+      return null;
+  }
+  @Override
+  public RoleDef findRole(String roleName)
+  {
+      return null;
+  }
+  
 }

@@ -159,6 +159,10 @@ public class AssociationDef extends AbstractClassDef<Element>
 		List<RoleDef> ret=new ArrayList<RoleDef>(roles);
 		return ret;
 	}
+	  @Override
+	  public RoleDef findRole(String roleName) {
+	      return (RoleDef)getRealElement(RoleDef.class,roleName);
+	  }
 
   /** Returns a string that consists of either <code>CLASS</code>
       or <code>STRUCTURE</code> followed by a space and the fully

@@ -172,4 +172,15 @@ public class Projection extends UnextendableView
 
     return selected.getAliasing ();
   }
+  @Override
+  public RoleDef findOpposideRole(String roleName)
+  {
+      return getSelected().getAliasing().findOpposideRole(roleName);
+  }
+  @Override
+  public RoleDef findRole(String roleName)
+  {
+      return getSelected().getAliasing().findRole(roleName);
+  }
+  
 }

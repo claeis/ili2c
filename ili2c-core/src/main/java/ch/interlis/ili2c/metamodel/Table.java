@@ -596,5 +596,9 @@ public class Table extends AbstractClassDef<AbstractLeafElement>
 	        errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_mismatchStructure",getScopedName(),baseElement.getScopedName())));
 	    }
 	}
+	  @Override
+	  public RoleDef findRole(String roleName) {
+	      return null;
+	  }
 
 }

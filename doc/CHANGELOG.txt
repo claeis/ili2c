@@ -3,6 +3,7 @@ LATEST
 - fix validation of EXTENDED ViewDef
 - fix validation of datatype compatibility in constraints of ViewDef
 - fix validation of ViewDef translation (#41)
+- enable role-access in VIEW with ALL OF (#6)
 
 ili2c 5.1.5 (2020-12-28)
 ---------------------------
