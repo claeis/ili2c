@@ -33,7 +33,7 @@ Fehler wird aber in der Regel schon früher ausgegeben.::
   ...
   Error: ASSOCIATION should end with "END"
   ...
-  Error: compiler run failed
+  Error: ...compiler run failed
 
 Laufzeitanforderungen
 ---------------------
