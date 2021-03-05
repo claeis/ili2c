@@ -1,5 +1,6 @@
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
 
 public class AggregationView extends UnextendableView
 {
@@ -45,5 +46,34 @@ public class AggregationView extends UnextendableView
 
       }
       return aggregates;
+    }
+    @Override
+    public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+      throws java.lang.IllegalStateException
+    {
+        super.checkTranslationOf(errs,name,baseName);
+        AggregationView baseElement=(AggregationView)getTranslationOf();
+        if(baseElement==null) {
+            return;
+        }
+        
+        Ili2cSemanticException err=null;
+        err=checkElementRef(getBase().getAliasing(),baseElement.getBase().getAliasing(),getSourceLine(),"err_diff_baseViewMismatch");
+        if(err!=null) {
+            errs.add(err);
+        }
+        ObjectPath[] elev=getEqual().getAttributes();
+        ObjectPath[] otherElev=baseElement.getEqual().getAttributes();
+        if(elev.length!=otherElev.length) {
+            err=new Ili2cSemanticException(getSourceLine(), Element.formatMessage("err_diff_attributeListMismatch"));
+            errs.add(err);
+        }else {
+            for(int ri=0;ri<elev.length;ri++) {
+                err=Evaluable.checkTranslation(elev[ri], otherElev[ri], getSourceLine(), "err_diff_attributeListMismatch");
+                if(err!=null) {
+                    errs.add(err);
+                }
+            }
+        }
     }
 }

@@ -1,0 +1,47 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC TopicA1 =
+	
+		STRUCTURE StructA0 =
+		END StructA0;
+		
+		CLASS ClassA0 =
+		  a0 : LIST OF StructA0;
+		  a1 : LIST OF StructA0;
+		END ClassA0;
+		
+	
+		VIEW ViewA0
+			INSPECTION OF A0~ClassA0 -> a0;
+			=
+		END ViewA0;
+
+	END TopicA1;
+		
+END ModelA.
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+
+	TOPIC TopicB1 =
+	
+		STRUCTURE StructB0 =
+		END StructB0;
+		
+		CLASS ClassB0 =
+		  b0 : LIST OF StructB0;
+		  b1 : LIST OF StructB0;
+		END ClassB0;
+		
+	
+		VIEW ViewB0
+			INSPECTION OF B0~ClassB0 -> b1;
+			=
+		END ViewB0;
+
+	END TopicB1;
+
+END ModelB.

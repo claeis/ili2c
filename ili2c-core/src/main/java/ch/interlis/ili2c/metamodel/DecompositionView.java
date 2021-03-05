@@ -10,7 +10,7 @@
 
 package ch.interlis.ili2c.metamodel;
 
-
+import java.util.List;
 
 /** A special type of View that is based on decomposing a composition attribute
     of another Viewable.
@@ -189,6 +189,31 @@ public ViewableAlias getRenamedViewable() {
 
 public void setRenamedViewable(ViewableAlias renamedViewable) {
 	this.renamedViewable = renamedViewable;
+}
+@Override
+public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+  throws java.lang.IllegalStateException
+{
+    super.checkTranslationOf(errs,name,baseName);
+    DecompositionView baseElement=(DecompositionView)getTranslationOf();
+    if(baseElement==null) {
+        return;
+    }
+    
+    Ili2cSemanticException err=null;
+    err=checkElementRef(getRenamedViewable().getAliasing(),baseElement.getRenamedViewable().getAliasing(),getSourceLine(),"err_diff_baseViewMismatch");
+    if(err!=null) {
+        errs.add(err);
+    }
+    err=Evaluable.checkTranslation(getDecomposedAttribute(), baseElement.getDecomposedAttribute(), getSourceLine(), "err_diff_objectPathMismatch");
+    if(err==null) {
+        if(isAreaDecomposition()!=baseElement.isAreaDecomposition()) {
+            err=new Ili2cSemanticException(getSourceLine(), Element.formatMessage("err_diff_objectPathMismatch"));
+        }
+    }
+    if(err!=null) {
+        errs.add(err);
+    }
 }
 
 }

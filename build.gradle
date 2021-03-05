@@ -24,7 +24,7 @@ allprojects {
 	}
 }
 
-version '5.1.5'+System.getProperty('release','-SNAPSHOT')
+version '5.2.0'+System.getProperty('release','-SNAPSHOT')
 
 configurations {
 	scpAntTask
@@ -61,6 +61,8 @@ ext {
 	repos_host = System.getProperty('repos_host',properties.get('repos_host','ftp.interlis.ch'))
 	repos_dir = System.getProperty('repos_dir',properties.get('repos_dir',''))
 	repos_url = 'scp://'+repos_host+'/'+repos_dir
+	python= System.getProperty('python',properties.get('python','python'))
+	rst2html= System.getProperty('rst2html',properties.get('rst2html','rst2html'))
 }
 
 sourceSets {
@@ -72,6 +74,21 @@ sourceSets {
             srcDirs = ['test/data']
         }
     }
+}
+
+task usrdoc(type:Exec) {
+	group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = 'Builds the user documentation (html)'
+	def infile=new File(project.projectDir,'doc/ili2c.rst')
+	def outfile=new File('docs/ili2c.html')
+	inputs.file infile
+	outputs.file outfile
+	doFirst{
+		new File(project.buildDir,'docs').mkdir()
+	}
+		workingDir = project.buildDir
+		executable python
+		args = [rst2html, infile, outfile]
 }
 
 task fatjar(type: Jar) {

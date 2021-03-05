@@ -19,6 +19,8 @@ package ch.interlis.ili2c.gui;
 
 import java.util.*;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import javax.swing.*;
 
 import java.awt.*;
@@ -109,15 +111,9 @@ public class Main {
 	  }catch(Throwable e){
 		  EhiLogger.logError(e);
 	  }
-      Date today;
-      String dateOut;
-      DateFormat dateFormatter;
-
-      dateFormatter = DateFormat.getDateTimeInstance(DateFormat.SHORT,
-                             DateFormat.SHORT,
-                             Locale.getDefault());
-      today = new Date();
-      dateOut = dateFormatter.format(today);
+      DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      Date today = new Date();
+      String dateOut = dateFormatter.format(today);
       String failed= td==null ? "failed":"done";
       errOutput.append("--- compiler run "+failed+" "+dateOut+"\n");
   }

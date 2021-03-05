@@ -43,7 +43,7 @@ import ch.interlis.ili2c.metamodel.ComposedUnit;
 
 public class Interlis2GeneratorTest {
 
-	private static final String ILI_FILE = "test\\data\\interlis2generator\\EnumOk_de.ili";
+	private static final String ILI_FILE = "test/data/interlis2generator/EnumOk_de.ili";
 	private static final String NLSXML_FILE = ILI_FILE + ".xml";
 	private static final String OUTPUT_ILI_FILE = "out.ili";
 

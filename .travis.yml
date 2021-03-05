@@ -16,8 +16,8 @@ branches:
 install: true
 
 script: 
-  - if [ $TRAVIS_BRANCH == "stable-core" ]; then gradle :ili2c-core:jar ; fi 
-  - if [ $TRAVIS_BRANCH != "stable-core" ]; then gradle jar ; fi
+  - if [ $TRAVIS_BRANCH == "stable-core" ]; then gradle :ili2c-core:jar :ili2c-core:test ; fi 
+  - if [ $TRAVIS_BRANCH != "stable-core" ]; then gradle jar test ; fi
   
 deploy:
   - provider: script

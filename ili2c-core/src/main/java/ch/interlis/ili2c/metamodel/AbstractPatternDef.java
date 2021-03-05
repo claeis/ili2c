@@ -149,8 +149,23 @@ public abstract class AbstractPatternDef<E extends Element> extends ExtendableCo
         //if (o instanceof ConstraintsDef)
 
 
+        if (e instanceof ExtendedView)
+        {
+            ExtendedView toInsert = (ExtendedView) e;
+            Element conflicting = getElement ( e.getName());
+            if ((conflicting != null) && (conflicting != e)
+              && !toInsert.isExtended() && !toInsert.isExtending(conflicting)) {
+                throw new Ili2cSemanticException (formatMessage (
+                        "err_view_nonunique",
+                        e.getName(),
+                        AbstractPatternDef.this.toString()));
+                  }
+                    return true;
+            
+        }
         if (e instanceof View)
         {
+            
           Element conflicting = getElement ( e.getName());
           if ((conflicting != null) && (conflicting != e)) {
             throw new Ili2cSemanticException (formatMessage (

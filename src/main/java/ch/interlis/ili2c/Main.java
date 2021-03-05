@@ -8,10 +8,14 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.view.GenericFileFilter;
@@ -482,9 +486,14 @@ public class Main {
 			} else {
 				// compile models
 				TransferDescription td = runCompiler(config, settings,ili2cMetaAttrs);
+                DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date today = new Date();
+                String dateOut = dateFormatter.format(today);
 				if (td == null) {
-					EhiLogger.logError("compiler failed");
+					EhiLogger.logError("...compiler run failed "+dateOut);
 					System.exit(1);
+				}else {
+                    EhiLogger.logState("...compiler run done "+dateOut);
 				}
 			}
 	} catch (Exception ex) {

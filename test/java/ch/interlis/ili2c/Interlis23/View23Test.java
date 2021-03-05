@@ -381,4 +381,19 @@ public class View23Test {
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}
+    @Test
+    public void view_ObjectPathWithRolename() {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"view_ObjectPathWithRolename.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+        }
+        assertNotNull(td);
+        assertEquals(0,errs.getErrs().size());
+    }
 }

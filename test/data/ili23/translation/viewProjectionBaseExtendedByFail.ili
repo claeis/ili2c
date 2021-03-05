@@ -1,0 +1,61 @@
+INTERLIS 2.3;
+
+MODEL ModelA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC TopicA1 =
+	
+		CLASS ClassA0 =
+		  a0 : 1 .. 10;
+		  a1 : 1 .. 10;
+		END ClassA0;
+	
+		VIEW ViewA0  
+			PROJECTION OF A0~ClassA0;
+			=
+		END ViewA0;
+		
+		CLASS ClassA1 EXTENDS ClassA0 =
+		END ClassA1;
+
+		CLASS ClassA2 EXTENDS ClassA0 =
+		END ClassA2;
+		
+		VIEW ViewA1 EXTENDS ViewA0
+			BASE A0 EXTENDED BY A0p~ClassA1
+			=
+		END ViewA1;
+
+	END TopicA1;
+
+END ModelA.
+
+MODEL ModelB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF ModelA [ "1"]
+=
+
+	TOPIC TopicB1 =
+	
+		CLASS ClassB0 =
+		  b0 : 1 .. 10;
+		  b1 : 1 .. 10;
+		END ClassB0;
+	
+		VIEW ViewB0 
+			PROJECTION OF B0~ClassB0;
+			=
+		END ViewB0;
+		
+		CLASS ClassB1 EXTENDS ClassB0 =
+		END ClassB1;
+
+		CLASS ClassB2 EXTENDS ClassB0 =
+		END ClassB2;
+		
+		VIEW ViewB1 EXTENDS ViewB0
+			BASE B0 EXTENDED BY B0p~ClassB2
+			=
+		END ViewB1;
+
+	END TopicB1;
+
+END ModelB.

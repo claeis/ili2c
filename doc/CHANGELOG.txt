@@ -1,6 +1,14 @@
 LATEST
 ---------------------------
 
+ili2c 5.2.0 (2021-03-05)
+---------------------------
+- fix validation of EXTENDED ViewDef
+- fix validation of datatype compatibility in constraints of ViewDef
+- fix validation of ViewDef translation (#41)
+- enable role-access in VIEW with ALL OF (#6)
+- add success message at end of cmdline run
+
 ili2c 5.1.5 (2020-12-28)
 ---------------------------
 - fix validation of FunctionDef translation (#41)

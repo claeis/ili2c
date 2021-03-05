@@ -162,6 +162,9 @@ public abstract class Viewable<E extends Element> extends ExtendableContainer<E>
                 + "." + getName();
         }
   }
+  public abstract RoleDef findOpposideRole(Container context,String roleName);
+  public abstract RoleDef findOpposideRole(String roleName);
+  public abstract RoleDef findRole(String roleName);
 
   public Iterator<LocalAttribute> getDefinedAttributes()
   {

@@ -10,7 +10,7 @@
 
 package ch.interlis.ili2c.metamodel;
 
-
+import java.util.List;
 
 /** A view that is based on unioning a number of Viewables.
 
@@ -98,4 +98,29 @@ public class UnionView extends UnextendableView
   {
     super.setAbstract (abst);
   }
+  @Override
+  public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+    throws java.lang.IllegalStateException
+  {
+      super.checkTranslationOf(errs,name,baseName);
+      UnionView baseElement=(UnionView)getTranslationOf();
+      if(baseElement==null) {
+          return;
+      }
+      
+      Ili2cSemanticException err=null;
+      ViewableAlias[] uv = getUnited();
+      ViewableAlias[] baseUv = baseElement.getUnited();
+      if(uv.length!=baseUv.length) {
+          errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_baseViewMismatch")));
+      }else {
+          for(int i=0;i<uv.length;i++) {
+              err=checkElementRef(uv[i].getAliasing(),baseUv[i].getAliasing(),getSourceLine(),"err_diff_baseViewMismatch");
+              if(err!=null) {
+                  errs.add(err);
+              }
+          }
+      }
+  }
+  
 }

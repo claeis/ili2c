@@ -5039,11 +5039,11 @@ protected pathEl[Viewable currentViewable,Container context]
 		AttributeDef refattr=null;
 		refattr=findAttribute(currentViewable,n.getText());
 		RoleDef oppend=null;
-		if(currentViewable instanceof AbstractClassDef){
+		if(currentViewable instanceof Viewable){
 			if(context!=null){
-				oppend=((AbstractClassDef)currentViewable).findOpposideRole(context,n.getText());
+				oppend=currentViewable.findOpposideRole(context,n.getText());
 			}else{
-				oppend=((AbstractClassDef)currentViewable).findOpposideRole(n.getText());
+				oppend=currentViewable.findOpposideRole(n.getText());
 			}
 		}
 		if(refattr!=null && refattr.getDomainResolvingAliases() instanceof ReferenceType){
@@ -5052,10 +5052,10 @@ protected pathEl[Viewable currentViewable,Container context]
 		}else if(refattr!=null && refattr.getDomainResolvingAliases() instanceof ObjectType){
 			ObjectType ref=(ObjectType)refattr.getDomainResolvingAliases();
 			el=new PathElBase(currentViewable,n.getText(),ref.getRef());
-		}else if(currentViewable instanceof AssociationDef && currentViewable.getRealElement(RoleDef.class,n.getText())!=null){
+		}else if(currentViewable.findRole(n.getText())!=null){
 			// currentView is an Association? -> role name
-			el=new PathElAssocRole((RoleDef)currentViewable.getRealElement(RoleDef.class,n.getText()));
-		}else if(currentViewable instanceof AbstractClassDef && oppend!=null){
+			el=new PathElAssocRole(currentViewable.findRole(n.getText()));
+		}else if(oppend!=null){
 			// currentView is an AbstractClassDef -> role name
 			el=new PathElAbstractClassRole(oppend);
 		}else{

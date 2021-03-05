@@ -222,6 +222,7 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
    * Will also check associations that are only visible from the given context.
    * @returns Null or found RoleDef.
    */
+  @Override
   public RoleDef findOpposideRole(Container context,String roleName){
 	  RoleDef ret=findOpposideRole(roleName);
 	  if(ret!=null){
@@ -259,6 +260,7 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
   /** find the opposide role with the given Name.
    * @returns Null or found RoleDef.
    */
+  @Override
   public RoleDef findOpposideRole(String roleName){
 	    if (roleName == null) {
             return null;
@@ -275,6 +277,7 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
 	    }
       return null;
   }
+  
   /** get the list of associations that have no link object,
    *  but are embedded into this. Doesn't return inherited ones.
    * @returns list<RoleDef>

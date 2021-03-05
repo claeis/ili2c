@@ -30,7 +30,7 @@ import ch.interlis.ili2c.metamodel.TypeAlias;
 public class Interlis2GeneratorTransformationTest {
 
 	private static final String NEW_MODEL_NAME = "LineType_200";
-	private static final String ILI_FILE = "test\\data\\interlis2generator\\TrafoParam.ili";
+	private static final String ILI_FILE = "test/data/interlis2generator/TrafoParam.ili";
 	private static final String OUTPUT_ILI_FILE = "out.ili";
 
 	@Test

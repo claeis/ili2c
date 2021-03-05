@@ -2,6 +2,7 @@ package ch.interlis.ili2c.metamodel;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 
 /** a type used to describe an 'OBJECT OF ..' function argument
@@ -66,7 +67,19 @@ public class ObjectType extends Type
 	public void setAllOf(boolean allOf) {
 		this.allOf = allOf;
 	}
+	  @Override
+	  protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
+	  {
+	      super.checkTranslationOf(errs,name,baseName);
+	      ObjectType   baseElement=(ObjectType)getTranslationOf();
 
+	      if (baseElement == null){
+	          return;
+	      }
+	      if(!equalElementRef(ref,baseElement.ref)) {
+	          throw new Ili2cSemanticException();
+	      }
+	  }
 }
 
 
