@@ -1,5 +1,6 @@
 LATEST
 ---------------------------
+- enable spaces in paths of ilimodels.xml entries
 
 ili2c 5.2.0 (2021-03-05)
 ---------------------------

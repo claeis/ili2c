@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -1258,25 +1259,25 @@ public class RepositoryAccess {
 	/** Gets access to a file.
 	 * If the file is in a remote repository, it will be downloaded to the cache and path to the version in the cache is returned.
 	 * If the file is already in the cache, the repository will be checked for never version depending on age of cached file and md5 digest.
-	 * @param uri remote or local repository
+	 * @param uriStr remote or local repository
 	 * @param filename file/path to download from repository. If null, uri includes the file name.
 	 * @param maxTTL max age of file in cache before downloading it again.
 	 * @param md5 digest of remote file or null. If cached version has a different digest, download remote file again.
 	 * @return local file or null if it doesn't exist in remote repository
 	 * @throws RepositoryAccessException
 	 */
-	public File getLocalFileLocation(String uri,String filename,long maxTTL,String md5)
+	public File getLocalFileLocation(String uriStr,String filename,long maxTTL,String md5)
 	throws RepositoryAccessException
 {
-	if(uri==null){
+	if(uriStr==null){
 		if(filename!=null){
 			return new File(filename);
 		}
 		return null;
 	}
-	if(resolver!=null && resolver.resolvesUri(uri)){
+	if(resolver!=null && resolver.resolvesUri(uriStr)){
 		// translate uri to location in cache
-		String localFileName = escapeUri(uri);
+		String localFileName = escapeUri(uriStr);
 		File ret=new File(localCache,localFileName);
 		if(filename!=null){
 			ret=new File(ret,filename);
@@ -1302,7 +1303,7 @@ public class RepositoryAccess {
 			java.io.OutputStream fos=null;
 			try{
 				try {
-					in=new java.io.BufferedInputStream(resolver.resolveIliFile(uri,filename));
+					in=new java.io.BufferedInputStream(resolver.resolveIliFile(uriStr,filename));
 				} catch (FileNotFoundException e) {
 					return null;
 				} catch (IOException e) {
@@ -1317,7 +1318,7 @@ public class RepositoryAccess {
 				if(!dir.exists()){
 					boolean created=dir.mkdirs();
 					if(!created){
-						throw new IllegalArgumentException("failed to create folder "+uri);
+						throw new IllegalArgumentException("failed to create folder "+uriStr);
 					}
 				}
 				// save to cache
@@ -1357,7 +1358,7 @@ public class RepositoryAccess {
 		return ret;
 	}
 	// if http
-	String urilc=uri.toLowerCase();
+	String urilc=uriStr.toLowerCase();
 	boolean isHttps= urilc.startsWith("https:");
 	boolean isHttp=urilc.startsWith("http:");
 	if(isHttp || isHttps){
@@ -1366,9 +1367,9 @@ public class RepositoryAccess {
 		{
 			String urib=null;
 			if(isHttps){
-				urib=uri.substring("https:".length()); 
+				urib=uriStr.substring("https:".length()); 
 			}else{
-				urib=uri.substring("http:".length()); 
+				urib=uriStr.substring("http:".length()); 
 			}
 			localFileName=escapeUri(urib);
 		}
@@ -1395,14 +1396,15 @@ public class RepositoryAccess {
 			// fetch from http server (handle redirects)
 			java.net.URL url=null;
 			try {
-				url=new java.net.URI(uri).toURL();
+			    java.net.URI uri=new java.net.URI(uriStr);
+				url=uri.toURL();
 				if(filename!=null){
 					// incomplete url of directory?
-					if(!uri.endsWith("/")){
+					if(!uriStr.endsWith("/")){
 						// fix it
-						url=new java.net.URI(uri+"/").toURL();
+						uri=new java.net.URI(uriStr+"/");
 					}
-					url=new java.net.URL(url,filename);
+					url=makeURI(uri,filename).toURL();
 				}
 				EhiLogger.traceState("fetching <"+url+"> ...");
 			} catch (MalformedURLException e) {
@@ -1456,7 +1458,7 @@ public class RepositoryAccess {
 				if(!dir.exists()){
 					boolean created=dir.mkdirs();
 					if(!created){
-						throw new IllegalArgumentException("failed to create folder "+uri);
+						throw new IllegalArgumentException("failed to create folder "+uriStr);
 					}
 				}
 				// save to cache
@@ -1496,7 +1498,7 @@ public class RepositoryAccess {
 		return ret;
 	}
 	// uri is a local file 
-	File ret=new File(uri);
+	File ret=new File(uriStr);
 	if(filename!=null){
 		ret=new File(ret,filename);
 	}
@@ -1505,6 +1507,17 @@ public class RepositoryAccess {
 	}
 	return ret;
 }
+    public static java.net.URI makeURI(java.net.URI uri,String pathStr) throws URISyntaxException
+    {
+        if(pathStr.startsWith("/") || pathStr.startsWith("\\")) {
+            pathStr=pathStr.substring(1);
+        }
+        java.net.URI path=new java.net.URI(uri.getScheme(),uri.getHost(),"/"+pathStr,null);
+        pathStr=path.getRawPath().substring(1);
+        uri=uri.resolve(pathStr);
+        return uri;
+    }
+
     @Deprecated
 	public static ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata findModelMetadata(
     		List<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> modelMetadatav, String name,
