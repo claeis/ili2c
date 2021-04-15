@@ -31,7 +31,7 @@ public class TransferDescription extends Container<Model>
     
   protected String   name = "";
   private Map<String,Element> name2ele=null;
-
+  private RuntimeParameters actualRuntimeParameters=new RuntimeParameters();
 
   /** The models in this transfer description. */
   protected List<Model> contents = new LinkedList<Model>();
@@ -211,5 +211,16 @@ public static final String MIMETYPE_XTF = "application/interlis+xml;version=2.3"
         }
         return version;
     }
-  
+    public RuntimeParameters getActualRuntimeParameters() {
+        return actualRuntimeParameters;
+    }
+    public void setActualRuntimeParameters(RuntimeParameters actualRuntimeParameters) {
+        this.actualRuntimeParameters = actualRuntimeParameters;
+    }
+    public Object getActualRuntimeParameter(String name) {
+        return actualRuntimeParameters.getValue(name);
+    }
+    public void setActualRuntimeParameter(String name,Object value) {
+        actualRuntimeParameters.setValue(name, value);
+    }  
 }
