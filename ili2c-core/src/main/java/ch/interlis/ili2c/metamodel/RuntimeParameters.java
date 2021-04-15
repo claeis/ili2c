@@ -52,7 +52,7 @@ public class RuntimeParameters {
 	}
 	static public void initDefaultValues(RuntimeParameters src)
 	{
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-ddTHH:mm:ss.SSS");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
         Date today = new Date();
         String dateOut = dateFormatter.format(today);
 	    // z.B. "usr/data/dm01.xtf"
