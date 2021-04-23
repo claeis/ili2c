@@ -5,9 +5,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,8 +16,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
-
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.view.GenericFileFilter;
 import ch.interlis.ili2c.config.BoidEntry;
@@ -31,7 +30,6 @@ import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.Element;
 import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
 import ch.interlis.ili2c.metamodel.ObjectPath;
-import ch.interlis.ili2c.metamodel.PathEl;
 import ch.interlis.ili2c.metamodel.RuntimeParameters;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.metamodel.Viewable;
@@ -162,8 +160,8 @@ public class Main {
     TransformationParameter params = new TransformationParameter();
     
 	if (args.length == 0) {
-	    ch.interlis.ili2c.gui.Main.main(args);
-	    return;
+        runGui(args);
+        return;
 	}
 
 	if (hasArg("-u", "--usage", args)) {
@@ -501,6 +499,40 @@ public class Main {
 	    EhiLogger.logError(APP_NAME + ": An internal error has occured. Please notify " + notifyOnError, ex);
 	    System.exit(1);
 	}
+    }
+
+
+    private static void runGui(String[] args) {
+        //ch.interlis.ili2c.gui.Main.main(args);
+        Class mainFrame=null;
+        try {
+            mainFrame=Class.forName(preventOptimziation("ch.interlis.ili2c.gui.Main")); // avoid, that graalvm native-image detects a reference to MainFrame
+        } catch (ClassNotFoundException e) {
+            // ignore; report later
+        } 
+        Method mainFrameMain=null;
+        if(mainFrame!=null) {
+            try {
+                mainFrameMain = mainFrame.getMethod ("main",(new String[0]).getClass());
+            }catch(NoSuchMethodException ex) {
+                // ignore; report later
+            }
+        }
+        if(mainFrameMain!=null) {
+            try {
+                mainFrameMain.invoke(null, (Object)args);
+                return;                 
+            } catch (IllegalArgumentException ex) {
+                EhiLogger.logError("failed to open GUI",ex);
+            } catch (IllegalAccessException ex) {
+                EhiLogger.logError("failed to open GUI",ex);
+            } catch (InvocationTargetException ex) {
+                EhiLogger.logError("failed to open GUI",ex);
+            }
+        }else {
+            EhiLogger.logError(APP_NAME+": no GUI available");
+        }
+        System.exit(1);
     }
 
 
@@ -978,8 +1010,40 @@ public class Main {
 
 
     static public boolean editConfig(Configuration config) {
-	ch.interlis.ili2c.gui.Main dialog = new ch.interlis.ili2c.gui.Main();
-	return dialog.showDialog();
+	//ch.interlis.ili2c.gui.Main dialog = new ch.interlis.ili2c.gui.Main();
+	//return dialog.showDialog();
+    Class dialogClass=null;
+    try {
+        dialogClass=Class.forName(preventOptimziation("ch.interlis.ili2c.gui.Main")); // avoid, that graalvm native-image detects a reference to MainFrame
+    } catch (ClassNotFoundException e) {
+        // ignore; report later
+    } 
+    Method mainFrameShowDialog=null;
+    if(dialogClass!=null) {
+        try {
+            mainFrameShowDialog = dialogClass.getMethod("showDialog");
+        }catch(NoSuchMethodException ex) {
+            // ignore; report later
+        }
+    }
+    if(mainFrameShowDialog!=null) {
+        try {
+            Object dialog=dialogClass.newInstance();
+            Object ret=mainFrameShowDialog.invoke(dialog);
+            return (Boolean)ret;                 
+        } catch (IllegalArgumentException ex) {
+            EhiLogger.logError("failed to open GUI",ex);
+        } catch (IllegalAccessException ex) {
+            EhiLogger.logError("failed to open GUI",ex);
+        } catch (InvocationTargetException ex) {
+            EhiLogger.logError("failed to open GUI",ex);
+        } catch (InstantiationException ex) {
+            EhiLogger.logError("failed to open GUI",ex);
+        }
+    }else {
+        EhiLogger.logError(APP_NAME+": no GUI available");
+    }
+    return false;
     }
 
     @Deprecated
@@ -1055,5 +1119,10 @@ public class Main {
 	    ch.interlis.ili2c.config.FileEntry file = (ch.interlis.ili2c.config.FileEntry) filei.next();
 	    EhiLogger.logState("ilifile <" + file.getFilename() + ">");
 	}
+    }
+    private static String preventOptimziation(String val) {
+        StringBuffer buf=new StringBuffer(val.length());
+        buf.append(val);
+        return buf.toString();
     }
 }

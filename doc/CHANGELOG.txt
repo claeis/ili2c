@@ -1,6 +1,7 @@
 LATEST
 ---------------------------
 - added native-image config
+- Separate GUI (Swing) classes from Main class (#52)
 
 ili2c 5.2.1 (2021-04-23)
 ---------------------------
