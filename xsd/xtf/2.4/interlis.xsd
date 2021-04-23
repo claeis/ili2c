@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns="http://www.interlis.ch/xtf/2.4/INTERLIS"
   targetNamespace="http://www.interlis.ch/xtf/2.4/INTERLIS"
   xmlns:geom="http://www.interlis.ch/geometry/1.0" elementFormDefault="qualified"
-  attributeFormDefault="unqualified" version="2018-09-15">
+  attributeFormDefault="unqualified" version="2021-04-21">
   <xsd:import namespace="http://www.interlis.ch/geometry/1.0"/>
 
   <xsd:element name="extensions">
@@ -53,6 +53,7 @@
       <xsd:enumeration value="INITIAL"/>
     </xsd:restriction>
   </xsd:simpleType>
+
   <xsd:simpleType name="operationType">
     <xsd:restriction base="xsd:token">
       <xsd:enumeration value="INSERT"/>
@@ -67,7 +68,7 @@
   <xsd:element name="transfer" type="TransferType"/>
   <xsd:complexType name="TransferType">
     <xsd:sequence>
-      <xsd:element name="headersection" minOccurs="0">
+      <xsd:element name="headersection">
         <xsd:complexType>
           <xsd:sequence>
             <xsd:element name="models">
@@ -77,7 +78,7 @@
                 </xsd:sequence>
               </xsd:complexType>
             </xsd:element>
-            <xsd:element name="sender" type="xsd:normalizedString" minOccurs="0"/>
+            <xsd:element name="sender" type="xsd:string" minOccurs="0"/>
             <xsd:element name="comment" type="xsd:string" minOccurs="0"/>
             <xsd:element ref="extensions" minOccurs="0"/>
           </xsd:sequence>
@@ -129,7 +130,6 @@
       <xsd:pattern value="[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}"/>
     </xsd:restriction>
   </xsd:simpleType>
-
 
   <xsd:element name="METAOBJECT" type="METAOBJECTType"/>
   <xsd:complexType name="METAOBJECTType">
@@ -303,8 +303,7 @@
     </xsd:sequence>
     <xsd:anyAttribute processContents="lax"/>
   </xsd:complexType>
-  <xsd:element name="GregorianDateTime" type="GregorianDateTimeType"
-    substitutionGroup="GregorianDate"/>
+  <xsd:element name="GregorianDateTime" type="GregorianDateTimeType" substitutionGroup="GregorianDate"/>
   <xsd:complexType name="GregorianDateTimeType">
     <xsd:complexContent>
       <xsd:extension base="GregorianDateType">
@@ -350,13 +349,6 @@
     <xsd:sequence>
       <xsd:element ref="extensions" minOccurs="0"/>
       <xsd:element name="Geometry" minOccurs="0" type="geom:PolylineType"/>
-      <xsd:element name="LineAttrs">
-        <xsd:complexType>
-          <xsd:sequence>
-            <xsd:any minOccurs="1" maxOccurs="1"/>
-          </xsd:sequence>
-        </xsd:complexType>
-      </xsd:element>
     </xsd:sequence>
     <xsd:anyAttribute processContents="lax"/>
   </xsd:complexType>
@@ -384,3 +376,4 @@
   </xsd:complexType>
 
 </xsd:schema>
+

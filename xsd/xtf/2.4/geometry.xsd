@@ -1,11 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.interlis.ch/geometry/1.0"
   targetNamespace="http://www.interlis.ch/geometry/1.0" elementFormDefault="qualified"
   attributeFormDefault="unqualified" version="2014-08-15">
-
-  <!-- DRAFT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-  <!-- DRAFT !!! may change without xmlns change !!! -->
-  <!-- DRAFT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 
   <xsd:element name="extensions">
     <xsd:annotation>
@@ -93,13 +89,6 @@
     <xsd:complexContent>
       <xsd:extension base="GeometryType">
         <xsd:sequence>
-          <xsd:element name="lineattr" minOccurs="0">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:any minOccurs="1" maxOccurs="unbounded" processContents="lax"/>
-              </xsd:sequence>
-            </xsd:complexType>
-          </xsd:element>
           <xsd:element ref="coord" minOccurs="1" maxOccurs="1"/>
           <xsd:choice minOccurs="1" maxOccurs="unbounded">
             <xsd:element ref="coord" minOccurs="1" maxOccurs="1"/>
@@ -144,3 +133,4 @@
   </xsd:complexType>
 
 </xsd:schema>
+
