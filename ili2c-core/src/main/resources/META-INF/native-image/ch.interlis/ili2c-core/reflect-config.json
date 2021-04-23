@@ -1,0 +1,10 @@
+[
+{
+  "name":"antlr.CommonHiddenStreamToken",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
+  "name":"antlr.CommonToken",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+}
+]

@@ -1,0 +1,11 @@
+{
+ "resources":[
+	{"pattern":"\\QIliRepository.xsd\\E"}
+ ],	
+  "bundles":[
+    {"name":"ch.interlis.ili2c.Version"}, 
+    {"name":"ch.interlis.ili2c.generator.Interlis1Generator"}, 
+    {"name":"ch.interlis.ili2c.gui.Ili2cTexts"}, 
+    {"name":"ch.interlis.ili2c.metamodel.ErrorMessages"}
+  ]
+}
