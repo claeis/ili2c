@@ -34,6 +34,13 @@ CONTRACTED MODEL ModelA AT "mailto:ceis@localhost" VERSION "2016-03-29" =
        ALL OF ClassL;
        MANDATORY CONSTRAINT roleK_n21->attrK<>"a";
     END View_n21;
+
+  	VIEW View_class_n2n
+   	PROJECTION OF ClassK;
+    	=
+       ALL OF ClassK;
+       MANDATORY CONSTRAINT INTERLIS.objectCount(roleL_n2n)>0;
+    END View_class_n2n;
     
 	END Topic;
 END ModelA.

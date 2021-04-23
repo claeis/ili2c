@@ -1,6 +1,12 @@
 LATEST
 ---------------------------
 
+ili2c 5.2.1 (2021-04-23)
+---------------------------
+- enable spaces in paths of ilimodels.xml entries
+- add runtime support of RunTimeParameterDef / MODEL MinimalRuntimeSystem01 (ilivalidator#221)
+- fix type check of RuntimeParameterDef application
+
 ili2c 5.2.0 (2021-03-05)
 ---------------------------
 - fix validation of EXTENDED ViewDef

@@ -32,6 +32,7 @@ import ch.interlis.ili2c.metamodel.Element;
 import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
 import ch.interlis.ili2c.metamodel.ObjectPath;
 import ch.interlis.ili2c.metamodel.PathEl;
+import ch.interlis.ili2c.metamodel.RuntimeParameters;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.metamodel.Viewable;
 import ch.interlis.ili2c.parser.Ili1Parser;
@@ -668,6 +669,7 @@ public class Main {
 	    }
 	}
 	TransferDescription desc = new TransferDescription();
+	RuntimeParameters.initDefaultValues(desc.getActualRuntimeParameters());
 	boolean emitPredefined = config.isIncPredefModel();
 	boolean checkMetaObjs = config.isCheckMetaObjs();
 	CompilerLogEvent.enableWarnings(config.isGenerateWarnings());
