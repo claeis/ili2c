@@ -1184,7 +1184,7 @@ private void setup(
   
   public void printConstraint(Constraint elt,boolean suppressDoc,String language)
   {
-	  if(suppressDoc){
+	  if(!suppressDoc){
 			printDocumentation(elt.getDocumentation());
 			printMetaValues(elt.getMetaValues(), language, elt.getScopedName());
 	  }
@@ -3315,16 +3315,6 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
       {
         if (withPredefined || !(elt instanceof PredefinedModel))
         {
-          /* Stefan Keller <Stefan.Keller@lt.admin.ch> always wants
-             an empty line before models -- 1999-10-06/Sascha Brawer
-
-
-           if (lastClass != null)
-            ipw.println();
-
-
-          */
-          //ipw.println ();
           printModel((Model) elt, language);
           lastClass = Model.class;
         }
