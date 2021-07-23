@@ -1997,7 +1997,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 			for (Iterator valuei = values.getValues().iterator(); valuei.hasNext();) {
 				String name = (String) valuei.next();
 				String value = "";
-				if (name.equals("CRS")) {
+				if (params!=null && name.equals("CRS")) {
 					value  = String.valueOf(params.getEpsgCode());
 				} else {
 					value = values.getValue(name);
@@ -2082,7 +2082,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 
     // LANGUAGE
 	if (language == null) {
-		if (params.getNewModelName() != null) {
+		if (params!=null && params.getNewModelName() != null) {
 			ipw.print("MODEL " + params.getNewModelName());
 		} else {
 			ipw.print("MODEL " + mdef.getName());
@@ -2182,7 +2182,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     ipw.println ();
     ipw.print ("END ");
     if (language == null) {
-		if (params.getNewModelName() != null) {
+		if (params!=null && params.getNewModelName() != null) {
 			ipw.print(params.getNewModelName());
 		} else {
 			ipw.print(mdef.getName());
