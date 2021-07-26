@@ -254,11 +254,10 @@ private void setup(
 	
     Topic extending = (Topic) topic.getExtending();
 
+    printDocumentation(topic,language);
     printMetaValues(topic.getMetaValues(), language, topic.getScopedName());
-
     ipw.print("TOPIC ");
 	if (language == null) {
-		printDocumentation(topic.getDocumentation());
 		ipw.print(topic.getName());
 	} else {
 	    String name = getNameInLanguage(topic, language);
@@ -267,13 +266,6 @@ private void setup(
 	    } else {
 	        ipw.print(name);
 	    }
-	    
-		String documentation = getDocumentationInLanguage(topic, language);
-		if (documentation == "") {
-		    printDocumentation(topic.getDocumentation());
-		} else {
-		    printDocumentation(documentation);
-		}
 	}
     printModifiers(topic.isAbstract(), topic.isFinal(),
       /* EXTENDED */false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
@@ -421,16 +413,7 @@ private void setup(
 
   protected void printAbstractClassDef (AbstractClassDef def, String language)
   {
-	if (language == null) {
-		printDocumentation(def.getDocumentation());
-	} else {
-	    String documentation = getDocumentationInLanguage(def, language);
-	    if (documentation == "" || documentation == null) { 
-	        printDocumentation(def.getDocumentation());
-	    } else {
-	        printDocumentation(documentation);
-	    }
-	}
+    printDocumentation(def,language);
 	printMetaValues(def.getMetaValues(), language, def.getScopedName());
 
 	String keyword;
@@ -615,17 +598,8 @@ private void setup(
   public void printView (View view,boolean suppressDoc, String language)
   {
 	  if(!suppressDoc){
-	      if (language == null) {
-	          printDocumentation(view.getDocumentation());  
-	      } else {
-	          String docu = getDocumentationInLanguage(view, language);
-	          if (docu == null || docu == "") {
-	              printDocumentation(view.getDocumentation());
-	          } else {
-	              printDocumentation(docu);
-	          }
-	      }
-			printMetaValues(view.getMetaValues(), language, view.getScopedName());
+	      printDocumentation(view,language);
+	      printMetaValues(view.getMetaValues(), language, view.getScopedName());
 	  }
 	  printStart("VIEW", view, /* basedOn */ null, language);
     ipw.println ("");
@@ -719,7 +693,7 @@ private void setup(
       return;
 
     if(!suppressDoc){
-    	printDocumentation(graph.getDocumentation());
+        printDocumentation(graph,language);
     	printMetaValues(graph.getMetaValues(), language, graph.getScopedName());
     }
    printStart ("GRAPHIC", graph, /* basedOn */ graph.getBasedOn(),language);
@@ -1185,7 +1159,7 @@ private void setup(
   public void printConstraint(Constraint elt,boolean suppressDoc,String language)
   {
 	  if(!suppressDoc){
-			printDocumentation(elt.getDocumentation());
+	      printDocumentation(elt,language);
 			printMetaValues(elt.getMetaValues(), language, elt.getScopedName());
 	  }
       Container container=elt.getContainer();
@@ -1240,17 +1214,8 @@ private void setup(
   public void printGraphicParameterDef(GraphicParameterDef gfxp,boolean suppressDoc,String language)
   {
 	  if(!suppressDoc){
-	      if (language == null) {
-	          printDocumentation(gfxp.getDocumentation());
-	      } else {
-	          String docu = getDocumentationInLanguage(gfxp, language);
-	          if (docu == null || docu == "") {
-	              printDocumentation(gfxp.getDocumentation());
-	          } else {
-	              printDocumentation(docu);
-	          }
-	      }
-			printMetaValues(gfxp.getMetaValues(), language, gfxp.getScopedName());
+	      printDocumentation(gfxp,language);
+	      printMetaValues(gfxp.getMetaValues(), language, gfxp.getScopedName());
 	  }
 	String scopedNamePrefix = gfxp.getScopedName();
 	if (language == null) {
@@ -1281,16 +1246,7 @@ private void setup(
   public void printMetaDataUseDef(MetaDataUseDef mu,boolean suppressDoc,String language)
   {
 	  if(!suppressDoc){
-	      if (language == null) {
-	          printDocumentation(mu.getDocumentation());  
-	      } else {
-	          String docu = getDocumentationInLanguage(mu, language);
-	          if (docu == null || docu == "") {
-	              printDocumentation(mu.getDocumentation());
-	          } else {
-	              printDocumentation(docu);
-	          }
-	      }
+	      printDocumentation(mu,language);
 			printMetaValues(mu.getMetaValues(), language, mu.getScopedName());
 	  }
     if(mu.isSignData()){
@@ -1428,16 +1384,7 @@ private void setup(
     Unit extending = (Unit)u.getExtending();
 
     if(!suppressDoc){
-		if (language == null) {
-			printDocumentation(u.getDocumentation());
-		} else {
-		    String docu = getDocumentationInLanguage(u, language);
-		    if (docu == null || docu == "") {
-		        printDocumentation(u.getDocumentation());
-		    } else {
-		        printDocumentation(docu);
-		    }
-		}
+        printDocumentation(u,language);
     	printMetaValues(u.getMetaValues(), language, u.getScopedName());
     }
     ipw.print(u.getDocName());
@@ -1633,18 +1580,8 @@ private void setup(
 
 
     if(!suppressDoc){
-    	if (language == null) {
-        	printDocumentation(par.getDocumentation());
-        	printMetaValues(par.getMetaValues(), language, par.getScopedName());
-    	} else {
-    	    String docu = getDocumentationInLanguage(scope, language);
-    	    if (docu == "" || docu == null) {
-    	        printDocumentation(par.getDocumentation());
-    	    } else {
-    	        printDocumentation(docu);
-    	    }
-    		printMetaValues(par.getMetaValues(), language, par.getScopedName());
-    	}
+        printDocumentation(par,language);
+    	printMetaValues(par.getMetaValues(), language, par.getScopedName());
     }
     if (language == null) {
     	ipw.print(par.getName());
@@ -1707,18 +1644,11 @@ private void setup(
 								RoleDef role, String language)
   {
 
+      printDocumentation(role,language);
+      printMetaValues(role.getMetaValues(), language, role.getScopedName());
 	if (language == null) {
-		printDocumentation(role.getDocumentation());
-	    printMetaValues(role.getMetaValues(), language, role.getScopedName());
 		ipw.print(role.getName());
 	} else {
-	    String docu = getDocumentationInLanguage(scope, language);
-	    if (docu == null || docu == "") {
-	        printDocumentation(role.getDocumentation());
-	    } else {
-	        printDocumentation(docu);
-	    }
-		printMetaValues(role.getMetaValues(), language, role.getScopedName());
 		String name = getNameInLanguage(role, language);
 		if (name == null || name == "") {
 		    ipw.print(role.getName());
@@ -1795,16 +1725,7 @@ private void setup(
 		}
 		return;
 	}
-	if (language == null) {
-		printDocumentation(attrib.getDocumentation());
-	} else {
-		String value = getDocumentationInLanguage(attrib, language);
-		if (value == "" || value == null) {
-		    printDocumentation(attrib.getDocumentation());
-		} else {
-		    printDocumentation(value);
-		}
-	}
+    printDocumentation(attrib,language);
 	printMetaValues(attrib.getMetaValues(), language, attrib.getScopedName());
 
 	if(attrib instanceof LocalAttribute){
@@ -1875,16 +1796,10 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
   {
     SignAttribute extending = (SignAttribute)attrib.getExtending();
 
+    printDocumentation(attrib,language);
     if (language == null) {
-        printDocumentation(attrib.getDocumentation());
         ipw.print(attrib.getName());        
     } else {
-        String docu = getDocumentationInLanguage(attrib, language);
-        if (docu == null || docu == "") {
-            printDocumentation(attrib.getDocumentation());
-        } else {
-            printDocumentation(docu);
-        }
         String name = getNameInLanguage(attrib, language);
         if (name == null || name == "") {
             ipw.print(attrib.getName()); 
@@ -2034,6 +1949,19 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 			}
 		}
   }
+  public void printDocumentation(Element def,String language)
+  {
+      if (language == null) {
+          printDocumentation(def.getDocumentation());
+      } else {
+          String documentation = getDocumentationInLanguage(def, language);
+          if (documentation == "" || documentation == null) { 
+              printDocumentation(def.getDocumentation());
+          } else {
+              printDocumentation(documentation);
+          }
+      }
+  }
   public void printDocumentation(String doc)
 	{
 	if(doc==null)return;
@@ -2060,17 +1988,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 	
 	ipw.println ();
     
-	if (language == null) {
-		printDocumentation(mdef.getDocumentation());
-	} else {
-		String value = getDocumentationInLanguage(mdef, language);
-		if (value == null || value == "") {
-		    printDocumentation(mdef.getDocumentation());
-		} else {
-		    printDocumentation(value);
-		}
-	}
-	
+    printDocumentation(mdef,language);
 	printMetaValues(mdef.getMetaValues(),language,mdef.getScopedName());
 	
 	if(mdef.isContracted()){
@@ -2262,16 +2180,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     Domain extending = dd.getExtending();
     String scopedNamePrefix = dd.getScopedName();
     
-    if (language == null) {
-        printDocumentation(dd.getDocumentation());
-    } else {
-        String docu = getDocumentationInLanguage(dd, language);
-        if (docu == null || docu == "") {
-            printDocumentation(dd.getDocumentation());
-        } else {
-            printDocumentation(docu);
-        }
-    }
+    printDocumentation(dd,language);
 	printMetaValues(dd.getMetaValues(), language, dd.getScopedName());
 	if (language != null) {
 	    String name = getEnumerationElementNameInLanguage(scopedNamePrefix, language); 
@@ -3025,17 +2934,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
       return;
     }
 
-    if (language == null) {
-        printDocumentation(lf.getDocumentation());
-    } else {
-        String docu = getDocumentationInLanguage(lf, language);
-        if (docu == null || docu == "") {
-            printDocumentation(lf.getDocumentation());
-        } else {
-            printDocumentation(docu);
-        }
-    }
-	
+    printDocumentation(lf,language);
 	printMetaValues(lf.getMetaValues(), language, lf.getScopedName());
 	if (language == null) {
 	    ipw.print (lf.getName ());
@@ -3093,16 +2992,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
     }
 
     if(!suppressDoc){
-        if (language == null) {
-            printDocumentation(f.getDocumentation());           
-        } else {
-            String docu = getDocumentationInLanguage(f, language);
-            if (docu == null || docu == "") {
-                printDocumentation(f.getDocumentation());
-            } else {
-                printDocumentation(docu);
-            }
-        }
+        printDocumentation(f,language);
         printMetaValues(f.getMetaValues(), language, f.getScopedName()); 
     }
     
