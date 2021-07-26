@@ -290,7 +290,6 @@ private void setup(
       
     }
 
-
     ipw.println(" =");
     ipw.indent();
 	
@@ -329,7 +328,6 @@ private void setup(
           }
       }
      
-      //ipw.print(((Topic) it.next()).getScopedName(topic));
       while (it.hasNext())
       {
         ipw.print(", ");
@@ -347,10 +345,8 @@ private void setup(
                 ipw.print(concatenatedTopicName);
             }
         }
-        //ipw.print(((Topic) it.next()).getScopedName(topic));
       }
       ipw.println(';');
-      ipw.println();
     }
 
 
@@ -391,11 +387,6 @@ private void setup(
 		ipw.println("END;");
 	}
     ipw.unindent();
-
-
-    /* Stefan Keller <Stefan.Keller@lt.admin.ch> always wants an empty
-       line before END Topic -- 1999-10-06/Sascha Brawer
-    */
     ipw.println ();
     ipw.print("END ");
 	if (language == null) {
@@ -428,7 +419,6 @@ private void setup(
 	}else{
 		throw new IllegalArgumentException();
 	}
-
 
     printStart (keyword, def, /* based on */ null,language);
     ipw.println (" =");
@@ -1984,20 +1974,12 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 
   protected void printModel (Model mdef,String language)
   {
-
-	
-	ipw.println ();
-    
     printDocumentation(mdef,language);
 	printMetaValues(mdef.getMetaValues(),language,mdef.getScopedName());
 	
 	if(mdef.isContracted()){
 		ipw.print("CONTRACTED ");
 	}
-	
-    //ipw.print(mdef.toString());
-
-
     // LANGUAGE
 	if (language == null) {
 		if (params!=null && params.getNewModelName() != null) {
@@ -2016,10 +1998,10 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 
 	if (language == null) {
 		if (mdef.getLanguage() != null) {
-			ipw.print("(" + mdef.getLanguage() + ")");
+			ipw.print(" (" + mdef.getLanguage() + ")");
 		}
 	} else {
-		ipw.print("(" + language + ")");
+		ipw.print(" (" + language + ")");
 	}
 	ipw.println ();
 	ipw.indent();
@@ -2044,14 +2026,15 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 	  ipw.print (' ');
 	  printExplanation (expl);
 	}
+    ipw.println("");
 	if (translationConfig!=null) {
-        String translationText = "TRANSLATION OF " + mdef.getName() + "[\""
+        String translationText = "TRANSLATION OF " + mdef.getName() + " [\""
                 + mdef.getModelVersion() + "\"]";
         ipw.println(translationText);
 	}else {
 	    // TODO Translation
 	}
-	ipw.println(" =");
+	ipw.println("=");
 
 
     Importable[] imported = mdef.getImporting ();
@@ -2091,7 +2074,6 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 	if(modelsImported){
 	    ipw.println(';');
 	    ipw.unindent();
-	    ipw.println();
 	}
 
     printElements (mdef, language);
@@ -2113,9 +2095,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
             ipw.print(name);
         }
     }
-    
     ipw.println ('.');
-    ipw.println ();
   }
 
 	private String getDocumentationInLanguage(Element ele, String language) {
@@ -2835,6 +2815,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
     }
 
 
+    ipw.println ("");
     ipw.unindent ();
     ipw.print (')');
   }
@@ -3117,8 +3098,6 @@ private void printFormatedTypeMinMax(FormattedType ft) {
   protected void printElements (Container container,String language)
   {
     Class lastClass = null;
-
-
     if(onlyLastFile && container instanceof TransferDescription) {
         for(Model model:((TransferDescription)container).getModelsFromLastFile()) {
             lastClass = printElement(container, lastClass, model,language);
@@ -3127,9 +3106,6 @@ private void printFormatedTypeMinMax(FormattedType ft) {
         Iterator it = container.iterator();
         while (it.hasNext()) {
           ch.interlis.ili2c.metamodel.Element elt = (ch.interlis.ili2c.metamodel.Element) it.next();
-
-
-
           lastClass = printElement(container, lastClass, elt,language);
         }
         
@@ -3149,14 +3125,15 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
 	  }
       else if (elt instanceof Function)
       {
-        if ((lastClass != null) && (lastClass != Function.class))
+        if (lastClass!=null && lastClass!=Function.class) {
           ipw.println();
+        }
         printFunctionDeclaration (container, (Function) elt, language);
         lastClass = Function.class;
       }
       else if (elt instanceof Parameter)
       {
-        if (lastClass != Parameter.class)
+        if (lastClass!=null && lastClass!=Parameter.class)
         {
           ipw.println ("PARAMETER");
         }
@@ -3167,8 +3144,7 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
       {
         if (lastClass != Domain.class)
         {
-          if (lastClass != null)
-            ipw.println();
+          ipw.println();
           ipw.println("DOMAIN");
         }
         ipw.indent();
@@ -3178,10 +3154,9 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
       }
       else if (elt instanceof LineForm)
       {
-        if (lastClass != LineForm.class)
+        if (lastClass!=LineForm.class)
         {
-          if (lastClass != null)
-            ipw.println();
+          ipw.println();
           ipw.println ("LINE FORM");
         }
         ipw.indent ();
@@ -3191,9 +3166,8 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
       }
       else if (elt instanceof Unit)
       {
-        if (lastClass != Unit.class) {
-          if (lastClass != null)
-            ipw.println();
+        if (lastClass!=Unit.class) {
+          ipw.println();
           ipw.println("UNIT");
         }
         ipw.indent();
@@ -3205,13 +3179,13 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
       {
         if (withPredefined || !(elt instanceof PredefinedModel))
         {
+          ipw.println();
           printModel((Model) elt, language);
           lastClass = Model.class;
         }
       }
       else if (elt instanceof Topic)
       {
-        ipw.println ();
         ipw.println ();
         printTopic((Topic) elt, language);
         lastClass = Topic.class;
@@ -3243,15 +3217,13 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
 	  }
       else if (elt instanceof View)
       {
-        if (lastClass != null)
-          ipw.println();
+        ipw.println();
         printView((View) elt, language);
         lastClass = View.class;
       }
       else if (elt instanceof Graphic)
       {
-        if (lastClass != null)
-          ipw.println();
+        ipw.println();
         printGraphic ((Graphic) elt, language);
         lastClass = Graphic.class;
       }
@@ -3294,10 +3266,6 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
     TransferDescription   td, String language)
   {
     ipw.println("INTERLIS 2.3;");
-    ipw.unindent();
-    ipw.println();
-
-
     printElements(td, language);
   }
 }

@@ -4,6 +4,7 @@ LATEST
 - NLSXML: ModelElements.sort() ignore case
 - ili2 export: added missing constraint doc
 - ili2 export: fixed NPE if no crs or language trafo 
+- ili2 export: adjust spaces/newlines to umleditor output
 
 ili2c 5.2.2 (2021-04-30)
 ---------------------------
