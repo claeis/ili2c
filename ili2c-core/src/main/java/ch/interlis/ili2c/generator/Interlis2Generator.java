@@ -3136,7 +3136,7 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
       }
       else if (elt instanceof Parameter)
       {
-        if (lastClass!=null && lastClass!=Parameter.class)
+        if (lastClass!=Parameter.class)
         {
           ipw.println ("PARAMETER");
         }
