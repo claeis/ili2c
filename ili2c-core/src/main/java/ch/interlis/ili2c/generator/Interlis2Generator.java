@@ -1529,16 +1529,19 @@ private void setup(
 	      				}
 	      				ipw.print(newScopeName);
 	      			} else {
-	      				ipw.print(elt.getScopedName(scope));
+	      				//ipw.print(elt.getScopedName(scope));
+                        ipw.print(elt.getScopedName(null));
 	      			}
 	      		}
 			} else {
-				ipw.print(elt.getScopedName(scope));
+                //ipw.print(elt.getScopedName(scope));
+				ipw.print(elt.getScopedName(null));
 			}
 		} else {
 		    String text = getNameInLanguage(elt, language);
 		    if (text == "" || text == null) {
-		        ipw.print(elt.getScopedName(scope));
+		        //ipw.print(elt.getScopedName(scope));
+                ipw.print(elt.getScopedName(null));
 		    } else {
 		        ipw.print(text);
 		    }
