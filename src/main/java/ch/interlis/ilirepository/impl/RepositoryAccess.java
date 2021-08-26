@@ -71,7 +71,7 @@ public class RepositoryAccess {
             localCache=new File(System.getProperty("user.home"),".ilicache");
         }
         String hashedFilenames=System.getenv(ILI_CACHE_FILENAME);
-        if(hashedFilenames!=null & hashedFilenames.equalsIgnoreCase(ILI_CACHE_FILENAME_MD5)) {
+        if(hashedFilenames!=null && hashedFilenames.equalsIgnoreCase(ILI_CACHE_FILENAME_MD5)) {
             doHashedFilenames=true;
         }
     }
