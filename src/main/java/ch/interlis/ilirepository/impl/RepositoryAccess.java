@@ -54,18 +54,25 @@ import ch.interlis.models.DatasetIdx16.DataIndex.DatasetMetadata;
  */
 public class RepositoryAccess {
     public static final String ILI_CACHE = "ILI_CACHE";
+    public static final String ILI_CACHE_FILENAME = "ILI_CACHE_FILENAME";
+    public static final String ILI_CACHE_FILENAME_MD5 = "MD5";
     private HashMap<String,IliFiles> reposIliFiles=new HashMap<String,IliFiles>();
     private HashMap<String,List<DatasetMetadata>> reposIliData=new HashMap<String,List<DatasetMetadata>>();
 	private HashMap<String,IliSite> reposIliSite=new HashMap<String,IliSite>();
 	private long metaMaxTTL=86400000L; // max time to live in ms for a file in the cache
 	private File localCache=null;
 	private IliResolver resolver=null;
+    private boolean doHashedFilenames=false;
     public RepositoryAccess() {
         String userDefinedCacheFolder=System.getenv(ILI_CACHE);
         if(userDefinedCacheFolder!=null && userDefinedCacheFolder.trim().length()>0) {
             localCache=new File(userDefinedCacheFolder);
         }else {
             localCache=new File(System.getProperty("user.home"),".ilicache");
+        }
+        String hashedFilenames=System.getenv(ILI_CACHE_FILENAME);
+        if(hashedFilenames!=null & hashedFilenames.equalsIgnoreCase(ILI_CACHE_FILENAME_MD5)) {
+            doHashedFilenames=true;
         }
     }
 	
@@ -1277,7 +1284,7 @@ public class RepositoryAccess {
 	}
 	if(resolver!=null && resolver.resolvesUri(uriStr)){
 		// translate uri to location in cache
-		String localFileName = escapeUri(uriStr);
+		String localFileName = translateUriToFilenameInCache(uriStr);
 		File ret=new File(localCache,localFileName);
 		if(filename!=null){
 			ret=new File(ret,filename);
@@ -1371,7 +1378,7 @@ public class RepositoryAccess {
 			}else{
 				urib=uriStr.substring("http:".length()); 
 			}
-			localFileName=escapeUri(urib);
+			localFileName=translateUriToFilenameInCache(urib);
 		}
 		File ret=new File(localCache,localFileName);
 		if(filename!=null){
@@ -1560,6 +1567,12 @@ public class RepositoryAccess {
         }
         return null;
     }
+    private String translateUriToFilenameInCache(String uri) {
+        if(doHashedFilenames) {
+            return calcMD5(uri);
+        }
+        return escapeUri(uri);
+    }
     public static String escapeUri(String uri) {
 		StringBuffer localFileName=new StringBuffer();
 		{
@@ -1627,6 +1640,17 @@ public class RepositoryAccess {
 		}
 		return signature;
 	}
+    public static String calcMD5(String value)
+    {
+        java.security.MessageDigest md;
+        try {
+            md = java.security.MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalArgumentException(e);
+        }
+        String signature=String.format("%032x",new java.math.BigInteger(1,md.digest(value.getBytes())));
+        return signature;
+    }
 	public static void copyFile(File target,File src) {
 		java.io.BufferedInputStream in=null;
 		java.io.OutputStream fos=null;
