@@ -26,6 +26,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import ch.ehi.basics.logging.EhiLogger;
+import ch.ehi.iox.objpool.ObjectPoolManager;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
@@ -67,188 +68,231 @@ public class CheckReposIlis {
 		
 		Main.setHttpProxySystemProperties(settings);
 				
-		HashSet<IliFile> failedFiles=new HashSet<IliFile>();
-		ArrayList<MetaEntryProblem> inconsistentMetaEntry=new ArrayList<MetaEntryProblem>();
-		Iterator reposi = config.iteratorFileEntry();
-		while (reposi.hasNext()) {
-			FileEntry e = (FileEntry) reposi.next();
-			if (e.getKind() == FileEntryKind.ILIMODELFILE) {
-				String repos = e.getFilename();
-				// get list of current files in repository
-				RepositoryAccess reposAccess=new RepositoryAccess();
-				File ilimodelsFile;
-				try {
-					ilimodelsFile = reposAccess.getLocalFileLocation(repos,IliManager.ILIMODELS_XML,0,null);
-				} catch (RepositoryAccessException e2) {
-					EhiLogger.logError(e2);
-					continue;
-				}
-				if(ilimodelsFile==null){
-					EhiLogger.logAdaption("URL <"+repos+"> contains no "+IliManager.ILIMODELS_XML+"; ignored");
-					continue;
-				}
-				// xsd validate file
-				{
-				    javax.xml.transform.Source schemaFiles[] =  null;
-					try{
-				    javax.xml.transform.Source schemaFiles2[] =  {
-					    		new StreamSource(getClass().getResource( "/IliRepository.xsd" ).toString())
-					    };
-						schemaFiles=schemaFiles2;
-					}catch(java.lang.NullPointerException ex){
-			        	EhiLogger.logError("failed to create schema",ex);
-					}
-				    Schema schema=null;
-				    if(schemaFiles!=null){
-					    SchemaFactory factory = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
-						try {
-							schema = factory.newSchema(schemaFiles);
-						} catch (SAXException ex) {
-							EhiLogger.logError("failed to read schema",ex);
-						}
-				    }
-				    if(schema!=null){
-						javax.xml.validation.ValidatorHandler validator = schema
-								.newValidatorHandler();
-						validator.setErrorHandler(new org.xml.sax.ErrorHandler(){
-							public void error(SAXParseException ex)
-									throws SAXException {
-								EhiLogger.logError(IliManager.ILIMODELS_XML+":"+ex.getLineNumber()+":"+ex.getColumnNumber()+":"+ex.getMessage());
-								validationErrors=true;
-							}
+        HashSet<IliFile> failedFiles=new HashSet<IliFile>();
+        ArrayList<MetaEntryProblem> inconsistentMetaEntry=new ArrayList<MetaEntryProblem>();
+		File tmpFolder=ObjectPoolManager.getCacheTmpFilename();;
+		try {
+	        Iterator reposi = config.iteratorFileEntry();
+	        while (reposi.hasNext()) {
+	            FileEntry e = (FileEntry) reposi.next();
+	            if (e.getKind() == FileEntryKind.ILIMODELFILE) {
+	                String repos = e.getFilename();
+	                // get list of current files in repository
+	                RepositoryAccess reposAccess=new RepositoryAccess();
+	                File ilimodelsXmlFile;
+	                try {
+	                    ilimodelsXmlFile = reposAccess.getLocalFileLocation(repos,IliManager.ILIMODELS_XML,0,null);
+	                } catch (RepositoryAccessException e2) {
+	                    EhiLogger.logError(e2);
+	                    continue;
+	                }
+	                if(ilimodelsXmlFile==null){
+	                    EhiLogger.logAdaption("URL <"+repos+"> contains no "+IliManager.ILIMODELS_XML+"; ignored");
+	                    continue;
+	                }
+	                // xsd validate file
+	                {
+	                    javax.xml.transform.Source schemaFiles[] =  null;
+	                    try{
+	                    javax.xml.transform.Source schemaFiles2[] =  {
+	                                new StreamSource(getClass().getResource( "/IliRepository.xsd" ).toString())
+	                        };
+	                        schemaFiles=schemaFiles2;
+	                    }catch(java.lang.NullPointerException ex){
+	                        EhiLogger.logError("failed to create schema",ex);
+	                    }
+	                    Schema schema=null;
+	                    if(schemaFiles!=null){
+	                        SchemaFactory factory = SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+	                        try {
+	                            schema = factory.newSchema(schemaFiles);
+	                        } catch (SAXException ex) {
+	                            EhiLogger.logError("failed to read schema",ex);
+	                        }
+	                    }
+	                    if(schema!=null){
+	                        javax.xml.validation.ValidatorHandler validator = schema
+	                                .newValidatorHandler();
+	                        validator.setErrorHandler(new org.xml.sax.ErrorHandler(){
+	                            public void error(SAXParseException ex)
+	                                    throws SAXException {
+	                                EhiLogger.logError(IliManager.ILIMODELS_XML+":"+ex.getLineNumber()+":"+ex.getColumnNumber()+":"+ex.getMessage());
+	                                validationErrors=true;
+	                            }
 
-							public void fatalError(SAXParseException ex)
-									throws SAXException {
-								EhiLogger.logError(ex);
-							}
+	                            public void fatalError(SAXParseException ex)
+	                                    throws SAXException {
+	                                EhiLogger.logError(ex);
+	                            }
 
-							public void warning(SAXParseException ex)
-									throws SAXException {
-								EhiLogger.logError(ex);
-							}
-						});
-						javax.xml.stream.XMLInputFactory inputFactory = javax.xml.stream.XMLInputFactory.newInstance();
-						FileInputStream inputFile;
-						XMLEventReader reader;
-						try {
-							//inputFile = new java.io.FileInputStream(ilimodelsFile);
-							//reader = inputFactory.createXMLEventReader(inputFile);
-							//validator.validate(new javax.xml.transform.stax.StAXSource(reader));
-							
-							XMLReader parser = XMLReaderFactory.createXMLReader();
-							
-							parser.setErrorHandler(validator.getErrorHandler());
-							parser.setContentHandler(validator);
-							parser.parse(ilimodelsFile.getAbsolutePath());
-						} catch (Exception ex) {
-							EhiLogger.logError("failed to validate "+IliManager.ILIMODELS_XML,ex);
-						}
-				    }
-					
-				}
-				// read file
-				IliFiles files=null;
-				List<ModelMetadata> modelMetadatav = null;
-				try {
-					modelMetadatav = RepositoryAccess.readIliModelsXml2(ilimodelsFile);
-					modelMetadatav = RepositoryAccess.getLatestVersions2(modelMetadatav);
-					files = RepositoryAccess.createIliFiles2(repos, modelMetadatav);
-				} catch (RepositoryAccessException e2) {
-					EhiLogger.logError(e2);
-					continue;
-				}
-				for(Iterator<IliFile> filei=files.iteratorFile();filei.hasNext();){
-					IliFile file=filei.next();
-					List<String> ilimodels=new ArrayList<String>();
-					for(Iterator modeli=file.iteratorModel();modeli.hasNext();){
-						IliModel model=(IliModel)modeli.next();
-						ilimodels.add(model.getName());
-					}
-						Configuration fileconfig = new Configuration();
-						try {
-							File iliFile = reposAccess.getLocalFileLocation(file.getRepositoryUri(),file.getPath(),0,file.getMd5());
-							if(iliFile==null){
-							    EhiLogger.logError("File <"+file.getPath()+"> not found");
-								failedFiles.add(file);
-								continue;
-							}
-							fileconfig.addFileEntry(new ch.interlis.ili2c.config.FileEntry(
-									  iliFile.getPath(),ch.interlis.ili2c.config.FileEntryKind.ILIMODELFILE));
-							fileconfig.setAutoCompleteModelList(true);
-							fileconfig.setGenerateWarnings(false);
-							TransferDescription td=Main.runCompiler(fileconfig,settings);
-							if(td==null){
-								failedFiles.add(file);
-							}else{
-								// check entries in ilimodels.xml
-								String md5=RepositoryAccess.calcMD5(iliFile);
-								for(Iterator<Model> modeli=td.iterator();modeli.hasNext();){
-									Model model=modeli.next();
-									if(model==td.INTERLIS){
-										continue;
-									}
-									if(model.getFileName()!=null && model.getFileName().equals(iliFile.getAbsolutePath())){
-										EhiLogger.logState("check model "+model.getFileName());
-										String csl=null;
-										if(model.getIliVersion().equals(Model.ILI1)){
-											csl=ModelMetadata.ili1;
-										}else if(model.getIliVersion().equals(Model.ILI2_2)){
-											csl=ModelMetadata.ili2_2;
-										}else if(model.getIliVersion().equals(Model.ILI2_3)){
-											csl=ModelMetadata.ili2_3;
-										}else if(model.getIliVersion().equals(Model.ILI2_4)){
-                                            csl=ModelMetadata.ili2_4;
-										}else{
-											throw new IllegalStateException("unexpected ili version");
-										}
-										ModelMetadata modelMetadata=RepositoryAccess.findModelMetadata2(modelMetadatav,model.getName(),csl);
-										if(modelMetadata==null){
-											inconsistentMetaEntry.add(new MetaEntryProblem(null,model.getName(),"entry missing or wrong model name in ilimodels.xml for "+file.getPath()));
-										}else{
-											if(modelMetadata.getMd5()!=null && !modelMetadata.getMd5().equalsIgnoreCase(md5)){
-												inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong md5 value; correct would be "+md5));
-											}
-											if(model.getIliVersion().equals(Model.ILI2_3) || model.getIliVersion().equals(Model.ILI2_4)){
-												if(modelMetadata.getVersion()!=null && !modelMetadata.getVersion().equals(model.getModelVersion())){
-													inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong version value; correct would be "+model.getModelVersion()));
-												}
-												if(modelMetadata.getVersionComment()!=null && !modelMetadata.getVersionComment().equals(model.getModelVersionExpl())){
-													inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong versionComment value; correct would be "+model.getModelVersionExpl()));
-												}
-												if(modelMetadata.getIssuer()!=null && !modelMetadata.getIssuer().equals(model.getIssuer())){
-													inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong issuer value; correct would be "+model.getIssuer()));											
-												}
-											}
-											HashSet<String> depsMeta=new HashSet<String>();
-											HashSet<String> depsIli=new HashSet<String>();
-											for(String dep : modelMetadata.getDependsOnModel()){
-												depsMeta.add(dep);
-											}
-											String sep="";
-											StringBuilder missingDeps=new StringBuilder();
-											for(Model dep : model.getImporting()){
-												String depIli=dep.getName();
-												depsIli.add(depIli);
-												if(!depIli.equals("INTERLIS") && !depsMeta.contains(depIli)){
-													missingDeps.append(sep);
-													missingDeps.append(depIli);
-													sep=",";
-												}
-											}
-											if(missingDeps.length()>0){
-												inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong depends list; misssing models "+missingDeps.toString()));
-											}
-										}
-									}
-								}
-							}
-						} catch (RepositoryAccessException e1) {
-							EhiLogger.logError(e1);
-							failedFiles.add(file);
-						}
+	                            public void warning(SAXParseException ex)
+	                                    throws SAXException {
+	                                EhiLogger.logError(ex);
+	                            }
+	                        });
+	                        javax.xml.stream.XMLInputFactory inputFactory = javax.xml.stream.XMLInputFactory.newInstance();
+	                        FileInputStream inputFile;
+	                        XMLEventReader reader;
+	                        try {
+	                            //inputFile = new java.io.FileInputStream(ilimodelsFile);
+	                            //reader = inputFactory.createXMLEventReader(inputFile);
+	                            //validator.validate(new javax.xml.transform.stax.StAXSource(reader));
+	                            
+	                            XMLReader parser = XMLReaderFactory.createXMLReader();
+	                            
+	                            parser.setErrorHandler(validator.getErrorHandler());
+	                            parser.setContentHandler(validator);
+	                            parser.parse(ilimodelsXmlFile.getAbsolutePath());
+	                        } catch (Exception ex) {
+	                            EhiLogger.logError("failed to validate "+IliManager.ILIMODELS_XML,ex);
+	                        }
+	                    }
+	                    
+	                }
+                    ch.interlis.ilirepository.IliManager manager=new ch.interlis.ilirepository.IliManager();
+                    ArrayList<String> modeldirv = new ArrayList<String>();
+                    String ilidirs = settings.getValue(UserSettings.ILIDIRS);
+                    String modeldirs[] = ilidirs.split(UserSettings.ILIDIR_SEPARATOR);
+                    for(String m:modeldirs) {
+                        if(!m.startsWith("%")) {
+                            modeldirv.add(m);
+                        }
+                    }
+                    manager.setRepositories((String[]) modeldirv.toArray(new String[1]));
+	                // read file
+	                IliFiles ilimodelsFiles=null;
+	                List<ModelMetadata> ilimodelsEntries = null;
+	                try {
+	                    ilimodelsEntries = RepositoryAccess.readIliModelsXml2(ilimodelsXmlFile);
+	                    ilimodelsEntries = RepositoryAccess.getLatestVersions2(ilimodelsEntries);
+	                    ilimodelsFiles = RepositoryAccess.createIliFiles2(repos, ilimodelsEntries);
+	                } catch (RepositoryAccessException e2) {
+	                    EhiLogger.logError(e2);
+	                    continue;
+	                }
+	                for(Iterator<IliFile> filei=ilimodelsFiles.iteratorFile();filei.hasNext();){
+	                    IliFile ilimodelsFile=filei.next();
+	                    EhiLogger.logState("check file <"+ilimodelsFile.getPath()+"> in <"+ilimodelsFile.getRepositoryUri()+">");
+	                    List<String> ilimodelsFileModels=new ArrayList<String>();
+                        ArrayList<String> ilimodelsFileRequiredModels=new ArrayList<String>();
+                        double iliversion=0.0;
+	                    for(Iterator modeli=ilimodelsFile.iteratorModel();modeli.hasNext();){
+	                        IliModel model=(IliModel)modeli.next();
+	                        iliversion=model.getIliVersion();
+	                        ilimodelsFileModels.add(model.getName());
+	                        for(String reqModel:(Iterable<String>)model.getDependencies()) {
+	                            if(!ilimodelsFileRequiredModels.contains(reqModel)) {
+	                                ilimodelsFileRequiredModels.add(reqModel);
+	                            }
+	                        }
+	                    }
+	                        Configuration fileconfig = new Configuration();
+	                        try {
+	                            File localIliFileInIliCache = reposAccess.getLocalFileLocation(ilimodelsFile.getRepositoryUri(),ilimodelsFile.getPath(),0,ilimodelsFile.getMd5());
+	                            if(localIliFileInIliCache==null){
+	                                EhiLogger.logError("File <"+ilimodelsFile.getPath()+"> not found");
+	                                failedFiles.add(ilimodelsFile);
+	                                continue;
+	                            }
+	                            File localIliFile=new File(tmpFolder,localIliFileInIliCache.getName());
+	                            try {
+	                                RepositoryAccess.copyFile(localIliFile,localIliFileInIliCache);
+	                                
+	                                fileconfig.setAutoCompleteModelList(false);
+	                                if(ilimodelsFileRequiredModels.size()>0){
+	                                    // get list of required files based on ilimodels.xml entries
+	                                    Configuration fconfig = manager.getConfig(ilimodelsFileRequiredModels,iliversion);
+	                                    Iterator fi = fconfig.iteratorFileEntry();
+	                                    while (fi.hasNext()) {
+	                                        fileconfig.addFileEntry((FileEntry) fi.next());
+	                                    }
+	                                }
+                                    fileconfig.addFileEntry(new ch.interlis.ili2c.config.FileEntry(
+                                            localIliFile.getAbsolutePath(),ch.interlis.ili2c.config.FileEntryKind.ILIMODELFILE));
+                                    ch.interlis.ili2c.Ili2c.logIliFiles(fileconfig);
+	                                fileconfig.setGenerateWarnings(false);
+	                                TransferDescription td=Main.runCompiler(fileconfig,settings);
+	                                if(td==null){
+	                                    failedFiles.add(ilimodelsFile);
+	                                }else{
+	                                    // check entries in ilimodels.xml
+	                                    String md5=RepositoryAccess.calcMD5(localIliFile);
+	                                    for(Iterator<Model> modeli=td.iterator();modeli.hasNext();){
+	                                        Model model=modeli.next();
+	                                        if(model==td.INTERLIS){
+	                                            continue;
+	                                        }
+	                                        if(model.getFileName()!=null && model.getFileName().equals(localIliFile.getAbsolutePath())){
+	                                            EhiLogger.logState("check model "+model.getName());
+	                                            String csl=null;
+	                                            if(model.getIliVersion().equals(Model.ILI1)){
+	                                                csl=ModelMetadata.ili1;
+	                                            }else if(model.getIliVersion().equals(Model.ILI2_2)){
+	                                                csl=ModelMetadata.ili2_2;
+	                                            }else if(model.getIliVersion().equals(Model.ILI2_3)){
+	                                                csl=ModelMetadata.ili2_3;
+	                                            }else if(model.getIliVersion().equals(Model.ILI2_4)){
+	                                                csl=ModelMetadata.ili2_4;
+	                                            }else{
+	                                                throw new IllegalStateException("unexpected ili version");
+	                                            }
+	                                            ModelMetadata modelMetadata=RepositoryAccess.findModelMetadata2(ilimodelsEntries,model.getName(),csl);
+	                                            if(modelMetadata==null){
+	                                                inconsistentMetaEntry.add(new MetaEntryProblem(null,model.getName(),"entry missing or wrong model name in ilimodels.xml for "+ilimodelsFile.getPath()));
+	                                            }else{
+	                                                if(modelMetadata.getMd5()!=null && !modelMetadata.getMd5().equalsIgnoreCase(md5)){
+	                                                    inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong md5 value; correct would be "+md5));
+	                                                }
+	                                                if(model.getIliVersion().equals(Model.ILI2_3) || model.getIliVersion().equals(Model.ILI2_4)){
+	                                                    if(modelMetadata.getVersion()!=null && !modelMetadata.getVersion().equals(model.getModelVersion())){
+	                                                        inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong version value; correct would be "+model.getModelVersion()));
+	                                                    }
+	                                                    if(modelMetadata.getVersionComment()!=null && !modelMetadata.getVersionComment().equals(model.getModelVersionExpl())){
+	                                                        inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong versionComment value; correct would be "+model.getModelVersionExpl()));
+	                                                    }
+	                                                    if(modelMetadata.getIssuer()!=null && !modelMetadata.getIssuer().equals(model.getIssuer())){
+	                                                        inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong issuer value; correct would be "+model.getIssuer()));                                          
+	                                                    }
+	                                                }
+	                                                HashSet<String> depsMeta=new HashSet<String>();
+	                                                HashSet<String> depsIli=new HashSet<String>();
+	                                                for(String dep : modelMetadata.getDependsOnModel()){
+	                                                    depsMeta.add(dep);
+	                                                }
+	                                                String sep="";
+	                                                StringBuilder missingDeps=new StringBuilder();
+	                                                for(Model dep : model.getImporting()){
+	                                                    String depIli=dep.getName();
+	                                                    depsIli.add(depIli);
+	                                                    if(!depIli.equals("INTERLIS") && !depsMeta.contains(depIli)){
+	                                                        missingDeps.append(sep);
+	                                                        missingDeps.append(depIli);
+	                                                        sep=",";
+	                                                    }
+	                                                }
+	                                                if(missingDeps.length()>0){
+	                                                    inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),"wrong depends list; misssing models "+missingDeps.toString()));
+	                                                }
+	                                            }
+	                                        }
+	                                    }
+	                                }
+	                            } catch (Ili2cException e1) {
+	                                EhiLogger.logError(e1);
+	                                failedFiles.add(ilimodelsFile);
+                                }finally {
+	                                localIliFile.delete();
+	                            }
+	                        } catch (RepositoryAccessException e1) {
+	                            EhiLogger.logError(e1);
+	                            failedFiles.add(ilimodelsFile);
+	                        }
 
-				}
-			}
+	                }
+	            }
+	        }
+		}finally {
+		 tmpFolder.delete();   
 		}
 		if(inconsistentMetaEntry.size()>0){
 			Collections.sort(inconsistentMetaEntry,new Comparator<MetaEntryProblem>(){

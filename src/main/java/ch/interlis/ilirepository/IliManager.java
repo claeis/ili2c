@@ -94,6 +94,13 @@ public class IliManager implements ReposManager {
 			rep.setIliFiles(uri, iliFiles);
 		}
 	}
+    public IliFiles getIliFiles(String uri){
+        if(uri!=null){
+            EhiLogger.traceState("uri <"+uri+">");
+            return rep.getIliFiles(uri);
+        }
+        return null;
+    }
 	public IliResolver getResolver() {
 		return rep.getResolver();
 	}

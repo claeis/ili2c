@@ -157,7 +157,7 @@ public class Main {
 	String translationDef=null;
     Ili2cMetaAttrs ili2cMetaAttrs=new Ili2cMetaAttrs();
     
-    TransformationParameter params = new TransformationParameter();
+    TransformationParameter params = null;
     
 	if (args.length == 0) {
         runGui(args);
@@ -318,6 +318,7 @@ public class Main {
 		if (args[i].equals("--trafoDiff")) {
 			i++;
 			String[] diffs = args[i].split("\\,");
+			if(params==null)params=new TransformationParameter();
 			params.setDiff_x(Double.parseDouble(diffs[0]));
 			params.setDiff_y(Double.parseDouble(diffs[1]));
 		    continue;
@@ -325,18 +326,21 @@ public class Main {
 		if (args[i].equals("--trafoFactor")) {
 			i++;
 			String[] factor = args[i].split("\\,");
+            if(params==null)params=new TransformationParameter();
 			params.setFactor_x(Double.parseDouble(factor[0]));
 			params.setFactor_y(Double.parseDouble(factor[1]));
 		    continue;
 		}
 		if (args[i].equals("--trafoEpsg")) {
 			i++;
+            if(params==null)params=new TransformationParameter();
 			params.setEpsgCode(Integer.parseInt(args[i]));
 		    continue;
 		}
 		if (args[i].equals("--trafoImports")) {
 			i++;
 			String[] imports = args[i].split("\\=");
+            if(params==null)params=new TransformationParameter();
 			params.setImportModels(new TransformationParameter.ModelTransformation[] {
 					new TransformationParameter.ModelTransformation(imports[0], imports[1])
 			});
@@ -344,6 +348,7 @@ public class Main {
 		}
 		if (args[i].equals("--trafoNewModel")) {
 			i++;
+            if(params==null)params=new TransformationParameter();
 			params.setNewModelName(args[i]);
 		    continue;
 		}

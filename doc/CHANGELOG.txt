@@ -1,6 +1,18 @@
 LATEST
 ---------------------------
 
+ili2c 5.2.3 (2021-09-10)
+---------------------------
+- added IliManager.getIliFiles()
+- NLSXML: ModelElements.sort() ignore case
+- ili2 export: added missing constraint doc
+- ili2 export: fixed NPE if no crs or language trafo 
+- ili2 export: adjust spaces/newlines to umleditor output
+- ili2 export: use qualified name in references
+- check-repo-ilis: use local empty folder to read ili file from, to avoid not detecting missing deps in ilimodels.xml
+- ili-cache: set ILI_CACHE_FILENAME=MD5 to use short filenames in $HOME/.ilicache
+- iox-ili-1.21.6
+
 ili2c 5.2.2 (2021-04-30)
 ---------------------------
 - added native-image config

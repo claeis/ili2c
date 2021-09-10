@@ -3,8 +3,8 @@ allprojects {
 	apply plugin: "java"
 	apply plugin: "maven"
 	
-	sourceCompatibility = "1.6" 
-	targetCompatibility = "1.6"
+	sourceCompatibility = JavaVersion.VERSION_1_6
+	targetCompatibility = JavaVersion.VERSION_1_6
 	compileJava.options.encoding = 'US-ASCII'
 	
 	configurations {
@@ -24,7 +24,7 @@ allprojects {
 	}
 }
 
-version '5.2.2'+System.getProperty('release','-SNAPSHOT')
+version '5.2.3'+System.getProperty('release','-SNAPSHOT')
 
 configurations {
 	scpAntTask
@@ -38,7 +38,7 @@ configurations {
 
 dependencies {
     implementation "ch.interlis:iox-api:1.0.3"
-    implementation("ch.interlis:iox-ili:1.21.6") {
+    implementation("ch.interlis:iox-ili:1.21.7") {
     	exclude group: 'net.iharder', module: 'base64'
     	exclude group: 'com.vividsolutions', module: 'jts-core'
     }

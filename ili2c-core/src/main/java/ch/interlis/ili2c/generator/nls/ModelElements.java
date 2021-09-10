@@ -40,7 +40,7 @@ public class ModelElements implements Iterable<TranslationElement> {
 	    Collections.sort(element, new Comparator<TranslationElement>() { 
 	        @Override
 	        public int compare(TranslationElement ele1, TranslationElement ele2) {
-	            return ele1.getScopedName().compareTo(ele2.getScopedName());
+	            return ele1.getScopedName().compareToIgnoreCase(ele2.getScopedName());
 	        }
 	    });
 	}
