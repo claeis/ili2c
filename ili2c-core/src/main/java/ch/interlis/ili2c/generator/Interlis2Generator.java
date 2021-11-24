@@ -2053,10 +2053,17 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
   }
   
   public void printType (Container scope, Type dd) {
-	  printType(scope, dd, null, null);
+	  printType(scope, dd, null, null,true);
+  }
+  public void printType (Container scope, Type dd,boolean withCardinality) {
+      printType(scope, dd, null, null,withCardinality);
   }
 
   public void printType (Container scope, Type dd, String language, String scopedNamePrefix)
+  {
+      printType(scope, dd,language, scopedNamePrefix,true);
+  }
+  public void printType (Container scope, Type dd, String language, String scopedNamePrefix,boolean withCardinality)
   {
     if (dd == null)
     {
@@ -2064,8 +2071,10 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
       return;
     }
 
-    if (dd.isMandatory() && !(dd instanceof CompositionType))
-      ipw.print("MANDATORY ");
+    if(withCardinality) {
+        if (dd.isMandatory() && !(dd instanceof CompositionType))
+            ipw.print("MANDATORY ");
+    }
 
 
     if (dd instanceof NumericalType)

@@ -24,7 +24,7 @@ allprojects {
 	}
 }
 
-version '5.2.3'+System.getProperty('release','-SNAPSHOT')
+version '5.2.4'+System.getProperty('release','-SNAPSHOT')
 
 configurations {
 	scpAntTask
@@ -38,7 +38,7 @@ configurations {
 
 dependencies {
     implementation "ch.interlis:iox-api:1.0.3"
-    implementation("ch.interlis:iox-ili:1.21.7") {
+    implementation("ch.interlis:iox-ili:1.21.8") {
     	exclude group: 'net.iharder', module: 'base64'
     	exclude group: 'com.vividsolutions', module: 'jts-core'
     }
