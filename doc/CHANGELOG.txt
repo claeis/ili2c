@@ -1,5 +1,6 @@
 LATEST
 ---------------------------
+- fix check-repo-ilis: "The name of the model conflicts with..."
 
 ili2c 5.2.4 (2021-11-24)
 ---------------------------

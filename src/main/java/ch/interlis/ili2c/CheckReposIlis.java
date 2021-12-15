@@ -173,17 +173,24 @@ public class CheckReposIlis {
 	                for(Iterator<IliFile> filei=ilimodelsFiles.iteratorFile();filei.hasNext();){
 	                    IliFile ilimodelsFile=filei.next();
 	                    EhiLogger.logState("check file <"+ilimodelsFile.getPath()+"> in <"+ilimodelsFile.getRepositoryUri()+">");
-	                    List<String> ilimodelsFileModels=new ArrayList<String>();
-                        ArrayList<String> ilimodelsFileRequiredModels=new ArrayList<String>();
+	                    List<String> modelsInFile=new ArrayList<String>();
+                        ArrayList<String> requiredModels=new ArrayList<String>();
                         double iliversion=0.0;
 	                    for(Iterator modeli=ilimodelsFile.iteratorModel();modeli.hasNext();){
 	                        IliModel model=(IliModel)modeli.next();
 	                        iliversion=model.getIliVersion();
-	                        ilimodelsFileModels.add(model.getName());
+	                        modelsInFile.add(model.getName());
 	                        for(String reqModel:(Iterable<String>)model.getDependencies()) {
-	                            if(!ilimodelsFileRequiredModels.contains(reqModel)) {
-	                                ilimodelsFileRequiredModels.add(reqModel);
+	                            if(!requiredModels.contains(reqModel)) {
+	                                requiredModels.add(reqModel);
 	                            }
+	                        }
+	                    }
+	                    Iterator<String> requiredModelIt=requiredModels.iterator();
+	                    for(;requiredModelIt.hasNext();) {
+	                        String requiredModel=requiredModelIt.next();
+	                        if(modelsInFile.contains(requiredModel)) {
+	                            requiredModelIt.remove();
 	                        }
 	                    }
 	                        Configuration fileconfig = new Configuration();
@@ -199,9 +206,9 @@ public class CheckReposIlis {
 	                                RepositoryAccess.copyFile(localIliFile,localIliFileInIliCache);
 	                                
 	                                fileconfig.setAutoCompleteModelList(false);
-	                                if(ilimodelsFileRequiredModels.size()>0){
+	                                if(requiredModels.size()>0){
 	                                    // get list of required files based on ilimodels.xml entries
-	                                    Configuration fconfig = manager.getConfig(ilimodelsFileRequiredModels,iliversion);
+	                                    Configuration fconfig = manager.getConfig(requiredModels,iliversion);
 	                                    Iterator fi = fconfig.iteratorFileEntry();
 	                                    while (fi.hasNext()) {
 	                                        fileconfig.addFileEntry((FileEntry) fi.next());
@@ -223,7 +230,7 @@ public class CheckReposIlis {
 	                                            continue;
 	                                        }
 	                                        if(model.getFileName()!=null && model.getFileName().equals(localIliFile.getAbsolutePath())){
-	                                            EhiLogger.logState("check model "+model.getName());
+	                                            EhiLogger.logState("check entry of model "+model.getName());
 	                                            String csl=null;
 	                                            if(model.getIliVersion().equals(Model.ILI1)){
 	                                                csl=ModelMetadata.ili1;
