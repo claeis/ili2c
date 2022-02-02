@@ -1,5 +1,6 @@
 LATEST
 ---------------------------
+- ili repos access: filter browseOnly entries before version chaining (#67)
 
 ili2c 5.2.5 (2021-12-28)
 ---------------------------
