@@ -102,9 +102,15 @@ public class Imd16Generator {
 		// Model
 		iomModel.setContracted( model.isContracted() );
 		iomModel.setiliVersion( model.getIliVersion() );
-		iomModel.setLanguage( model.getLanguage() );
-		iomModel.setCharSetIANAName(model.getCharSetIANAName());
-		iomModel.setxmlns(model.getXmlns());
+		if(model.getLanguage()!=null) {
+	        iomModel.setLanguage( model.getLanguage() );
+		}
+		if(model.getCharSetIANAName()!=null) {
+	        iomModel.setCharSetIANAName(model.getCharSetIANAName());
+		}
+		if(model.getXmlns()!=null) {
+	        iomModel.setxmlns(model.getXmlns());
+		}
 		if(model.getNoIncrementalTransfer()!=null){
 			iomModel.setNoIncrementalTransfer(model.getNoIncrementalTransfer());
 		}

@@ -1,8 +1,8 @@
 INTERLIS 2.3;
 
-/* 2011-12-22 ceis added ExistenceConstraint/Attr */
-!!@precursorVersion=2008-08-29
-MODEL IlisMeta07 (en) AT "http://interlis.ch" VERSION "2011-12-22" =
+/* 2020-04-24 Enumeration Kind in STRUCTURE PathEl defined as ORDERED */
+!!@precursorVersion=2011-12-22
+MODEL IlisMeta07 (en) AT "http://interlis.ch" VERSION "2020-04-24" =
 
   DOMAIN
     BasketOID = OID TEXT; /* Filename */
@@ -569,7 +569,7 @@ MODEL IlisMeta07 (en) AT "http://interlis.ch" VERSION "2011-12-22" =
     STRUCTURE PathEl =
       Kind: (This, ThisArea, ThatArea, Parent,
              ReferenceAttr, AssocPath, Role, ViewBase,
-             Attribute, MetaObject);
+             Attribute, MetaObject) ORDERED;
       Ref: REFERENCE TO (EXTERNAL) MetaElement;
       NumIndex: MultRange;
       SpecIndex: (First, Last);

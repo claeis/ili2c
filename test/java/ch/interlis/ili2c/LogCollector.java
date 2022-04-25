@@ -4,9 +4,10 @@ import java.util.ArrayList;
 
 import ch.ehi.basics.logging.AbstractStdListener;
 import ch.ehi.basics.logging.LogEvent;
+import ch.interlis.iox.IoxLogEvent;
 
 
-public class LogCollector implements  ch.ehi.basics.logging.LogListener {
+public class LogCollector implements  ch.ehi.basics.logging.LogListener,ch.interlis.iox.IoxLogging {
 	private ArrayList<LogEvent> errors=new ArrayList<LogEvent>();
 
 	public ArrayList<LogEvent> getErrs() {
@@ -23,5 +24,10 @@ public class LogCollector implements  ch.ehi.basics.logging.LogListener {
 	    java.util.List<String> msgs=AbstractStdListener.formatOutput(ev, false, false);
 	    return msgs.get(0);
 	}
+
+    @Override
+    public void addEvent(IoxLogEvent event) {
+        logEvent((LogEvent)event);
+    }
 	
 }
