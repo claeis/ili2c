@@ -71,7 +71,7 @@ public class ImdGeneratorTest {
             HashMap<String,IomObject> objs=new HashMap<String,IomObject>();
              do{
                     event=reader.read();
-                    //validator.validate(event);
+                    //validator.validate(event); // requires ilivalidator#336
                     if(event instanceof StartTransferEvent){
                     }else if(event instanceof StartBasketEvent){
                     }else if(event instanceof ObjectEvent){
@@ -125,7 +125,7 @@ public class ImdGeneratorTest {
             HashMap<String,IomObject> objs=new HashMap<String,IomObject>();
              do{
                     event=reader.read();
-                    //validator.validate(event);
+                    //validator.validate(event); // requires ilivalidator#336
                     if(event instanceof StartTransferEvent){
                     }else if(event instanceof StartBasketEvent){
                     }else if(event instanceof ObjectEvent){
