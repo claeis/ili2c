@@ -7,13 +7,14 @@ public class Ili1Format {
 	public static final int DEFAULT_BLANK_CODE = 0x5f;
 	public static final  int DEFAULT_UNDEFINED_CODE = 0x40;
 	public  static final int DEFAULT_CONTINUE_CODE = 0x5c;
+	public static final String DEFAULT_FONT="ISO-8859-1";
 	public boolean isFree=true;
 	public int lineSize = 0;
 	public int tidSize = 0;
 	public int blankCode = DEFAULT_BLANK_CODE;
 	public int undefinedCode = DEFAULT_UNDEFINED_CODE;
 	public int continueCode = DEFAULT_CONTINUE_CODE;
-	public String font=null;
+	public String font=DEFAULT_FONT;
 	public int tidKind;
 	public static final int TID_I16=1;
 	public static final int TID_I32=2;

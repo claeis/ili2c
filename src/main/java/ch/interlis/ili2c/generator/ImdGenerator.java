@@ -99,7 +99,9 @@ public class ImdGenerator {
 		// Model
 		iomModel.setContracted( model.isContracted() );
 		iomModel.setiliVersion( model.getIliVersion() );
-		iomModel.setLanguage( model.getLanguage() );
+		if(model.getLanguage()!=null) {
+	        iomModel.setLanguage( model.getLanguage() );
+		}
 		if(model.getIliVersion().equals(ch.interlis.ili2c.metamodel.Model.ILI2_3)){
 			iomModel.setAt( model.getIssuer() );
 			iomModel.setVersion( model.getModelVersion() );

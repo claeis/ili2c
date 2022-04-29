@@ -1072,6 +1072,9 @@ public class RepositoryAccess {
 		// remove different csl
 		for(Iterator<ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata> i=modelVersions1.iterator();i.hasNext();){
 			model=i.next();
+			if(model.getbrowseOnly()) {
+			    continue;
+			}
 			if(model.getSchemaLanguage().equals(csl)){
 				modelVersions.add(model);
 			}
@@ -1144,6 +1147,9 @@ public class RepositoryAccess {
         // remove different csl
         for(Iterator<ModelMetadata> i=modelVersions1.iterator();i.hasNext();){
             model=i.next();
+            if(model.isBrowseOnly()) {
+                continue;
+            }
             if(model.getSchemaLanguage().equals(csl)){
                 modelVersions.add(model);
             }
