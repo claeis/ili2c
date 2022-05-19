@@ -1,6 +1,7 @@
 LATEST
 ---------------------------
 - metamodel: add ili linenr to constraints 
+- iox-ili-1.21.11+
 
 ili2c 5.2.6 (2022-04-29)
 ---------------------------
