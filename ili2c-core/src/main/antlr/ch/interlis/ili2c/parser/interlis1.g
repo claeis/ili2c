@@ -962,7 +962,7 @@ protected ili1_identifications [Table table]
   boolean selfStanding=false;
 }
   : "NO" "IDENT"
-  | "IDENT"
+  | ident:"IDENT"
     (
       anam:NAME
       {
@@ -1014,6 +1014,7 @@ protected ili1_identifications [Table table]
 		  UniquenessConstraint constr = new UniquenessConstraint();
 		  constr.setElements(uel);
 		  constr.setSelfStanding(selfStanding);
+          constr.setSourceLine (ident.getLine());
 		  /* Add it to the table. */
 		  table.add (constr);
 	  }else{

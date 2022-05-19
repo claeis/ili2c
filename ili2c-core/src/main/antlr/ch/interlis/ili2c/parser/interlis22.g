@@ -3699,6 +3699,7 @@ protected mandatoryConstraint [Viewable v]
       try {
         constr = new MandatoryConstraint();
         constr.setCondition(condition);
+    	constr.setSourceLine(mand.getLine());
       } catch (Exception ex) {
         reportError(ex, mand.getLine());
       }
@@ -3729,6 +3730,7 @@ protected plausibilityConstraint [Viewable v]
         constr.setDirection(direction);
         constr.setCondition(condition);
         constr.setPercentage(percentage.doubleValue());
+        constr.setSourceLine(tok.getLine());
       } catch (Exception ex) {
         reportError (ex, tok.getLine());
       }
@@ -3744,9 +3746,10 @@ protected existenceConstraint[Viewable v]
 		constr=new ExistenceConstraint();
 		ObjectPath attrRef=null;
 	}
-	: "EXISTENCE" "CONSTRAINT" attr=attributePath[v]
+	: exst:"EXISTENCE" "CONSTRAINT" attr=attributePath[v]
 		{
 			constr.setRestrictedAttribute(attr);
+        	  constr.setSourceLine(exst.getLine());
 		}
 	"REQUIRED" "IN" ref=viewableRef[v] COLON attrRef=attributePath[ref]
 		{
@@ -3767,10 +3770,13 @@ protected uniquenessConstraint[Viewable v]
   	{
 		constr=new UniquenessConstraint();
 	}
-	: "UNIQUE"
+	: tok:"UNIQUE"
 	( constr=globalUniqueness[v]
 	| constr=localUniqueness[v]
 	)
+	{
+	  constr.setSourceLine(tok.getLine());
+	}
 	SEMI
 	;
 

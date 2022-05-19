@@ -4411,6 +4411,7 @@ protected mandatoryConstraint [Viewable v,Container context]
             constr.setDirty(true);
       	}
         constr.setCondition(condition);
+	    constr.setSourceLine(mand.getLine());
       } catch (Exception ex) {
         reportError(ex, mand.getLine());
       }
@@ -4438,6 +4439,7 @@ protected plausibilityConstraint [Viewable v,Container context]
     {
       try {
         constr = new PlausibilityConstraint();
+	  constr.setSourceLine(tok.getLine());
 	if(n!=null){constr.setName(n.getText());}
       	if(!condition.isDirty() && !condition.isLogical()){
 			reportError (formatMessage ("err_expr_noLogical",(String)null),
@@ -4465,6 +4467,7 @@ protected existenceConstraint[Viewable v,Container context]
 	: e:"EXISTENCE" "CONSTRAINT" ((NAME COLON) => n:NAME COLON )?
 	attr=attributePath[v,context]
 		{
+        	  constr.setSourceLine(e.getLine());
 			try{
 				if(n!=null){constr.setName(n.getText());}
 			} catch (Exception ex) {
@@ -4494,6 +4497,7 @@ protected uniquenessConstraint[Viewable v,Container context]
 	}
 	: u:"UNIQUE" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON) => n:NAME COLON )?
 	{
+		  constr.setSourceLine(u.getLine());
 		try{
 			if(n!=null){constr.setName(n.getText());}
 		} catch (Exception ex) {
@@ -4656,6 +4660,7 @@ protected setConstraint [Viewable v,Container context]
 	condition=expression[v, /* expectedType */ predefinedBooleanType,context]
 	SEMI
 	{
+	  constr.setSourceLine(tok.getLine());
 	  if(v instanceof Table && !((Table)v).isIdentifiable()){
 			reportError (formatMessage ("err_constraint_illegalSetInStruct",
 				v.getScopedName(null)), tok.getLine());
