@@ -2791,7 +2791,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
       printError ();
     else
     {
-    	String sep=" ";
+    	String sep="";
       for (int i = 0; i < args.length; i++)
       {
           FormalArgument arg=args[i];
@@ -2805,7 +2805,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
               }
           }
           
-          ipw.print(name+": ");
+          ipw.print(sep+name+": ");
         printType (scope, args[i].getType(), language, scope.getScopedName());
         sep="; ";
       }
