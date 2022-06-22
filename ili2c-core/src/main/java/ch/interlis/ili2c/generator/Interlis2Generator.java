@@ -1002,7 +1002,6 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
         printAttributePath(forTable, path, language);
       }
     }else{
-      printMetaValues(uc.getMetaValues(), language, uc.getScopedName());
       ipw.print ("UNIQUE");
       String next=" ";
       while(pathi.hasNext()){
