@@ -15,6 +15,7 @@ public class ModelMetadata{
     private String name=null;
     private String schemaLanguage=null;
     private String file=null;
+    private String baseUri=null;
     private String version=null;
     private String versionComment=null;
     private String nameLanguage=null;
@@ -55,10 +56,25 @@ public class ModelMetadata{
         this.schemaLanguage = schemaLanguage;
     }
     public String getFile() {
+        if(baseUri!=null) {
+            return baseUri+file;
+        }
+        return file;
+    }
+    public String getRelativeFile() {
         return file;
     }
     public void setFile(String file) {
         this.file = file;
+    }
+    public String getBaseUri() {
+        return baseUri;
+    }
+    public void setBaseUri(String baseUri) {
+        if(!baseUri.endsWith("/")) {
+            baseUri=baseUri+"/";
+        }
+        this.baseUri = baseUri;
     }
     public String getVersion() {
         return version;

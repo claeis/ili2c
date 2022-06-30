@@ -28,11 +28,8 @@ public class ModelLister implements VisitorAction {
         return false;
     }
     private static void fixFiles(List<ModelMetadata> models, String uri) {
-        if(!uri.endsWith("/")) {
-            uri=uri+"/";
-        }
         for(ModelMetadata md:models) {
-            md.setFile(uri+md.getFile());
+            md.setBaseUri(uri);
         }
         
     }

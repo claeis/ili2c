@@ -2,6 +2,7 @@ LATEST
 ---------------------------
 - metamodel: add ili linenr to constraints 
 - ili2 export: added missing ';' between formal arguments in FUNCTION definition
+- ModelMetadata added baseUri (#70)
 - iox-ili-1.21.11+
 
 ili2c 5.2.6 (2022-04-29)
