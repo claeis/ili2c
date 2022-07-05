@@ -8,6 +8,7 @@ import ch.interlis.ilirepository.IliManager;
 
 public class ModelLister implements VisitorAction {
     private List<ModelMetadata> result=new ArrayList<ModelMetadata>();
+    private java.util.Set<String> visitedSites=new java.util.HashSet<String>();
     private boolean ignoreDuplicates=true;
     public boolean processRepository(String uri, RepositoryAccess rep) throws RepositoryAccessException {
         
@@ -15,6 +16,7 @@ public class ModelLister implements VisitorAction {
         try {
             EhiLogger.traceState("read "+IliManager.ILIMODELS_XML+" from <"+uri+">...");
             iliModels=rep.readIlimodelsXml2(uri);
+            visitedSites.add(uri);
         }catch(RepositoryAccessException ex) {
             EhiLogger.logAdaption("repository <"+uri+"> ignored; "+RepositoryAccess.toString(ex));
         }
@@ -49,6 +51,9 @@ public class ModelLister implements VisitorAction {
     public void logRepositoryScan(String uri) {
         // TODO Auto-generated method stub
         
+    }
+    public java.util.Set<String> visitedRepositories() {
+        return visitedSites;
     }
 
     @Deprecated

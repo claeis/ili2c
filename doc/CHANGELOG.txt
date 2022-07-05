@@ -3,6 +3,7 @@ LATEST
 - metamodel: add ili linenr to constraints 
 - ili2 export: added missing ';' between formal arguments in FUNCTION definition
 - ModelMetadata added baseUri (#70)
+- ModelLister.visitedRepositories() added (#70)
 - fix JRE 1.6 compatibility
 - iox-ili-1.21.11+
 
