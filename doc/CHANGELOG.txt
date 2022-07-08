@@ -1,12 +1,15 @@
 LATEST
 ---------------------------
+
+ili2c 5.2.7 (2022-07-08)
+---------------------------
 - metamodel: add ili linenr to constraints 
 - ili2 export: added missing ';' between formal arguments in FUNCTION definition
 - ModelMetadata added baseUri (#70)
 - ModelLister.visitedRepositories() added (#70)
 - isDomainName()/isDomainUri()/isDomainHalignment()/isDomainValignment() added
 - fix JRE 1.6 compatibility
-- iox-ili-1.21.11+
+- iox-ili-1.21.10
 
 ili2c 5.2.6 (2022-04-29)
 ---------------------------
