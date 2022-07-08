@@ -3,8 +3,12 @@ allprojects {
 	apply plugin: "java"
 	apply plugin: "maven"
 	
-	sourceCompatibility = JavaVersion.VERSION_1_6
-	targetCompatibility = JavaVersion.VERSION_1_6
+    if(!JavaVersion.current().isJava8()){
+      compileJava.options.compilerArgs.addAll(['--release', '6'])
+    }else{
+      sourceCompatibility = JavaVersion.VERSION_1_6 
+      targetCompatibility = JavaVersion.VERSION_1_6
+    }
 	compileJava.options.encoding = 'US-ASCII'
 	
 	configurations {
@@ -24,7 +28,7 @@ allprojects {
 	}
 }
 
-version '5.2.6'+System.getProperty('release','-SNAPSHOT')
+version '5.2.7'+System.getProperty('release','-SNAPSHOT')
 
 configurations {
 	scpAntTask

@@ -4396,6 +4396,7 @@ protected mandatoryConstraint [Viewable v,Container context]
             constr.setDirty(true);
       	}
 		constr.setCondition(condition);
+		constr.setSourceLine(mand.getLine());
       } catch (Exception ex) {
         reportError(ex, mand.getLine());
       }
@@ -4432,6 +4433,7 @@ protected plausibilityConstraint [Viewable v,Container context]
         constr.setDirection(direction);
         constr.setCondition(condition);
         constr.setPercentage(percentage.doubleValue());
+		constr.setSourceLine(tok.getLine());
       } catch (Exception ex) {
         reportError (ex, tok.getLine());
       }
@@ -4447,9 +4449,10 @@ protected existenceConstraint[Viewable v,Container context]
 		constr=new ExistenceConstraint();
 		ObjectPath attrRef=null;
 	}
-	: "EXISTENCE" "CONSTRAINT" attr=attributePath[v,context]
+	: exst:"EXISTENCE" "CONSTRAINT" attr=attributePath[v,context]
 		{
 			constr.setRestrictedAttribute(attr);
+		    constr.setSourceLine(exst.getLine());
 		}
 	"REQUIRED" "IN" ref=viewableRefDepReq[v] COLON attrRef=attributePath[ref,context]
 		{
@@ -4478,6 +4481,7 @@ protected uniquenessConstraint[Viewable v,Container context]
 	| constr=localUniqueness[v]
 	)
 	{
+		    constr.setSourceLine(u.getLine());
 		if(preCond!=null){ 
 			if(!preCond.isDirty() && !preCond.isLogical()){
 				reportError (formatMessage ("err_expr_noLogical",(String)null),
@@ -4628,6 +4632,7 @@ protected setConstraint [Viewable v,Container context]
 	condition=expression[v, /* expectedType */ predefinedBooleanType,context]
 	SEMI
 	{
+	  constr.setSourceLine(tok.getLine());
 	  if(v instanceof Table && !((Table)v).isIdentifiable()){
 			reportError (formatMessage ("err_constraint_illegalSetInStruct",
 				v.getScopedName(null)), tok.getLine());

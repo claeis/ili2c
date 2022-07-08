@@ -1,13 +1,15 @@
 INTERLIS 2.3;
 
 /* 2020-04-24 Enumeration Kind in STRUCTURE PathEl defined as ORDERED */
-!!@precursorVersion=2011-12-22
-MODEL IlisMeta07 (en) AT "http://interlis.ch" VERSION "2020-04-24" =
+/* 2022-04-28 DOMAIN LanguageCode: not MANDATORY; CLASS Translation: Attribute Language is MANDATORY */
+
+!!@precursorVersion=2020-04-24
+MODEL IlisMeta07 (en) AT "http://models.interlis.ch" VERSION "2022-04-28" =
 
   DOMAIN
     BasketOID = OID TEXT; /* Filename */
     MetaElemOID = OID TEXT; /* Namepath: Model... */
-    LanguageCode = MANDATORY TEXT*5;
+    LanguageCode = TEXT*5;
 
 
   TOPIC ModelData =
@@ -718,7 +720,7 @@ MODEL IlisMeta07 (en) AT "http://interlis.ch" VERSION "2020-04-24" =
 
     CLASS Translation =
       NO OID;
-      Language: LanguageCode;
+      Language: MANDATORY LanguageCode;
       Translations: BAG OF METranslation;
     END Translation;
 

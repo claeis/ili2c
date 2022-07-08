@@ -1002,7 +1002,6 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
         printAttributePath(forTable, path, language);
       }
     }else{
-      printMetaValues(uc.getMetaValues(), language, uc.getScopedName());
       ipw.print ("UNIQUE");
       String next=" ";
       while(pathi.hasNext()){
@@ -2791,7 +2790,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
       printError ();
     else
     {
-    	String sep=" ";
+    	String sep="";
       for (int i = 0; i < args.length; i++)
       {
           FormalArgument arg=args[i];
@@ -2805,7 +2804,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
               }
           }
           
-          ipw.print(name+": ");
+          ipw.print(sep+name+": ");
         printType (scope, args[i].getType(), language, scope.getScopedName());
         sep="; ";
       }

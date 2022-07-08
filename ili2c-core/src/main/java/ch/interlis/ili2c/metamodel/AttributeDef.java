@@ -661,6 +661,54 @@ public abstract class AttributeDef
 		return false;
 		
 	}
+    public boolean isDomainHalignment(){
+        TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
+        Type type=getDomain();
+        while(type instanceof TypeAlias) {
+            if (((TypeAlias) type).getAliasing() == td.INTERLIS.HALIGNMENT) {
+                return true;
+            }
+            type=((TypeAlias) type).getAliasing().getType();
+        }
+        return false;
+        
+    }
+    public boolean isDomainValignment(){
+        TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
+        Type type=getDomain();
+        while(type instanceof TypeAlias) {
+            if (((TypeAlias) type).getAliasing() == td.INTERLIS.VALIGNMENT) {
+                return true;
+            }
+            type=((TypeAlias) type).getAliasing().getType();
+        }
+        return false;
+        
+    }
+    public boolean isDomainName(){
+        TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
+        Type type=getDomain();
+        while(type instanceof TypeAlias) {
+            if (((TypeAlias) type).getAliasing() == td.INTERLIS.NAME) {
+                return true;
+            }
+            type=((TypeAlias) type).getAliasing().getType();
+        }
+        return false;
+        
+    }
+    public boolean isDomainUri(){
+        TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
+        Type type=getDomain();
+        while(type instanceof TypeAlias) {
+            if (((TypeAlias) type).getAliasing() == td.INTERLIS.URI) {
+                return true;
+            }
+            type=((TypeAlias) type).getAliasing().getType();
+        }
+        return false;
+        
+    }
 	public boolean isDomainIli1Date(){
 		TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
 		Type type=getDomain();
