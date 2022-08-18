@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public class EnumTreeValueType extends BaseType {
+public class EnumTreeValueType extends AbstractEnumerationType {
 
   public EnumTreeValueType()
   {
@@ -45,6 +45,7 @@ public void setEnumType(Domain domain) {
     public EnumTreeValueType clone() {
         return (EnumTreeValueType) super.clone();
     }
+    @Override
 	public Enumeration getConsolidatedEnumeration() {
 	      Enumeration ret=((EnumerationType)enumType.getType()).getConsolidatedEnumeration();
 	      return ret;

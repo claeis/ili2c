@@ -1,5 +1,6 @@
 LATEST
 ---------------------------
+- metamodel: added AbstractEnumerationType
 
 ili2c 5.2.7 (2022-07-08)
 ---------------------------
