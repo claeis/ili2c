@@ -1,6 +1,7 @@
 LATEST
 ---------------------------
 - metamodel: added AbstractEnumerationType
+- IliManager.ILIDATA_URI_PREFIX added (iox-ili#91)
 
 ili2c 5.2.7 (2022-07-08)
 ---------------------------
