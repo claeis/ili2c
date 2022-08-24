@@ -24,7 +24,7 @@ import ch.ehi.basics.logging.EhiLogger;
     @author    Sascha Brawer
     @author    Gordan Vosicki - Added cloning support
 */
-public class EnumerationType extends BaseType {
+public class EnumerationType extends AbstractEnumerationType {
   protected boolean ordered = false;
   protected boolean circular = false;
   protected Enumeration enumeration = null;
@@ -159,6 +159,7 @@ public class EnumerationType extends BaseType {
   {
     return enumeration;
   }
+  @Override
   public Enumeration getConsolidatedEnumeration ()
   {
     if(extending==null){
