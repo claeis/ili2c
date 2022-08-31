@@ -59,7 +59,7 @@ public class TypeAlias extends Type
     return false;
   }
 
-
+  @Override
   public boolean isMandatoryConsideringAliases ()
   {
     if (isMandatory ())

@@ -2071,8 +2071,21 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     }
 
     if(withCardinality) {
-        if (dd.isMandatory() && !(dd instanceof CompositionType))
+        Cardinality card = dd.getCardinality();
+        if (card.getMaximum() == 1)
+        {
+          /* [MANDATORY] OBJECT */
+          if (card.getMinimum() == 1)
             ipw.print("MANDATORY ");
+        }
+        else
+        {
+          /* BAG OR LIST */
+          ipw.print(dd.isOrdered() ? "LIST " : "BAG ");
+          ipw.print(card);
+          ipw.print(' ');
+          ipw.print("OF ");
+        }
     }
 
 
@@ -2202,23 +2215,6 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     }else if (dd instanceof CompositionType)
     {
       CompositionType comp = (CompositionType) dd;
-      Cardinality card = comp.getCardinality();
-      if (card.getMaximum() == 1)
-      {
-        /* [MANDATORY] OBJECT */
-        if (card.getMinimum() == 1)
-          ipw.print("MANDATORY ");
-      }
-      else
-      {
-        /* BAG OR LIST */
-        ipw.print(comp.isOrdered() ? "LIST " : "BAG ");
-	      ipw.print(card);
-	      ipw.print(' ');
-		ipw.print("OF ");
-      }
-
-
       printRef (scope, comp.getComponentType(), language);
     }
     else if (dd instanceof ReferenceType)

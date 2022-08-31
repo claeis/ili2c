@@ -414,19 +414,7 @@ public class Uml21Generator
 				
 				Cardinality card=role.getCardinality();
 				
-				xout.writeStartElement("upperValue");
-				xout.writeAttribute(xmiNs, "type",umlPfx+"LiteralUnlimitedNatural");
-				if(card.getMaximum()==Cardinality.UNBOUND){
-					xout.writeAttribute("value","*");
-				}else{
-					xout.writeAttribute("value",Long.toString(card.getMaximum()));
-				}
-			    xout.writeEndElement();
-
-				xout.writeStartElement("lowerValue");
-				xout.writeAttribute(xmiNs, "type",umlPfx+"LiteralInteger");
-				xout.writeAttribute("value",Long.toString(card.getMinimum()));
-			    xout.writeEndElement();
+				writeCardinality(card);
 			    
 				xout.writeEndElement();
 			}
@@ -448,26 +436,10 @@ public class Uml21Generator
 		if(type instanceof CompositionType){
 	    	CompositionType composition=(CompositionType)type;
 	    	Table part=composition.getComponentType();
-		    Cardinality card=composition.getCardinality();
 			xout.writeAttribute("type",part.getScopedName(null));
 			if(def.getExtending()!=null){
 				xout.writeAttribute("redefinedProperty",getAttributeDefXmiId((AttributeDef) def.getExtending()));
 			}
-			
-			xout.writeStartElement("upperValue");
-			xout.writeAttribute(xmiNs, "type",umlPfx+"LiteralUnlimitedNatural");
-			if(card.getMaximum()==Cardinality.UNBOUND){
-				xout.writeAttribute("value","*");
-			}else{
-				xout.writeAttribute("value",Long.toString(card.getMaximum()));
-			}
-		    xout.writeEndElement();
-
-			xout.writeStartElement("lowerValue");
-			xout.writeAttribute(xmiNs, "type",umlPfx+"LiteralInteger");
-			xout.writeAttribute("value",Long.toString(card.getMinimum()));
-		    xout.writeEndElement();
-			
 		}else{
 			String typeId=null;
 			if(type instanceof TypeAlias){
@@ -521,25 +493,30 @@ public class Uml21Generator
 			if(def.getExtending()!=null){
 				xout.writeAttribute("redefinedProperty",getAttributeDefXmiId((AttributeDef) def.getExtending()));
 			}
-			
-			xout.writeStartElement("upperValue");
-			xout.writeAttribute(xmiNs, "type",umlPfx+"LiteralUnlimitedNatural");
-			xout.writeAttribute("value","1");
-		    xout.writeEndElement();
-
-			xout.writeStartElement("lowerValue");
-			xout.writeAttribute(xmiNs, "type",umlPfx+"LiteralInteger");
-			if (!def.getDomain().isMandatoryConsideringAliases()) {
-				xout.writeAttribute("value","1");
-			}else{
-				xout.writeAttribute("value","0");
-			}
-		    xout.writeEndElement();
 		}
+        Cardinality card=type.getCardinality();
+        writeCardinality(card);
 	    
 	    xout.writeEndElement();
 	
 	}
+
+
+    private void writeCardinality(Cardinality card) throws XMLStreamException {
+        xout.writeStartElement("upperValue");
+        xout.writeAttribute(xmiNs, "type",umlPfx+"LiteralUnlimitedNatural");
+        if(card.getMaximum()==Cardinality.UNBOUND){
+        	xout.writeAttribute("value","*");
+        }else{
+        	xout.writeAttribute("value",Long.toString(card.getMaximum()));
+        }
+        xout.writeEndElement();
+
+        xout.writeStartElement("lowerValue");
+        xout.writeAttribute(xmiNs, "type",umlPfx+"LiteralInteger");
+        xout.writeAttribute("value",Long.toString(card.getMinimum()));
+        xout.writeEndElement();
+    }
 	private java.util.ArrayList applies=new java.util.ArrayList();
 	private void applyStereotype(Element ele)
 	{
