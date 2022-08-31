@@ -10,6 +10,8 @@
 package ch.interlis.ili2c.metamodel;
 
 import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.Collections;
 import java.util.HashSet;
 
 /** An abstract class that groups together all containers that
@@ -21,5 +23,5 @@ public abstract class Importable<E extends Element> extends Container<E>
 
   /** The model definitions which depend on this <code>Model</code>.
    */
-  protected Set<Model> importedBy = new HashSet<Model>(2);
+  protected Set<Model> importedBy = Collections.newSetFromMap(new WeakHashMap<Model, Boolean>());
 }

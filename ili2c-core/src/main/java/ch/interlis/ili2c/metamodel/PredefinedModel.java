@@ -233,6 +233,13 @@ public class PredefinedModel extends DataModel
       }
       return instance;
   }
+  @Override
+  public final Container getContainer ()
+  {
+      // because INTERLIS is a singleton, there can not be a reference to the container
+      return null;
+  }
+  
   private void setupModel()
   {
     add (STRAIGHTS);

@@ -126,7 +126,6 @@ public abstract class AbstractSurfaceOrAreaType extends LineType
   public void setLineAttributeStructure (Table lineAttributeStructure)
     throws java.beans.PropertyVetoException
   {
-    TransferDescription td;
 
     Table oldValue = this.lineAttributeStructure;
     Table newValue = lineAttributeStructure;
@@ -137,7 +136,6 @@ public abstract class AbstractSurfaceOrAreaType extends LineType
     if (newValue == null)
       throw new IllegalArgumentException (rsrc.getString ("err_nullNotAcceptable"));
 
-    td = (TransferDescription) newValue.getContainer (TransferDescription.class);
 
     try
     {

@@ -13,7 +13,9 @@ package ch.interlis.ili2c.metamodel;
 
 
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.beans.PropertyVetoException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -35,8 +37,8 @@ public class Domain extends AbstractLeafElement
   protected boolean    _mandatory = false;
 
   protected Domain extending = null;
-  protected Set<Domain> extendedBy = new HashSet<Domain>(2);
-  protected Set<Type> aliasedBy = new HashSet<Type>(2);
+  protected Set<Domain> extendedBy = Collections.newSetFromMap(new WeakHashMap<Domain, Boolean>());
+  protected Set<Type> aliasedBy = Collections.newSetFromMap(new WeakHashMap<Type, Boolean>());
 
 
   public Domain ()

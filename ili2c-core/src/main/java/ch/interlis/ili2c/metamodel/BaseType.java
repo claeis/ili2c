@@ -22,16 +22,10 @@ import java.beans.beancontext.BeanContextChildSupport;
 */
 public abstract class BaseType extends Type
 {
-  protected BaseType()
-  {
-    bccs = new BeanContextChildSupport(this);
-  }
 
 
     public BaseType clone() {
         BaseType cloned = (BaseType) super.clone();
-
-        bccs = new BeanContextChildSupport(this);
         return cloned;
     }
 

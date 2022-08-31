@@ -268,11 +268,7 @@ public abstract class Model extends Importable<Element>
 	  if(!((ElementDelegate)elements).checkChildElement(o)){
 		  return;
 	  }
-	    try {
-		      o.setBeanContext(this);
-	    } catch (java.beans.PropertyVetoException pve) {
-		      throw new IllegalArgumentException(pve.getLocalizedMessage());
-	    }
+      o.setContainer(this);
 
 	  if (o instanceof GraphicParameterDef)
 	  {
@@ -287,11 +283,7 @@ public abstract class Model extends Importable<Element>
 	  if(!((ElementDelegate)elements).checkChildElement(o)){
 		  return;
 	  }
-	    try {
-		      o.setBeanContext(this);
-	    } catch (java.beans.PropertyVetoException pve) {
-		      throw new IllegalArgumentException(pve.getLocalizedMessage());
-	    }
+      o.setContainer(this);
 
 	  if (o instanceof GraphicParameterDef)
 	  {

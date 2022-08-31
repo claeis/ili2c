@@ -115,17 +115,15 @@ public class SignAttribute extends ExtendableContainer<Element>
   {
     Table oldValue = this.generating;
     Table newValue = generating;
-    TransferDescription td;
 
     if (oldValue == newValue)
       return;
 
-    td = (TransferDescription) getContainer (TransferDescription.class);
-    if ((newValue != null) && !newValue.isExtending (td.INTERLIS.SIGN))
+    if ((newValue != null) && !newValue.isExtending (PredefinedModel.getInstance().SIGN))
     {
       throw new IllegalArgumentException (formatMessage (
         "err_signAttr_ofNonSignTab",
-        newValue.toString(), td.INTERLIS.SIGN.toString()));
+        newValue.toString(), PredefinedModel.getInstance().SIGN.toString()));
     }
 
     fireVetoableChange ("generating", oldValue, newValue);

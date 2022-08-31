@@ -27,7 +27,7 @@ public abstract class Type
   implements Cloneable
 {
   protected Type       extending = null;
-  protected Set<Type>  extendedBy = new HashSet<Type>(2);
+  protected Set<Type>  extendedBy = Collections.newSetFromMap(new WeakHashMap<Type, Boolean>());
   protected Cardinality  cardinality = new Cardinality(0,1);
   private boolean      ordered = false;
 
@@ -40,8 +40,7 @@ public abstract class Type
         Type type=this;
         while (type instanceof TypeAlias) {
             Domain domain = ((TypeAlias) type).getAliasing();
-            TransferDescription td = (TransferDescription) domain.getContainer(TransferDescription.class);
-            if (domain == td.INTERLIS.BOOLEAN) {
+            if (domain == PredefinedModel.getInstance().BOOLEAN) {
                 return true;
             }
             type=domain.getType();
