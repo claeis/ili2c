@@ -573,25 +573,6 @@ public final class XSD24Generator
     if(type instanceof TypeAlias){
     	Domain realDomain=((TypeAlias)type).getAliasing();
     	Type realType=realDomain.getType();
-    	/*
-    	URI (FINAL) = TEXT*1023;
-    	NAME (FINAL) = TEXT*255;
-    	INTERLIS_1_DATE (FINAL) = TEXT*8;
-    	BOOLEAN (FINAL) = (
-    	HALIGNMENT (FINAL) = (
-    	VALIGNMENT (FINAL) = (
-    	ANYOID = OID ANY;
-    	I32OID = OID 0 .. 2147483647;
-    	STANDARDOID = OID TEXT*16;
-    	UUIDOID = OID TEXT*36;
-    	LineCoord (ABSTRACT) = COORD NUMERIC, NUMERIC;
-    	GregorianYear = 1582 .. 2999
-    	XMLTime = FORMAT BASED ON UTC ( Hours/2 ":" Minutes ":" Seconds );
-    	XMLDate = FORMAT BASED ON GregorianDate ( Year "-" Month "-" Day );
-    	XMLDateTime EXTENDS XMLDate = FORMAT BASED ON GregorianDateTime
-    	*/
-    	// only the following can apprea in a DomainDef
-    	// URI, NAME, INTERLIS_1_DATE, BOOLEAN, HALIGNMENT, VALIGNMENT
     	String base=null;
     	String facets=null;
     	if(realDomain==td.INTERLIS.URI){
@@ -609,6 +590,12 @@ public final class XSD24Generator
     		base=getIliXmlns()+"HALIGNMENT";
     	}else if(realDomain==td.INTERLIS.VALIGNMENT){
     		base=getIliXmlns()+"VALIGNMENT";
+        }else if(realDomain==td.INTERLIS.XmlDate){
+            base="xsd:date";
+        }else if(realDomain==td.INTERLIS.XmlDateTime){
+            base="xsd:dateTime";
+        }else if(realDomain==td.INTERLIS.XmlTime){
+            base="xsd:time";
         }else{
         	throw new IllegalArgumentException(realDomain.getScopedName(null)+": type "+type.getClass()+" not yet supported");
         }

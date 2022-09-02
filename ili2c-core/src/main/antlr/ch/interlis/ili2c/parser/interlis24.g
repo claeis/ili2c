@@ -3134,11 +3134,37 @@ protected formattedConst
 ;
 
 protected dateTimeType [Container scope, Type extending]
-  returns [CoordType ct]
+  returns [TypeAlias tt]
 {
-	ct=null;
+	tt=null;
 }
-: "DATE" | "TIMEOFDAY" | "DATETIME" // FIXME24
+: d:"DATE"
+    {
+      tt = new TypeAlias ();
+      try {
+        ((TypeAlias) tt).setAliasing (modelInterlis.XmlDate);
+      } catch (Exception ex) {
+        reportInternalError (ex, d.getLine());
+      }
+    }
+  | t:"TIMEOFDAY" 
+    {
+      tt = new TypeAlias ();
+      try {
+        ((TypeAlias) tt).setAliasing (modelInterlis.XmlTime);
+      } catch (Exception ex) {
+        reportInternalError (ex, t.getLine());
+      }
+    }
+  | dt:"DATETIME"
+    {
+      tt = new TypeAlias ();
+      try {
+        ((TypeAlias) tt).setAliasing (modelInterlis.XmlDateTime);
+      } catch (Exception ex) {
+        reportInternalError (ex, dt.getLine());
+      }
+    }
 ;
 	
 protected coordinateType [Container scope, Type extending,boolean isGeneric]

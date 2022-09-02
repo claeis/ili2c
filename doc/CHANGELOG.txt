@@ -2,6 +2,7 @@ LATEST
 ---------------------------
 - fix memory leak in metamodel (#76)
 - ili2.4: LIST/BAG with simple types (#74) 
+- ili2.4:  support DATE/DATETIME/TIMEOFDAY (#73) 
 
 ili2c 5.2.8 (2022-08-24)
 ---------------------------
