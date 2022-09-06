@@ -49,6 +49,28 @@ public class XSD24GeneratorTest {
         Schema schema=readSchema(generatedSchemaDoc);
         
     }
+    @Test
+    public void text_list() throws Exception {
+        TEST_OUT.mkdirs();
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(Attribute24Test.ILI_TEXT_LIST, FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+        }
+        assertNotNull(td);
+        assertEquals(0,errs.getErrs().size());
+        ch.interlis.ili2c.generator.XSD24Generator.generate (td, TEST_OUT);
+        
+        // read generated xsd
+        java.io.File generatedSchemaDoc=new java.io.File(TEST_OUT,"ModelA.xsd");
+        Schema schema=readSchema(generatedSchemaDoc);
+        
+    }
 
     private Schema readSchema(java.io.File generatedSchemaDoc) throws SAXException {
         javax.xml.transform.Source schemaFiles[] =  new javax.xml.transform.Source[]{

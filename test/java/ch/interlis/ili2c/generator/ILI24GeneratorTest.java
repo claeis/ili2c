@@ -35,5 +35,23 @@ public class ILI24GeneratorTest {
             Assert.assertEquals("attrDate : DATE;",syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
         }
     }
+    @Test
+    public void text_list() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(Attribute24Test.ILI_TEXT_LIST, FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        Assert.assertNotNull(td);
+        Assert.assertEquals(0,errs.getErrs().size());
+        java.io.StringWriter syntaxBuffer=new java.io.StringWriter();
+        Interlis2Generator makeSyntax=Interlis2Generator.generateElements24(syntaxBuffer,td);
+        {
+            syntaxBuffer.getBuffer().setLength(0);
+            makeSyntax.printElement(null, null, td.getElement("ModelA.TopicA.ClassA.attrA"), null);
+            Assert.assertEquals("attrA : LIST {0..*} OF TEXT*20;",syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+        }
+    }
 
 }
