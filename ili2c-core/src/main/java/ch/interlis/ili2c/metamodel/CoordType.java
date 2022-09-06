@@ -1,6 +1,5 @@
 
 package ch.interlis.ili2c.metamodel;
-import ch.ehi.basics.logging.EhiLogger;
 
 
 /** A coordinate type. */

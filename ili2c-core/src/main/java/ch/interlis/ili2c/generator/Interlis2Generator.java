@@ -2289,7 +2289,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
       if (lt instanceof PolylineType){
         ipw.print (((PolylineType) lt).isDirected() ? "DIRECTED POLYLINE" : "POLYLINE");
       }else if (lt instanceof MultiPolylineType){
-          ipw.print (((PolylineType) lt).isDirected() ? "DIRECTED MULTIPOLYLINE" : "MULTIPOLYLINE");
+          ipw.print (((MultiPolylineType) lt).isDirected() ? "DIRECTED MULTIPOLYLINE" : "MULTIPOLYLINE");
       }else if (lt instanceof SurfaceType){
         ipw.print ("SURFACE");
       }else if (lt instanceof MultiSurfaceType){

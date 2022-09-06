@@ -69,6 +69,93 @@ public class XSD24GeneratorTest {
         // read generated xsd
         java.io.File generatedSchemaDoc=new java.io.File(TEST_OUT,"ModelA.xsd");
         Schema schema=readSchema(generatedSchemaDoc);
+    }
+    @Test
+    public void multiCoord() throws Exception {
+        TEST_OUT.mkdirs();
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(Attribute24Test.ILI_MULTICOORD, FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+        }
+        assertNotNull(td);
+        assertEquals(0,errs.getErrs().size());
+        ch.interlis.ili2c.generator.XSD24Generator.generate (td, TEST_OUT);
+        
+        // read generated xsd
+        java.io.File generatedSchemaDoc=new java.io.File(TEST_OUT,"ModelA.xsd");
+        Schema schema=readSchema(generatedSchemaDoc);
+        
+    }
+    @Test
+    public void multiPolyine() throws Exception {
+        TEST_OUT.mkdirs();
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(Attribute24Test.ILI_MULTIPOLYLINE, FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+        }
+        assertNotNull(td);
+        assertEquals(0,errs.getErrs().size());
+        ch.interlis.ili2c.generator.XSD24Generator.generate (td, TEST_OUT);
+        
+        // read generated xsd
+        java.io.File generatedSchemaDoc=new java.io.File(TEST_OUT,"ModelA.xsd");
+        Schema schema=readSchema(generatedSchemaDoc);
+        
+    }
+    @Test
+    public void multiSurface() throws Exception {
+        TEST_OUT.mkdirs();
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(Attribute24Test.ILI_MULTISURFACE, FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+        }
+        assertNotNull(td);
+        assertEquals(0,errs.getErrs().size());
+        ch.interlis.ili2c.generator.XSD24Generator.generate (td, TEST_OUT);
+        
+        // read generated xsd
+        java.io.File generatedSchemaDoc=new java.io.File(TEST_OUT,"ModelA.xsd");
+        Schema schema=readSchema(generatedSchemaDoc);
+        
+    }
+    @Test
+    public void multiArea() throws Exception {
+        TEST_OUT.mkdirs();
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(Attribute24Test.ILI_MULTIAREA, FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+        }
+        assertNotNull(td);
+        assertEquals(0,errs.getErrs().size());
+        ch.interlis.ili2c.generator.XSD24Generator.generate (td, TEST_OUT);
+        
+        // read generated xsd
+        java.io.File generatedSchemaDoc=new java.io.File(TEST_OUT,"ModelA.xsd");
+        Schema schema=readSchema(generatedSchemaDoc);
         
     }
 

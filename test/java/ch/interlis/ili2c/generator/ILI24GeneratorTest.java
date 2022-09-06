@@ -36,6 +36,98 @@ public class ILI24GeneratorTest {
         }
     }
     @Test
+    public void multiCoord() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(Attribute24Test.ILI_MULTICOORD, FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        Assert.assertNotNull(td);
+        Assert.assertEquals(0,errs.getErrs().size());
+        java.io.StringWriter syntaxBuffer=new java.io.StringWriter();
+        Interlis2Generator makeSyntax=Interlis2Generator.generateElements24(syntaxBuffer,td);
+        {
+            syntaxBuffer.getBuffer().setLength(0);
+            makeSyntax.printElement(null, null, td.getElement("ModelA.DomainMultiCoord"), null);
+            Assert.assertEquals("DOMAIN DomainMultiCoord = MULTICOORD 2460000.000 .. 2870000.000, 1045000.000 .. 1310000.000;",syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+        }
+        {
+            syntaxBuffer.getBuffer().setLength(0);
+            makeSyntax.printElement(null, null, td.getElement("ModelA.TopicA.ClassA.attrMultiCoord"), null);
+            Assert.assertEquals("attrMultiCoord : MULTICOORD 2460000.000 .. 2870000.000, 1045000.000 .. 1310000.000;",syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+        }
+    }
+    @Test
+    public void multiPolyline() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(Attribute24Test.ILI_MULTIPOLYLINE, FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        Assert.assertNotNull(td);
+        Assert.assertEquals(0,errs.getErrs().size());
+        java.io.StringWriter syntaxBuffer=new java.io.StringWriter();
+        Interlis2Generator makeSyntax=Interlis2Generator.generateElements24(syntaxBuffer,td);
+        {
+            syntaxBuffer.getBuffer().setLength(0);
+            makeSyntax.printElement(null, null, td.getElement("ModelA.DomainMultiPolyline"), null);
+            Assert.assertEquals("DOMAIN DomainMultiPolyline = MULTIPOLYLINE WITH (STRAIGHTS, ARCS) VERTEX ModelA.Coord;",syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+        }
+        {
+            syntaxBuffer.getBuffer().setLength(0);
+            makeSyntax.printElement(null, null, td.getElement("ModelA.TopicA.ClassA.attrMultiPolyline"), null);
+            Assert.assertEquals("attrMultiPolyline : MULTIPOLYLINE WITH (STRAIGHTS, ARCS) VERTEX ModelA.Coord;",syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+        }
+    }
+    @Test
+    public void multiSurface() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(Attribute24Test.ILI_MULTISURFACE, FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        Assert.assertNotNull(td);
+        Assert.assertEquals(0,errs.getErrs().size());
+        java.io.StringWriter syntaxBuffer=new java.io.StringWriter();
+        Interlis2Generator makeSyntax=Interlis2Generator.generateElements24(syntaxBuffer,td);
+        {
+            syntaxBuffer.getBuffer().setLength(0);
+            makeSyntax.printElement(null, null, td.getElement("ModelA.DomainMultiSurface"), null);
+            Assert.assertEquals("DOMAIN DomainMultiSurface = MULTISURFACE WITH (STRAIGHTS, ARCS) VERTEX ModelA.Coord WITHOUT OVERLAPS > 0.001;",syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+        }
+        {
+            syntaxBuffer.getBuffer().setLength(0);
+            makeSyntax.printElement(null, null, td.getElement("ModelA.TopicA.ClassA.attrMultiSurface"), null);
+            Assert.assertEquals("attrMultiSurface : MULTISURFACE WITH (STRAIGHTS, ARCS) VERTEX ModelA.Coord WITHOUT OVERLAPS > 0.001;",syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+        }
+    }
+    @Test
+    public void multiArea() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(Attribute24Test.ILI_MULTIAREA, FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        Assert.assertNotNull(td);
+        Assert.assertEquals(0,errs.getErrs().size());
+        java.io.StringWriter syntaxBuffer=new java.io.StringWriter();
+        Interlis2Generator makeSyntax=Interlis2Generator.generateElements24(syntaxBuffer,td);
+        {
+            syntaxBuffer.getBuffer().setLength(0);
+            makeSyntax.printElement(null, null, td.getElement("ModelA.DomainMultiArea"), null);
+            Assert.assertEquals("DOMAIN DomainMultiArea = MULTIAREA WITH (STRAIGHTS, ARCS) VERTEX ModelA.Coord WITHOUT OVERLAPS > 0.001;",syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+        }
+        {
+            syntaxBuffer.getBuffer().setLength(0);
+            makeSyntax.printElement(null, null, td.getElement("ModelA.TopicA.ClassA.attrMultiArea"), null);
+            Assert.assertEquals("attrMultiArea : MULTIAREA WITH (STRAIGHTS, ARCS) VERTEX ModelA.Coord WITHOUT OVERLAPS > 0.001;",syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+        }
+    }
+    @Test
     public void text_list() throws Exception {
         LogCollector errs=new LogCollector();
         EhiLogger.getInstance().addListener(errs);
