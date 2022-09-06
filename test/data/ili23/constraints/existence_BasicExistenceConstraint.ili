@@ -2,15 +2,21 @@ INTERLIS 2.3;
 
 MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
 	TOPIC topic =
-
+	  DOMAIN
+		CoordA = COORD 
+				2460000.000 .. 2870000.000,
+				1045000.000 .. 1310000.000;
 
 		CLASS Other =
 			otherAttr : TEXT*10;
+			coordAttr : CoordA;
 		END Other;
 
 		CLASS aclass =
 			attr : TEXT*10;
+			lineAttr : POLYLINE WITH (STRAIGHTS,ARCS) VERTEX CoordA;
 			EXISTENCE CONSTRAINT attr REQUIRED IN Other:otherAttr;
+			EXISTENCE CONSTRAINT lineAttr REQUIRED IN Other:coordAttr;
 		END aclass;
 		
 

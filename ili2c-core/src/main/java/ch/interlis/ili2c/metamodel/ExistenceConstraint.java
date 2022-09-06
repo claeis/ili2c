@@ -22,6 +22,15 @@ public class ExistenceConstraint extends Constraint
 	*/
 	public void addRequiredIn(ObjectPath attribute)
 	{
+	    Type requiredInType=attribute.getType().resolveAliases();
+	    Type attrType=restrictedAttribute.getType().resolveAliases();
+	    if(attrType.getClass()!=requiredInType.getClass()) {
+	        if(attrType instanceof LineType && requiredInType instanceof AbstractCoordType) {
+	            ; // ok
+	        }else {
+	            throw new Ili2cSemanticException(getSourceLine(), Element.formatMessage("err_existConstraint_RequiredInTypeMismatch",attribute.toString(),restrictedAttribute.toString()));
+	        }
+	    }
 		requiredIn.add(attribute);
 	}
         public Iterator<ObjectPath> iteratorRequiredIn()

@@ -84,6 +84,21 @@ public class Constraints23Test {
 		Table classB=(Table) topicB.getElement(Table.class, "aclass");
 		assertNotNull(classB);
 	}
+    @Test
+    public void existence_TypeIncompatibility() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Settings settings=new Settings();
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"existence_TypeIncompatibility.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("The attribute type of \"otherAttr\" does not match \"attr\".", logEvent.getRawEventMsg());
+    }
 	
 	// This test checks a basic local uniqueness constraint.
 	@Test
