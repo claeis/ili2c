@@ -26,12 +26,14 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import ch.ehi.basics.logging.EhiLogger;
+import ch.ehi.basics.settings.Settings;
 import ch.ehi.iox.objpool.ObjectPoolManager;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.Model;
+import ch.interlis.ili2c.metamodel.PredefinedModel;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.modelscan.IliFile;
 import ch.interlis.ili2c.modelscan.IliModel;
@@ -64,7 +66,7 @@ public class CheckReposIlis {
 
 	private boolean validationErrors=false;
 	public boolean checkRepoIlis(Configuration config,
-			UserSettings settings) {
+			Settings settings) {
 		
 		Main.setHttpProxySystemProperties(settings);
 				
@@ -181,6 +183,9 @@ public class CheckReposIlis {
 	                        iliversion=model.getIliVersion();
 	                        modelsInFile.add(model.getName());
 	                        for(String reqModel:(Iterable<String>)model.getDependencies()) {
+	                            if(reqModel.equals(PredefinedModel.INTERLIS)) {
+	                                continue; // ignore here; report error later
+	                            }
 	                            if(!requiredModels.contains(reqModel)) {
 	                                requiredModels.add(reqModel);
 	                            }
@@ -264,6 +269,10 @@ public class CheckReposIlis {
 	                                                HashSet<String> depsMeta=new HashSet<String>();
 	                                                HashSet<String> depsIli=new HashSet<String>();
 	                                                for(String dep : modelMetadata.getDependsOnModel()){
+	                                                    if(dep.equals(PredefinedModel.INTERLIS)) {
+                                                            inconsistentMetaEntry.add(new MetaEntryProblem(modelMetadata.getOid(),model.getName(),PredefinedModel.INTERLIS+" must not be listed as dependsOnModel"));                                          
+	                                                        continue;
+	                                                    }
 	                                                    depsMeta.add(dep);
 	                                                }
 	                                                String sep="";
@@ -343,7 +352,7 @@ public class CheckReposIlis {
 				EhiLogger.logError("syntax errors in "+IliManager.ILIMODELS_XML);
 			}
 		}
-		return failedFiles.size()!=0;
+		return !failedFiles.isEmpty() || !inconsistentMetaEntry.isEmpty();
 	}
 
 }

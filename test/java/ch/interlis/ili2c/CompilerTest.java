@@ -75,6 +75,24 @@ public class CompilerTest {
         
     }
     @Test
+    public void reposModelNameDependsOnINTELIS() throws Exception {
+        LogCollector logs=new LogCollector();
+        try {
+            EhiLogger.getInstance().addListener(logs);
+            Configuration ili2cConfig=new Configuration();
+            Settings settings=new Settings();
+            settings.setValue(UserSettings.ILIDIRS,CheckReposIlisTest.TEST_REPOS);
+            FileEntry fileEntry=new FileEntry("ModelA", FileEntryKind.ILIMODELFILE);
+            ili2cConfig.addFileEntry(fileEntry);
+            ili2cConfig.setAutoCompleteModelList(true);
+            TransferDescription td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+            assertNotNull(td);
+        }finally {
+            EhiLogger.getInstance().removeListener(logs);
+        }
+        
+    }
+    @Test
     public void localIliFileDependentModelFails() throws Exception {
         LogCollector logs=new LogCollector();
         try {

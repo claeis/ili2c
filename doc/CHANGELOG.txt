@@ -7,6 +7,7 @@ LATEST
 - verify type compatibility in EXISTENCE CONSTRAINT (#77) 
 - fix reference to INTERLIS.ANYCLASS must not be external
 - fix missing MANDATORY in extended references (#40) 
+- fix --check-repo-ilis does not find "INTERLIS" model (#75) 
 
 ili2c 5.2.8 (2022-08-24)
 ---------------------------

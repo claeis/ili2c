@@ -23,7 +23,8 @@ import java.util.ArrayList;
 */
 public class PredefinedModel extends DataModel
 {
-  private static PredefinedModel instance=null;
+  public static final String INTERLIS = "INTERLIS";
+private static PredefinedModel instance=null;
   public final LineForm STRAIGHTS = new LineForm ("STRAIGHTS");
   public final LineForm ARCS = new LineForm ("ARCS");
 

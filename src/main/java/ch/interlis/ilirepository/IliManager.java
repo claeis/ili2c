@@ -34,6 +34,7 @@ import ch.ehi.basics.view.GenericFileFilter;
 import ch.interlis.ili2c.Ili2cException;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
+import ch.interlis.ili2c.metamodel.PredefinedModel;
 import ch.interlis.ili2c.modelscan.IliFile;
 import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ili2c.ModelScan;
@@ -312,7 +313,10 @@ public class IliManager implements ReposManager {
 			String model=it.next();
 			if(model==null){
 				continue;
+			}else if(model.equals(PredefinedModel.INTERLIS)) {
+			    continue;
 			}
+			
 			IliFile file=getFromSet(toVisitFiles,model,iliVersion);
 			if(file==null){
 				file=iliCrawler.getIliFileMetadataDeep(model,iliVersion,true);
@@ -345,7 +349,7 @@ public class IliManager implements ReposManager {
 	throws Ili2cException
 	{	
 		if(toVisitFiles.isEmpty()){
-			throw new IllegalStateException("toVisitFiles.isEmpty()");
+			return new Configuration();
 		}
 		HashSet<IliFile> visitedFiles=new HashSet<IliFile>();
 		TopoSort reqFiles=new TopoSort();
@@ -362,7 +366,7 @@ public class IliManager implements ReposManager {
 				Iterator<String> depi=model.getDependencies().iterator();
 				while(depi.hasNext()){
 					String dep=depi.next();
-					if(dep.equals("INTERLIS")){
+					if(dep.equals(PredefinedModel.INTERLIS)){
 						continue;
 					}
 					//EhiLogger.debug("model "+model.getName()+", dep "+dep);
