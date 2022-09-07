@@ -93,6 +93,7 @@ public class CompositionType extends Type
                  of the exception indicates the reason; it is a localized
                  string that is intended for being displayed to the user.
   */
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     CompositionType   general;
@@ -121,8 +122,6 @@ public class CompositionType extends Type
         "err_compositionType_componentNotExt",
         myComponent.toString(), generalComponent.toString()));
     }
-
-    checkCardinalityExtension(general);
   }
   @Override
   protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)

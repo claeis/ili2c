@@ -169,6 +169,7 @@ public abstract class LineType extends Type
                  of the exception indicates the reason; it is a localized
                  string that is intended for being displayed to the user.
   */
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     LineType   general;

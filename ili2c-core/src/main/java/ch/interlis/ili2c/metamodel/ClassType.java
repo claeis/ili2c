@@ -31,6 +31,7 @@ public class ClassType extends Type
   {
   	return restrictedTo.iterator();
   }
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     if ((wantToExtend == null)
@@ -41,7 +42,6 @@ public class ClassType extends Type
         throw new Ili2cSemanticException (rsrc.getString (
         "err_type_ExtOther"));
     }
-    checkCardinalityExtension(wantToExtend);
   }
 
 

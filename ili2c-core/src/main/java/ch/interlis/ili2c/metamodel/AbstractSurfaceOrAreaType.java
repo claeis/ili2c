@@ -215,6 +215,7 @@ public abstract class AbstractSurfaceOrAreaType extends LineType
                  of the exception indicates the reason; it is a localized
                  string that is intended for being displayed to the user.
   */
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     super.checkTypeExtension (wantToExtend);

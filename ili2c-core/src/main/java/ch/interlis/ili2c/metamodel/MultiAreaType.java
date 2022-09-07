@@ -30,6 +30,7 @@ public class MultiAreaType extends MultiSurfaceOrAreaType
     return "MULTIAREA";
   }
 
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     super.checkTypeExtension (wantToExtend);
@@ -41,7 +42,6 @@ public class MultiAreaType extends MultiSurfaceOrAreaType
       throw new IllegalArgumentException (rsrc.getString (
         "err_areaType_ExtOther"));
     }
-    checkCardinalityExtension(wantToExtend);
   }
   @Override
   public boolean isAbstract(StringBuilder err) {

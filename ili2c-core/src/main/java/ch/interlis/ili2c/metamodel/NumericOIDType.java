@@ -18,6 +18,7 @@ public class NumericOIDType extends OIDType
 	{
 		return type;
 	}
+	  @Override
 	  void checkTypeExtension (Type wantToExtend)
 	  {
 	    if ((wantToExtend == null)

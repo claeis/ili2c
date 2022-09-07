@@ -87,6 +87,7 @@ public class MultiPolylineType extends LineType
                  of the exception indicates the reason; it is a localized
                  string that is intended for being displayed to the user.
   */
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     super.checkTypeExtension (wantToExtend);
@@ -110,7 +111,6 @@ public class MultiPolylineType extends LineType
           rsrc.getString ("err_polylineType_ExtDirPoly"));
       }
     }
-    checkCardinalityExtension(wantToExtend);
   }
   private Table implicitLineGeometry=null;
   /** Returns the concrete structure (an extension of INTERLIS.LineGeometry)

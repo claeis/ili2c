@@ -13,6 +13,7 @@ public class AnyOIDType extends OIDType
 	{
 		return null;
 	}
+	  @Override
 	  void checkTypeExtension (Type wantToExtend)
 	  {
 	    if ((wantToExtend == null)

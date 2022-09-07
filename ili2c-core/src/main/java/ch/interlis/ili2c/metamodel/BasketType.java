@@ -42,6 +42,7 @@ public class BasketType extends Type {
 	{
 		this.topic=topic;
 	}
+	  @Override
 	  void checkTypeExtension (Type wantToExtend)
 	  {
 	    if ((wantToExtend == null)
@@ -51,7 +52,6 @@ public class BasketType extends Type {
 	        throw new Ili2cSemanticException (rsrc.getString (
 	        "err_type_ExtOther"));
 	    }
-	    checkCardinalityExtension(wantToExtend);
 	  }
 
 

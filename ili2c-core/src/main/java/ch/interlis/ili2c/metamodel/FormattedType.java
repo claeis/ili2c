@@ -332,6 +332,7 @@ public void setPrefix(String prefix) {
 		}
 		return fmt.toString();
 	}
+	  @Override
 	  void checkTypeExtension (Type wantToExtend)
 	  {
 	    if ((wantToExtend == null)
@@ -341,7 +342,6 @@ public void setPrefix(String prefix) {
 	        throw new Ili2cSemanticException (rsrc.getString (
 	        "err_type_ExtOther"));
 	    }
-	    checkCardinalityExtension(wantToExtend);
 	  }
 
 

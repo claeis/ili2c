@@ -41,6 +41,7 @@ public class MultiSurfaceType extends MultiSurfaceOrAreaType
                  of the exception indicates the reason; it is a localized
                  string that is intended for being displayed to the user.
   */
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     super.checkTypeExtension (wantToExtend);
@@ -52,7 +53,6 @@ public class MultiSurfaceType extends MultiSurfaceOrAreaType
       throw new IllegalArgumentException (rsrc.getString (
         "err_surfaceType_ExtOther"));
     }
-    checkCardinalityExtension(wantToExtend);
   }
   @Override
   public boolean isAbstract(StringBuilder err) {

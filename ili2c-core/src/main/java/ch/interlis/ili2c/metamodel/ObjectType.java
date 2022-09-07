@@ -41,6 +41,7 @@ public class ObjectType extends Type
 		  {
 		  	return restrictedTo.iterator();
 		  }
+		  @Override
 		  void checkTypeExtension (Type wantToExtend)
 		  {
 		    if ((wantToExtend == null)

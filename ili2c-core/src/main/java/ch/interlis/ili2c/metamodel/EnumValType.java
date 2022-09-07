@@ -11,6 +11,7 @@ public class EnumValType extends Type
 		public boolean isOnlyLeafs() {
 			return onlyLeafs;
 		}
+		  @Override
 		  void checkTypeExtension (Type wantToExtend)
 		  {
 		    if ((wantToExtend == null)
@@ -20,7 +21,6 @@ public class EnumValType extends Type
 		        throw new Ili2cSemanticException (rsrc.getString (
 		        "err_type_ExtOther"));
 		    }
-		    checkCardinalityExtension(wantToExtend);
 		  }
 
 

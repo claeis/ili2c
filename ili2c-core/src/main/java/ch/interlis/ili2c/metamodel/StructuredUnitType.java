@@ -131,6 +131,7 @@ public class StructuredUnitType extends NumericalType
                  of the exception indicates the reason; it is a localized
                  string that is intended for being displayed to the user.
   */
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     StructuredUnitType   general;
@@ -161,7 +162,6 @@ public class StructuredUnitType extends NumericalType
           generalUnit.toString()));
       }
     }
-    checkCardinalityExtension(wantToExtend);
   }
 
 

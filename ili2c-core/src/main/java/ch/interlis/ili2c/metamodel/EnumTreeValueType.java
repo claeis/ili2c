@@ -22,6 +22,7 @@ public class EnumTreeValueType extends AbstractEnumerationType {
 
     return true;
   }
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     if ((wantToExtend == null)
@@ -31,7 +32,6 @@ public class EnumTreeValueType extends AbstractEnumerationType {
         throw new Ili2cSemanticException (rsrc.getString (
         "err_type_ExtOther"));
     }
-    checkCardinalityExtension(wantToExtend);
   }
 
 public Domain getEnumType() {
