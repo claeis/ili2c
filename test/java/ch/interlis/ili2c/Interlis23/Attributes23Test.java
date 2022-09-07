@@ -178,13 +178,12 @@ public class Attributes23Test {
     }
 	
 	// This test checks if the compiler accepts a reference attribute to ANYCLASS.
-    @Ignore
 	@Test
-	public void attributeRef_RefAttrToAnyClass() {
+	public void RefAttrToAnyClass() {
 		LogCollector errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
 		Configuration ili2cConfig=new Configuration();
-		FileEntry fileEntry=new FileEntry(TEST_OUT+"attributeRef_RefAttrToAnyClass.ili", FileEntryKind.ILIMODELFILE);
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"RefAttrToAnyClass.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
 		try{

@@ -276,32 +276,36 @@ public abstract class AbstractPatternDef<E extends Element> extends ExtendableCo
   }
 public static void checkRefTypeTarget(AbstractPatternDef<?> thisTopic,
 		String attrPath, AbstractClassDef<?> struct,AbstractClassDef<?> target, boolean external) {
-	  Container<?> targetTopic = target.getContainer();
-		// target in a topic and targets topic not a base of this topic 
-		if(targetTopic!=null && thisTopic!=null && !thisTopic.isExtending(targetTopic)){
-			if(!external){
-				// must be external
-				if(attrPath==null){
-					throw new Ili2cSemanticException (formatMessage ("err_refattr_externalreq"));
-				}else{
-					throw new Ili2cSemanticException (formatMessage ("err_refattr_externalreq2",attrPath,struct.getScopedName(null)));
-				}
-			}else{
-				  if(targetTopic!=thisTopic){
-				    if(!thisTopic.isDependentOn(targetTopic)){
-						if(attrPath==null){
-					    	throw new Ili2cSemanticException (formatMessage ("err_refattr_topicdepreq",
-									thisTopic.getName(),
-									targetTopic.getScopedName(null)));
-						}else{
-					    	throw new Ili2cSemanticException (formatMessage ("err_refattr_topicdepreq2",
-									thisTopic.getName(),
-									targetTopic.getScopedName(null),attrPath,struct.getScopedName(null)));
-						}
-				    }
-				  }
-			}
-		}
+      if(target==PredefinedModel.getInstance().ANYCLASS) {
+          ; // ok, special case
+      }else {
+          Container<?> targetTopic = target.getContainer();
+          // target in a topic and targets topic not a base of this topic 
+          if(targetTopic!=null && thisTopic!=null && !thisTopic.isExtending(targetTopic)){
+              if(!external){
+                  // must be external
+                  if(attrPath==null){
+                      throw new Ili2cSemanticException (formatMessage ("err_refattr_externalreq"));
+                  }else{
+                      throw new Ili2cSemanticException (formatMessage ("err_refattr_externalreq2",attrPath,struct.getScopedName(null)));
+                  }
+              }else{
+                    if(targetTopic!=thisTopic){
+                      if(!thisTopic.isDependentOn(targetTopic)){
+                          if(attrPath==null){
+                              throw new Ili2cSemanticException (formatMessage ("err_refattr_topicdepreq",
+                                      thisTopic.getName(),
+                                      targetTopic.getScopedName(null)));
+                          }else{
+                              throw new Ili2cSemanticException (formatMessage ("err_refattr_topicdepreq2",
+                                      thisTopic.getName(),
+                                      targetTopic.getScopedName(null),attrPath,struct.getScopedName(null)));
+                          }
+                      }
+                    }
+              }
+          }
+      }
 }
 public void addAfter(E o,Object previous)
   {
