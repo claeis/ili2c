@@ -178,7 +178,7 @@ public class Attributes23Test {
     }
 	
 	// This test checks if the compiler accepts a reference attribute to ANYCLASS.
-	@Ignore
+    @Ignore
 	@Test
 	public void attributeRef_RefAttrToAnyClass() {
 		LogCollector errs=new LogCollector();
@@ -255,7 +255,6 @@ public class Attributes23Test {
 	}
 	
 	// This test checks if the compiler accepts an AttriutePathType with a ClassType restriction
-	@Ignore
 	@Test
 	public void attributePathType_ClassTypeRestriction() {
 		LogCollector errs=new LogCollector();
