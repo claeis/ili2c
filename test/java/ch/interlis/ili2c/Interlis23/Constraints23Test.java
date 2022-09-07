@@ -189,9 +189,10 @@ public class Constraints23Test {
 	}
 	
 	// This test checks a existence constraint that requires a DEPENDS ON.
-	@Ignore
 	@Test
-	public void existence_RequireADependsOn() throws Exception {
+	public void existence_RequireADependsOn_Fail() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
 		Settings settings=new Settings();
 		Configuration ili2cConfig=new Configuration();
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"existence_RequireADependsOn.ili", FileEntryKind.ILIMODELFILE);
@@ -201,7 +202,10 @@ public class Constraints23Test {
 		td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
 		}catch(Exception e) {
 		}
-		assertNotNull(td);
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("This reference to a viewable requires a topic dependency between topicB and topicA", logEvent.getRawEventMsg());
 	}
 	
 	// This test checks that a ConstraintsDef references a viewable in the same topic.
