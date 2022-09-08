@@ -9,7 +9,6 @@ import ch.ehi.basics.settings.Settings;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
-import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 
 public class CompilerTest {
@@ -24,7 +23,7 @@ public class CompilerTest {
             EhiLogger.getInstance().addListener(logs);
             Configuration ili2cConfig=new Configuration();
             Settings settings=new Settings();
-            settings.setValue(UserSettings.ILIDIRS,TEST_REPOS);
+            settings.setValue(Ili2cSettings.ILIDIRS,TEST_REPOS);
             FileEntry fileEntry=new FileEntry(TEST_REPOS+"/compileFailsB.ili", FileEntryKind.ILIMODELFILE);
             ili2cConfig.addFileEntry(fileEntry);
             ili2cConfig.setAutoCompleteModelList(true);
@@ -43,7 +42,7 @@ public class CompilerTest {
             EhiLogger.getInstance().addListener(logs);
             Configuration ili2cConfig=new Configuration();
             Settings settings=new Settings();
-            settings.setValue(UserSettings.ILIDIRS,TEST_REPOS);
+            settings.setValue(Ili2cSettings.ILIDIRS,TEST_REPOS);
             FileEntry fileEntry=new FileEntry(TEST_REPOS+"/compileFailsD.ili", FileEntryKind.ILIMODELFILE);
             ili2cConfig.addFileEntry(fileEntry);
             ili2cConfig.setAutoCompleteModelList(true);
@@ -62,7 +61,7 @@ public class CompilerTest {
             EhiLogger.getInstance().addListener(logs);
             Configuration ili2cConfig=new Configuration();
             Settings settings=new Settings();
-            settings.setValue(UserSettings.ILIDIRS,TEST_REPOS);
+            settings.setValue(Ili2cSettings.ILIDIRS,TEST_REPOS);
             FileEntry fileEntry=new FileEntry("compileFailsB", FileEntryKind.ILIMODELFILE);
             ili2cConfig.addFileEntry(fileEntry);
             ili2cConfig.setAutoCompleteModelList(true);
@@ -81,7 +80,7 @@ public class CompilerTest {
             EhiLogger.getInstance().addListener(logs);
             Configuration ili2cConfig=new Configuration();
             Settings settings=new Settings();
-            settings.setValue(UserSettings.ILIDIRS,CheckReposIlisTest.TEST_REPOS);
+            settings.setValue(Ili2cSettings.ILIDIRS,CheckReposIlisTest.TEST_REPOS);
             FileEntry fileEntry=new FileEntry("ModelA", FileEntryKind.ILIMODELFILE);
             ili2cConfig.addFileEntry(fileEntry);
             ili2cConfig.setAutoCompleteModelList(true);
@@ -99,7 +98,7 @@ public class CompilerTest {
             EhiLogger.getInstance().addListener(logs);
             Configuration ili2cConfig=new Configuration();
             Settings settings=new Settings();
-            settings.setValue(UserSettings.ILIDIRS,TEST_LOCAL);
+            settings.setValue(Ili2cSettings.ILIDIRS,TEST_LOCAL);
             FileEntry fileEntry=new FileEntry(TEST_LOCAL+"/compileFailsB.ili", FileEntryKind.ILIMODELFILE);
             ili2cConfig.addFileEntry(fileEntry);
             ili2cConfig.setAutoCompleteModelList(true);
@@ -117,7 +116,7 @@ public class CompilerTest {
             EhiLogger.getInstance().addListener(logs);
             Configuration ili2cConfig=new Configuration();
             Settings settings=new Settings();
-            settings.setValue(UserSettings.ILIDIRS,TEST_LOCAL);
+            settings.setValue(Ili2cSettings.ILIDIRS,TEST_LOCAL);
             FileEntry fileEntry=new FileEntry(TEST_LOCAL+"/compileFailsD.ili", FileEntryKind.ILIMODELFILE);
             ili2cConfig.addFileEntry(fileEntry);
             ili2cConfig.setAutoCompleteModelList(true);
@@ -136,7 +135,7 @@ public class CompilerTest {
             EhiLogger.getInstance().addListener(logs);
             Configuration ili2cConfig=new Configuration();
             Settings settings=new Settings();
-            settings.setValue(UserSettings.ILIDIRS,TEST_LOCAL);
+            settings.setValue(Ili2cSettings.ILIDIRS,TEST_LOCAL);
             FileEntry fileEntry=new FileEntry("compileFailsB", FileEntryKind.ILIMODELFILE);
             ili2cConfig.addFileEntry(fileEntry);
             ili2cConfig.setAutoCompleteModelList(true);

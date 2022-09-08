@@ -10,7 +10,6 @@ import ch.interlis.models.ILIREPOSITORY20;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
-import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ilirepository.impl.RepositoryVisitor;
 import ch.interlis.ilirepository.impl.ModelMetadata;
 import ch.interlis.ilirepository.impl.ModelLister;
@@ -28,7 +27,7 @@ import ch.interlis.iox_j.StartTransferEvent;
 public class ListModels2 {
 
 	public boolean listModels(Configuration config,
-			UserSettings settings, boolean onlyLatestVersions) {
+	        Ili2cSettings settings, boolean onlyLatestVersions) {
 		boolean failed=false;
 		Main.setHttpProxySystemProperties(settings);
 		RepositoryAccess reposAccess=new RepositoryAccess();
@@ -36,7 +35,7 @@ public class ListModels2 {
 		List<String> repos=new ArrayList<String>();
 		if(config.getSizeFileEntry()==0) {
 		    // use default
-		    repos.add(UserSettings.ILI_REPOSITORY);
+		    repos.add(Ili2cSettings.ILI_REPOSITORY);
 		}else {
 	        Iterator reposi = config.iteratorFileEntry();
 	        while (reposi.hasNext()) {

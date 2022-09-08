@@ -26,7 +26,6 @@ import ch.interlis.ili2c.config.GenerateOutputKind;
 import ch.interlis.ili2c.generator.TransformationParameter;
 import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
 import ch.interlis.ili2c.generator.nls.ModelElements;
-import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.Element;
 import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
 import ch.interlis.ili2c.metamodel.ObjectPath;
@@ -48,19 +47,19 @@ public class Main {
      */
     public static final String APP_NAME = "ili2c";
     @Deprecated
-    public static final String ILI_DIR = UserSettings.ILI_DIR;
+    public static final String ILI_DIR = Ili2cSettings.ILI_DIR;
     @Deprecated
-    public static final String JAR_DIR = UserSettings.JAR_DIR;
+    public static final String JAR_DIR = Ili2cSettings.JAR_DIR;
     @Deprecated
-    public static final String JAR_MODELS = UserSettings.JAR_MODELS;
+    public static final String JAR_MODELS = Ili2cSettings.JAR_MODELS;
     @Deprecated
-    public static final String ILI_REPOSITORY = UserSettings.ILI_REPOSITORY;
+    public static final String ILI_REPOSITORY = Ili2cSettings.ILI_REPOSITORY;
     @Deprecated
-    public static final String ILIDIR_SEPARATOR = UserSettings.ILIDIR_SEPARATOR;
+    public static final String ILIDIR_SEPARATOR = Ili2cSettings.ILIDIR_SEPARATOR;
     @Deprecated
-    public static final String MODELS_SEPARATOR = UserSettings.MODELS_SEPARATOR;
+    public static final String MODELS_SEPARATOR = Ili2cSettings.MODELS_SEPARATOR;
     @Deprecated
-    public static final String DEFAULT_ILIDIRS = UserSettings.DEFAULT_ILIDIRS;
+    public static final String DEFAULT_ILIDIRS = Ili2cSettings.DEFAULT_ILIDIRS;
 
     protected static boolean hasArg(String v1, String v2, String[] args) {
 	for (int i = 0; i < args.length; i++) {
@@ -129,10 +128,10 @@ public class Main {
     System.err.println("    java -jar " + progName + " -o2 --out file_LV95.ili --trafoNewModel model_LV95 --trafoDiff 2000000,1000000 --trafoFactor 1,1 --trafoEpsg 2056 --trafoImports  GeometryCHLV95_V1=GeometryCHLV03_V1 file.ili");
     System.err.println();
     System.err.println("List all models starting in the given repository:");
-    System.err.println("    java -jar " + progName + " --listModels "+UserSettings.ILI_REPOSITORY);
+    System.err.println("    java -jar " + progName + " --listModels "+Ili2cSettings.ILI_REPOSITORY);
     System.err.println();
     System.err.println("List all data starting in the given repository:");
-    System.err.println("    java -jar " + progName + " --listData "+UserSettings.ILI_REPOSITORY);
+    System.err.println("    java -jar " + progName + " --listData "+Ili2cSettings.ILI_REPOSITORY);
     System.err.println();
     }
 
@@ -151,12 +150,15 @@ public class Main {
 	boolean withWarnings = true;
 	int numErrorsWhileGenerating = 0;
 	String notifyOnError = "compiler@interlis.ch";
-	String ilidirs = UserSettings.DEFAULT_ILIDIRS;
+	String ilidirs = System.getenv(Ili2cSettings.ENV_DEFAULT_ILIDIRS);
 	String httpProxyHost = null;
 	String httpProxyPort = null;
 	String translationDef=null;
     Ili2cMetaAttrs ili2cMetaAttrs=new Ili2cMetaAttrs();
     
+    if(ilidirs==null) {
+        ilidirs=Ili2cSettings.DEFAULT_ILIDIRS;
+    }
     TransformationParameter params = null;
     
 	if (args.length == 0) {
@@ -423,7 +425,7 @@ public class Main {
 
 	    }
 
-	    UserSettings settings = new UserSettings();
+	    Ili2cSettings settings = new Ili2cSettings();
 	    setDefaultIli2cPathMap(settings);
 	    settings.setHttpProxyHost(httpProxyHost);
 	    settings.setHttpProxyPort(httpProxyPort);
@@ -559,7 +561,7 @@ public class Main {
 	}
 	String ili2cHome = getIli2cHome();
 	if (ili2cHome != null) {
-	    ilipathv.add(ili2cHome + File.separator + UserSettings.JAR_MODELS);
+	    ilipathv.add(ili2cHome + File.separator + Ili2cSettings.JAR_MODELS);
 	}
 	return ilipathv;
     }
@@ -589,10 +591,10 @@ public class Main {
 
 	String ili2cHome = getIli2cHome();
 	if (ili2cHome != null) {
-		pathmap.put(UserSettings.JAR_DIR, ili2cHome + File.separator + UserSettings.JAR_MODELS);
+		pathmap.put(Ili2cSettings.JAR_DIR, ili2cHome + File.separator + Ili2cSettings.JAR_MODELS);
 	}
-	pathmap.put(UserSettings.ILI_DIR, null);
-	settings.setTransientObject(UserSettings.ILIDIRS_PATHMAP, pathmap);
+	pathmap.put(Ili2cSettings.ILI_DIR, null);
+	settings.setTransientObject(Ili2cSettings.ILIDIRS_PATHMAP, pathmap);
     }
 
 
@@ -605,7 +607,7 @@ public class Main {
 
     if (doAutoCompleteModelList) {
         if (settings != null) {
-            String ilidirs = settings.getValue(UserSettings.ILIDIRS);
+            String ilidirs = settings.getValue(Ili2cSettings.ILIDIRS);
             if (ilidirs == null) {
                 doAutoCompleteModelList = false;
             }
@@ -642,7 +644,7 @@ public class Main {
     		    filev.add(e);
     		}
 	    } else {
-	        String iliVersion=settings.getValue(UserSettings.ILI_LANGUAGE_VERSION);
+	        String iliVersion=settings.getValue(Ili2cSettings.ILI_LANGUAGE_VERSION);
             double version=0.0;
             if(iliVersion!=null) {
                 version=Double.parseDouble(iliVersion);
@@ -660,28 +662,28 @@ public class Main {
 
     		setHttpProxySystemProperties(settings);
     		
-    		HashMap pathmap = (HashMap) settings.getTransientObject(UserSettings.ILIDIRS_PATHMAP);
+    		HashMap pathmap = (HashMap) settings.getTransientObject(Ili2cSettings.ILIDIRS_PATHMAP);
     
     		ArrayList modeldirv = getModelRepos(settings, ilifilev, pathmap);
     
     		// get/create repository manager
     		ch.interlis.ilirepository.IliManager manager = (ch.interlis.ilirepository.IliManager) settings
-                    .getTransientObject(UserSettings.CUSTOM_ILI_MANAGER);
+                    .getTransientObject(Ili2cSettings.CUSTOM_ILI_MANAGER);
     		if(manager==null) {
     		    manager=new ch.interlis.ilirepository.IliManager();
     		}
     		ch.interlis.ilirepository.IliResolver resolver = (ch.interlis.ilirepository.IliResolver) settings
-    		        .getTransientObject(UserSettings.CUSTOM_ILI_RESOLVER);
+    		        .getTransientObject(Ili2cSettings.CUSTOM_ILI_RESOLVER);
     		if (resolver != null) {
     		    manager.setResolver(resolver);
     		}
     		// set list of repositories to search
     		manager.setRepositories((String[]) modeldirv.toArray(new String[1]));
-    		String tempReposUri=settings.getTransientValue(UserSettings.TEMP_REPOS_URI);
+    		String tempReposUri=settings.getTransientValue(Ili2cSettings.TEMP_REPOS_URI);
     		if(tempReposUri!=null) {
     	        manager.setIliFiles(RepositoryVisitor.fixUri(tempReposUri),
     	                (ch.interlis.ilirepository.IliFiles) settings
-    	                        .getTransientObject(UserSettings.TEMP_REPOS_ILIFILES));
+    	                        .getTransientObject(Ili2cSettings.TEMP_REPOS_ILIFILES));
     		}
 
     		// get complete list of required ili-files
@@ -952,14 +954,14 @@ public class Main {
 		    pathmap = new HashMap();
 		}
 
-		String ilidirs = settings.getValue(UserSettings.ILIDIRS);
-		String modeldirs[] = ilidirs.split(UserSettings.ILIDIR_SEPARATOR);
+		String ilidirs = settings.getValue(Ili2cSettings.ILIDIRS);
+		String modeldirs[] = ilidirs.split(Ili2cSettings.ILIDIR_SEPARATOR);
 		HashSet ilifiledirs = new HashSet();
 
 		for (int modeli = 0; modeli < modeldirs.length; modeli++) {
 			String m = modeldirs[modeli];
 
-			if (m.equals(UserSettings.ILI_DIR) && pathmap.containsKey(UserSettings.ILI_DIR)) {
+			if (m.equals(Ili2cSettings.ILI_DIR) && pathmap.containsKey(Ili2cSettings.ILI_DIR)) {
 				for (int filei = 0; filei < ilifilev.size(); filei++) {
 					String ilifile = ilifilev.get(filei);
 
@@ -995,8 +997,8 @@ public class Main {
 
 	public static void setHttpProxySystemProperties(
 			ch.ehi.basics.settings.Settings settings) {
-		String httpProxyHost = settings.getValue(UserSettings.HTTP_PROXY_HOST);
-		String httpProxyPort = settings.getValue(UserSettings.HTTP_PROXY_PORT);
+		String httpProxyHost = settings.getValue(Ili2cSettings.HTTP_PROXY_HOST);
+		String httpProxyPort = settings.getValue(Ili2cSettings.HTTP_PROXY_PORT);
 
 		if (httpProxyHost != null) {
 		    EhiLogger.logState("httpProxyHost <" + httpProxyHost + ">");

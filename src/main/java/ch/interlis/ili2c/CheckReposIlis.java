@@ -2,20 +2,14 @@ package ch.interlis.ili2c;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -31,7 +25,6 @@ import ch.ehi.iox.objpool.ObjectPoolManager;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
-import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.Model;
 import ch.interlis.ili2c.metamodel.PredefinedModel;
 import ch.interlis.ili2c.metamodel.TransferDescription;
@@ -153,8 +146,8 @@ public class CheckReposIlis {
 	                }
                     ch.interlis.ilirepository.IliManager manager=new ch.interlis.ilirepository.IliManager();
                     ArrayList<String> modeldirv = new ArrayList<String>();
-                    String ilidirs = settings.getValue(UserSettings.ILIDIRS);
-                    String modeldirs[] = ilidirs.split(UserSettings.ILIDIR_SEPARATOR);
+                    String ilidirs = settings.getValue(Ili2cSettings.ILIDIRS);
+                    String modeldirs[] = ilidirs.split(Ili2cSettings.ILIDIR_SEPARATOR);
                     for(String m:modeldirs) {
                         if(!m.startsWith("%")) {
                             modeldirv.add(m);

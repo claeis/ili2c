@@ -27,15 +27,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import ch.interlis.ili2c.metamodel.TransferDescription;
-import ch.interlis.ili2c.metamodel.ErrorListener;
 import ch.interlis.ili2c.config.*;
-import ch.interlis.ili2c.CompilerLogEvent;
+import ch.interlis.ili2c.Ili2cSettings;
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.logging.TextAreaListener;
 import ch.ehi.basics.view.*;
 
 public class Main {
-        private UserSettings settings;
+        private Ili2cSettings settings;
         final static String CHECKPANEL = "Check/Generate";
         //final static String COMPAREPANEL = "Compare";
         TextAreaListener errlistener=null;
@@ -243,7 +242,7 @@ public class Main {
 			if(dlg.showDialog()==RepositoriesDialog.OK_OPTION){
 				String ilidirs=dlg.getIlidirs();
 				if(ilidirs==null){
-					ilidirs=UserSettings.DEFAULT_ILIDIRS;
+					ilidirs=Ili2cSettings.DEFAULT_ILIDIRS;
 				}
 				settings.setIlidirs(ilidirs);
 				settings.setHttpProxyHost(dlg.getHttpProxyHost());
@@ -764,7 +763,7 @@ public class Main {
   
   public static void main(String[] args) {
     Main instance=new Main();
-    instance.settings = UserSettings.load();
+    instance.settings = Ili2cSettings.load();
     ch.interlis.ili2c.Main.setDefaultIli2cPathMap(instance.settings);
     
     instance.run();
