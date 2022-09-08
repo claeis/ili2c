@@ -1331,7 +1331,10 @@ public class Imd16Generator {
 			iomFunc.addDocumentation( doc );
 		}
 		
-		iomFunc.setExplanation(func.getExplanation());
+		String explanation=func.getExplanation();
+		if(explanation!=null) {
+	        iomFunc.setExplanation(explanation);
+		}
 		
 		ch.interlis.ili2c.metamodel.Type retType=func.getDomain();
 		OutParam<String> typeTid=new OutParam<String>();
