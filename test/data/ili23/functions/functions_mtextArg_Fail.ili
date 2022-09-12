@@ -1,0 +1,16 @@
+INTERLIS 2.3;
+
+MODEL FunctionTest  AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"=
+
+
+  TOPIC TestTopic =
+
+    CLASS A =
+      Name: MTEXT*2;
+      MANDATORY CONSTRAINT INTERLIS.len(Name)==2;
+    END A;
+
+  END TestTopic;
+
+END FunctionTest.
+
