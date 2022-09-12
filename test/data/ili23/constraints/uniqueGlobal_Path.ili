@@ -1,0 +1,33 @@
+INTERLIS 2.3;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC TopicA =
+
+		STRUCTURE StructA =
+			attrA : TEXT*10;
+		END StructA;
+
+		CLASS ClassB =
+			attrB1 : TEXT*10;
+			attrB2 : StructA;
+			UNIQUE attrB2->attrA;
+		END ClassB;
+		
+		CLASS ClassC =
+			attrC : TEXT*10;
+		END ClassC;
+		
+		ASSOCIATION b2c =
+		  b -- {0..1} ClassB;
+		  c -- {0..*} ClassC;
+		  UNIQUE b->attrB1;
+		  UNIQUE c->attrC;
+		END b2c;
+
+		CONSTRAINTS OF ClassC =
+		  UNIQUE b->attrB1;
+		END;
+		
+	END TopicA;
+
+END ModelA.

@@ -26,10 +26,10 @@ public class Constraints23Test {
 	private static final String TEST_OUT="test/data/ili23/constraints/";
 	
 	@Test
-	public void unique_UniquePreCondition() throws Exception {
+	public void uniqueGlobal_PreCondition() throws Exception {
 		Settings settings=new Settings();
 		Configuration ili2cConfig=new Configuration();
-		FileEntry fileEntry=new FileEntry(TEST_OUT+"unique_UniquePreCondition.ili", FileEntryKind.ILIMODELFILE);
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"uniqueGlobal_PreCondition.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
 		td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
@@ -102,10 +102,10 @@ public class Constraints23Test {
 	
 	// This test checks a basic local uniqueness constraint.
 	@Test
-	public void unique_BasicUniquenessConstraint() throws Exception {
+	public void uniqueLocal_Basic() throws Exception {
 		Settings settings=new Settings();
 		Configuration ili2cConfig=new Configuration();
-		FileEntry fileEntry=new FileEntry(TEST_OUT+"unique_BasicUniquenessConstraint.ili", FileEntryKind.ILIMODELFILE);
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"uniqueLocal_Basic.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
 		td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
@@ -120,10 +120,10 @@ public class Constraints23Test {
 	
 	// This test checks a basic global uniqueness constraint.
 	@Test
-	public void unique_BasicGlobalUniquenessConstraint() throws Exception {
+	public void uniqueGlobal_Basic() throws Exception {
 		Settings settings=new Settings();
 		Configuration ili2cConfig=new Configuration();
-		FileEntry fileEntry=new FileEntry(TEST_OUT+"unique_BasicGlobalUniquenessConstraint.ili", FileEntryKind.ILIMODELFILE);
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"uniqueGlobal_Basic.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
 		td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
@@ -135,6 +135,46 @@ public class Constraints23Test {
 		Table classB=(Table) topicB.getElement(Table.class, "aclass");
 		assertNotNull(classB);
 	}
+    @Test
+    public void uniqueGlobal_Path() throws Exception {
+        Settings settings=new Settings();
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"uniqueGlobal_Path.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+        assertNotNull(td);
+    }
+    @Test
+    public void uniqueGlobal_AttrPath_Fail() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Settings settings=new Settings();
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"uniqueGlobal_AttrPath_Fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("unexpected cardinality of attribute \"ModelA.TopicA.ClassB:attrB2\".", logEvent.getRawEventMsg());
+    }
+    @Test
+    public void uniqueGlobal_RolePath_Fail() throws Exception {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Settings settings=new Settings();
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"uniqueGlobal_RolePath_Fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("unexpected cardinality of role \"ModelA.TopicA.b2c:c\".", logEvent.getRawEventMsg());
+    }
 	
 	// This test checks a basic ConstraintsDef.
 	@Test
@@ -172,10 +212,10 @@ public class Constraints23Test {
 	
 	// This test checks a local unique constraint defined in a structure.
 	@Test
-	public void unique_DefinedInStructure() throws Exception {
+	public void uniqueLocal_DefinedInStructure() throws Exception {
 		Settings settings=new Settings();
 		Configuration ili2cConfig=new Configuration();
-		FileEntry fileEntry=new FileEntry(TEST_OUT+"unique_DefinedInStructure.ili", FileEntryKind.ILIMODELFILE);
+		FileEntry fileEntry=new FileEntry(TEST_OUT+"uniqueLocal_DefinedInStructure.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
 		td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
@@ -214,22 +254,6 @@ public class Constraints23Test {
 		Settings settings=new Settings();
 		Configuration ili2cConfig=new Configuration();
 		FileEntry fileEntry=new FileEntry(TEST_OUT+"constraintDef_RefViewableInSameTopic.ili", FileEntryKind.ILIMODELFILE);
-		ili2cConfig.addFileEntry(fileEntry);
-		TransferDescription td=null;
-		try {
-		td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
-		}catch(Exception e) {
-		}
-		assertNotNull(td);
-	}
-	
-	// This test checks the detcection of struct attr in a uniqueness constraint.
-	@Ignore
-	@Test
-	public void unique_DetectStructAttrInUniqueConst() throws Exception {
-		Settings settings=new Settings();
-		Configuration ili2cConfig=new Configuration();
-		FileEntry fileEntry=new FileEntry(TEST_OUT+"unique_DetectStructAttrInUniqueConst.ili", FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		TransferDescription td=null;
 		try {
