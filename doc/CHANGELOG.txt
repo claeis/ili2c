@@ -1,5 +1,8 @@
 LATEST
 ---------------------------
+
+ili2c 5.3.0 (2022-10-21)
+---------------------------
 - fix memory leak in metamodel (#76)
 - ili2.4: LIST/BAG with simple types (#74) 
 - ili2.4: support DATE/DATETIME/TIMEOFDAY (#73) 
@@ -10,6 +13,7 @@ LATEST
 - fix --check-repo-ilis does not find "INTERLIS" model (#75) 
 - make DEFAULT_ILIDIRS available as env var (#64)
 - fix  UNIQUE: Missing error message if 0..n-RoleDef-PathEl (#71) 
+- iox-ili-1.21.13
 
 ili2c 5.2.8 (2022-08-24)
 ---------------------------
