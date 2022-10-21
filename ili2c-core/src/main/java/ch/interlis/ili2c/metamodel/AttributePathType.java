@@ -49,6 +49,7 @@ public class AttributePathType extends BaseType {
 
     return true;
   }
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     if ((wantToExtend == null)
@@ -59,7 +60,6 @@ public class AttributePathType extends BaseType {
         throw new Ili2cSemanticException (rsrc.getString (
         "err_type_ExtOther"));
     }
-    checkCardinalityExtension(wantToExtend);
   }
 
 

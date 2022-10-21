@@ -119,6 +119,7 @@ public class Interlis2Generator
   boolean             withPredefined;
   private boolean onlyLastFile;
   int                 numErrors = 0;
+  boolean doIli24=false;
   
   private static final String FR = Ili2TranslationXml.FR;
   private static final String IT = Ili2TranslationXml.IT;
@@ -139,8 +140,13 @@ public class Interlis2Generator
 	Writer out, TransferDescription td, ModelElements modelElements)
   {
 	Interlis2Generator i = new Interlis2Generator();
-	i.setup(out, td, false, false,modelElements, null);
+	i.setup(out, td, false, false,modelElements, null,false);
 	return i;
+  }
+  public static Interlis2Generator generateElements24(Writer out, TransferDescription td) {
+      Interlis2Generator i = new Interlis2Generator();
+      i.setup(out, td, false, false,null, null,true);
+      return i;
   }
   static public String debugToString(TransferDescription td,ch.interlis.ili2c.metamodel.Element ele)
   {
@@ -180,13 +186,13 @@ public class Interlis2Generator
               these errors.
   */
 	public int generate(Writer out, TransferDescription rd, boolean withPredefined) {
-		setup(out, rd, withPredefined, false,null, null);
+		setup(out, rd, withPredefined, false,null, null,false);
 		printTransferDescription(rd, null);
 		finish();
 		return numErrors;
 	}
 	public int generateWithNewCrs(Writer out, TransferDescription rd, TransformationParameter params) {
-		setup(out, rd, false, true,null, params);
+		setup(out, rd, false, true,null, params,false);
 		printTransferDescription(rd, null);
 		finish();
 		return numErrors;
@@ -194,7 +200,7 @@ public class Interlis2Generator
   public int generateWithNewLanguage (
 	Writer out, TransferDescription td,ModelElements modelEles, String language)
 	{
-      setup(out, td, false, true,modelEles, null);
+      setup(out, td, false, true,modelEles, null,false);
       printTransferDescription(td, language);
       finish();
       return numErrors;
@@ -202,7 +208,7 @@ public class Interlis2Generator
 private void setup(
 	Writer out,
 	TransferDescription td,
-	boolean withPredefined, boolean onlyLastFile, ModelElements modelEles, TransformationParameter params) {
+	boolean withPredefined, boolean onlyLastFile, ModelElements modelEles, TransformationParameter params,boolean doIli24) {
 	ipw = new IndentPrintWriter (out);
 	this.td = td;
 	modelInterlis = td.INTERLIS;
@@ -211,6 +217,7 @@ private void setup(
 	this.translationConfig = modelEles;
 	this.params = params;
 	this.onlyLastFile=onlyLastFile;
+	this.doIli24=doIli24;
 }
 
   private boolean printModifierHelper(boolean first, boolean flag, String what)
@@ -1356,6 +1363,12 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
 		ipw.print ("ANYCLASS");
     }else if(elt==modelInterlis.ANYSTRUCTURE){
         ipw.print ("ANYSTRUCTURE");
+    }else if(elt==modelInterlis.XmlDate && doIli24){
+        ipw.print ("DATE");
+    }else if(elt==modelInterlis.XmlDateTime && doIli24){
+        ipw.print ("DATETIME");
+    }else if(elt==modelInterlis.XmlTime && doIli24){
+        ipw.print ("TIMEOFDAY");
     }else{
         if (language == null) {
 			if (params != null && params.getImportModels()!=null) {
@@ -2071,8 +2084,21 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     }
 
     if(withCardinality) {
-        if (dd.isMandatory() && !(dd instanceof CompositionType))
+        Cardinality card = dd.getCardinality();
+        if (card.getMaximum() == 1)
+        {
+          /* [MANDATORY] OBJECT */
+          if (card.getMinimum() == 1)
             ipw.print("MANDATORY ");
+        }
+        else
+        {
+          /* BAG OR LIST */
+          ipw.print(dd.isOrdered() ? "LIST " : "BAG ");
+          ipw.print(card);
+          ipw.print(' ');
+          ipw.print("OF ");
+        }
     }
 
 
@@ -2202,23 +2228,6 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     }else if (dd instanceof CompositionType)
     {
       CompositionType comp = (CompositionType) dd;
-      Cardinality card = comp.getCardinality();
-      if (card.getMaximum() == 1)
-      {
-        /* [MANDATORY] OBJECT */
-        if (card.getMinimum() == 1)
-          ipw.print("MANDATORY ");
-      }
-      else
-      {
-        /* BAG OR LIST */
-        ipw.print(comp.isOrdered() ? "LIST " : "BAG ");
-	      ipw.print(card);
-	      ipw.print(' ');
-		ipw.print("OF ");
-      }
-
-
       printRef (scope, comp.getComponentType(), language);
     }
     else if (dd instanceof ReferenceType)
@@ -2280,7 +2289,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
       if (lt instanceof PolylineType){
         ipw.print (((PolylineType) lt).isDirected() ? "DIRECTED POLYLINE" : "POLYLINE");
       }else if (lt instanceof MultiPolylineType){
-          ipw.print (((PolylineType) lt).isDirected() ? "DIRECTED MULTIPOLYLINE" : "MULTIPOLYLINE");
+          ipw.print (((MultiPolylineType) lt).isDirected() ? "DIRECTED MULTIPOLYLINE" : "MULTIPOLYLINE");
       }else if (lt instanceof SurfaceType){
         ipw.print ("SURFACE");
       }else if (lt instanceof MultiSurfaceType){

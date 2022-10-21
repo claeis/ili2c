@@ -8,7 +8,7 @@ public class RoleDef extends AbstractLeafElement
 	implements Extendable
 {
 	private RoleDef extending;
-	private Set<RoleDef> extendedBy=new HashSet<RoleDef>(2);
+	private Set<RoleDef> extendedBy=Collections.newSetFromMap(new WeakHashMap<RoleDef, Boolean>());
 	private boolean _abstract;
 	private boolean _final;
 	private boolean hiding=false;

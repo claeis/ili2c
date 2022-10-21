@@ -14,7 +14,6 @@ import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.config.GenerateOutputKind;
-import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.modelscan.IliFile;
@@ -41,7 +40,7 @@ import ch.interlis.models.ILIREPOSITORY20;
  * @author ceis
  */
 public class MakeIliModelsXml2 {
-	public static final String DEFAULT_ILIDIRS="http://models.interlis.ch/;"+UserSettings.JAR_DIR;
+	public static final String DEFAULT_ILIDIRS="http://models.interlis.ch/;"+Ili2cSettings.JAR_DIR;
 	/** name of application as shown to user.
 	 */
 	public static final String APP_NAME="mkilimodelsxml";
@@ -188,12 +187,12 @@ public class MakeIliModelsXml2 {
 				for(String theNewFile : files.keySet()){
 					IliFiles tempIliFiles=RepositoryAccess.createIliFiles2(repositoryRoot,newModels);
 					// compile
-					UserSettings settings = new UserSettings();
+					Ili2cSettings settings = new Ili2cSettings();
 					settings.setHttpProxyHost(httpProxyHost);
 					settings.setHttpProxyPort(httpProxyPort);
 					settings.setIlidirs(repositoryRoot+";"+ilidirs);
-					settings.setTransientObject(UserSettings.TEMP_REPOS_ILIFILES, tempIliFiles);
-					settings.setTransientObject(UserSettings.TEMP_REPOS_URI, repositoryRoot);
+					settings.setTransientObject(Ili2cSettings.TEMP_REPOS_ILIFILES, tempIliFiles);
+					settings.setTransientObject(Ili2cSettings.TEMP_REPOS_URI, repositoryRoot);
 					Configuration config = new Configuration();
 					FileEntry file = new FileEntry(new File(repositoryRoot,theNewFile).getAbsolutePath(),
 							FileEntryKind.ILIMODELFILE);

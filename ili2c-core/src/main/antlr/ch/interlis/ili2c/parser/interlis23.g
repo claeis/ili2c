@@ -4490,15 +4490,36 @@ protected uniquenessConstraint[Viewable v,Container context]
 			}
 			constr.setPreCondition(preCond);
 		}
-		// check that all attrPaths do not point to a struct
 		UniqueEl elements=constr.getElements();
-		Iterator attri=elements.iteratorAttribute();
-		while(attri.hasNext()){
-			ObjectPath attr=(ObjectPath)attri.next();
-			if(attr.isAttributePath() && attr.getType() instanceof CompositionType){
-				reportError(formatMessage ("err_uniqueness_StructNoAllowed",attr.toString()),u.getLine());
-			}
-		}
+	    for(ObjectPath attribute:elements.getAttributes()) {
+	          PathEl[] pathEls = attribute.getPathElements();
+	          for(PathEl pathEl:pathEls) {
+	              AttributeDef attr=null;
+	              RoleDef role=null;
+	              if(pathEl instanceof StructAttributeRef) {
+	                  attr=((StructAttributeRef) pathEl).getAttr();
+	              }else if(pathEl instanceof AttributeRef) {
+	                  attr=((AttributeRef) pathEl).getAttr();
+	              }else if(pathEl instanceof PathElAbstractClassRole) {
+	                  role=((PathElAbstractClassRole) pathEl).getRole();
+	              }else if(pathEl instanceof AssociationPath) {
+	                  role=((AssociationPath) pathEl).getTargetRole();
+	              }
+	              if(attr!=null) {
+	                  Type type=attr.getDomain();
+	                  if(type.getCardinality().getMaximum()>1) {
+	                      //throw new Ili2cSemanticException(getSourceLine(),"unexpected cardinality of attribute "+attr.getName());
+	                      reportError(formatMessage ("err_uniqueness_attrCardinality",attr.toString()),u.getLine());
+	                  }
+	              }else if(role!=null) {
+	                  if(role.getCardinality().getMaximum()>1) {
+	                      //throw new Ili2cSemanticException(getSourceLine(),"unexpected cardinality of role "+role.getName());
+	                      reportError(formatMessage ("err_uniqueness_roleCardinality",role.toString()),u.getLine());
+	                  }
+	              }
+	          }
+	    }
+		
 	}
 	SEMI
 	;
@@ -4539,7 +4560,6 @@ protected localUniqueness[Viewable start]
 		constr=new UniquenessConstraint();
 		constr.setLocal(true);
 		UniqueEl elements=new UniqueEl();
-		constr.setElements(elements);
 		ObjectPath prefix=null;
 		PathEl el;
 		LinkedList path=new LinkedList();
@@ -4609,6 +4629,9 @@ protected localUniqueness[Viewable start]
 			elements.addAttribute(new ObjectPath(localViewable,attrRef));
 		}
 	)*
+	{
+		constr.setElements(elements);
+	}
 	;
 
 protected setConstraint [Viewable v,Container context]

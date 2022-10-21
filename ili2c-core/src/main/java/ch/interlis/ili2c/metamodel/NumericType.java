@@ -168,6 +168,7 @@ public class NumericType extends NumericalType
                  of the exception indicates the reason; it is a localized
                  string that is intended for being displayed to the user.
   */
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     NumericType   general;
@@ -289,7 +290,6 @@ public class NumericType extends NumericalType
 
     if (errorString != null)
       throw new Ili2cSemanticException (rsrc.getString (errorString));
-    checkCardinalityExtension(wantToExtend);
   }
   @Override
   protected void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)

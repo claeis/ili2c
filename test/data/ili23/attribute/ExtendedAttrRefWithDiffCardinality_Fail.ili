@@ -1,0 +1,14 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic =
+		CLASS ClassA  =
+		END ClassA;
+	    STRUCTURE StructA =
+			attr  : MANDATORY REFERENCE TO ClassA;
+	    END StructA;
+	    STRUCTURE StructB EXTENDS StructA =
+			attr (EXTENDED) : REFERENCE TO ClassA; !! fail
+	    END StructB;
+	END topic;
+END model.

@@ -35,9 +35,7 @@ import ch.ehi.basics.logging.EhiLogger;
 */
 public abstract class Container<E extends Element>
   extends Element
-  implements BeanContext /*, Collection<E> */
 {
-  protected final BeanContextSupport bcs = new BeanContextSupport(this);
 
   // Here we have a problem for generics with the BeanContext interface which
   // extends "Collection" without type arguments.
@@ -55,7 +53,6 @@ public abstract class Container<E extends Element>
 
   protected Container()
   {
-    bccs = bcs;
     elements=createElements();
   }
 
@@ -130,11 +127,7 @@ public abstract class Container<E extends Element>
 
 	    /* Only Interlis elements can be added. */
 	    if (o instanceof Element) {
-	    try {
-	      e.setBeanContext(this);
-	    } catch (java.beans.PropertyVetoException pve) {
-	      throw new IllegalArgumentException(pve.getLocalizedMessage());
-	    }
+	          e.setContainer(this);
 	    boolean wasAdded = elements.add(e);
 	/*
 	    if (wasAdded)
@@ -197,116 +190,45 @@ public abstract class Container<E extends Element>
   public void addBeanContextMembershipListener(
     BeanContextMembershipListener bcml)
   {
-  	if(isAlias()){
-  		((Container)getReal()).addBeanContextMembershipListener(bcml);
-  		return;
-  	}else{
-	    bcs.addBeanContextMembershipListener(bcml);
-  	}
   }
 
 
   public URL getResource(String name, BeanContextChild bcc)
   {
-  	if(isAlias()){
+  	/* if(isAlias()){
   		return ((Container)getReal()).getResource(name, bcc);
   	}else{
 	    return bcs.getResource(name, bcc);
-  	}
+  	} */
+      throw new UnsupportedOperationException();
   }
 
 
   public InputStream getResourceAsStream(
     String name, BeanContextChild bcc)
   {
-  	if(isAlias()){
+/*  	if(isAlias()){
   		return ((Container)getReal()).getResourceAsStream(name,bcc);
   	}else{
 	    return bcs.getResourceAsStream(name, bcc);
-  	}
+  	} */
+      throw new UnsupportedOperationException();
+      
   }
 
 
   public Object instantiateChild(String beanName)
     throws ClassNotFoundException, java.io.IOException
   {
-  	if(isAlias()){
-  		return ((Container)getReal()).instantiateChild(beanName);
-  	}else{
-	    return bcs.instantiateChild(beanName);
-  	}
+      throw new UnsupportedOperationException();
   }
 
 
   public void removeBeanContextMembershipListener(
     BeanContextMembershipListener bcml)
   {
-  	if(isAlias()){
-  		((Container)getReal()).removeBeanContextMembershipListener(bcml);
-  		return;
-  	}else{
-	    bcs.removeBeanContextMembershipListener(bcml);
-  	}
   }
 
-
-
-  public void setDesignTime(boolean designTime)
-  {
-  	if(isAlias()){
-  		((Container)getReal()).setDesignTime(designTime);
-  		return;
-  	}else{
-	    bcs.setDesignTime(designTime);
-  	}
-  }
-
-
-  public boolean isDesignTime() {
-  	if(isAlias()){
-  		return ((Container)getReal()).isDesignTime();
-  	}else{
-	    return bcs.isDesignTime();
-  	}
-  }
-
-
-  public boolean needsGui() {
-  	if(isAlias()){
-  		return ((Container)getReal()).needsGui();
-  	}else{
-	    return bcs.needsGui();
-  	}
-  }
-
-
-  public void dontUseGui() {
-  	if(isAlias()){
-  		((Container)getReal()).dontUseGui();
-  		return;
-  	}else{
-	    bcs.dontUseGui();
-  	}
-  }
-
-
-  public void okToUseGui() {
-  	if(isAlias()){
-  		((Container)getReal()).okToUseGui();
-  		return;
-  	}else{
-	    bcs.okToUseGui();
-  	}
-  }
-
-
-  public boolean avoidingGui() {
-  	if(isAlias()){
-  		return ((Container)getReal()).avoidingGui();
-  	}else{
-	    return bcs.avoidingGui();
-  	}
-  }
 
 
   /** @deprecated Going to be out of use. */
@@ -314,8 +236,8 @@ public abstract class Container<E extends Element>
   	if(isAlias()){
   		return ((Container)getReal()).resolveModelName(name);
   	}else{
-	    BeanContext bc = getBeanContext();
-	    if (bc instanceof Container) {
+	    Container bc = getContainer();
+	    if (bc!=null) {
             return ((Container) bc).resolveModelName(name);
         } else {
             return null;

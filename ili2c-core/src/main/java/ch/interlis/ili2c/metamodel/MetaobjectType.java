@@ -16,6 +16,7 @@ public class MetaobjectType extends Type
   {
     return ref;
   }
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     if ((wantToExtend == null)

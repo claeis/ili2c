@@ -27,7 +27,7 @@ public abstract class Type
   implements Cloneable
 {
   protected Type       extending = null;
-  protected Set<Type>  extendedBy = new HashSet<Type>(2);
+  protected Set<Type>  extendedBy = Collections.newSetFromMap(new WeakHashMap<Type, Boolean>());
   protected Cardinality  cardinality = new Cardinality(0,1);
   private boolean      ordered = false;
 
@@ -40,8 +40,7 @@ public abstract class Type
         Type type=this;
         while (type instanceof TypeAlias) {
             Domain domain = ((TypeAlias) type).getAliasing();
-            TransferDescription td = (TransferDescription) domain.getContainer(TransferDescription.class);
-            if (domain == td.INTERLIS.BOOLEAN) {
+            if (domain == PredefinedModel.getInstance().BOOLEAN) {
                 return true;
             }
             type=domain.getType();
@@ -198,6 +197,7 @@ public abstract class Type
 
     /* Check that the argument is valid. */
     checkTypeExtension (newValue);
+    checkCardinalityExtension(newValue);
 
 
 
@@ -250,11 +250,11 @@ public abstract class Type
 	  
 	    // compare ordering only if more than one object possible
 	    if (this.cardinality.getMaximum()>1 && !this.isOrdered() && general.isOrdered())
-	      throw new IllegalArgumentException (rsrc.getString (
+	      throw new Ili2cSemanticException (rsrc.getString (
 	        "err_compositionType_UnorderedExtOrdered"));
 	    
 	    if (!general.cardinality.isGeneralizing(this.cardinality))
-	        throw new IllegalArgumentException (formatMessage (
+	        throw new Ili2cSemanticException (formatMessage (
 	          "err_compositionType_cardExtMismatch",
 	          this.cardinality.toString(), general.cardinality.toString()));
   }

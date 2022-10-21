@@ -40,7 +40,7 @@ import ch.ehi.basics.logging.EhiLogger;
     @version   January 28, 1999
     @author    Sascha Brawer (mailto:sb@adasys.ch)
 */
-public abstract class Element implements BeanContextChild,ElementAlias {
+public abstract class Element implements ElementAlias {
   /** A resource bundle with localizable error messages and
       other useful texts.
   */
@@ -159,18 +159,17 @@ public abstract class Element implements BeanContextChild,ElementAlias {
 
       @see java.beans.beancontext.BeanContextChild
   */
-  protected BeanContextChildSupport bccs;
 
   public final void setBeanContext(BeanContext bc)
     throws PropertyVetoException
   {
-    bccs.setBeanContext(bc);
+      throw new UnsupportedOperationException();
   }
 
 
   public final BeanContext getBeanContext()
   {
-    return bccs.getBeanContext();
+      throw new UnsupportedOperationException();
   }
 
 
@@ -188,7 +187,6 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   */
   public void addPropertyChangeListener (PropertyChangeListener listener)
   {
-    bccs.addPropertyChangeListener (null, listener);
   }
 
 
@@ -204,7 +202,6 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   public void addPropertyChangeListener(
     String propertyName, PropertyChangeListener listener)
   {
-    bccs.addPropertyChangeListener(propertyName, listener);
   }
 
 
@@ -213,7 +210,6 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   public void removePropertyChangeListener(
     String propertyName, PropertyChangeListener listener)
   {
-    bccs.removePropertyChangeListener(propertyName, listener);
   }
 
 
@@ -221,7 +217,6 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   public void addVetoableChangeListener(
     String propertyName, VetoableChangeListener listener)
   {
-    bccs.addVetoableChangeListener(propertyName, listener);
   }
 
 
@@ -230,7 +225,6 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   public void removeVetoableChangeListener(
     String propertyName, VetoableChangeListener listener)
   {
-    bccs.removeVetoableChangeListener(propertyName, listener);
   }
 
 
@@ -242,8 +236,6 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   protected void firePropertyChange(String propertyName,
     boolean oldValue, boolean newValue)
   {
-    bccs.firePropertyChange(propertyName,
-      new Boolean(oldValue), new Boolean(newValue));
   }
 
 
@@ -256,8 +248,6 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   protected void firePropertyChange(String propertyName,
     int oldValue, int newValue)
   {
-    bccs.firePropertyChange(propertyName,
-      new Integer(oldValue), new Integer(newValue));
   }
 
 
@@ -270,8 +260,6 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   protected void firePropertyChange(String propertyName,
     Object oldValue, Object newValue)
   {
-    bccs.firePropertyChange(propertyName,
-      oldValue, newValue);
   }
 
 
@@ -285,8 +273,6 @@ public abstract class Element implements BeanContextChild,ElementAlias {
     boolean oldValue, boolean newValue)
   throws java.beans.PropertyVetoException
   {
-    bccs.fireVetoableChange(propertyName,
-      new Boolean(oldValue), new Boolean(newValue));
   }
 
 
@@ -300,8 +286,6 @@ public abstract class Element implements BeanContextChild,ElementAlias {
     Object oldValue, Object newValue)
   throws java.beans.PropertyVetoException
   {
-    bccs.fireVetoableChange(propertyName,
-      oldValue, newValue);
   }
 
 
@@ -338,13 +322,13 @@ public abstract class Element implements BeanContextChild,ElementAlias {
   */
   public final Container<?> getContainer (Class<?> klass)
   {
-    BeanContext bc = getBeanContext();
+    Container bc = getContainer();
 
     while (bc != null) {
       if (klass.isInstance(bc)) {
         return (Container<?>) bc;
     }
-      bc = bc.getBeanContext();
+      bc = bc.getContainer();
     }
 
     return null;
@@ -356,15 +340,14 @@ public abstract class Element implements BeanContextChild,ElementAlias {
       If the bean context of <code>this</code> is not an instance of
       ch.interlis.Container, the result is <code>null</code>.
   */
-  public final Container getContainer ()
+  private Container container=null;
+  public Container getContainer ()
   {
-    BeanContext bc = getBeanContext();
-
-    if (bc instanceof Container) {
-        return (Container) bc;
-    } else {
-        return null;
-    }
+      return container;
+  }
+  public final void setContainer (Container c)
+  {
+      container=c;
   }
 
 

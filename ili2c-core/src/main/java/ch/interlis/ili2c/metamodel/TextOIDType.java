@@ -16,6 +16,7 @@ public class TextOIDType extends OIDType
 	{
 		return type;
 	}
+	  @Override
 	  void checkTypeExtension (Type wantToExtend)
 	  {
 	    if ((wantToExtend == null)

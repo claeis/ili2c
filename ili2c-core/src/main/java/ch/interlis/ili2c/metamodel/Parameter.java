@@ -139,11 +139,8 @@ public class Parameter extends AbstractLeafElement
       if (realType instanceof ReferenceType)
       {
         Table referred = (Table)((ReferenceType) realType).getReferred();
-        TransferDescription td = (referred == null)
-          ? null
-          : (TransferDescription) referred.getContainer (TransferDescription.class);
 
-        if ((referred != null) && !referred.isExtending (td.INTERLIS.METAOBJECT))
+        if ((referred != null) && !referred.isExtending (PredefinedModel.getInstance().METAOBJECT))
           throw new IllegalArgumentException (formatMessage (
             "err_parameter_refToNonMeta",
             this.toString (),

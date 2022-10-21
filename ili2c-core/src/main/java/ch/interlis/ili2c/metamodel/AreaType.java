@@ -30,6 +30,7 @@ public class AreaType extends SurfaceOrAreaType
     return "AREA";
   }
 
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     super.checkTypeExtension (wantToExtend);
@@ -41,7 +42,6 @@ public class AreaType extends SurfaceOrAreaType
       throw new IllegalArgumentException (rsrc.getString (
         "err_areaType_ExtOther"));
     }
-    checkCardinalityExtension(wantToExtend);
   }
   @Override
   public boolean isAbstract(StringBuilder err) {

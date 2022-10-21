@@ -16,23 +16,23 @@ branches:
 install: true
 
 script: 
-  - if [ $TRAVIS_BRANCH == "stable-core" ]; then gradle :ili2c-core:jar :ili2c-core:test ; fi 
-  - if [ $TRAVIS_BRANCH != "stable-core" ]; then gradle jar test ; fi
+  - if [ $TRAVIS_BRANCH == "stable-core" ]; then ./gradlew :ili2c-core:jar :ili2c-core:test ; fi 
+  - if [ $TRAVIS_BRANCH != "stable-core" ]; then ./gradlew jar test ; fi
   
 deploy:
   - provider: script
     skip_cleanup: true
-    script: gradle --info -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr}  bindist uploadArchives
+    script: ./gradlew --info -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr}  bindist uploadArchives
     on:
       branch: master
   - provider: script
     skip_cleanup: true
-    script: gradle -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} '-Drelease=' bindist uploadArchives uploadBindist
+    script: ./gradlew -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} '-Drelease=' bindist uploadArchives uploadBindist
     on:
       branch: stable
   - provider: script
     skip_cleanup: true
-    script: gradle -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} '-Drelease=' :ili2c-core:uploadArchives
+    script: ./gradlew -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} '-Drelease=' :ili2c-core:uploadArchives
     on:
       branch: stable-core
 notifications:

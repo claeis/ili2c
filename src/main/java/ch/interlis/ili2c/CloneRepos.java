@@ -10,7 +10,6 @@ import ch.interlis.models.ILIREPOSITORY20;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
-import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.modelscan.IliFile;
 import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ilirepository.IliFiles;
@@ -30,7 +29,7 @@ import ch.interlis.iox_j.StartTransferEvent;
 public class CloneRepos {
 
 	public boolean cloneRepos(Configuration config,
-			UserSettings settings) {
+	        Ili2cSettings settings) {
 		boolean failed=false;
 		Main.setHttpProxySystemProperties(settings);
 		if(config.getOutputFile()==null) {

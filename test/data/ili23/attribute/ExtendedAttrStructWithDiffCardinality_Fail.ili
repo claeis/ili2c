@@ -1,0 +1,14 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC topic =
+	    STRUCTURE StructA =
+	    END StructA;
+		CLASS ClassA  =
+			attr  : StructA;
+		END ClassA;
+		CLASS ClassB EXTENDS ClassA =
+			attr (EXTENDED) : LIST {1..*} OF StructA;  !! fail
+		END ClassB;
+	END topic;
+END model.

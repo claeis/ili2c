@@ -101,6 +101,7 @@ public abstract class AbstractCoordType extends BaseType
     return false;
   }
 
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     if ((wantToExtend == null)
@@ -110,7 +111,6 @@ public abstract class AbstractCoordType extends BaseType
         throw new Ili2cSemanticException (rsrc.getString (
         "err_coordType_ExtOther"));
     }
-    checkCardinalityExtension(wantToExtend);
   }
   public boolean checkStructuralEquivalence (Element with)
   {

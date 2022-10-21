@@ -23,7 +23,7 @@ public abstract class ExtendableContainer<E extends Element> extends Container<E
 
   /** The containers which are extended by this container.
   */
-  protected Set<ExtendableContainer<E>> extendedBy = new HashSet<ExtendableContainer<E>>(2);
+  protected Set<ExtendableContainer<E>> extendedBy = Collections.newSetFromMap(new WeakHashMap<ExtendableContainer<E>, Boolean>());
 
 
 

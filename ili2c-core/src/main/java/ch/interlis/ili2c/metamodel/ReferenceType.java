@@ -79,6 +79,7 @@ public class ReferenceType extends Type
                  of the exception indicates the reason; it is a localized
                  string that is intended for being displayed to the user.
   */
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     if ((wantToExtend == null)
@@ -105,7 +106,7 @@ public class ReferenceType extends Type
   {
 	  restrictedTo.add(classOrAssociation);
 	  // check if structure is a valid extension
-	  if(referred!=((TransferDescription)referred.getContainer(TransferDescription.class)).INTERLIS.ANYCLASS
+	  if(referred!=PredefinedModel.getInstance().ANYCLASS
 	  	&& !classOrAssociation.isExtending(referred)){
 		throw new IllegalArgumentException (formatMessage (
 			"err_referenceType_restriction",

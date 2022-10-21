@@ -23,7 +23,8 @@ import java.util.ArrayList;
 */
 public class PredefinedModel extends DataModel
 {
-  private static PredefinedModel instance=null;
+  public static final String INTERLIS = "INTERLIS";
+private static PredefinedModel instance=null;
   public final LineForm STRAIGHTS = new LineForm ("STRAIGHTS");
   public final LineForm ARCS = new LineForm ("ARCS");
 
@@ -233,6 +234,13 @@ public class PredefinedModel extends DataModel
       }
       return instance;
   }
+  @Override
+  public final Container getContainer ()
+  {
+      // because INTERLIS is a singleton, there can not be a reference to the container
+      return null;
+  }
+  
   private void setupModel()
   {
     add (STRAIGHTS);

@@ -16,13 +16,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ch.ehi.basics.settings.Settings;
+import ch.interlis.ili2c.Ili2cSettings;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
 import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.generator.nls.TranslationElement;
-import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 
 /**
@@ -419,10 +419,10 @@ public class Ili2TranslationXmlTest {
 	
 		Settings settings = new Settings();
 		String currentDir = iliFile1.getAbsoluteFile().getParent();
-		settings.setValue(UserSettings.ILIDIRS, UserSettings.DEFAULT_ILIDIRS);
+		settings.setValue(Ili2cSettings.ILIDIRS, Ili2cSettings.DEFAULT_ILIDIRS);
 		HashMap<String, String> pathMap = new HashMap<String, String>();
-		pathMap.put(UserSettings.ILI_DIR, currentDir);
-		settings.setTransientObject(UserSettings.ILIDIRS_PATHMAP, pathMap);
+		pathMap.put(Ili2cSettings.ILI_DIR, currentDir);
+		settings.setTransientObject(Ili2cSettings.ILIDIRS_PATHMAP, pathMap);
 		TransferDescription td = null;
 		td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig, settings);
 		return td;

@@ -24,7 +24,7 @@ public abstract class Unit extends AbstractLeafElement implements Extendable
   protected String        name = "";
   protected String        docName = "";
   protected Unit		  extending = null;
-  protected Set<Unit>     extendedBy = new HashSet<Unit>(2);
+  protected Set<Unit>     extendedBy = Collections.newSetFromMap(new WeakHashMap<Unit, Boolean>());
   protected boolean       _abstract = false;
   protected boolean       _final = false;
 

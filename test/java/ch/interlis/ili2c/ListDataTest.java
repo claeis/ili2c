@@ -7,16 +7,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import ch.ehi.basics.logging.EhiLogger;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
-import ch.interlis.ili2c.gui.UserSettings;
-import ch.interlis.ili2c.metamodel.AttributeDef;
-import ch.interlis.ili2c.metamodel.EnumerationType;
-import ch.interlis.ili2c.metamodel.Model;
-import ch.interlis.ili2c.metamodel.Table;
-import ch.interlis.ili2c.metamodel.Topic;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ilirepository.Dataset;
 import ch.interlis.iom.IomObject;
@@ -27,7 +20,6 @@ import ch.interlis.iox.IoxEvent;
 import ch.interlis.iox.ObjectEvent;
 import ch.interlis.iox.StartBasketEvent;
 import ch.interlis.iox.StartTransferEvent;
-import ch.interlis.models.DatasetIdx16.DataIndex.DatasetMetadata;
 
 public class ListDataTest {
     private static final String TEST_REPOS = "test/data/listdata/repos1";
@@ -48,7 +40,7 @@ public class ListDataTest {
 		FileEntry fileEntry=new FileEntry(TEST_REPOS, FileEntryKind.ILIMODELFILE);
 		ili2cConfig.addFileEntry(fileEntry);
 		ili2cConfig.setOutputFile(data.getPath());
-        UserSettings settings=new UserSettings();
+		Ili2cSettings settings=new Ili2cSettings();
 		ListData listData=new ListData();
         listData.listData(ili2cConfig, settings);
         {

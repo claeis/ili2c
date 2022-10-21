@@ -4,7 +4,7 @@ INTERLIS 2.3;
 /* 2022-04-28 DOMAIN LanguageCode: not MANDATORY; CLASS Translation: Attribute Language is MANDATORY */
 
 !!@precursorVersion=2020-04-24
-MODEL IlisMeta07 (en) AT "http://models.interlis.ch" VERSION "2022-04-28" =
+MODEL IlisMeta07 (en) AT "http://models.interlis.ch" VERSION "2022-04-28-ceis" =
 
   DOMAIN
     BasketOID = OID TEXT; /* Filename */
@@ -264,7 +264,7 @@ MODEL IlisMeta07 (en) AT "http://models.interlis.ch" VERSION "2022-04-28" =
     /* DataUnits */
 
     CLASS DataUnit EXTENDS ExtendableME =
-      Name (EXTENDED): TEXT := "BASKET";
+      Name (EXTENDED): MANDATORY TEXT := "BASKET";
       ViewUnit: MANDATORY BOOLEAN;
       DataUnitName: MANDATORY TEXT;
     END DataUnit;

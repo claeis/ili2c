@@ -1,0 +1,15 @@
+INTERLIS 2.4;
+
+MODEL Simple24
+  AT "mailto:ce@eisenhutinformatik.ch" VERSION "2016-12-21" =
+    
+  TOPIC TestA =
+    
+    CLASS ClassA1 =
+    	attr1 : TEXT*60;
+    END ClassA1;
+    
+  END TestA;
+  
+  
+END Simple24.

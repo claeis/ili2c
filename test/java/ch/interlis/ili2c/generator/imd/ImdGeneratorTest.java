@@ -31,6 +31,9 @@ import ch.interlis.iox_j.validator.ValidationConfig;
 import ch.interlis.iox_j.validator.Validator;
 
 public class ImdGeneratorTest {
+    public static final String SIMPLE10_ILI = "test/data/imdgenerator/Simple10.ili";
+    public static final String SIMPLE23_ILI = "test/data/imdgenerator/Simple23.ili";
+    private static final String ILIS_META07_ILI = "standard/IlisMeta07.ili";
     @Test
     public void ili23Test() throws Iox2jtsException, IoxException {
         final String OUT_FILE = "Simple23-out.imd";
@@ -39,7 +42,7 @@ public class ImdGeneratorTest {
             // compile model
             TransferDescription td=null;
             Configuration ili2cConfig=new Configuration();
-            FileEntry fileEntry=new FileEntry("test/data/imdgenerator/Simple23.ili", FileEntryKind.ILIMODELFILE);
+            FileEntry fileEntry=new FileEntry(SIMPLE23_ILI, FileEntryKind.ILIMODELFILE);
             ili2cConfig.addFileEntry(fileEntry);
             ili2cConfig.setOutputFile(OUT_FILE);
             ili2cConfig.setOutputKind(GenerateOutputKind.IMD);
@@ -53,7 +56,7 @@ public class ImdGeneratorTest {
             // compile model
             TransferDescription td=null;
             Configuration ili2cConfig=new Configuration();
-            FileEntry fileEntry=new FileEntry("standard/IlisMeta07.ili", FileEntryKind.ILIMODELFILE);
+            FileEntry fileEntry=new FileEntry(ILIS_META07_ILI, FileEntryKind.ILIMODELFILE);
             ili2cConfig.addFileEntry(fileEntry);
             td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
             assertNotNull(td);
@@ -93,7 +96,7 @@ public class ImdGeneratorTest {
             // compile model
             TransferDescription td=null;
             Configuration ili2cConfig=new Configuration();
-            FileEntry fileEntry=new FileEntry("test/data/imdgenerator/Simple10.ili", FileEntryKind.ILIMODELFILE);
+            FileEntry fileEntry=new FileEntry(SIMPLE10_ILI, FileEntryKind.ILIMODELFILE);
             ili2cConfig.addFileEntry(fileEntry);
             ili2cConfig.setOutputFile(OUT_FILE);
             ili2cConfig.setOutputKind(GenerateOutputKind.IMD);
@@ -107,7 +110,7 @@ public class ImdGeneratorTest {
             // compile model
             TransferDescription td=null;
             Configuration ili2cConfig=new Configuration();
-            FileEntry fileEntry=new FileEntry("standard/IlisMeta07.ili", FileEntryKind.ILIMODELFILE);
+            FileEntry fileEntry=new FileEntry(ILIS_META07_ILI, FileEntryKind.ILIMODELFILE);
             ili2cConfig.addFileEntry(fileEntry);
             td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
             assertNotNull(td);

@@ -39,7 +39,7 @@ public abstract class AttributeDef
   protected boolean       _final;
   protected boolean       _abstract;
   private boolean       _transient;
-  protected Set<AttributeDef> extendedBy = new HashSet<AttributeDef>(2);
+  protected Set<AttributeDef> extendedBy = Collections.newSetFromMap(new WeakHashMap<AttributeDef, Boolean>());
   protected Type          domain;
 	private String ili1Explanation=null;
   protected AttributeDef ()
@@ -650,10 +650,9 @@ public abstract class AttributeDef
 	}
 
 	public boolean isDomainBoolean(){
-		TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
 		Type type=getDomain();
 		while(type instanceof TypeAlias) {
-			if (((TypeAlias) type).getAliasing() == td.INTERLIS.BOOLEAN) {
+			if (((TypeAlias) type).getAliasing() == PredefinedModel.getInstance().BOOLEAN) {
 				return true;
 			}
 			type=((TypeAlias) type).getAliasing().getType();
@@ -662,10 +661,9 @@ public abstract class AttributeDef
 		
 	}
     public boolean isDomainHalignment(){
-        TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
         Type type=getDomain();
         while(type instanceof TypeAlias) {
-            if (((TypeAlias) type).getAliasing() == td.INTERLIS.HALIGNMENT) {
+            if (((TypeAlias) type).getAliasing() == PredefinedModel.getInstance().HALIGNMENT) {
                 return true;
             }
             type=((TypeAlias) type).getAliasing().getType();
@@ -674,10 +672,9 @@ public abstract class AttributeDef
         
     }
     public boolean isDomainValignment(){
-        TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
         Type type=getDomain();
         while(type instanceof TypeAlias) {
-            if (((TypeAlias) type).getAliasing() == td.INTERLIS.VALIGNMENT) {
+            if (((TypeAlias) type).getAliasing() == PredefinedModel.getInstance().VALIGNMENT) {
                 return true;
             }
             type=((TypeAlias) type).getAliasing().getType();
@@ -686,10 +683,9 @@ public abstract class AttributeDef
         
     }
     public boolean isDomainName(){
-        TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
         Type type=getDomain();
         while(type instanceof TypeAlias) {
-            if (((TypeAlias) type).getAliasing() == td.INTERLIS.NAME) {
+            if (((TypeAlias) type).getAliasing() == PredefinedModel.getInstance().NAME) {
                 return true;
             }
             type=((TypeAlias) type).getAliasing().getType();
@@ -698,10 +694,9 @@ public abstract class AttributeDef
         
     }
     public boolean isDomainUri(){
-        TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
         Type type=getDomain();
         while(type instanceof TypeAlias) {
-            if (((TypeAlias) type).getAliasing() == td.INTERLIS.URI) {
+            if (((TypeAlias) type).getAliasing() == PredefinedModel.getInstance().URI) {
                 return true;
             }
             type=((TypeAlias) type).getAliasing().getType();
@@ -710,10 +705,9 @@ public abstract class AttributeDef
         
     }
 	public boolean isDomainIli1Date(){
-		TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
 		Type type=getDomain();
 		while(type instanceof TypeAlias) {
-			if (((TypeAlias) type).getAliasing() == td.INTERLIS.INTERLIS_1_DATE) {
+			if (((TypeAlias) type).getAliasing() == PredefinedModel.getInstance().INTERLIS_1_DATE) {
 				return true;
 			}
 			type=((TypeAlias) type).getAliasing().getType();
@@ -721,11 +715,10 @@ public abstract class AttributeDef
 		return false;
 	}
 	public boolean isDomainIli2Date(){
-		TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
 		Type type=getDomain();
 		if (type instanceof TypeAlias){
 			while(type instanceof TypeAlias) {
-				if (((TypeAlias) type).getAliasing() == td.INTERLIS.XmlDate) {
+				if (((TypeAlias) type).getAliasing() == PredefinedModel.getInstance().XmlDate) {
 					return true;
 				}
 				type=((TypeAlias) type).getAliasing().getType();
@@ -733,18 +726,17 @@ public abstract class AttributeDef
 		}
 		if(type instanceof FormattedType){
 			FormattedType ft=(FormattedType)type;
-			if(ft.getDefinedBaseDomain()== td.INTERLIS.XmlDate){
+			if(ft.getDefinedBaseDomain()== PredefinedModel.getInstance().XmlDate){
 				return true;
 			}
 		}
 		return false;
 	}
 	public boolean isDomainIli2DateTime(){
-		TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
 		Type type=getDomain();
 		if (type instanceof TypeAlias){
 			while(type instanceof TypeAlias) {
-				if (((TypeAlias) type).getAliasing() == td.INTERLIS.XmlDateTime) {
+				if (((TypeAlias) type).getAliasing() == PredefinedModel.getInstance().XmlDateTime) {
 					return true;
 				}
 				type=((TypeAlias) type).getAliasing().getType();
@@ -752,18 +744,17 @@ public abstract class AttributeDef
 		}
 		if(type instanceof FormattedType){
 			FormattedType ft=(FormattedType)type;
-			if(ft.getDefinedBaseDomain()== td.INTERLIS.XmlDateTime){
+			if(ft.getDefinedBaseDomain()== PredefinedModel.getInstance().XmlDateTime){
 				return true;
 			}
 		}
 		return false;
 	}
 	public boolean isDomainIli2Time(){
-		TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
 		Type type=getDomain();
 		if (type instanceof TypeAlias){
 			while(type instanceof TypeAlias) {
-				if (((TypeAlias) type).getAliasing() == td.INTERLIS.XmlTime) {
+				if (((TypeAlias) type).getAliasing() == PredefinedModel.getInstance().XmlTime) {
 					return true;
 				}
 				type=((TypeAlias) type).getAliasing().getType();
@@ -771,18 +762,17 @@ public abstract class AttributeDef
 		}
 		if(type instanceof FormattedType){
 			FormattedType ft=(FormattedType)type;
-			if(ft.getDefinedBaseDomain()== td.INTERLIS.XmlTime){
+			if(ft.getDefinedBaseDomain()== PredefinedModel.getInstance().XmlTime){
 				return true;
 			}
 		}
 		return false;
 	}
 	public boolean isDomainIliUuid(){
-		TransferDescription td=(TransferDescription) getContainer(TransferDescription.class);
 		Type type=getDomain();
 		if (type instanceof TypeAlias){
 			while(type instanceof TypeAlias) {
-				if (((TypeAlias) type).getAliasing() == td.INTERLIS.UUIDOID) {
+				if (((TypeAlias) type).getAliasing() == PredefinedModel.getInstance().UUIDOID) {
 					return true;
 				}
 				type=((TypeAlias) type).getAliasing().getType();

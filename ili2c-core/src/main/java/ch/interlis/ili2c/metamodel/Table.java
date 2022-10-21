@@ -44,7 +44,7 @@ public class Table extends AbstractClassDef<AbstractLeafElement>
   /** backlink to CompositionType, if this ClassDef is used as part of
    *  a structure attribute.
    */
-  Set<CompositionType> componentFor = new HashSet<CompositionType>(2);
+  Set<CompositionType> componentFor = Collections.newSetFromMap(new WeakHashMap<CompositionType, Boolean>());
 
   protected List<Parameter> parameters = new LinkedList<Parameter>();
 

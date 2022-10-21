@@ -6,17 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import ch.ehi.basics.logging.EhiLogger;
-import ch.ehi.iox.ilisite.ILIREPOSITORY09;
-import ch.ehi.iox.ilisite.IliRepository09.RepositoryIndex.ModelMetadata;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
-import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ilirepository.impl.RepositoryVisitor;
 import ch.interlis.iom.IomObject;
 import ch.interlis.ilirepository.Dataset;
 import ch.interlis.ilirepository.impl.DataFinder;
-import ch.interlis.ilirepository.impl.ModelLister;
 import ch.interlis.ilirepository.impl.RepositoryAccess;
 import ch.interlis.ilirepository.impl.RepositoryAccessException;
 import ch.interlis.iom_j.Iom_jObject;
@@ -32,7 +28,7 @@ import ch.interlis.iox_j.StartTransferEvent;
 public class ListData {
 
 	public boolean listData(Configuration config,
-			UserSettings settings) {
+	        Ili2cSettings settings) {
 		boolean failed=false;
 		Main.setHttpProxySystemProperties(settings);
 		RepositoryAccess reposAccess=new RepositoryAccess();
@@ -40,7 +36,7 @@ public class ListData {
 		List<String> repos=new ArrayList<String>();
 		if(config.getSizeFileEntry()==0) {
 		    // use default
-		    repos.add(UserSettings.ILI_REPOSITORY);
+		    repos.add(Ili2cSettings.ILI_REPOSITORY);
 		}else {
 	        Iterator reposi = config.iteratorFileEntry();
 	        while (reposi.hasNext()) {

@@ -126,7 +126,6 @@ public abstract class AbstractSurfaceOrAreaType extends LineType
   public void setLineAttributeStructure (Table lineAttributeStructure)
     throws java.beans.PropertyVetoException
   {
-    TransferDescription td;
 
     Table oldValue = this.lineAttributeStructure;
     Table newValue = lineAttributeStructure;
@@ -137,7 +136,6 @@ public abstract class AbstractSurfaceOrAreaType extends LineType
     if (newValue == null)
       throw new IllegalArgumentException (rsrc.getString ("err_nullNotAcceptable"));
 
-    td = (TransferDescription) newValue.getContainer (TransferDescription.class);
 
     try
     {
@@ -217,6 +215,7 @@ public abstract class AbstractSurfaceOrAreaType extends LineType
                  of the exception indicates the reason; it is a localized
                  string that is intended for being displayed to the user.
   */
+  @Override
   void checkTypeExtension (Type wantToExtend)
   {
     super.checkTypeExtension (wantToExtend);
