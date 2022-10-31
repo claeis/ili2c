@@ -20,4 +20,4 @@ java -jar ili2c.jar [options]
 
 ili2c includes a little helper to create and maintain model repositories. See the help on the command line:
 
-java -cp ili2c.jar ch.interlis.ilirepository.MakeIliModelsXml --help
+java -cp ili2c.jar ch.interlis.ili2c.MakeIliModelsXml --help
