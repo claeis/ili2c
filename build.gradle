@@ -96,6 +96,21 @@ task usrdoc(type:Exec) {
 		args = [rst2html, infile, outfile]
 }
 
+task ilidoc(type:Exec) {
+	group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = 'Builds the ilidoc documentation (html)'
+	def infile=new File(project.projectDir,'doc/ilidoc.rst')
+	def outfile=new File('docs/ilidoc.html')
+	inputs.file infile
+	outputs.file outfile
+	doFirst{
+		new File(project.buildDir,'docs').mkdir()
+	}
+		workingDir = project.buildDir
+		executable python
+		args = [rst2html, infile, outfile]
+}
+
 task fatjar(type: Jar) {
 	archiveFileName='ili2c.jar'
   manifest {
