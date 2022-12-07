@@ -177,4 +177,5 @@ Folgendes Beispiel soll den Gebrauch von ilidoc-Text illustrieren::
 	END ModelA.
 
 .. [1] INTERLIS 2-Referenzhandbuch
+
 .. [2] INTERLIS 2-Metamodell
