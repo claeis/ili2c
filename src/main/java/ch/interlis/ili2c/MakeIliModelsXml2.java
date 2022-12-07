@@ -39,6 +39,8 @@ import ch.interlis.models.ILIREPOSITORY20;
  * rewrite bestehende Datei zuerst loeschen und dann neu scannen und erzeugen
  * @author ceis
  */
+//moved to ilimanager
+@Deprecated
 public class MakeIliModelsXml2 {
 	public static final String DEFAULT_ILIDIRS="http://models.interlis.ch/;"+Ili2cSettings.JAR_DIR;
 	/** name of application as shown to user.

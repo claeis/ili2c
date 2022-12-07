@@ -28,7 +28,7 @@ allprojects {
 	}
 }
 
-version '5.3.0'+System.getProperty('release','-SNAPSHOT')
+version '5.3.1'+System.getProperty('release','-SNAPSHOT')
 
 configurations {
 	scpAntTask
@@ -42,7 +42,7 @@ configurations {
 
 dependencies {
     implementation "ch.interlis:iox-api:1.0.3"
-    implementation("ch.interlis:iox-ili:1.21.13") {
+    implementation("ch.interlis:iox-ili:1.21.14") {
     	exclude group: 'net.iharder', module: 'base64'
     	exclude group: 'com.vividsolutions', module: 'jts-core'
     }
@@ -86,6 +86,21 @@ task usrdoc(type:Exec) {
     description = 'Builds the user documentation (html)'
 	def infile=new File(project.projectDir,'doc/ili2c.rst')
 	def outfile=new File('docs/ili2c.html')
+	inputs.file infile
+	outputs.file outfile
+	doFirst{
+		new File(project.buildDir,'docs').mkdir()
+	}
+		workingDir = project.buildDir
+		executable python
+		args = [rst2html, infile, outfile]
+}
+
+task ilidoc(type:Exec) {
+	group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = 'Builds the ilidoc documentation (html)'
+	def infile=new File(project.projectDir,'doc/ilidoc.rst')
+	def outfile=new File('docs/ilidoc.html')
 	inputs.file infile
 	outputs.file outfile
 	doFirst{

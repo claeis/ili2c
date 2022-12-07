@@ -26,6 +26,8 @@ import ch.interlis.iox_j.ObjectEvent;
 import ch.interlis.iox_j.StartBasketEvent;
 import ch.interlis.iox_j.StartTransferEvent;
 
+//moved to ilimanager
+@Deprecated
 public class CloneRepos {
 
 	public boolean cloneRepos(Configuration config,
