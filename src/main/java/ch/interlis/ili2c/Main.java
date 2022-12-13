@@ -662,9 +662,9 @@ public class Main {
 
     		setHttpProxySystemProperties(settings);
     		
-    		HashMap pathmap = (HashMap) settings.getTransientObject(Ili2cSettings.ILIDIRS_PATHMAP);
+    		java.util.Map<String,String> pathmap = (java.util.Map<String,String>) settings.getTransientObject(Ili2cSettings.ILIDIRS_PATHMAP);
     
-    		ArrayList modeldirv = getModelRepos(settings, ilifilev, pathmap);
+    		java.util.List<String> modeldirv = getModelRepos(settings, ilifilev, pathmap);
     
     		// get/create repository manager
     		ch.interlis.ilirepository.IliManager manager = (ch.interlis.ilirepository.IliManager) settings
@@ -945,18 +945,47 @@ public class Main {
 		Ili2TranslationXml.writeModelElementsAsXML(eles,new File(config.getOutputFile()));
 	}
 
-	private static ArrayList getModelRepos(
+    public static java.util.List<String> resolvePathMap(String ilidirs,java.util.Map<String,String> pathmap) {
+        ArrayList<String> modeldirv=new ArrayList<String>();
+        if (pathmap == null) {
+            pathmap = new HashMap<String,String>();
+        }
+
+        String modeldirs[] = ilidirs.split(Ili2cSettings.ILIDIR_SEPARATOR);
+        for (int modeli = 0; modeli < modeldirs.length; modeli++) {
+            String m = modeldirs[modeli];
+
+            if (m.startsWith("%")) {
+                String key = m;
+                EhiLogger.traceState("pathmap key <"+key+">");
+                if (pathmap.containsKey(key)) {
+                    m = (String) pathmap.get(key);
+                    if (m != null && m.length() > 0) {
+                        modeldirv.add(m);
+                    }
+                }
+            } else {
+                if (m != null && m.length() > 0) {
+                    modeldirv.add(m);
+                }
+            }
+        }
+        return modeldirv;
+        
+    }
+    /** legacy of resolvePathMap() that replaces Ili2cSettings.ILI_DIR with the set of ili-file-folders
+     */
+	private static java.util.List<String> getModelRepos(
 			ch.ehi.basics.settings.Settings settings,
-			ArrayList<String> ilifilev, HashMap pathmap) {
-		ArrayList modeldirv;
-		modeldirv=new ArrayList();
+			java.util.List<String> ilifilev, java.util.Map<String,String> pathmap) {
+		ArrayList<String> modeldirv=new ArrayList<String>();
 		if (pathmap == null) {
-		    pathmap = new HashMap();
+		    pathmap = new HashMap<String,String>();
 		}
 
 		String ilidirs = settings.getValue(Ili2cSettings.ILIDIRS);
 		String modeldirs[] = ilidirs.split(Ili2cSettings.ILIDIR_SEPARATOR);
-		HashSet ilifiledirs = new HashSet();
+		HashSet<String> ilifiledirs = new HashSet<String>();
 
 		for (int modeli = 0; modeli < modeldirs.length; modeli++) {
 			String m = modeldirs[modeli];
