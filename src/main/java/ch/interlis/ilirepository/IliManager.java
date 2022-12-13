@@ -40,6 +40,7 @@ import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ili2c.ModelScan;
 import ch.interlis.ilirepository.impl.RepositoryCrawler;
 import ch.interlis.ilirepository.impl.RepositoryVisitor;
+import ch.interlis.models.DatasetIdx16.DataFile;
 import ch.interlis.ilirepository.impl.DataFinder;
 import ch.interlis.ilirepository.impl.RepositoryAccess;
 import ch.interlis.ilirepository.impl.RepositoryAccessException;
@@ -518,5 +519,35 @@ public class IliManager implements ReposManager {
 		}
 		
 	}
+    public static File getLocalCopyOfReposFile(IliManager repoManager, String dataFile) {
+        if(dataFile.startsWith(IliManager.ILIDATA_URI_PREFIX)) {
+            try {
+                String bid=dataFile.substring(IliManager.ILIDATA_URI_PREFIX.length());
+                List<Dataset> datasets = repoManager.getDatasetIndex(bid, null);
+                if(datasets.size()==0) {
+                    EhiLogger.logError("file "+dataFile+" not found");
+                    return null;
+                }else if(datasets.size()>1) {
+                    EhiLogger.logError("file "+dataFile+" ambiguous");
+                    return null;
+                }
+                java.io.File localFiles[]=repoManager.getLocalFileOfRemoteDataset(datasets.get(0), getFormat(datasets.get(0)));
+                return localFiles[0];
+            } catch (Ili2cException e) {
+                EhiLogger.logError("failed to get file "+dataFile,e);
+                return null;
+            } catch (RepositoryAccessException e) {
+                EhiLogger.logError("failed to get file "+dataFile,e);
+                return null;
+            }
+        }
+        return new java.io.File(dataFile);
+    }
+    private static String getFormat(Dataset dataset) {
+        for(DataFile file:dataset.getMetadata().getfiles()){
+            return file.getfileFormat();
+        }
+        return null;
+    }
 }
 
