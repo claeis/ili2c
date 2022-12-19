@@ -519,26 +519,20 @@ public class IliManager implements ReposManager {
 		}
 		
 	}
-    public static File getLocalCopyOfReposFile(IliManager repoManager, String dataFile) {
+    public static File getLocalCopyOfReposFile(IliManager repoManager, String dataFile) throws Ili2cException {
         if(dataFile.startsWith(IliManager.ILIDATA_URI_PREFIX)) {
             try {
                 String bid=dataFile.substring(IliManager.ILIDATA_URI_PREFIX.length());
                 List<Dataset> datasets = repoManager.getDatasetIndex(bid, null);
                 if(datasets.size()==0) {
-                    EhiLogger.logError("file "+dataFile+" not found");
-                    return null;
+                    throw new Ili2cException("file "+dataFile+" not found");
                 }else if(datasets.size()>1) {
-                    EhiLogger.logError("file "+dataFile+" ambiguous");
-                    return null;
+                    throw new Ili2cException("file "+dataFile+" ambiguous");
                 }
                 java.io.File localFiles[]=repoManager.getLocalFileOfRemoteDataset(datasets.get(0), getFormat(datasets.get(0)));
                 return localFiles[0];
-            } catch (Ili2cException e) {
-                EhiLogger.logError("failed to get file "+dataFile,e);
-                return null;
             } catch (RepositoryAccessException e) {
-                EhiLogger.logError("failed to get file "+dataFile,e);
-                return null;
+                throw new Ili2cException("failed to get file "+dataFile,e);
             }
         }
         return new java.io.File(dataFile);
