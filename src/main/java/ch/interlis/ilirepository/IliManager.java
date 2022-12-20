@@ -78,6 +78,7 @@ public class IliManager implements ReposManager {
     /** uri prefix to data in repositories
      */
     public static final String ILIDATA_URI_PREFIX = "ilidata:";
+    public static final String FILE_URI_PREFIX = "file:";
     private long iliMaxTTL=604800000L; // max time (7 days) to live in ms for a file in the cache
     private long dataMaxTTL=43200000L; // max time (24h) to live in ms for a file in the cache
 	private RepositoryAccess rep=new RepositoryAccess();
@@ -534,6 +535,8 @@ public class IliManager implements ReposManager {
             } catch (RepositoryAccessException e) {
                 throw new Ili2cException("failed to get file "+dataFile,e);
             }
+        }else if(dataFile.startsWith(IliManager.FILE_URI_PREFIX)) {
+            dataFile=dataFile.substring(IliManager.FILE_URI_PREFIX.length());
         }
         return new java.io.File(dataFile);
     }
