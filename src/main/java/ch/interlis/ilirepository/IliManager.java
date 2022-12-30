@@ -40,6 +40,7 @@ import ch.interlis.ili2c.modelscan.IliModel;
 import ch.interlis.ili2c.ModelScan;
 import ch.interlis.ilirepository.impl.RepositoryCrawler;
 import ch.interlis.ilirepository.impl.RepositoryVisitor;
+import ch.interlis.models.DatasetIdx16.DataFile;
 import ch.interlis.ilirepository.impl.DataFinder;
 import ch.interlis.ilirepository.impl.RepositoryAccess;
 import ch.interlis.ilirepository.impl.RepositoryAccessException;
@@ -77,6 +78,7 @@ public class IliManager implements ReposManager {
     /** uri prefix to data in repositories
      */
     public static final String ILIDATA_URI_PREFIX = "ilidata:";
+    public static final String FILE_URI_PREFIX = "file:";
     private long iliMaxTTL=604800000L; // max time (7 days) to live in ms for a file in the cache
     private long dataMaxTTL=43200000L; // max time (24h) to live in ms for a file in the cache
 	private RepositoryAccess rep=new RepositoryAccess();
@@ -518,5 +520,31 @@ public class IliManager implements ReposManager {
 		}
 		
 	}
+    public static File getLocalCopyOfReposFile(IliManager repoManager, String dataFile) throws Ili2cException {
+        if(dataFile.startsWith(IliManager.ILIDATA_URI_PREFIX)) {
+            try {
+                String bid=dataFile.substring(IliManager.ILIDATA_URI_PREFIX.length());
+                List<Dataset> datasets = repoManager.getDatasetIndex(bid, null);
+                if(datasets.size()==0) {
+                    throw new Ili2cException("file "+dataFile+" not found");
+                }else if(datasets.size()>1) {
+                    throw new Ili2cException("file "+dataFile+" ambiguous");
+                }
+                java.io.File localFiles[]=repoManager.getLocalFileOfRemoteDataset(datasets.get(0), getFormat(datasets.get(0)));
+                return localFiles[0];
+            } catch (RepositoryAccessException e) {
+                throw new Ili2cException("failed to get file "+dataFile,e);
+            }
+        }else if(dataFile.startsWith(IliManager.FILE_URI_PREFIX)) {
+            dataFile=dataFile.substring(IliManager.FILE_URI_PREFIX.length());
+        }
+        return new java.io.File(dataFile);
+    }
+    private static String getFormat(Dataset dataset) {
+        for(DataFile file:dataset.getMetadata().getfiles()){
+            return file.getfileFormat();
+        }
+        return null;
+    }
 }
 
