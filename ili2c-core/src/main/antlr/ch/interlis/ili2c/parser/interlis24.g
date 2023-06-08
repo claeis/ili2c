@@ -4757,135 +4757,159 @@ protected expression [Container ns, Type expectedType,Container functionNs]
 protected term[Container ns, Type expectedType, Container functionNs]
   returns [Evaluable expr]
 {
+  Evaluable left=null;
+  Evaluable right=null;
   expr = null;
   int lineNumber = 0;
   boolean dirty=false;
 }
   : {lineNumber=LT(1).getLine();}
   expr=term0 [ns, expectedType, functionNs]
+    {
+      if(expr==null){
+	      dirty=true;
+      }
+    }
     (
-      IMPLIES
+      o:IMPLIES {lineNumber = o.getLine();}
       expr = term0 [ns, expectedType, functionNs]
+      {
+      	if(right==null){
+      		dirty=true;
+      	}else{
+      		left=expr;
+  	          expr = new Expression.Implication(left,right);
+				if(!dirty && !left.isDirty() && !right.isDirty() && (!left.isLogical() || !right.isLogical())){
+					reportError (formatMessage ("err_expr_noLogical",(String)null),
+							 lineNumber);
+					dirty=true;
+				}
+      	}
+      }
     )?
+    {
+    	if(expr!=null && dirty){
+          expr.setDirty(dirty);
+        }
+    }
   ; 
   
 protected term0[Container ns, Type expectedType, Container functionNs]
   returns [Evaluable expr]
 {
-  List disjoined = null;
   expr = null;
+  Evaluable left=null;
+  Evaluable right=null;
   int lineNumber = 0;
   boolean dirty=false;
+  char op=' ';
 }
   : {lineNumber=LT(1).getLine();} 
-  expr=term1 [ns, expectedType, functionNs]
+    expr=term1 [ns, expectedType, functionNs]
     {
-      disjoined = new LinkedList ();
-      if(expr!=null){
-	      disjoined.add(expr);
+      if(expr==null){
+	      dirty=true;
       }
     }
 
     (
-      o:"OR"
-      expr = term1 [ns, expectedType, functionNs]
+      ( o:"OR" {op='|';lineNumber = o.getLine();}| o2:PLUS {op='+';lineNumber = o2.getLine();}| o3:MINUS {op='-';lineNumber = o3.getLine();} )
+      right = term1 [ns, expectedType, functionNs]
       {
-      	if(expr!=null){
-			disjoined.add (expr);
-			lineNumber = o.getLine();
-			if(!dirty && !expr.isDirty() && !expr.isLogical()){
-				reportError (formatMessage ("err_expr_noLogical",(String)null),
-						 lineNumber);
-				dirty=true;
-			}
+      	if(right==null){
+      		dirty=true;
+      	}else{
+      		left=expr;
+      		if(op=='|'){
+  	          expr = new Expression.Disjunction(left,right);
+				if(!dirty && !left.isDirty() && !right.isDirty() && (!left.isLogical() || !right.isLogical())){
+					reportError (formatMessage ("err_expr_noLogical",(String)null),
+							 lineNumber);
+					dirty=true;
+				}
+      		}else if(op=='+'){
+    	      expr = new Expression.Addition(left,right);
+				if(!dirty && !left.isDirty() && !right.isDirty() && (!(left.getType() instanceof NumericType) || !(right.getType() instanceof NumericType))){
+					reportError (formatMessage ("err_expr_noNumeric",(String)null),
+							 lineNumber);
+					dirty=true;
+				}
+      		}else if(op=='-'){
+    	      expr = new Expression.Subtraction(left,right);
+				if(!dirty && !left.isDirty() && !right.isDirty() && (!(left.getType() instanceof NumericType) || !(right.getType() instanceof NumericType))){
+					reportError (formatMessage ("err_expr_noNumeric",(String)null),
+							 lineNumber);
+					dirty=true;
+				}
+      		}
       	}
       }
     )*
-
     {
-      if (disjoined.size() == 1){
-        expr = (Evaluable) disjoined.get(0);
-        if(dirty){
+    	if(expr!=null && dirty){
           expr.setDirty(dirty);
         }
-      }else if (disjoined.size() > 1){
-        try {
-			expr = (Evaluable) disjoined.get(0);
-			if(!dirty && !expr.isDirty() && !expr.isLogical()){
-				reportError (formatMessage ("err_expr_noLogical",(String)null),
-						 lineNumber);
-				dirty=true;
-			}
-          expr = new Expression.Disjunction (
-            (Evaluable[]) disjoined.toArray (new Evaluable[disjoined.size()]));
-            expr.setDirty(dirty);
-        } catch (Exception ex) {
-          reportError (ex, lineNumber);
-        }
-      }else{
-      	expr=null;
-      }
     }
+
   ;
 
 
 protected term1 [Container ns, Type expectedType,Container functionNs]
   returns [Evaluable expr]
 {
-  List conjoined = null;
   expr = null;
+  Evaluable left=null;
+  Evaluable right=null;
   int lineNumber = 0;
   boolean dirty=false;
+  char op=' ';
 }
   : {lineNumber=LT(1).getLine();}
   expr=term2 [ns, expectedType, functionNs]
     {
-      conjoined = new LinkedList ();
-      if(expr!=null){
-	    conjoined.add(expr);
+      if(expr==null){
+	    dirty=true;
 	  }
     }
 
     (
-      an:"AND"
-      expr = term2 [ns, expectedType, functionNs]
+      ( an: "AND" {op='&';lineNumber = an.getLine();}| an2:STAR {op='*';lineNumber = an2.getLine();}| an3:SLASH {op='/';lineNumber = an3.getLine();})
+      right = term2 [ns, expectedType, functionNs]
       {
-      	if(expr!=null){
-			conjoined.add (expr);
-			lineNumber = an.getLine();
-			if(!dirty && !expr.isDirty() && !expr.isLogical()){
-				reportError (formatMessage ("err_expr_noLogical",(String)null),
-						 lineNumber);
-				dirty=true;
-			}
-		}
+      	if(right==null){
+      		dirty=true;
+      	}else{
+      		left=expr;
+      		if(op=='&'){
+  	          expr = new Expression.Conjunction(left,right);
+				if(!dirty && !left.isDirty() && !right.isDirty() && (!left.isLogical() || !right.isLogical())){
+					reportError (formatMessage ("err_expr_noLogical",(String)null),
+							 lineNumber);
+					dirty=true;
+				}
+      		}else if(op=='*'){
+    	      expr = new Expression.Multiplication(left,right);
+				if(!dirty && !left.isDirty() && !right.isDirty() && (!(left.getType() instanceof NumericType) || !(right.getType() instanceof NumericType))){
+					reportError (formatMessage ("err_expr_noNumeric",(String)null),
+							 lineNumber);
+					dirty=true;
+				}
+      		}else if(op=='/'){
+    	      expr = new Expression.Division(left,right);
+				if(!dirty && !left.isDirty() && !right.isDirty() && (!(left.getType() instanceof NumericType) || !(right.getType() instanceof NumericType))){
+					reportError (formatMessage ("err_expr_noNumeric",(String)null),
+							 lineNumber);
+					dirty=true;
+				}
+      		}
+      	}
       }
     )*
 
     {
-      if (conjoined.size() == 1){
-        expr = (Evaluable) conjoined.get(0);
-        if(dirty){
+    	if(expr!=null && dirty){
           expr.setDirty(dirty);
         }
-      } else if (conjoined.size() > 1){
-        try {
-        
-			expr = (Evaluable) conjoined.get(0);        
-			if(!dirty && !expr.isDirty() && !expr.isLogical()){
-					reportError (formatMessage ("err_expr_noLogical",(String)null),
-							 lineNumber);
-					dirty=true;
-			}
-			expr = new Expression.Conjunction(
-            	(Evaluable[]) conjoined.toArray(new Evaluable[conjoined.size()]));
-            expr.setDirty(dirty);
-        } catch (Exception ex) {
-          reportError (ex, lineNumber);
-        }
-      }else{
-      	expr=null;
-      }
     }
   ;
 
@@ -6964,11 +6988,6 @@ options {
 }
 
 
-tokens {
-  PLUS;
-  MINUS;
-}
-
 {
   public boolean isIli1=false;
 }
@@ -7129,6 +7148,17 @@ SLASH options { paraphrase = "'/'"; }
   : '/'
   ;
 
+protected
+PLUS options { paraphrase = "'+'"; }
+  : '+'
+  ;
+
+protected
+MINUS options { paraphrase = "'-'"; }
+  : '-'
+  ;
+
+  
 BACKSLASH options { paraphrase = "'\\'"; }
   : '\\'
   ;

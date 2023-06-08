@@ -100,6 +100,12 @@ public abstract class Expression extends Evaluable
 
       this.disjoined = disjoined;
     }
+    public Disjunction (Evaluable left,Evaluable right)
+    {
+      this.disjoined = new Evaluable[2];
+      this.disjoined[0]=left;
+      this.disjoined[1]=right;
+    }
 
     public Evaluable[] getDisjoined() {
       return disjoined;
@@ -164,6 +170,12 @@ public abstract class Expression extends Evaluable
       if (conjoined.length < 2)
         throw new IllegalArgumentException();
       this.conjoined = conjoined;
+    }
+    public Conjunction (Evaluable left,Evaluable right)
+    {
+      this.conjoined = new Evaluable[2];
+      this.conjoined[0]=left;
+      this.conjoined[1]=right;
     }
 
     public Evaluable[] getConjoined() {
@@ -578,4 +590,271 @@ public abstract class Expression extends Evaluable
         return null;
     }
   }
+  public static class Addition extends Expression
+  {
+    protected Evaluable left;
+    protected Evaluable right;
+
+    public Addition (Evaluable left, Evaluable right)
+    {
+      this.left = left;
+      this.right = right;
+    }
+
+    public Evaluable getLeft()
+    {
+      return left;
+    }
+
+
+    public Evaluable getRight()
+    {
+      return right;
+    }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        Equality other=(Equality)otherEv;
+        if(left.getClass()!=other.left.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
+        }
+        ret=left.checkTranslation(other.left,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        if(right.getClass()!=other.right.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
+        }
+        ret=right.checkTranslation(other.right,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        return null;
+    }
+    @Override
+    public boolean isLogical() {
+        return false;
+    }
+    @Override
+    public Type getType() {
+        return new NumericType();
+    }
+    
+  }
+  public static class Subtraction extends Expression
+  {
+    protected Evaluable left;
+    protected Evaluable right;
+
+    public Subtraction (Evaluable left, Evaluable right)
+    {
+      this.left = left;
+      this.right = right;
+    }
+
+    public Evaluable getLeft()
+    {
+      return left;
+    }
+
+
+    public Evaluable getRight()
+    {
+      return right;
+    }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        Equality other=(Equality)otherEv;
+        if(left.getClass()!=other.left.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
+        }
+        ret=left.checkTranslation(other.left,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        if(right.getClass()!=other.right.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
+        }
+        ret=right.checkTranslation(other.right,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        return null;
+    }
+    @Override
+    public boolean isLogical() {
+        return false;
+    }
+    @Override
+    public Type getType() {
+        return new NumericType();
+    }
+    
+  }
+  public static class Multiplication extends Expression
+  {
+    protected Evaluable left;
+    protected Evaluable right;
+
+    public Multiplication(Evaluable left, Evaluable right)
+    {
+      this.left = left;
+      this.right = right;
+    }
+
+    public Evaluable getLeft()
+    {
+      return left;
+    }
+
+
+    public Evaluable getRight()
+    {
+      return right;
+    }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        Equality other=(Equality)otherEv;
+        if(left.getClass()!=other.left.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
+        }
+        ret=left.checkTranslation(other.left,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        if(right.getClass()!=other.right.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
+        }
+        ret=right.checkTranslation(other.right,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        return null;
+    }
+    @Override
+    public boolean isLogical() {
+        return false;
+    }
+    @Override
+    public Type getType() {
+        return new NumericType();
+    }
+    
+  }
+  public static class Division extends Expression
+  {
+    protected Evaluable left;
+    protected Evaluable right;
+
+    public Division(Evaluable left, Evaluable right)
+    {
+      this.left = left;
+      this.right = right;
+    }
+
+    public Evaluable getLeft()
+    {
+      return left;
+    }
+
+
+    public Evaluable getRight()
+    {
+      return right;
+    }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        Equality other=(Equality)otherEv;
+        if(left.getClass()!=other.left.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
+        }
+        ret=left.checkTranslation(other.left,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        if(right.getClass()!=other.right.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
+        }
+        ret=right.checkTranslation(other.right,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        return null;
+    }
+    @Override
+    public boolean isLogical() {
+        return false;
+    }
+    @Override
+    public Type getType() {
+        return new NumericType();
+    }
+    
+  }
+  public static class Implication extends Expression
+  {
+    protected Evaluable left;
+    protected Evaluable right;
+
+    public Implication(Evaluable left, Evaluable right)
+    {
+      this.left = left;
+      this.right = right;
+    }
+
+    public Evaluable getLeft()
+    {
+      return left;
+    }
+
+
+    public Evaluable getRight()
+    {
+      return right;
+    }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        GreaterThan other=(GreaterThan)otherEv;
+        if(left.getClass()!=other.left.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
+        }
+        ret=left.checkTranslation(other.left,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        if(right.getClass()!=other.right.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
+        }
+        ret=right.checkTranslation(other.right,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        return null;
+    }
+  }
+  
 }
