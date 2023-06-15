@@ -1,0 +1,14 @@
+INTERLIS 2.4;
+
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+
+  TOPIC TopicA = 
+
+  	DOMAIN
+  	   DomainA = TEXT*30 CONSTRAINTS Name : INTERLIS.len(THIS)>2;
+
+  END TopicA;
+
+END ModelA.

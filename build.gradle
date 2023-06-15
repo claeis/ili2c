@@ -46,6 +46,10 @@ dependencies {
     	exclude group: 'net.iharder', module: 'base64'
     	exclude group: 'com.vividsolutions', module: 'jts-core'
     }
+    runtime	group: 'javax.xml.bind',name:'jaxb-api', version:'2.3.1'
+    runtime	group: 'com.sun.xml.bind',name:'jaxb-core', version:'2.3.0.1'
+    runtime	group: 'com.sun.xml.bind',name:'jaxb-impl', version:'2.3.2'
+    runtime group: 'javax.activation', name: 'activation', version: '1.1.1'
     testImplementation "com.vividsolutions:jts-core:1.14.0"
     
 	scpAntTask "org.apache.ant:ant-jsch:1.10.7"
