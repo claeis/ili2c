@@ -109,7 +109,7 @@ import ch.interlis.ili2c.metamodel.ViewableAlias;
 */
 public class Interlis2Generator
 {
-  IndentPrintWriter   ipw;
+  protected IndentPrintWriter   ipw;
   TransferDescription td;
   /** the predefined model INTERLIS
    *
@@ -293,7 +293,7 @@ private void setup(
 		ipw.println(';');
 	}
 
-    Iterator it = topic.getDependentOn();
+    Iterator it = getTopicDependsOn(topic);
     if (it.hasNext())
     {
       ipw.print("DEPENDS ON ");
@@ -352,6 +352,9 @@ private void setup(
     printName(topic,language);
     ipw.println(';');
   }
+protected Iterator getTopicDependsOn(Topic topic) {
+    return topic.getDependentOn();
+}
 protected Domain getTopicClassOid(Topic topic) {
     Domain classOid=topic.getOid();
     return classOid;
@@ -1356,21 +1359,25 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
 
 
   private void printName(Element elt, String language) {
+      ipw.print(getElementName(elt,language));
+  }
+  protected String getElementName(Element elt,String language)
+  {
       if (language == null) {
           if (params!=null && params.getNewModelName() != null && elt instanceof Model) {
-              ipw.print(params.getNewModelName());
+              return params.getNewModelName();
           }else {
-              ipw.print(elt.getName());
+              return elt.getName();
           }
       } else {
           String name = getNameInLanguage(elt, language);
           if (name==null || name == "") {
-              ipw.print(elt.getName());
+              return elt.getName();
           } else {
-              ipw.print(name);
+              return name;
           }
       }
-}
+  }
   protected void printRef (Container scope, Element elt,String language)
   {
     if (elt == null){
@@ -2583,11 +2590,11 @@ private void printFormatedTypeMinMax(FormattedType ft) {
     if (type.isCircular())
         ipw.print(" CIRCULAR");
 
-
-    if (type.getUnit() != null)
+    Unit unit=getTypeUnit(type);
+    if (unit != null)
     {
       ipw.print (" [");
-      ipw.print (type.getUnit().getScopedName(scope));
+      ipw.print (unit.getScopedName(scope));
       ipw.print (']');
     }
 
@@ -2605,12 +2612,19 @@ private void printFormatedTypeMinMax(FormattedType ft) {
     }
 
 
-    if (type.getReferenceSystem() != null)
+    final RefSystemRef referenceSystem = getTypeReferenceSystem(type);
+    if (referenceSystem != null)
     {
       ipw.print (' ');
-      printReferenceSysRef (scope, type.getReferenceSystem (), language);
+      printReferenceSysRef (scope, referenceSystem, language);
     }
   }
+protected RefSystemRef getTypeReferenceSystem(NumericalType type) {
+    return type.getReferenceSystem();
+}
+protected Unit getTypeUnit(NumericalType type) {
+    return type.getUnit();
+}
 
 
 
