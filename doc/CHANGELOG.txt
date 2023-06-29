@@ -4,6 +4,7 @@ LATEST
 - ili2.4:  support Expression with +, -, *, / (#86) 
 - ili2 export API: add ilishaper hooks
 - NLSXML: fix export of FormalArgument
+- ili2.4 export: fix TransferDescription
 
 ili2c 5.3.2 (2022-12-30)
 ---------------------------

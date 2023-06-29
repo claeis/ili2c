@@ -119,7 +119,7 @@ public class Interlis2Generator
   boolean             withPredefined;
   private boolean onlyLastFile;
   int                 numErrors = 0;
-  boolean doIli24=false;
+  private boolean doIli24=false;
   
   private static final String FR = Ili2TranslationXml.FR;
   private static final String IT = Ili2TranslationXml.IT;
@@ -140,7 +140,7 @@ public class Interlis2Generator
 	Writer out, TransferDescription td, ModelElements modelElements)
   {
 	Interlis2Generator i = new Interlis2Generator();
-	i.setup(out, td, false, false,modelElements, null,false);
+	i.setup(out, td, false, false,modelElements, null,null);
 	return i;
   }
   public static Interlis2Generator generateElements24(Writer out, TransferDescription td) {
@@ -186,13 +186,13 @@ public class Interlis2Generator
               these errors.
   */
 	public int generate(Writer out, TransferDescription rd, boolean withPredefined) {
-		setup(out, rd, withPredefined, false,null, null,false);
+		setup(out, rd, withPredefined, false,null, null,null);
 		printTransferDescription(rd, null);
 		finish();
 		return numErrors;
 	}
 	public int generateWithNewCrs(Writer out, TransferDescription rd, TransformationParameter params) {
-		setup(out, rd, false, true,null, params,false);
+		setup(out, rd, false, true,null, params,null);
 		printTransferDescription(rd, null);
 		finish();
 		return numErrors;
@@ -200,7 +200,7 @@ public class Interlis2Generator
   public int generateWithNewLanguage (
 	Writer out, TransferDescription td,ModelElements modelEles, String language)
 	{
-      setup(out, td, false, true,modelEles, null,false);
+      setup(out, td, false, true,modelEles, null,null);
       printTransferDescription(td, language);
       finish();
       return numErrors;
@@ -208,7 +208,7 @@ public class Interlis2Generator
 private void setup(
 	Writer out,
 	TransferDescription td,
-	boolean withPredefined, boolean onlyLastFile, ModelElements modelEles, TransformationParameter params,boolean doIli24) {
+	boolean withPredefined, boolean onlyLastFile, ModelElements modelEles, TransformationParameter params,Boolean doIli24) {
 	ipw = new IndentPrintWriter (out);
 	this.td = td;
 	modelInterlis = td.INTERLIS;
@@ -217,7 +217,7 @@ private void setup(
 	this.translationConfig = modelEles;
 	this.params = params;
 	this.onlyLastFile=onlyLastFile;
-	this.doIli24=doIli24;
+	this.doIli24=doIli24!=null?doIli24:!td.getLastModel().isIli23();
 }
 
   private boolean printModifierHelper(boolean first, boolean flag, String what)
@@ -3089,7 +3089,11 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
   protected void printTransferDescription (
     TransferDescription   td, String language)
   {
-    ipw.println("INTERLIS 2.3;");
+    if(doIli24) {
+        ipw.println("INTERLIS 2.4;");
+    }else {
+        ipw.println("INTERLIS 2.3;");
+    }
     printElements(td, language);
   }
 }

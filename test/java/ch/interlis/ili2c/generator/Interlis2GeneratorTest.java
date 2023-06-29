@@ -44,7 +44,6 @@ import ch.interlis.ili2c.metamodel.ComposedUnit;
 public class Interlis2GeneratorTest {
 
 	private static final String ILI_FILE = "test/data/interlis2generator/EnumOk_de.ili";
-	private static final String NLSXML_FILE = ILI_FILE + ".xml";
 	private static final String OUTPUT_ILI_FILE = "out.ili";
 
 	/**
@@ -55,23 +54,18 @@ public class Interlis2GeneratorTest {
 	public void model() throws Exception {
 		// ili lesen
 		TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-		// xml lesen
-		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
-		// neues ili mit namen aus xml schreiben
+		// neues ili schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+		new Interlis2Generator().generate(out, td, false);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
 		assertNotNull(newTd);
 
-		// testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-		Element modelEle = newTd.getElement("EnumOkB");
+		Element modelEle = newTd.getElement("EnumOkA");
 		assertNotNull(modelEle);
 		assertEquals(DataModel.class, modelEle.getClass());
-		assertEquals(Ili2TranslationXml.FR, ((DataModel) modelEle).getLanguage());
-		assertNotNull(modelEle.getTranslationOf());
-		assertEquals("EnumOkA", modelEle.getTranslationOf().getScopedName());
+        assertEquals(DataModel.ILI2_3,((DataModel)modelEle).getIliVersion());
 	}
 	
     /**
@@ -82,39 +76,21 @@ public class Interlis2GeneratorTest {
     public void function() throws Exception {
         // ili lesen
         TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-        // xml lesen
-        ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+        new Interlis2Generator().generate(out, td, false);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
         assertNotNull(newTd);
 
         // testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-        Element modelEle = newTd.getElement("EnumOkB.FunctionB");
+        Element modelEle = newTd.getElement("EnumOkA.FunctionA");
         assertNotNull(modelEle);
         assertEquals(Function.class, modelEle.getClass());
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.FunctionA", modelEle.getTranslationOf().getScopedName());
         
         FormalArgument[] arguments = ((Function) modelEle).getArguments();
-        String scopedName = modelEle.getScopedName() + "." + arguments[0].getScopedName();
-        assertEquals("EnumOkB.FunctionB.dummyB", scopedName);
-        assertEquals(Function.class, modelEle.getClass());
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        
-        Function function = arguments[0].getFunction();
-        Element baseLanguageElement = function.getTranslationOf();
-        
-        Function fnc = (Function) baseLanguageElement;
-        FormalArgument[] argumentsSubElement = fnc.getArguments();
-        String baseElement = Ili2TranslationXml.getElementInRootLanguage(fnc).getScopedName() + "." + argumentsSubElement[0].getName();
-        
-        assertEquals("EnumOkA.FunctionA.dummy", baseElement);
+        assertEquals("dummy", arguments[0].getName());
     }
     
     /**
@@ -125,23 +101,18 @@ public class Interlis2GeneratorTest {
     public void unit() throws Exception {
         // ili lesen
         TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-        // xml lesen
-        ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+        new Interlis2Generator().generate(out, td, false);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
         assertNotNull(newTd);
 
         // testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-        Element modelEle = newTd.getElement("EnumOkB.m3secB");
+        Element modelEle = newTd.getElement("EnumOkA.m3secA");
         assertNotNull(modelEle);
         assertEquals(ComposedUnit.class, modelEle.getClass());
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.m3secA", modelEle.getTranslationOf().getScopedName());
     }
     
     /**
@@ -152,23 +123,18 @@ public class Interlis2GeneratorTest {
     public void graphic() throws Exception {
         // ili lesen
         TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-        // xml lesen
-        ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+        new Interlis2Generator().generate(out, td, false);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
         assertNotNull(newTd);
 
         // testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-        Element modelEle = newTd.getElement("EnumOkB.GrafikB");
+        Element modelEle = newTd.getElement("EnumOkA.GrafikA");
         assertNotNull(modelEle);
         assertEquals(Topic.class, modelEle.getClass());
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.GrafikA", modelEle.getTranslationOf().getScopedName());
     }
     
     /**
@@ -179,23 +145,18 @@ public class Interlis2GeneratorTest {
     public void lineForm() throws Exception {
         // ili lesen
         TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-        // xml lesen
-        ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+        new Interlis2Generator().generate(out, td, false);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
         assertNotNull(newTd);
 
         // testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-        Element modelEle = newTd.getElement("EnumOkB.LineFormB");
+        Element modelEle = newTd.getElement("EnumOkA.LineFormA");
         assertNotNull(modelEle);
         assertEquals(LineForm.class, modelEle.getClass());
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.LineFormA", modelEle.getTranslationOf().getScopedName());
     }
     
     /**
@@ -206,23 +167,18 @@ public class Interlis2GeneratorTest {
     public void metaDataBasket() throws Exception {
         // ili lesen
         TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-        // xml lesen
-        ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+        new Interlis2Generator().generate(out, td, false);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
         assertNotNull(newTd);
 
         // testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-        Element modelEle = newTd.getElement("EnumOkB.BCoordSysB");
+        Element modelEle = newTd.getElement("EnumOkA.BCoordSysA");
         assertNotNull(modelEle);
         assertEquals(MetaDataUseDef.class, modelEle.getClass());
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.BCoordSysA", modelEle.getTranslationOf().getScopedName());
     }
     
     /**
@@ -233,30 +189,22 @@ public class Interlis2GeneratorTest {
     public void view() throws Exception {
         // ili lesen
         TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-        // xml lesen
-        ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+        new Interlis2Generator().generate(out, td, false);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
         assertNotNull(newTd);
 
         // testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-        Element modelEle = newTd.getElement("EnumOkB.TopicB.ClassB_V");
+        Element modelEle = newTd.getElement("EnumOkA.TopicA.ClassA_V");
         assertNotNull(modelEle);
         assertEquals(Projection.class, modelEle.getClass());
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.TopicA.ClassA_V", modelEle.getTranslationOf().getScopedName());
         
-        modelEle = newTd.getElement("EnumOkB.TopicB.ClassB_V.B");
+        modelEle = newTd.getElement("EnumOkA.TopicA.ClassA_V.A");
         assertNotNull(modelEle);
         assertEquals(LocalAttribute.class, modelEle.getClass());
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.TopicA.ClassA_V.A", modelEle.getTranslationOf().getScopedName());
     }
     
     /**
@@ -267,23 +215,18 @@ public class Interlis2GeneratorTest {
     public void parameter() throws Exception {
         // ili lesen
         TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-        // xml lesen
-        ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+        new Interlis2Generator().generate(out, td, false);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
         assertNotNull(newTd);
 
         // testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-        Element modelEle = newTd.getElement("EnumOkB.TopicB.SymbolB.PosB");
+        Element modelEle = newTd.getElement("EnumOkA.TopicA.SymbolA.PosA");
         assertNotNull(modelEle);
         assertEquals(Parameter.class, modelEle.getClass());
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.TopicA.SymbolA.PosA", modelEle.getTranslationOf().getScopedName());
     }
 	
     /**
@@ -294,23 +237,18 @@ public class Interlis2GeneratorTest {
     public void domain() throws Exception {
         // ili lesen
         TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-        // xml lesen
-        ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+        new Interlis2Generator().generate(out, td, false);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
         assertNotNull(newTd);
 
         // testen, dass im neuen ili fuer das Domain der name_fr aus dem xml steht
-        Element modelEle = newTd.getElement("EnumOkB.Coord2B");
+        Element modelEle = newTd.getElement("EnumOkA.Coord2");
         assertNotNull(modelEle);
         assertEquals(Domain.class, modelEle.getClass());
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.Coord2", modelEle.getTranslationOf().getScopedName());
     }
     
     /**
@@ -321,33 +259,24 @@ public class Interlis2GeneratorTest {
     public void structure() throws Exception {
         // ili lesen
         TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-        // xml lesen
-        ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
         // neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-        new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+        new Interlis2Generator().generate(out, td, false);
         out.close();
         // neues ili lesen
         TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
         assertNotNull(newTd);
 
         // testen, dass im neuen ili fuer das Domain der name_fr aus dem xml steht
-        Element modelEle = newTd.getElement("EnumOkB.KlothoideB");
+        Element modelEle = newTd.getElement("EnumOkA.Klothoide");
         assertNotNull(modelEle);
         assertEquals(Table.class, modelEle.getClass());
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.Klothoide", modelEle.getTranslationOf().getScopedName());
         
-        modelEle = newTd.getElement("EnumOkB.KlothoideB.aB");
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.Klothoide.a", modelEle.getTranslationOf().getScopedName());
+        modelEle = newTd.getElement("EnumOkA.Klothoide.a");
+        assertNotNull(modelEle);
         
-        modelEle = newTd.getElement("EnumOkB.LocalisedUriFR");
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.LocalisedUriDE", modelEle.getTranslationOf().getScopedName());
+        modelEle = newTd.getElement("EnumOkA.LocalisedUriDE");
+        assertNotNull(modelEle);
     }
 
 	/**
@@ -358,23 +287,18 @@ public class Interlis2GeneratorTest {
 	public void topic() throws Exception {
 		// ili lesen
 		TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-		// xml lesen
-		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));		// neues ili mit namen aus xml schreiben
 		// neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+		new Interlis2Generator().generate(out, td, false);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
 		assertNotNull(newTd);
 
 		// testen, dass im neuen ili fuer das Topic der name_fr aus dem xml steht
-		Element modelEle = newTd.getElement("EnumOkB.TopicB");
+		Element modelEle = newTd.getElement("EnumOkA.TopicA");
 		assertNotNull(modelEle);
 		assertEquals(Topic.class, modelEle.getClass());
-		assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-		assertNotNull(modelEle.getTranslationOf());
-		assertEquals("EnumOkA.TopicA", modelEle.getTranslationOf().getScopedName());
 	}
 	
 	/**
@@ -385,30 +309,22 @@ public class Interlis2GeneratorTest {
 	public void classTest() throws Exception {
 		// ili lesen
 		TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-		// xml lesen
-		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));		// neues ili mit namen aus xml schreiben
 		// neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+		new Interlis2Generator().generate(out, td, false);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
 		assertNotNull(newTd);
 
 		// testen, dass im neuen ili fuer das Class der name_fr aus dem xml steht
-		Element modelEle = newTd.getElement("EnumOkB.TopicB.ClassB");
+		Element modelEle = newTd.getElement("EnumOkA.TopicA.ClassA");
 		assertNotNull(modelEle);
 		assertEquals(Table.class, modelEle.getClass());
-		assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-		assertNotNull(modelEle.getTranslationOf());
-		assertEquals("EnumOkA.TopicA.ClassA", modelEle.getTranslationOf().getScopedName());
 		
-        modelEle = newTd.getElement("EnumOkB.TopicB.Document");
+        modelEle = newTd.getElement("EnumOkA.TopicA.Dokument");
         assertNotNull(modelEle);
         assertEquals(Table.class, modelEle.getClass());
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.TopicA.Dokument", modelEle.getTranslationOf().getScopedName());
 	}
 	
 	/**
@@ -419,37 +335,26 @@ public class Interlis2GeneratorTest {
 	public void attribute() throws Exception {
 		// ili lesen
 		TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-		// xml lesen
-		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+		new Interlis2Generator().generate(out, td, false);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
 		assertNotNull(newTd);
 
 		// testen, dass im neuen ili fuer das Attribute der name_fr aus dem xml steht
-		Element modelEle = newTd.getElement("EnumOkB.TopicB.ClassB.attrB");
+		Element modelEle = newTd.getElement("EnumOkA.TopicA.ClassA.attrA");
 		assertNotNull(modelEle);
 		assertEquals(LocalAttribute.class, modelEle.getClass());
-		assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-		assertNotNull(modelEle.getTranslationOf());
-		assertEquals("EnumOkA.TopicA.ClassA.attrA", modelEle.getTranslationOf().getScopedName());
 		
-		modelEle = newTd.getElement("EnumOkB.TopicB.Document.Titre");
+		modelEle = newTd.getElement("EnumOkA.TopicA.Dokument.Titel");
         assertNotNull(modelEle);
         assertEquals(LocalAttribute.class, modelEle.getClass());
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.TopicA.Dokument.Titel", modelEle.getTranslationOf().getScopedName());
         
-        modelEle = newTd.getElement("EnumOkB.TopicB.ClassB.geomB");
+        modelEle = newTd.getElement("EnumOkA.TopicA.ClassA.geomA");
         assertNotNull(modelEle);
         assertEquals(LocalAttribute.class, modelEle.getClass());
-        assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-        assertNotNull(modelEle.getTranslationOf());
-        assertEquals("EnumOkA.TopicA.ClassA.geomA", modelEle.getTranslationOf().getScopedName());
 	}
 	
 	/**
@@ -460,23 +365,18 @@ public class Interlis2GeneratorTest {
 	public void enumElementB21() throws Exception {
 		// ili lesen
 		TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-		// xml lesen
-		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+		new Interlis2Generator().generate(out, td, false);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
 		assertNotNull(newTd);
 
 		// testen, dass im neuen ili fuer das enumElement der name_fr aus dem xml steht
-		Element modelEle = newTd.getElement("EnumOkB.TopicB.ClassB.attrB");
+		Element modelEle = newTd.getElement("EnumOkA.TopicA.ClassA.attrA");
 		assertEquals(LocalAttribute.class, modelEle.getClass());
-		assertTrue(hasEnumElement(modelEle, "b2.b21"));
-		assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-		assertNotNull(modelEle.getTranslationOf());
-		assertTrue(hasEnumElement(modelEle.getTranslationOf(), "a2.a21"));
+		assertTrue(hasEnumElement(modelEle, "a2.a21"));
 	}
 	
 	/**
@@ -487,24 +387,19 @@ public class Interlis2GeneratorTest {
 	public void topicMetaAttribute() throws Exception {
 		// ili lesen
 		TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-		// xml lesen
-		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+		new Interlis2Generator().generate(out, td, false);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
 		assertNotNull(newTd);
 
 		// testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-		Element modelEle = newTd.getElement("EnumOkB.TopicB");
+		Element modelEle = newTd.getElement("EnumOkA.TopicA");
 		assertNotNull(modelEle);
-		assertTrue(hasMetaElement(modelEle,"Topic B", "dispName"));		
+		assertTrue(hasMetaElement(modelEle,"Topic A", "dispName"));		
 		assertEquals(Topic.class, modelEle.getClass());
-		assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-		assertNotNull(modelEle.getTranslationOf());
-		assertEquals("Topic A", modelEle.getTranslationOf().getMetaValues().getValue("dispName"));
 	}
 	
 	/**
@@ -515,23 +410,18 @@ public class Interlis2GeneratorTest {
 	public void constraintWithoutExplicitName() throws Exception {
 		// ili lesen
 		TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-		// xml lesen
-		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+		new Interlis2Generator().generate(out, td, false);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
 		assertNotNull(newTd);
 
 		// testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-		Element modelEle = newTd.getElement("EnumOkB.TopicB.ClassB.Constraint1");
+		Element modelEle = newTd.getElement("EnumOkA.TopicA.ClassA.Constraint1");
 		assertNotNull(modelEle);
 		assertEquals(MandatoryConstraint.class, modelEle.getClass());
-		assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-		assertNotNull(modelEle.getTranslationOf());
-		assertEquals("EnumOkA.TopicA.ClassA.Constraint1", modelEle.getTranslationOf().getScopedName());
 	}
 	
 	/**
@@ -542,23 +432,18 @@ public class Interlis2GeneratorTest {
 	public void constraintWithExplicitName() throws Exception {
 		// ili lesen
 		TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-		// xml lesen
-		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+		new Interlis2Generator().generate(out, td, false);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
 		assertNotNull(newTd);
 
 		// testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-		Element modelEle = newTd.getElement("EnumOkB.TopicB.ClassB.UniqueConstraintB");
+		Element modelEle = newTd.getElement("EnumOkA.TopicA.ClassA.UniqueConstraintA");
 		assertNotNull(modelEle);
 		assertEquals(UniquenessConstraint.class, modelEle.getClass());
-		assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-		assertNotNull(modelEle.getTranslationOf());
-		assertEquals("EnumOkA.TopicA.ClassA.UniqueConstraintA", modelEle.getTranslationOf().getScopedName());
 	}
 	
 	/**
@@ -569,23 +454,18 @@ public class Interlis2GeneratorTest {
 	public void role() throws Exception {
 		// ili lesen
 		TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-		// xml lesen
-		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+		new Interlis2Generator().generate(out, td, false);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
 		assertNotNull(newTd);
 
 		// testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-		Element modelEle = newTd.getElement("EnumOkB.TopicB.roleB1roleB2.roleB1");
+		Element modelEle = newTd.getElement("EnumOkA.TopicA.roleA1roleA2.roleA1");
 		assertNotNull(modelEle);
 		assertEquals(RoleDef.class, modelEle.getClass());
-		assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-		assertNotNull(modelEle.getTranslationOf());
-		assertEquals("EnumOkA.TopicA.roleA1roleA2.roleA1", modelEle.getTranslationOf().getScopedName());
 	}
 	
 	/**
@@ -596,23 +476,18 @@ public class Interlis2GeneratorTest {
 	public void association() throws Exception {
 		// ili lesen
 		TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-		// xml lesen
-		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+		new Interlis2Generator().generate(out, td, false);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
 		assertNotNull(newTd);
 
 		// testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-		Element modelEle = newTd.getElement("EnumOkB.TopicB.roleB1roleB2");
+		Element modelEle = newTd.getElement("EnumOkA.TopicA.roleA1roleA2");
 		assertNotNull(modelEle);
 		assertEquals(AssociationDef.class, modelEle.getClass());
-		assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-		assertNotNull(modelEle.getTranslationOf());
-		assertEquals("EnumOkA.TopicA.roleA1roleA2", modelEle.getTranslationOf().getScopedName());
 	}
 	
 	/**
@@ -623,23 +498,18 @@ public class Interlis2GeneratorTest {
 	public void constraintInAssociation() throws Exception {
 		// ili lesen
 		TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-		// xml lesen
-		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+		new Interlis2Generator().generate(out, td, false);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
 		assertNotNull(newTd);
 
 		// testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-		Element modelEle = newTd.getElement("EnumOkB.TopicB.roleB1roleB2.Constraint1");
+		Element modelEle = newTd.getElement("EnumOkA.TopicA.roleA1roleA2.Constraint1");
 		assertNotNull(modelEle);
 		assertEquals(MandatoryConstraint.class, modelEle.getClass());
-		assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-		assertNotNull(modelEle.getTranslationOf());
-		assertEquals("EnumOkA.TopicA.roleA1roleA2.Constraint1", modelEle.getTranslationOf().getScopedName());
 	}
 	
 	/**
@@ -650,24 +520,19 @@ public class Interlis2GeneratorTest {
 	public void enumElementMetaAttribute() throws Exception {
 		// ili lesen
 		TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.ILI_FILE));
-		// xml lesen
-		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(NLSXML_FILE));
 		// neues ili mit namen aus xml schreiben
         java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
-		new Interlis2Generator().generateWithNewLanguage(out, td, modelElements, Ili2TranslationXml.FR);
+		new Interlis2Generator().generate(out, td, false);
 		out.close();
 		// neues ili lesen
 		TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(Interlis2GeneratorTest.OUTPUT_ILI_FILE), new File(Interlis2GeneratorTest.ILI_FILE));
 		assertNotNull(newTd);
 
 		// testen, dass im neuen ili fuer das model der name_fr aus dem xml steht
-		Element modelEle = newTd.getElement("EnumOkB.TopicB.ClassB.attrB");
+		Element modelEle = newTd.getElement("EnumOkA.TopicA.ClassA.attrA");
 		assertNotNull(modelEle);
-		assertTrue(getMetaValueFromEnumerationElement(modelEle, "b 2", "b2"));
+		assertTrue(getMetaValueFromEnumerationElement(modelEle, "a 2", "a2"));
 		assertEquals(LocalAttribute.class, modelEle.getClass());
-		assertEquals(Ili2TranslationXml.FR, Ili2TranslationXml.getLanguage(modelEle));
-		assertNotNull(modelEle.getTranslationOf());
-		assertTrue(getMetaValueFromEnumerationElement(modelEle.getTranslationOf(), "a 2", "a2"));
 	}
 	
 	/**
