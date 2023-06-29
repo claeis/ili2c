@@ -3,6 +3,7 @@ LATEST
 - repos clone: unset/clear precursorVersion
 - ili2.4:  support Expression with +, -, *, / (#86) 
 - ili2 export API: add ilishaper hooks
+- NLSXML: fix export of FormalArgument
 
 ili2c 5.3.2 (2022-12-30)
 ---------------------------

@@ -11,6 +11,7 @@ public class ElementType {
 	public static final String ROLE = "ROLE";
 	public static final String FUNCTION = "FUNCTION";
 	public static final String PARAMETER = "PARAMETER";
+    public static final String FORMAL_ARGUMENT = "FORMAL ARGUMENT";
 	public static final String DOMAIN = "DOMAIN";
 	public static final String LINE_FORM = "LINE FORM";
 	public static final String UNIT = "UNIT";
