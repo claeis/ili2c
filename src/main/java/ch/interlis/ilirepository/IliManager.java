@@ -274,7 +274,12 @@ public class IliManager implements ReposManager {
 	 * @return compiler configuration
 	 * @throws Ili2cException
 	 */
-	public Configuration getConfig(ArrayList<String> requiredModels,double iliVersion)
+    public Configuration getConfig(ArrayList<String> requiredModels,double iliVersion)
+    throws Ili2cException
+    {
+        return getConfig(requiredModels,iliVersion,null);
+    }
+	public Configuration getConfig(ArrayList<String> requiredModels,double iliVersion,Ili2cMetaAttrs externalMetaAttrs)
 	throws Ili2cException
 	{
 		HashSet<IliFile> toVisitFiles=new HashSet<IliFile>();
@@ -337,6 +342,18 @@ public class IliManager implements ReposManager {
 		if(!missingModels.isEmpty()){
 			errmsg.append(": model(s) not found");
 			throw new Ili2cException(errmsg.toString());
+		}
+		if(externalMetaAttrs!=null) {
+		    for(IliFile ilifile:toVisitFiles) {
+                Iterator<IliModel> modeli=ilifile.iteratorModel();
+                while(modeli.hasNext()){
+                    IliModel model=modeli.next();
+                    String translationOfName=externalMetaAttrs.getMetaAttrValue(model.getName(),Ili2cMetaAttrs.ILI2C_TRANSLATION_OF);
+                    if(translationOfName!=null){
+                        model.addDepenedency(translationOfName);
+                    }
+		        }
+		    }
 		}
 		
 		// build config
