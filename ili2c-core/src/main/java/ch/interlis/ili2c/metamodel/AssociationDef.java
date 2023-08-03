@@ -152,13 +152,22 @@ public class AssociationDef extends AbstractClassDef<Element>
     };
   }
 
-	public Iterator<RoleDef> getRolesIterator(){
+    @Deprecated
+    public Iterator<RoleDef> getRolesIterator(){
+        return getDefinedRoles();
+    }
+    @Override
+	public Iterator<RoleDef> getDefinedRoles(){
 		return roles.iterator();
 	}
+	@Deprecated
 	public List<RoleDef> getRoles(){
 		List<RoleDef> ret=new ArrayList<RoleDef>(roles);
 		return ret;
 	}
+    public int getDefinedRolesSize(){
+        return roles.size();
+    }
 	  @Override
 	  public RoleDef findRole(String roleName) {
 	      return (RoleDef)getRealElement(RoleDef.class,roleName);

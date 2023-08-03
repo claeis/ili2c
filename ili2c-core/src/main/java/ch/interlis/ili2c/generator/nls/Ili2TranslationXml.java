@@ -58,7 +58,7 @@ public class Ili2TranslationXml {
 	 */
 	public ModelElements convertTransferDescription2ModelElements(TransferDescription td) {
 
-		readAllModelsFromTransferDesc(td);
+		visitTransferDescription(td);
 		return elements;
 	}
 	
@@ -82,7 +82,7 @@ public class Ili2TranslationXml {
 	 * @param td all ili models
 	 * @param file read only models from this file
 	 */
-	private void readAllModelsFromTransferDesc(TransferDescription td) {
+	private void visitTransferDescription(TransferDescription td) {
 	    Model models[]=td.getModelsFromLastFile();
 	    HashSet<Model> visitedModels=new HashSet<Model>();
 	    ArrayList<Model> mostSpecificModels=new ArrayList<Model>();
@@ -106,9 +106,9 @@ public class Ili2TranslationXml {
 
 			text.setElementType(getElementType(model));
 			setModelElementAllLanguages(text, model);
-			printModelElement(text);
+			addTranslationElement(text);
 
-			visitAllElements(model);
+			visitContainer(model);
 		}
 	}
 
@@ -184,6 +184,8 @@ public class Ili2TranslationXml {
 			return ElementType.FUNCTION;
 		} else if (model instanceof Parameter) {
 			return ElementType.PARAMETER;
+        } else if (model instanceof FormalArgument) {
+            return ElementType.FORMAL_ARGUMENT;
 		} else if (model instanceof Domain) {
 			return ElementType.DOMAIN;
 		} else if (model instanceof LineForm) {
@@ -259,24 +261,24 @@ public class Ili2TranslationXml {
 	 * 
 	 * @param text Structure of the XML with data
 	 */
-	private void printModelElement(TranslationElement text) {
+	private void addTranslationElement(TranslationElement text) {
 		elements.add(text);
 	}
 
 	/**
 	 * inserts model element's data into the structure with all Languages
 	 * 
-	 * @param text Structure of the XML
-	 * @param model related model Element
+	 * @param translationElement Structure of the XML
+	 * @param modelElement related model Element
 	 */
-	private void setModelElementAllLanguages(TranslationElement text, Element model) {
-		String language = getLanguage(model);
-		convertModelElement(text, model, language);
-		Element baseLanguageElement = model.getTranslationOf();
+	private void setModelElementAllLanguages(TranslationElement translationElement, Element modelElement) {
+		String language = getLanguage(modelElement);
+		setModelElementOneLanguage(translationElement, modelElement, language);
+		Element baseLanguageElement = modelElement.getTranslationOf();
 		// alle sprachen zu model
 		while (baseLanguageElement != null) {
 			language = getLanguage(baseLanguageElement);
-			convertModelElement(text, baseLanguageElement, language);
+			setModelElementOneLanguage(translationElement, baseLanguageElement, language);
 			Element translatedElement = baseLanguageElement;
 			baseLanguageElement = translatedElement.getTranslationOf();
 		}
@@ -302,7 +304,7 @@ public class Ili2TranslationXml {
 	 * @param model related model Element
 	 * @param language Language of the Element
 	 */
-	private void convertModelElement(TranslationElement text, Element model, String language) {
+	private void setModelElementOneLanguage(TranslationElement text, Element model, String language) {
 		if (language == null) {
 			if (model.getName() != null) {
 				text.setName_de(model.getName());
@@ -401,7 +403,7 @@ public class Ili2TranslationXml {
 	 * 
 	 * @param Model related model Element
 	 */
-	private void visitAllElements(Container model) {
+	private void visitContainer(Container model) {
 		Iterator<Element> funcI = model.iterator();
 		while (funcI.hasNext()) {
 			Element ele = funcI.next();
@@ -409,11 +411,11 @@ public class Ili2TranslationXml {
 			dto.setScopedName(getElementInRootLanguage(ele).getScopedName());
 			setModelElementAllLanguages(dto, ele);
 			dto.setElementType(getElementType(ele));
-			addTranslationElementForMetaValues(ele);
-			printModelElement(dto);
+			visitMetaAttributes(ele);
+			addTranslationElement(dto);
 
 			if (ele instanceof Container) {
-				visitAllElements((Container) ele);
+				visitContainer((Container) ele);
 			} else if (ele instanceof AttributeDef) {
 				AttributeDef attr = (AttributeDef) ele;
 				// If exist
@@ -428,28 +430,24 @@ public class Ili2TranslationXml {
 					prepareAllEnumaration((EnumerationType) domain.getType(), text, domain);
 				}
 			} else if (ele instanceof Function) {
-			    TranslationElement traslationElement = new TranslationElement();
-			    Function function = (Function) ele;
-			    FormalArgument[] arguments = function.getArguments();
-			    for (int i = 0; i < arguments.length; i++) {
-			        convertModelElement(traslationElement, arguments[i], getLanguage(function));
+			    Function srcFunction = (Function) ele;
+                final String srcEleLanguage = getLanguage(srcFunction);
+                final String srcFunctionScopedName = getElementInRootLanguage(srcFunction).getScopedName();
+			    FormalArgument[] srcArguments = srcFunction.getArguments();
+			    for (int i = 0; i < srcArguments.length; i++) {
+	                TranslationElement translationElement = new TranslationElement();
+                    translationElement.setScopedName(srcFunctionScopedName + "." + getElementInRootLanguage(srcArguments[i]).getName());
+                    translationElement.setElementType(getElementType(srcArguments[i]));
+                    setModelElementOneLanguage(translationElement, srcArguments[i], srcEleLanguage);
 			        
-			        Function function2 = arguments[i].getFunction();
-			        Element baseLanguageElement = function2.getTranslationOf();
+			        Element baseLanguageElement = srcFunction.getTranslationOf();
 			        while (baseLanguageElement != null) {
-			            if (baseLanguageElement instanceof Function) {
-			                Function fnc = (Function) baseLanguageElement;
-			                FormalArgument[] argumentsSubElement = fnc.getArguments();
-			                for (int j = 0; j < argumentsSubElement.length; j++) {
-			                    convertModelElement(traslationElement, argumentsSubElement[j], getLanguage(baseLanguageElement));
-			                    traslationElement.setScopedName(getElementInRootLanguage(function).getScopedName() + "." + argumentsSubElement[j].getName());
-			                    
-			                    function2 = argumentsSubElement[i].getFunction();
-			                    baseLanguageElement = function2.getTranslationOf();
-			                }
-			            }
+                        Function baseLanguageFunction = (Function) baseLanguageElement;
+                        FormalArgument[] baseLanguageArguments = baseLanguageFunction.getArguments();
+                        setModelElementOneLanguage(translationElement, baseLanguageArguments[i], getLanguage(baseLanguageElement));
+                        baseLanguageElement = baseLanguageFunction.getTranslationOf();
 			        }
-			        printModelElement(traslationElement);
+			        addTranslationElement(translationElement);
 			    }
 			}
 		}
@@ -461,7 +459,7 @@ public class Ili2TranslationXml {
 	 * 
 	 * @param Related Model Element
 	 */
-	private void addTranslationElementForMetaValues(Element ele) {
+	private void visitMetaAttributes(Element ele) {
 		String eleScopedName = getElementInRootLanguage(ele).getScopedName();
 		for (String metaAttrName : ele.getMetaValues().getValues()) {
 			String metaAttrScopedName = getMetaAttributeScopedName(eleScopedName, metaAttrName);
@@ -474,7 +472,7 @@ public class Ili2TranslationXml {
 				setTranslationElementName(translationElement, metaAttrValue, language);
 				ele = ele.getTranslationOf();
 			}
-			elements.add(translationElement);
+			addTranslationElement(translationElement);
 		}
 	}
 
@@ -531,8 +529,8 @@ public class Ili2TranslationXml {
 			}
 
 			text.setElementType(getElementType(enumEle));
-			addMetaValues(enumEle, scopedName, modelEle);
-			printModelElement(text);
+			visitEnumerationElementMetaAttributes(enumEle, scopedName, modelEle);
+			addTranslationElement(text);
 			if (enumEle.getSubEnumeration() != null) {
 				printAllEnumaration(enumEle.getSubEnumeration(), scopedName, modelEle);
 			}
@@ -546,7 +544,7 @@ public class Ili2TranslationXml {
 	 * @param scopedName Scope Name
 	 * @param modelEle Model Element
 	 */
-	private void addMetaValues(ch.interlis.ili2c.metamodel.Enumeration.Element ele, String scopedName,
+	private void visitEnumerationElementMetaAttributes(ch.interlis.ili2c.metamodel.Enumeration.Element ele, String scopedName,
 			Element modelEle) {
 		for (String metaAttrName : ele.getMetaValues().getValues()) {
 			String metaAttrScopedName = getMetaAttributeScopedName(scopedName, metaAttrName);
@@ -568,7 +566,7 @@ public class Ili2TranslationXml {
 				baseLanguageModelElement = baseLanguageModelElement.getTranslationOf();
 			}
 
-			elements.add(translationElement);
+			addTranslationElement(translationElement);
 		}
 	}
 

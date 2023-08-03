@@ -109,7 +109,7 @@ import ch.interlis.ili2c.metamodel.ViewableAlias;
 */
 public class Interlis2Generator
 {
-  IndentPrintWriter   ipw;
+  protected IndentPrintWriter   ipw;
   TransferDescription td;
   /** the predefined model INTERLIS
    *
@@ -119,7 +119,7 @@ public class Interlis2Generator
   boolean             withPredefined;
   private boolean onlyLastFile;
   int                 numErrors = 0;
-  boolean doIli24=false;
+  private boolean doIli24=false;
   
   private static final String FR = Ili2TranslationXml.FR;
   private static final String IT = Ili2TranslationXml.IT;
@@ -140,7 +140,7 @@ public class Interlis2Generator
 	Writer out, TransferDescription td, ModelElements modelElements)
   {
 	Interlis2Generator i = new Interlis2Generator();
-	i.setup(out, td, false, false,modelElements, null,false);
+	i.setup(out, td, false, false,modelElements, null,null);
 	return i;
   }
   public static Interlis2Generator generateElements24(Writer out, TransferDescription td) {
@@ -186,13 +186,13 @@ public class Interlis2Generator
               these errors.
   */
 	public int generate(Writer out, TransferDescription rd, boolean withPredefined) {
-		setup(out, rd, withPredefined, false,null, null,false);
+		setup(out, rd, withPredefined, false,null, null,null);
 		printTransferDescription(rd, null);
 		finish();
 		return numErrors;
 	}
 	public int generateWithNewCrs(Writer out, TransferDescription rd, TransformationParameter params) {
-		setup(out, rd, false, true,null, params,false);
+		setup(out, rd, false, true,null, params,null);
 		printTransferDescription(rd, null);
 		finish();
 		return numErrors;
@@ -200,7 +200,7 @@ public class Interlis2Generator
   public int generateWithNewLanguage (
 	Writer out, TransferDescription td,ModelElements modelEles, String language)
 	{
-      setup(out, td, false, true,modelEles, null,false);
+      setup(out, td, false, true,modelEles, null,null);
       printTransferDescription(td, language);
       finish();
       return numErrors;
@@ -208,7 +208,7 @@ public class Interlis2Generator
 private void setup(
 	Writer out,
 	TransferDescription td,
-	boolean withPredefined, boolean onlyLastFile, ModelElements modelEles, TransformationParameter params,boolean doIli24) {
+	boolean withPredefined, boolean onlyLastFile, ModelElements modelEles, TransformationParameter params,Boolean doIli24) {
 	ipw = new IndentPrintWriter (out);
 	this.td = td;
 	modelInterlis = td.INTERLIS;
@@ -217,7 +217,7 @@ private void setup(
 	this.translationConfig = modelEles;
 	this.params = params;
 	this.onlyLastFile=onlyLastFile;
-	this.doIli24=doIli24;
+	this.doIli24=doIli24!=null?doIli24:!td.getLastModel().isIli23();
 }
 
   private boolean printModifierHelper(boolean first, boolean flag, String what)
@@ -262,7 +262,7 @@ private void setup(
     Topic extending = (Topic) topic.getExtending();
 
     printDocumentation(topic,language);
-    printMetaValues(topic.getMetaValues(), language, topic.getScopedName());
+    printMetaValues(topic,topic.getMetaValues(), language, topic.getScopedName());
     ipw.print("TOPIC ");
     printName(topic,language);
     printModifiers(topic.isAbstract(), topic.isFinal(),
@@ -278,14 +278,14 @@ private void setup(
     ipw.println(" =");
     ipw.indent();
 	
-	Domain basketOid=topic.getBasketOid();
+	Domain basketOid = getTopicBasketOid(topic);
 	if(basketOid!=null){
 		
 		ipw.print("BASKET OID AS ");
         printRef(topic,basketOid,language);
 		ipw.println(';');
 	}
-	Domain classOid=topic.getOid();
+	Domain classOid = getTopicClassOid(topic);
 	if(classOid!=null){
 		
 		ipw.print("OID AS ");
@@ -293,7 +293,7 @@ private void setup(
 		ipw.println(';');
 	}
 
-    Iterator it = topic.getDependentOn();
+    Iterator it = getTopicDependsOn(topic);
     if (it.hasNext())
     {
       ipw.print("DEPENDS ON ");
@@ -352,11 +352,22 @@ private void setup(
     printName(topic,language);
     ipw.println(';');
   }
+protected Iterator getTopicDependsOn(Topic topic) {
+    return topic.getDependentOn();
+}
+protected Domain getTopicClassOid(Topic topic) {
+    Domain classOid=topic.getOid();
+    return classOid;
+}
+protected Domain getTopicBasketOid(Topic topic) {
+    Domain basketOid=topic.getBasketOid();
+    return basketOid;
+}
 
 protected void printAbstractClassDef (AbstractClassDef def, String language)
   {
     printDocumentation(def,language);
-	printMetaValues(def.getMetaValues(), language, def.getScopedName());
+	printMetaValues(def,def.getMetaValues(), language, def.getScopedName());
 
 	String keyword;
 	if(def instanceof Table){
@@ -374,7 +385,7 @@ protected void printAbstractClassDef (AbstractClassDef def, String language)
     printStart (keyword, def, /* based on */ null,language);
     ipw.println (" =");
     ipw.indent ();
-    Domain oid=def.getDefinedOid();
+    Domain oid = getAbstarctClassDefOid(def);
     if(oid!=null){
     	if(oid instanceof NoOid){
     	    ipw.println ("NO OID;");
@@ -387,6 +398,10 @@ protected void printAbstractClassDef (AbstractClassDef def, String language)
 	printElements(def, language);
 	printEnd(def, language);
   }
+protected Domain getAbstarctClassDefOid(AbstractClassDef def) {
+    Domain oid=def.getDefinedOid();
+    return oid;
+}
 
   private void printRenamedViewableRef (View view, ViewableAlias ref, String language)
   {
@@ -519,7 +534,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
   {
 	  if(!suppressDoc){
 	      printDocumentation(view,language);
-	      printMetaValues(view.getMetaValues(), language, view.getScopedName());
+	      printMetaValues(view,view.getMetaValues(), language, view.getScopedName());
 	  }
 	  printStart("VIEW", view, /* basedOn */ null, language);
     ipw.println ("");
@@ -597,7 +612,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
 
     if(!suppressDoc){
         printDocumentation(graph,language);
-    	printMetaValues(graph.getMetaValues(), language, graph.getScopedName());
+    	printMetaValues(graph,graph.getMetaValues(), language, graph.getScopedName());
     }
    printStart ("GRAPHIC", graph, /* basedOn */ graph.getBasedOn(),language);
    ipw.println (" =");
@@ -1062,7 +1077,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
   {
 	  if(!suppressDoc){
 	      printDocumentation(elt,language);
-			printMetaValues(elt.getMetaValues(), language, elt.getScopedName());
+			printMetaValues(elt,elt.getMetaValues(), language, elt.getScopedName());
 	  }
       Container container=elt.getContainer();
       if (elt instanceof MandatoryConstraint)
@@ -1113,7 +1128,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
   {
 	  if(!suppressDoc){
 	      printDocumentation(gfxp,language);
-	      printMetaValues(gfxp.getMetaValues(), language, gfxp.getScopedName());
+	      printMetaValues(gfxp,gfxp.getMetaValues(), language, gfxp.getScopedName());
 	  }
 	  printName(gfxp,language);
 	String scopedNamePrefix = gfxp.getScopedName();
@@ -1135,7 +1150,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
   {
 	  if(!suppressDoc){
 	      printDocumentation(mu,language);
-			printMetaValues(mu.getMetaValues(), language, mu.getScopedName());
+			printMetaValues(mu,mu.getMetaValues(), language, mu.getScopedName());
 	  }
     if(mu.isSignData()){
       ipw.print("SIGN BASKET ");
@@ -1189,7 +1204,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
     	        }
     	    }
 	    	
-	    	printMetaValues(mo.getMetaValues(), language, mo.getScopedName());
+	    	printMetaValues(mo,mo.getMetaValues(), language, mo.getScopedName());
 	    	printName(mo,language);
     	}
     }
@@ -1225,7 +1240,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
 
     if(!suppressDoc){
         printDocumentation(u,language);
-    	printMetaValues(u.getMetaValues(), language, u.getScopedName());
+    	printMetaValues(u,u.getMetaValues(), language, u.getScopedName());
     }
     ipw.print(u.getDocName());
     if (!u.getDocName().equals(u.getName())) {
@@ -1344,17 +1359,25 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
 
 
   private void printName(Element elt, String language) {
+      ipw.print(getElementName(elt,language));
+  }
+  protected String getElementName(Element elt,String language)
+  {
       if (language == null) {
-          ipw.print(elt.getName());
+          if (params!=null && params.getNewModelName() != null && elt instanceof Model) {
+              return params.getNewModelName();
+          }else {
+              return elt.getName();
+          }
       } else {
           String name = getNameInLanguage(elt, language);
-          if (name == "" || name == null) {
-              ipw.print(elt.getName());
+          if (name==null || name == "") {
+              return elt.getName();
           } else {
-              ipw.print(name);
+              return name;
           }
       }
-}
+  }
   protected void printRef (Container scope, Element elt,String language)
   {
     if (elt == null){
@@ -1431,7 +1454,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
 
     if(!suppressDoc){
         printDocumentation(par,language);
-    	printMetaValues(par.getMetaValues(), language, par.getScopedName());
+    	printMetaValues(par,par.getMetaValues(), language, par.getScopedName());
     }
     if (language == null) {
     	ipw.print(par.getName());
@@ -1495,7 +1518,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
   {
 
       printDocumentation(role,language);
-      printMetaValues(role.getMetaValues(), language, role.getScopedName());
+      printMetaValues(role,role.getMetaValues(), language, role.getScopedName());
       printName(role,language);
 	printModifiers(role.isAbstract(), role.isFinal(),
 	  role.isExtended(),role.isOrdered(),role.isExternal(),/*TRANSIENT*/false);
@@ -1559,7 +1582,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
 		return;
 	}
     printDocumentation(attrib,language);
-	printMetaValues(attrib.getMetaValues(), language, attrib.getScopedName());
+	printMetaValues(attrib,attrib.getMetaValues(), language, attrib.getScopedName());
 
 	if(attrib instanceof LocalAttribute){
 		LocalAttribute la=(LocalAttribute)attrib;
@@ -1708,10 +1731,14 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
   }
   
   public void printMetaValues(ch.ehi.basics.settings.Settings values) {
-	  printMetaValues(values, null, null);
+	  printMetaValues(null,values, null, null);
   }
 
   public void printMetaValues(ch.ehi.basics.settings.Settings values, String language, String scopedNamePrefix)
+  {
+      printMetaValues(null,values,language,scopedNamePrefix);
+  }
+  protected void printMetaValues(Object ili2cElement,ch.ehi.basics.settings.Settings values, String language, String scopedNamePrefix)
   {
 		if (values != null) {
 			for (Iterator valuei = values.getValues().iterator(); valuei.hasNext();) {
@@ -1790,26 +1817,13 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
   protected void printModel (Model mdef,String language)
   {
     printDocumentation(mdef,language);
-	printMetaValues(mdef.getMetaValues(),language,mdef.getScopedName());
+	printMetaValues(mdef,mdef.getMetaValues(),language,mdef.getScopedName());
 	
 	if(mdef.isContracted()){
 		ipw.print("CONTRACTED ");
 	}
-    // LANGUAGE
-	if (language == null) {
-		if (params!=null && params.getNewModelName() != null) {
-			ipw.print("MODEL " + params.getNewModelName());
-		} else {
-			ipw.print("MODEL " + mdef.getName());
-		}
-	} else {
-		String value = getNameInLanguage(mdef, language);
-		if (value == null || value == "") {
-		    ipw.print("MODEL " + mdef.getName());
-		} else {
-		    ipw.print("MODEL " + value);
-		}
-	}
+    ipw.print("MODEL ");
+    printName(mdef,language);
 
 	if (language == null) {
 		if (mdef.getLanguage() != null) {
@@ -1820,22 +1834,11 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 	}
 	ipw.println ();
 	ipw.indent();
-	String issuer=mdef.getIssuer();
-	if(issuer==null){
-		issuer="mailto:"+System.getProperty("user.name")+"@localhost";
-	}
+	String issuer = getModelIssuer(mdef);
     ipw.println("AT \""+issuer+"\"");
-    String version=mdef.getModelVersion();
-    if(version==null){
-		java.util.Calendar current=java.util.Calendar.getInstance();
-		java.text.DecimalFormat digit4 = new java.text.DecimalFormat("0000");
-		java.text.DecimalFormat digit2 = new java.text.DecimalFormat("00");
-		version=digit4.format(current.get(java.util.Calendar.YEAR))
-			+"-"+digit2.format(current.get(java.util.Calendar.MONTH)+1)
-			+"-"+digit2.format(current.get(java.util.Calendar.DAY_OF_MONTH));
-    }
+    String version = getModelVersion(mdef);
     ipw.print("VERSION \""+version+"\"");
-	String expl=mdef.getModelVersionExpl();
+	String expl = getModelVersionExpl(mdef);
 	if ((expl != null) && (expl.length() > 0))
 	{
 	  ipw.print (' ');
@@ -1894,22 +1897,32 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     ipw.unindent();
     ipw.println ();
     ipw.print ("END ");
-    if (language == null) {
-		if (params!=null && params.getNewModelName() != null) {
-			ipw.print(params.getNewModelName());
-		} else {
-			ipw.print(mdef.getName());
-		}
-    } else {
-        String name = getNameInLanguage(mdef, language);
-        if (name == null || name == "") {
-            ipw.print(mdef.getName());
-        } else {
-            ipw.print(name);
-        }
-    }
+    printName(mdef,language);
     ipw.println ('.');
   }
+protected String getModelVersionExpl(Model mdef) {
+    String expl=mdef.getModelVersionExpl();
+    return expl;
+}
+protected String getModelIssuer(Model mdef) {
+    String issuer=mdef.getIssuer();
+	if(issuer==null){
+		issuer="mailto:"+System.getProperty("user.name")+"@localhost";
+	}
+    return issuer;
+}
+protected String getModelVersion(Model mdef) {
+    String version=mdef.getModelVersion();
+    if(version==null){
+		java.util.Calendar current=java.util.Calendar.getInstance();
+		java.text.DecimalFormat digit4 = new java.text.DecimalFormat("0000");
+		java.text.DecimalFormat digit2 = new java.text.DecimalFormat("00");
+		version=digit4.format(current.get(java.util.Calendar.YEAR))
+			+"-"+digit2.format(current.get(java.util.Calendar.MONTH)+1)
+			+"-"+digit2.format(current.get(java.util.Calendar.DAY_OF_MONTH));
+    }
+    return version;
+}
 
 	private String getDocumentationInLanguage(Element ele, String language) {
 		String modelName = "";
@@ -1977,7 +1990,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     String scopedNamePrefix = dd.getScopedName();
     
     printDocumentation(dd,language);
-	printMetaValues(dd.getMetaValues(), language, dd.getScopedName());
+	printMetaValues(dd,dd.getMetaValues(), language, dd.getScopedName());
 	printName(dd,language);
     if(dd.getType() instanceof TypeAlias && ((TypeAlias)dd.getType()).getAliasing()==td.INTERLIS.INTERLIS_1_DATE){
     	Domain dd2=((TypeAlias)dd.getType()).getAliasing();
@@ -2577,11 +2590,11 @@ private void printFormatedTypeMinMax(FormattedType ft) {
     if (type.isCircular())
         ipw.print(" CIRCULAR");
 
-
-    if (type.getUnit() != null)
+    Unit unit=getTypeUnit(type);
+    if (unit != null)
     {
       ipw.print (" [");
-      ipw.print (type.getUnit().getScopedName(scope));
+      ipw.print (unit.getScopedName(scope));
       ipw.print (']');
     }
 
@@ -2599,12 +2612,19 @@ private void printFormatedTypeMinMax(FormattedType ft) {
     }
 
 
-    if (type.getReferenceSystem() != null)
+    final RefSystemRef referenceSystem = getTypeReferenceSystem(type);
+    if (referenceSystem != null)
     {
       ipw.print (' ');
-      printReferenceSysRef (scope, type.getReferenceSystem (), language);
+      printReferenceSysRef (scope, referenceSystem, language);
     }
   }
+protected RefSystemRef getTypeReferenceSystem(NumericalType type) {
+    return type.getReferenceSystem();
+}
+protected Unit getTypeUnit(NumericalType type) {
+    return type.getUnit();
+}
 
 
 
@@ -2640,7 +2660,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
 		String scopedName = scopedNamePrefix + "." + ee.getName();
 		if (language == null) {
 			printDocumentation(ee.getDocumentation());
-			printMetaValues(ee.getMetaValues(), language, scopedName);
+			printMetaValues(ee,ee.getMetaValues(), language, scopedName);
 			ipw.print(ee.getName());
 		} else {
 			String docu = getEnumerationElementDocumentationInLanguage(scopedName, language);
@@ -2649,7 +2669,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
 			} else {
 			    printDocumentation(docu);
 			}
-			printMetaValues(ee.getMetaValues(), language, scopedName);
+			printMetaValues(ee,ee.getMetaValues(), language, scopedName);
 			String name = getEnumerationElementNameInLanguage(scopedName, language);
 			if (name == null || name == "") {
 			    ipw.print(ee.getName());
@@ -2728,7 +2748,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
     }
 
     printDocumentation(lf,language);
-	printMetaValues(lf.getMetaValues(), language, lf.getScopedName());
+	printMetaValues(lf,lf.getMetaValues(), language, lf.getScopedName());
 	if (language == null) {
 	    ipw.print (lf.getName ());
 	} else {
@@ -2786,7 +2806,7 @@ private void printFormatedTypeMinMax(FormattedType ft) {
 
     if(!suppressDoc){
         printDocumentation(f,language);
-        printMetaValues(f.getMetaValues(), language, f.getScopedName()); 
+        printMetaValues(f,f.getMetaValues(), language, f.getScopedName()); 
     }
     
     ipw.print("FUNCTION ");
@@ -3069,7 +3089,11 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
   protected void printTransferDescription (
     TransferDescription   td, String language)
   {
-    ipw.println("INTERLIS 2.3;");
+    if(doIli24) {
+        ipw.println("INTERLIS 2.4;");
+    }else {
+        ipw.println("INTERLIS 2.3;");
+    }
     printElements(td, language);
   }
 }

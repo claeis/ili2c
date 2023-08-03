@@ -465,7 +465,7 @@ public final class Iligml20Generator
 			  return false;
 		  }
 		  ArrayList<RoleDef> roles=new ArrayList<RoleDef>();
-		  Iterator<RoleDef> rolei=assoc.getRolesIterator();
+		  Iterator<RoleDef> rolei=assoc.getDefinedRoles();
 		  boolean allExternal=true;
 		  while(rolei.hasNext()){
 			  RoleDef role=rolei.next();
@@ -640,7 +640,7 @@ public static ArrayList<RoleDef> getDefinedLightweightAssociations(Viewable v) {
 			RoleDef thisEnd = (RoleDef)iter.next();
 
 			AssociationDef roleOwner = (AssociationDef) thisEnd.getContainer();
-			int rolec=roleOwner.getRoles().size();
+			int rolec=roleOwner.getDefinedRolesSize();
 			if(rolec==2){
 				// not a derived association?
 				if(roleOwner.getDerivedFrom()==null){
@@ -683,7 +683,7 @@ static public Iterator<ViewableTransferElement> getAttributesAndRoles2(Viewable 
 			// for all, at this level defined/extended, attributes and roles
 			Iterator[] it = new Iterator[]
 			{
-				v.getRolesIterator(),
+				v.getDefinedRoles(),
 			  v.getDefinedAttributes()
 			};
 			Iterator attri=new CombiningIterator(it);
@@ -758,7 +758,7 @@ static public Iterator<ViewableTransferElement> getAttributesAndRoles2(Viewable 
 	}
 }
   private static boolean hasExternalRoles(AssociationDef assoc) {
-	for(Iterator<RoleDef> rolei=assoc.getRolesIterator();rolei.hasNext();){
+	for(Iterator<RoleDef> rolei=assoc.getDefinedRoles();rolei.hasNext();){
 		RoleDef role=rolei.next();
 		if(role.isExternal()){
 			return true;

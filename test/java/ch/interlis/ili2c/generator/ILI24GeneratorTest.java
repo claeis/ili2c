@@ -1,5 +1,11 @@
 package ch.interlis.ili2c.generator;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.File;
+import java.io.FileOutputStream;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,9 +15,30 @@ import ch.interlis.ili2c.Interlis24.Attribute24Test;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
+import ch.interlis.ili2c.generator.nls.Ili2TranslationXmlTest;
+import ch.interlis.ili2c.metamodel.DataModel;
+import ch.interlis.ili2c.metamodel.Element;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 
 public class ILI24GeneratorTest {
+    private static final String ILI_FILE = "test/data/interlis2generator/EnumOk24.ili";
+    private static final String OUTPUT_ILI_FILE = "out.ili";
+    @Test
+    public void model() throws Exception {
+        // ili lesen
+        TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(ILI_FILE));
+        // neues ili schreiben
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(OUTPUT_ILI_FILE),"UTF-8");
+        new Interlis2Generator().generate(out, td, false);
+        out.close();
+        // neues ili lesen
+        TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(OUTPUT_ILI_FILE), null);
+        assertNotNull(newTd);
+        Element modelEle = newTd.getElement("EnumOk24A");
+        assertNotNull(modelEle);
+        assertEquals(DataModel.class, modelEle.getClass());
+        assertEquals(DataModel.ILI2_4,((DataModel)modelEle).getIliVersion());
+    }
     @Test
     public void dateTime() throws Exception {
         LogCollector errs=new LogCollector();

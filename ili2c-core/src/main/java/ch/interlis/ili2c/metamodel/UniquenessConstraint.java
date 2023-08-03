@@ -23,6 +23,7 @@ public class UniquenessConstraint extends Constraint
 	private ObjectPath prefix=null;
 	private UniqueEl elements=null;
         private boolean local=false;
+        private Evaluable preCondition=null;
 	public UniquenessConstraint()
 	{
 	}
@@ -48,7 +49,6 @@ public class UniquenessConstraint extends Constraint
    {
     return local;
    }
-   private Evaluable preCondition=null;
 public Evaluable getPreCondition() {
 	return preCondition;
 }

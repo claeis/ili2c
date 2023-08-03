@@ -327,7 +327,7 @@ END B;<br></pre></code>
 			// for all, at this level defined/extended, attributes and roles
 			Iterator[] it = new Iterator[]
 			{
-  				v.getRolesIterator(),
+  				v.getDefinedRoles(),
 			  v.attributes.iterator()
 			};
 			Iterator attri=new CombiningIterator(it);
@@ -423,7 +423,7 @@ END B;<br></pre></code>
 			// for all, at this level defined/extended, attributes and roles
 			Iterator[] it = new Iterator[]
 			{
-				v.getRolesIterator(),
+				v.getDefinedRoles(),
 			  v.attributes.iterator()
 			};
 			Iterator attri=new CombiningIterator(it);
@@ -462,7 +462,7 @@ END B;<br></pre></code>
   /** gets RoleDef's defined by this.
    * This is a hotspot for getAttributesAndRoles2().
    */
-	public Iterator getRolesIterator(){
+	public Iterator getDefinedRoles(){
 		return null;
 	}
 

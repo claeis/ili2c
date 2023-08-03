@@ -421,6 +421,17 @@ public abstract class Element implements ElementAlias {
   {
     return getScopedName(null);
   }
+  public Element[] getElementPath()
+  {
+      List<Element> path=new java.util.ArrayList<Element>();
+      path.add(this);
+      Element parent=getContainer();
+      while(parent!=null && !(parent instanceof TransferDescription)) {
+          path.add(0,parent);
+          parent=parent.getContainer();
+      }
+        return path.toArray(new Element[path.size()]);
+  }
 
 
 
