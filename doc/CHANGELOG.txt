@@ -6,6 +6,7 @@ LATEST
 - NLSXML: fix export of FormalArgument
 - ili2.4 export: fix TransferDescription
 - IliManager.getConfig(models) support ili1-translation-of
+- API: Viewable.getRoles() renamed to getDefinedRoles()
 
 ili2c 5.3.2 (2022-12-30)
 ---------------------------
