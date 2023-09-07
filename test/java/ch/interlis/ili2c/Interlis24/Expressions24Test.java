@@ -131,4 +131,37 @@ public class Expressions24Test {
         CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
         assertEquals("numeric expression required.", logEvent.getRawEventMsg());
     }
+
+    @Test
+    public void implication() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "implication.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+        MandatoryConstraint constraint = (MandatoryConstraint)td.getElement("ModelA.TopicA.ClassA.Constraint1");
+        Expression.Implication expression = (Expression.Implication) constraint.getCondition();
+        assertTrue(expression.getLeft().isLogical());
+        assertTrue(expression.getRight().isLogical());
+    }
+
+    @Test
+    public void implication_fail() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "implication_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNull(td);
+        assertEquals(4, errs.getErrs().size());
+        for (int i = 0; i < 4; i++) {
+            CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(i);
+            assertEquals("logical expression required.", logEvent.getRawEventMsg());
+        }
+    }
 }

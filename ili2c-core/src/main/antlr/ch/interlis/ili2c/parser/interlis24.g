@@ -4772,7 +4772,7 @@ protected term[Container ns, Type expectedType, Container functionNs]
     }
     (
       o:IMPLIES {lineNumber = o.getLine();}
-      expr = term0 [ns, expectedType, functionNs]
+      right = term0 [ns, expectedType, functionNs]
       {
       	if(right==null){
       		dirty=true;
