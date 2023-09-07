@@ -11,6 +11,8 @@ import ch.interlis.ili2c.LogCollector;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
+import ch.interlis.ili2c.metamodel.Expression;
+import ch.interlis.ili2c.metamodel.MandatoryConstraint;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 
 public class Expressions24Test {
@@ -27,6 +29,9 @@ public class Expressions24Test {
         TransferDescription td = null;
         td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNotNull(td);
+        MandatoryConstraint constraint = (MandatoryConstraint)td.getElement("ModelA.TopicA.ClassA.Constraint1");
+        Expression.GreaterThan expression = (Expression.GreaterThan) constraint.getCondition();
+        assertTrue(expression.getLeft() instanceof Expression.Addition);
     }
     @Test
     public void plus_numeric_fail() throws Exception {
@@ -52,6 +57,9 @@ public class Expressions24Test {
         TransferDescription td = null;
         td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNotNull(td);
+        MandatoryConstraint constraint = (MandatoryConstraint)td.getElement("ModelA.TopicA.ClassA.Constraint1");
+        Expression.GreaterThan expression = (Expression.GreaterThan) constraint.getCondition();
+        assertTrue(expression.getLeft() instanceof Expression.Subtraction);
     }
     @Test
     public void minus_numeric_fail() throws Exception {
@@ -77,6 +85,9 @@ public class Expressions24Test {
         TransferDescription td = null;
         td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNotNull(td);
+        MandatoryConstraint constraint = (MandatoryConstraint)td.getElement("ModelA.TopicA.ClassA.Constraint1");
+        Expression.GreaterThan expression = (Expression.GreaterThan) constraint.getCondition();
+        assertTrue(expression.getLeft() instanceof Expression.Multiplication);
     }
     @Test
     public void mul_numeric_fail() throws Exception {
@@ -102,6 +113,9 @@ public class Expressions24Test {
         TransferDescription td = null;
         td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNotNull(td);
+        MandatoryConstraint constraint = (MandatoryConstraint)td.getElement("ModelA.TopicA.ClassA.Constraint1");
+        Expression.GreaterThan expression = (Expression.GreaterThan) constraint.getCondition();
+        assertTrue(expression.getLeft() instanceof Expression.Division);
     }
     @Test
     public void div_numeric_fail() throws Exception {
