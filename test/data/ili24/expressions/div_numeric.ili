@@ -8,7 +8,7 @@ MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
 
     CLASS ClassA =
       attr : 10 .. 20 ;
-      MANDATORY CONSTRAINT (attr * 5)>15;
+      MANDATORY CONSTRAINT (attr / 5)>15;
     END ClassA;
 
   END TopicA;
