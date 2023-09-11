@@ -1,12 +1,9 @@
 package ch.interlis.ili2c.Interlis24;
 
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 import org.junit.Test;
 import ch.ehi.basics.logging.EhiLogger;
 import ch.interlis.ili2c.CompilerLogEvent;
-import ch.interlis.ili2c.Ili2c;
-import ch.interlis.ili2c.Ili2cFailure;
 import ch.interlis.ili2c.LogCollector;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
@@ -26,8 +23,7 @@ public class Expressions24Test {
         Configuration ili2cConfig = new Configuration();
         FileEntry fileEntry = new FileEntry(TEST_OUT + "plus_numeric.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
-        TransferDescription td = null;
-        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        TransferDescription td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNotNull(td);
         MandatoryConstraint constraint = (MandatoryConstraint)td.getElement("ModelA.TopicA.ClassA.Constraint1");
         Expression.GreaterThan expression = (Expression.GreaterThan) constraint.getCondition();
@@ -40,8 +36,7 @@ public class Expressions24Test {
         Configuration ili2cConfig = new Configuration();
         FileEntry fileEntry = new FileEntry(TEST_OUT + "plus_numeric_fail.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
-        TransferDescription td = null;
-        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        TransferDescription td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNull(td);
         assertEquals(1, errs.getErrs().size());
         CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
@@ -54,8 +49,7 @@ public class Expressions24Test {
         Configuration ili2cConfig = new Configuration();
         FileEntry fileEntry = new FileEntry(TEST_OUT + "minus_numeric.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
-        TransferDescription td = null;
-        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        TransferDescription td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNotNull(td);
         MandatoryConstraint constraint = (MandatoryConstraint)td.getElement("ModelA.TopicA.ClassA.Constraint1");
         Expression.GreaterThan expression = (Expression.GreaterThan) constraint.getCondition();
@@ -68,8 +62,7 @@ public class Expressions24Test {
         Configuration ili2cConfig = new Configuration();
         FileEntry fileEntry = new FileEntry(TEST_OUT + "minus_numeric_fail.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
-        TransferDescription td = null;
-        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        TransferDescription td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNull(td);
         assertEquals(1, errs.getErrs().size());
         CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
@@ -82,8 +75,7 @@ public class Expressions24Test {
         Configuration ili2cConfig = new Configuration();
         FileEntry fileEntry = new FileEntry(TEST_OUT + "mul_numeric.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
-        TransferDescription td = null;
-        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        TransferDescription td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNotNull(td);
         MandatoryConstraint constraint = (MandatoryConstraint)td.getElement("ModelA.TopicA.ClassA.Constraint1");
         Expression.GreaterThan expression = (Expression.GreaterThan) constraint.getCondition();
@@ -96,8 +88,7 @@ public class Expressions24Test {
         Configuration ili2cConfig = new Configuration();
         FileEntry fileEntry = new FileEntry(TEST_OUT + "mul_numeric_fail.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
-        TransferDescription td = null;
-        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        TransferDescription td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNull(td);
         assertEquals(1, errs.getErrs().size());
         CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
@@ -110,8 +101,7 @@ public class Expressions24Test {
         Configuration ili2cConfig = new Configuration();
         FileEntry fileEntry = new FileEntry(TEST_OUT + "div_numeric.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
-        TransferDescription td = null;
-        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        TransferDescription td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNotNull(td);
         MandatoryConstraint constraint = (MandatoryConstraint)td.getElement("ModelA.TopicA.ClassA.Constraint1");
         Expression.GreaterThan expression = (Expression.GreaterThan) constraint.getCondition();
@@ -124,8 +114,7 @@ public class Expressions24Test {
         Configuration ili2cConfig = new Configuration();
         FileEntry fileEntry = new FileEntry(TEST_OUT + "div_numeric_fail.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
-        TransferDescription td = null;
-        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        TransferDescription td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNull(td);
         assertEquals(1, errs.getErrs().size());
         CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
@@ -139,8 +128,7 @@ public class Expressions24Test {
         Configuration ili2cConfig = new Configuration();
         FileEntry fileEntry = new FileEntry(TEST_OUT + "implication.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
-        TransferDescription td = null;
-        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        TransferDescription td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNotNull(td);
         MandatoryConstraint constraint = (MandatoryConstraint)td.getElement("ModelA.TopicA.ClassA.Constraint1");
         Expression.Implication expression = (Expression.Implication) constraint.getCondition();
@@ -155,8 +143,7 @@ public class Expressions24Test {
         Configuration ili2cConfig = new Configuration();
         FileEntry fileEntry = new FileEntry(TEST_OUT + "implication_fail.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
-        TransferDescription td = null;
-        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        TransferDescription td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
         assertNull(td);
         assertEquals(4, errs.getErrs().size());
         for (int i = 0; i < 4; i++) {
