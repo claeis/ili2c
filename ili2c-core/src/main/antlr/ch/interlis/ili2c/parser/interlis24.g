@@ -4518,24 +4518,24 @@ protected existenceConstraint[Viewable v,Container context]
 protected uniquenessConstraint[Viewable v,Container context]
 	returns [UniquenessConstraint constr]
   	{
-	Evaluable preCond=null;
-		constr=new UniquenessConstraint();
+	    Evaluable preCond=null;
+	    constr=null;
 	}
-	: u:"UNIQUE" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON) => n:NAME COLON )?
-	{
-		  constr.setSourceLine(u.getLine());
-		try{
-			if(n!=null){constr.setName(n.getText());}
-		} catch (Exception ex) {
-			reportError(ex, u.getLine());
-		}
-	}
+	: u:"UNIQUE" ( (LPAREN "BASKET") => LPAREN b:"BASKET" RPAREN )? ((NAME COLON) => n:NAME COLON )?
   	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,context] COLON
 	)?
 	( constr=globalUniqueness[v,context]
 	| constr=localUniqueness[v]
 	)
 	{
+		constr.setSourceLine(u.getLine());
+		try{
+			if(n!=null){constr.setName(n.getText());}
+			constr.setBasket(b!=null);
+		} catch (Exception ex) {
+			reportError(ex, u.getLine());
+		}
+
 		if(preCond!=null){ 
 			if(!preCond.isDirty() && !preCond.isLogical()){
 				reportError (formatMessage ("err_expr_noLogical",(String)null),

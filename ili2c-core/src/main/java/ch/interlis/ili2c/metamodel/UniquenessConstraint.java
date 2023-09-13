@@ -24,6 +24,7 @@ public class UniquenessConstraint extends Constraint
 	private UniqueEl elements=null;
         private boolean local=false;
         private Evaluable preCondition=null;
+        private boolean basket=false;
 	public UniquenessConstraint()
 	{
 	}
@@ -49,6 +50,14 @@ public class UniquenessConstraint extends Constraint
    {
     return local;
    }
+
+   public void setBasket(boolean isBasket){
+        basket = isBasket;
+   }
+
+   public boolean getBasket() {
+        return basket;
+   }
 public Evaluable getPreCondition() {
 	return preCondition;
 }
@@ -64,7 +73,7 @@ public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,Str
     if(baseElement==null) {
         return;
     }
-    
+
     Ili2cSemanticException err=Evaluable.checkTranslation(preCondition, baseElement.preCondition, getSourceLine(), "err_diff_uniqueConstraintPreConditionMismatch");
     if(err!=null) {
         errs.add(err);
