@@ -2,9 +2,13 @@ INTERLIS 2.4;
 
 MODEL ModelA AT "mailto:test@localhost" VERSION "2023-09-05" =
     TOPIC TopicA =
+        STRUCTURE StructA =
+            structAttr: TEXT*100;
+        END StructA;
+
         CLASS ClassA =
             attr1 : MANDATORY 0..999;
-
+            attr2: BAG {1..*} OF StructA;
             MANDATORY CONSTRAINT attr1 > 1;
             MANDATORY CONSTRAINT NamedMandatory: attr1 > 1;
             CONSTRAINT >= 80% attr1 > 2;
@@ -13,6 +17,9 @@ MODEL ModelA AT "mailto:test@localhost" VERSION "2023-09-05" =
             UNIQUE (BASKET) attr1;
             UNIQUE NamedUnique: attr1;
             UNIQUE (BASKET) NamedUniqueBasket: attr1;
+            UNIQUE (LOCAL) attr2 : structAttr;
+            UNIQUE NamedUniqueLocal: (LOCAL) attr2 : structAttr;
+            UNIQUE (BASKET) NamedUniqueBasketLocal: (LOCAL) attr2 : structAttr;
             SET CONSTRAINT INTERLIS.objectCount(ALL) >= 0;
             SET CONSTRAINT NamedSetConstraint: INTERLIS.objectCount(ALL) >= 0;
             SET CONSTRAINT (BASKET) INTERLIS.objectCount(ALL) >= 0;
@@ -28,6 +35,9 @@ MODEL ModelA AT "mailto:test@localhost" VERSION "2023-09-05" =
             UNIQUE (BASKET) attr1;
             UNIQUE NamedUnique2: attr1;
             UNIQUE (BASKET) NamedUniqueBasket2: attr1;
+            UNIQUE (LOCAL) attr2 : structAttr;
+            UNIQUE NamedUniqueLocal2: (LOCAL) attr2 : structAttr;
+            UNIQUE (BASKET) NamedUniqueBasketLocal2: (LOCAL) attr2 : structAttr;
             SET CONSTRAINT INTERLIS.objectCount(ALL) >= 0;
             SET CONSTRAINT NamedSetConstraint2: INTERLIS.objectCount(ALL) >= 0;
             SET CONSTRAINT (BASKET) INTERLIS.objectCount(ALL) >= 0;
