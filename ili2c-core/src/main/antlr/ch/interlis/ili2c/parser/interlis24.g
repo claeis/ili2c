@@ -4692,7 +4692,7 @@ protected setConstraint [Viewable v,Container context]
 	Evaluable condition=null;
   constr = new SetConstraint();
 }
-  : tok:"SET" "CONSTRAINT" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON)=> n:NAME COLON )?
+  : tok:"SET" "CONSTRAINT" ( (LPAREN "BASKET") => LPAREN b:"BASKET" RPAREN )? ((NAME COLON)=> n:NAME COLON )?
   	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,context] COLON
 		{
 			if(!preCond.isDirty() && !preCond.isLogical()){
@@ -4707,6 +4707,7 @@ protected setConstraint [Viewable v,Container context]
 	SEMI
 	{
 	  constr.setSourceLine(tok.getLine());
+      constr.setBasket(b!=null);
 	  if(v instanceof Table && !((Table)v).isIdentifiable()){
 			reportError (formatMessage ("err_constraint_illegalSetInStruct",
 				v.getScopedName(null)), tok.getLine());

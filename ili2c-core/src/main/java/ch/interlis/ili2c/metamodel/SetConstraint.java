@@ -9,9 +9,15 @@ public class SetConstraint extends Constraint
   {
   }
   private Evaluable preCondition=null;
+  private boolean basket=false;
+
   public Evaluable getPreCondition() {
   	return preCondition;
   }
+
+  public boolean getBasket(){ return basket; }
+
+  public void setBasket(boolean value) {basket = value; }
   public void setPreCondition(Evaluable preCondition) {
   	this.preCondition = preCondition;
   }
