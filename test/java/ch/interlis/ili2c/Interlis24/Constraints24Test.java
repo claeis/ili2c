@@ -11,7 +11,6 @@ import ch.interlis.ili2c.metamodel.SetConstraint;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.metamodel.UniqueEl;
 import ch.interlis.ili2c.metamodel.UniquenessConstraint;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -114,6 +113,7 @@ public class Constraints24Test {
 	public void UniquenessConstraintBasket(){
 		UniquenessConstraint constraint = (UniquenessConstraint) td.getElement("ModelA.TopicA.ClassA.Constraint6");
 		assertTrue(constraint.getBasket());
+		assertFalse(constraint.getLocal());
 		assertEquals(UniqueEl.class, constraint.getElements().getClass());
 	}
 
@@ -130,6 +130,7 @@ public class Constraints24Test {
 	public void UniquenessConstraintNamedBasket(){
 		UniquenessConstraint constraint = (UniquenessConstraint) td.getElement("ModelA.TopicA.ClassA.NamedUniqueBasket");
 		assertTrue(constraint.getBasket());
+		assertFalse(constraint.getLocal());
 		assertEquals("NamedUniqueBasket", constraint.getName());
 		assertEquals(UniqueEl.class, constraint.getElements().getClass());
 	}
@@ -138,6 +139,7 @@ public class Constraints24Test {
 	public void UniquenessConstraintLocal(){
 		UniquenessConstraint constraint = (UniquenessConstraint) td.getElement("ModelA.TopicA.ClassA.Constraint9");
 		assertTrue(constraint.getLocal());
+		assertFalse(constraint.getBasket());
 		assertEquals(UniqueEl.class, constraint.getElements().getClass());
 	}
 
@@ -145,6 +147,7 @@ public class Constraints24Test {
 	public void UniquenessConstraintNamedLocal(){
 		UniquenessConstraint constraint = (UniquenessConstraint) td.getElement("ModelA.TopicA.ClassA.NamedUniqueLocal");
 		assertTrue(constraint.getLocal());
+		assertFalse(constraint.getBasket());
 		assertEquals("NamedUniqueLocal", constraint.getName());
 		assertEquals(UniqueEl.class, constraint.getElements().getClass());
 	}
