@@ -70,6 +70,7 @@ import ch.interlis.ili2c.metamodel.NumericallyDerivedUnit;
 import ch.interlis.ili2c.metamodel.OIDType;
 import ch.interlis.ili2c.metamodel.ObjectPath;
 import ch.interlis.ili2c.metamodel.ObjectType;
+import ch.interlis.ili2c.metamodel.Objects;
 import ch.interlis.ili2c.metamodel.Parameter;
 import ch.interlis.ili2c.metamodel.ParameterAssignment;
 import ch.interlis.ili2c.metamodel.ParameterValue;
@@ -961,6 +962,12 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
       ipw.unindent ();
       ipw.print (/*(*/ ')');
       return;
+    }
+
+
+    if (expr instanceof Objects) {
+        ipw.print("ALL");
+        return;
     }
 
 
