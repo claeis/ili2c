@@ -89,6 +89,11 @@ public abstract class Constraint extends AbstractLeafElement
 		}
 		return name;
 	}
+
+    public boolean hasCustomName() {
+        return name!=null;
+    }
+
 	  public void setNameIdx (int idx){
 		  constraintIdx=idx;
 	  }

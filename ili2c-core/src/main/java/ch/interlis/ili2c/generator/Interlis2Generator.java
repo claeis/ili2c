@@ -974,99 +974,110 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
     printError ();
   }
 
-
-/**
- ExistenceConstraint = 'EXISTENCE' 'CONSTRAINT'
-                           AttributePath 'REQUIRED' 'IN'
-                               ViewableRef ':' AttributePath
-                               { 'OR' ViewableRef ':' AttributePath } ';'.
-*/
-  protected void printExistenceConstraint (Viewable forTable, ExistenceConstraint ec,String language)
-  {
-
-      ipw.print ("EXISTENCE CONSTRAINT ");
-      ObjectPath attr=ec.getRestrictedAttribute();
-      printAttributePath(forTable,attr,language);
-      ipw.print (" REQUIRED IN ");
-      Iterator reqi=ec.iteratorRequiredIn();
-      String next="";
-      while(reqi.hasNext()){
-        ObjectPath req=(ObjectPath)reqi.next();
-        ipw.print (next);next=" OR ";
-        printRef(forTable,req.getRoot(), language);
-        ipw.print(":");
-        printAttributePath(forTable,req,language);
-      }
-    ipw.println (';');
-  }
-  protected void printSetConstraint (Viewable forTable, SetConstraint ec,String language)
-  {
-
-      ipw.print ("SET CONSTRAINT");
-      if(ec.getPreCondition()!=null){
-          ipw.print (" WHERE ");
-          printExpression (forTable, ec.getPreCondition(),language);
-          ipw.println(": ");
-      }else{
-          ipw.println("");
-      }
-      ipw.indent();
-      printExpression (forTable, ec.getCondition(),language);
-      ipw.println (';');
-      ipw.unindent();
-  }
-
-  protected void printUniquenessConstraint (Viewable forTable, UniquenessConstraint uc,String language)
-  {
-    UniqueEl uel = uc.getElements();
-    Iterator pathi=uel.iteratorAttribute();
-    if(uc.getLocal()){
-      ipw.print ("UNIQUE (LOCAL) ");
-      ObjectPath prefix=uc.getPrefix();
-      printAttributePath(forTable, prefix, language);
-      String next=": ";
-      while(pathi.hasNext()){
-        ObjectPath path=(ObjectPath)pathi.next();
-        ipw.print (next);next=", ";
-        printAttributePath(forTable, path, language);
-      }
-    }else{
-      ipw.print ("UNIQUE");
-      String next=" ";
-      while(pathi.hasNext()){
-        ObjectPath path=(ObjectPath)pathi.next();
-        ipw.print (next);next=", ";
-        printAttributePath(forTable,path,language);
-      }
+    protected void printExistenceConstraint(ExistenceConstraint ec, String language) {
+        ipw.print("EXISTENCE CONSTRAINT ");
+        if (ec.hasCustomName()) {
+            ipw.print(ec.getName() + ": ");
+        }
+        ObjectPath attr = ec.getRestrictedAttribute();
+        printAttributePath(ec.getContainer(), attr, language);
+        ipw.print(" REQUIRED IN ");
+        Iterator<ObjectPath> reqi = ec.iteratorRequiredIn();
+        String next = "";
+        while (reqi.hasNext()) {
+            ObjectPath req = reqi.next();
+            ipw.print(next);
+            next = " OR ";
+            printRef(ec.getContainer(), req.getRoot(), language);
+            ipw.print(":");
+            printAttributePath(ec.getContainer(), req, language);
+        }
+        ipw.println(';');
     }
-    ipw.println (';');
-  /*
-    UniqueEl[] uel = uc.getElements();
-    AttributeRef[] prefix = uc.getPrefix();
 
-
-    ipw.print ("UNIQUE ");
-
-
-    if(prefix!=null && prefix.length > 0)
-    {
-      printAttributeRefs (prefix);
-      ipw.print (':');
+    protected void printSetConstraint(SetConstraint sc, String language) {
+        ipw.print("SET CONSTRAINT");
+        if (sc.getBasket()) {
+            ipw.print(" (BASKET)");
+        }
+        if (sc.hasCustomName()) {
+            ipw.print(" " + sc.getName() + ":");
+        }
+        if (sc.getPreCondition() != null) {
+            ipw.print(" WHERE ");
+            printExpression(sc.getContainer(), sc.getPreCondition(), language);
+            ipw.print(":");
+        }
+        ipw.println();
+        ipw.indent();
+        printExpression(sc.getContainer(), sc.getCondition(), language);
+        ipw.println(';');
+        ipw.unindent();
     }
-    for (int i = 0; i < uel.length; i++)
-    {
-      if (i > 0)
-        ipw.print (", ");
-      if (uel[i] == null){
-        printError ();
-      }else{
-        ; // TODO printAttributePath(forTable,uel[i].getAttribute());
-      }
+
+    protected void printUniquenessConstraint(UniquenessConstraint uc, String language) {
+        UniqueEl uel = uc.getElements();
+        Iterator<ObjectPath> pathi = uel.iteratorAttribute();
+        ipw.print("UNIQUE ");
+        if (uc.getBasket()) {
+            ipw.print("(BASKET) ");
+        }
+        if (uc.hasCustomName()) {
+            ipw.print(uc.getName() + ": ");
+        }
+        if (uc.getPreCondition() != null) {
+            ipw.print("WHERE ");
+            printExpression(uc.getContainer(), uc.getPreCondition(), language);
+            ipw.println(": ");
+        }
+        if (uc.getLocal()) {
+            ipw.print("(LOCAL) ");
+            ObjectPath prefix = uc.getPrefix();
+            printAttributePath(uc.getContainer(), prefix, language);
+            String next = ": ";
+            while (pathi.hasNext()) {
+                ObjectPath path = pathi.next();
+                ipw.print(next);
+                next = ", ";
+                printAttributePath(uc.getContainer(), path, language);
+            }
+        } else {
+            String next = "";
+            while (pathi.hasNext()) {
+                ObjectPath path = pathi.next();
+                ipw.print(next);
+                next = ", ";
+                printAttributePath(uc.getContainer(), path, language);
+            }
+        }
+        ipw.println(';');
     }
-    ipw.println (';');
-    */
-  }
-  
+
+    protected void printPlausibilityConstraint(PlausibilityConstraint pc, String language) {
+        ipw.print("CONSTRAINT ");
+        if (pc.hasCustomName()) {
+            ipw.print(pc.getName() + ": ");
+        }
+        if (pc.getDirection() == PlausibilityConstraint.DIRECTION_AT_LEAST) {
+            ipw.print(">= ");
+        } else {
+            ipw.print("<= ");
+        }
+        ipw.print(pc.getPercentage());
+        ipw.print("% ");
+        printExpression(pc.getContainer(), pc.getCondition(), language);
+        ipw.println(';');
+    }
+
+    protected void printMandatoryConstraint(MandatoryConstraint mc, String language) {
+        ipw.print("MANDATORY CONSTRAINT ");
+        if (mc.hasCustomName()) {
+            ipw.print(mc.getName() + ": ");
+        }
+        printExpression(mc.getContainer(), mc.getCondition(), language);
+        ipw.println(';');
+    }
+
   public void printConstraint(Constraint elt) {
 	  printConstraint(elt,null);
   }
@@ -1079,47 +1090,25 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
   public void printConstraint(Constraint elt,boolean suppressDoc) {
 	  printConstraint(elt,suppressDoc,null);
   }
-  
-  public void printConstraint(Constraint elt,boolean suppressDoc,String language)
-  {
-	  if(!suppressDoc){
-	      printDocumentation(elt,language);
-			printMetaValues(elt,elt.getMetaValues(), language, elt.getScopedName());
-	  }
-      Container container=elt.getContainer();
-      if (elt instanceof MandatoryConstraint)
-      {
-        ipw.print("MANDATORY CONSTRAINT ");
-        printExpression (container, ((MandatoryConstraint) elt).getCondition(),language);
-        ipw.println (';');
-      }
-      else if (elt instanceof PlausibilityConstraint)
-      {
-        PlausibilityConstraint pc = (PlausibilityConstraint) elt;
-        ipw.print ("CONSTRAINT ");
-        if (pc.getDirection() == PlausibilityConstraint.DIRECTION_AT_LEAST)
-          ipw.print (" >= ");
-        else
-          ipw.print (" <= ");
-        ipw.print (pc.getPercentage());
-        ipw.print ("% ");
-        printExpression (container, pc.getCondition(),language);
-        ipw.println (';');
-      }
-      else if (elt instanceof UniquenessConstraint)
-      {
-        UniquenessConstraint uc = (UniquenessConstraint) elt;
-        printUniquenessConstraint ((Viewable) container, uc,language);
-      }
-      else if (elt instanceof ExistenceConstraint)
-      {
-        printExistenceConstraint((Viewable) container, (ExistenceConstraint) elt,language);
-      }
-      else if (elt instanceof SetConstraint)
-      {
-        printSetConstraint((Viewable) container, (SetConstraint) elt,language);
-      }
-  }
+
+    public void printConstraint(Constraint elt, boolean suppressDoc, String language) {
+        if (!suppressDoc) {
+            printDocumentation(elt, language);
+            printMetaValues(elt, elt.getMetaValues(), language, elt.getScopedName());
+        }
+        if (elt instanceof MandatoryConstraint) {
+            printMandatoryConstraint((MandatoryConstraint) elt, language);
+        } else if (elt instanceof PlausibilityConstraint) {
+            printPlausibilityConstraint((PlausibilityConstraint) elt, language);
+        } else if (elt instanceof UniquenessConstraint) {
+            printUniquenessConstraint((UniquenessConstraint) elt, language);
+        } else if (elt instanceof ExistenceConstraint) {
+            printExistenceConstraint((ExistenceConstraint) elt, language);
+        } else if (elt instanceof SetConstraint) {
+            printSetConstraint((SetConstraint) elt, language);
+        }
+    }
+
   public void printGraphicParameterDef(GraphicParameterDef gfxp) {
 	  printGraphicParameterDef(gfxp,null);  
   }
