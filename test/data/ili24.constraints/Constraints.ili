@@ -2,6 +2,11 @@ INTERLIS 2.4;
 
 MODEL ModelA AT "mailto:test@localhost" VERSION "2023-09-05" =
     TOPIC TopicA =
+
+        CLASS ClassOther =
+            attrOther : 0..10;
+        END ClassOther;
+
         STRUCTURE StructA =
             structAttr: TEXT*100;
         END StructA;
@@ -13,6 +18,8 @@ MODEL ModelA AT "mailto:test@localhost" VERSION "2023-09-05" =
             MANDATORY CONSTRAINT NamedMandatory: attr1 > 1;
             CONSTRAINT >= 80% attr1 > 2;
             CONSTRAINT NamedPlausibility: <= 80% attr1 > 2;
+            EXISTENCE CONSTRAINT attr1 REQUIRED IN ClassOther : attrOther;
+            EXISTENCE CONSTRAINT NamedExistenceConstraint: attr1 REQUIRED IN ClassOther : attrOther;
             UNIQUE attr1;
             UNIQUE (BASKET) attr1;
             UNIQUE NamedUnique: attr1;
@@ -31,7 +38,8 @@ MODEL ModelA AT "mailto:test@localhost" VERSION "2023-09-05" =
             MANDATORY CONSTRAINT NamedMandatory2: attr1 > 1;
             CONSTRAINT >= 80% attr1 > 2;
             CONSTRAINT NamedPlausibility2: <= 80% attr1 > 2;
-            UNIQUE attr1;
+            EXISTENCE CONSTRAINT attr1 REQUIRED IN ClassOther : attrOther;
+            EXISTENCE CONSTRAINT NamedExistenceConstraint2: attr1 REQUIRED IN ClassOther : attrOther;            UNIQUE attr1;
             UNIQUE (BASKET) attr1;
             UNIQUE NamedUnique2: attr1;
             UNIQUE (BASKET) NamedUniqueBasket2: attr1;
