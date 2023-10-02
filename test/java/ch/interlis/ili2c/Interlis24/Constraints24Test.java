@@ -195,6 +195,7 @@ public class Constraints24Test {
 	@Test
 	public void SetConstraintNamed(){
 		SetConstraint constraint = (SetConstraint) td.getElement("ModelA.TopicA.ClassA.NamedSetConstraint");
+		assertEquals("NamedSetConstraint", constraint.getName());
 		assertFalse(constraint.getBasket());
 		assertEquals(Expression.GreaterThanOrEqual.class, constraint.getCondition().getClass());
 	}
@@ -210,6 +211,7 @@ public class Constraints24Test {
 	public void SetConstraintNamedBasket(){
 		SetConstraint constraint = (SetConstraint) td.getElement("ModelA.TopicA.ClassA.NamedSetConstraintBasket");
 		assertTrue(constraint.getBasket());
+		assertEquals("NamedSetConstraintBasket", constraint.getName());
 		assertEquals(Expression.GreaterThanOrEqual.class, constraint.getCondition().getClass());
 	}
 
