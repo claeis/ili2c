@@ -33,7 +33,7 @@ public class Constraints24Test {
 	public void setUp(){
 		errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
-		td = CompilerTestHelper.GetTransferDescription("test/data/ili24.constraints/Constraints.ili");
+		td = CompilerTestHelper.GetTransferDescription("test/data/ili24/constraints/Constraints.ili");
 	}
 
 	@Test
