@@ -1,0 +1,11 @@
+INTERLIS 2.4;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+    TOPIC TopicA =
+
+        DOMAIN DomainA = TEXT*30;
+        DOMAIN DomainB = TEXT*30 CONSTRAINTS Length : INTERLIS.len(THIS) > 2;
+        DOMAIN DomainC = NUMERIC CONSTRAINTS Min : THIS > 2, Max : THIS <= 100;
+
+    END TopicA;
+END ModelA.
