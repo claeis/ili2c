@@ -2270,8 +2270,25 @@ protected cardinality
   ;
 
 
+protected domainConstraint[Domain domain, Container container]
+    {
+        Evaluable condition = null;
+    } : constraintName:NAME COLON condition=expression[domain,predefinedBooleanType,container]
+    {
+        try {
+            DomainConstraint constraint = new DomainConstraint();
+            constraint.setName(constraintName.getText());
+            constraint.setCondition(condition);
+            domain.add(constraint);
+        } catch (Exception ex) {
+            reportError(ex, constraintName.getLine());
+        }
+    }
+    ;
+
 protected domainDef[Container container]
 	{
+	  Domain dd = null;
 	  Domain     extending = null;
 	  Type       extendingType = null;
 	  Type       declared = null;
@@ -2292,14 +2309,8 @@ protected domainDef[Container container]
 		(	"MANDATORY" (declared=type[container,extendingType,null,(mods&ch.interlis.ili2c.metamodel.Properties.eGENERIC)!=0])?
 		|	declared=type[container,extendingType,null,(mods&ch.interlis.ili2c.metamodel.Properties.eGENERIC)!=0]
 		)
-		( "CONSTRAINTS" 
-		NAME COLON expression[container,predefinedBooleanType,container] 
-			(COMMA NAME COLON expression[container,predefinedBooleanType,container] 
-			)*
-		)?
-		SEMI
 		{
-		Domain dd = new Domain ();
+		dd = new Domain ();
 
 		try {
 		dd.setName (n.getText());
@@ -2357,6 +2368,11 @@ protected domainDef[Container container]
 		reportError(ex, n.getLine());
 		}
 		}
+		( "CONSTRAINTS"
+			domainConstraint[dd, container]
+			(COMMA domainConstraint[dd, container])*
+		)?
+		SEMI
 	;
 
 protected domainDefs[Container container]
@@ -5066,17 +5082,28 @@ protected factor[Container ns,Container functionNs]
 			{ inspFactor.setRestriction(inspRestriction); 
 			}
 		)?) 
-	|	({
-			if(!(ns instanceof Viewable)){
-				reportError (formatMessage ("err_Container_currentIsNotViewable",
-				ns.toString()), LT(1).getLine());
-			}
+	| {ns instanceof Viewable}? ev = objectOrAttributePath[(Viewable)ns,functionNs]
+	{
+		if(ev == null){
+			reportError (formatMessage ("err_Container_currentIsNotViewable",
+			ns.toString()), LT(1).getLine());
 		}
-		ev=objectOrAttributePath[(Viewable)ns,functionNs]
-		)
+	}
+	| {ns instanceof Domain}? ev = valueRef[(Domain)ns]
 	|	ev=constant[ns]
-		
 	;
+
+
+protected valueRef[Domain domain]
+	returns[Evaluable evaluable]
+	{
+		evaluable = null;
+	}
+	: "THIS" {
+		evaluable = new ValueRefThis(domain.getType());
+	}
+	;
+
 
 protected objectOrAttributePath[Viewable start,Container context]
 	returns[ObjectPath object]

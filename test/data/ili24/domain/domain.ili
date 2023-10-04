@@ -3,9 +3,12 @@ INTERLIS 2.4;
 MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
     TOPIC TopicA =
 
-        DOMAIN DomainA = TEXT*30;
-        DOMAIN DomainB = TEXT*30 CONSTRAINTS Length : INTERLIS.len(THIS) > 2;
-        DOMAIN DomainC = NUMERIC CONSTRAINTS Min : THIS > 2, Max : THIS <= 100;
+        DOMAIN DomainText = TEXT*30;
+        DOMAIN DomainTextRestricted = TEXT*30 CONSTRAINTS Values : THIS == "SomeConstant" OR THIS == "OtherConstant";
+        DOMAIN DomainConstraintConstant = TEXT*30 CONSTRAINTS Constant : INTERLIS.len("Constant") > 2;
+        DOMAIN DomainConstraintThis = TEXT*30 CONSTRAINTS Length : INTERLIS.len(THIS) > 2;
+        DOMAIN DomainMultiConstraints = 0 .. 100 CONSTRAINTS Min : THIS > 10, Max100 : THIS <= 100;
+        DOMAIN DomainExtends EXTENDS DomainMultiConstraints = 0 .. 50 CONSTRAINTS Max50 : THIS <= 50;
 
     END TopicA;
 END ModelA.
