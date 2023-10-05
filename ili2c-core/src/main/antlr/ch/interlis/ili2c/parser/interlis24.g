@@ -3354,18 +3354,27 @@ protected classType[Container scope,Type extending]
 		Viewable restrictedTo;
 	}
 	: ( "CLASS" 
-		( "RESTRICTION" LPAREN restrictedTo=classOrAssociationRef[scope]
+		( restriction:"RESTRICTION" LPAREN restrictedTo=classRef[scope]
 			{ bt.addRestrictedTo(restrictedTo); }
-			(SEMI restrictedTo=classOrAssociationRef[scope]
+			(SEMI restrictedTo=classRef[scope]
 				{ bt.addRestrictedTo(restrictedTo); }
 			)*
+			{
+				Iterator<Viewable<?>> iterator = bt.iteratorRestrictedTo();
+				while (iterator.hasNext()) {
+					Table table = (Table) iterator.next();
+					if (!table.isIdentifiable()) {
+						reportError(formatMessage("err_classType_restrictionClassRequired", table.toString()), restriction.getLine());
+					}
+				}
+			}
 			RPAREN
 		)?
 	)
 	| ( "STRUCTURE" {bt.setStructure(true);}
-		( "RESTRICTION" LPAREN restrictedTo=structureRef[scope]
+		( "RESTRICTION" LPAREN restrictedTo=classRef[scope]
 				{ bt.addRestrictedTo(restrictedTo); }
-			(SEMI restrictedTo=structureRef[scope]
+			(SEMI restrictedTo=classRef[scope]
 				{ bt.addRestrictedTo(restrictedTo); }
 			)*
 			RPAREN
@@ -5089,13 +5098,42 @@ protected factor[Container ns,Container functionNs]
 			ns.toString()), LT(1).getLine());
 		}
 	}
-	| {ns instanceof Domain}? ev = valueRef[(Domain)ns]
+	| {ns instanceof Domain && ((Domain)ns).getType() instanceof ClassType}? ev = classTypeObjectOrAttributePath[(ClassType)(((Domain)ns).getType()),functionNs]
+	| {ns instanceof Domain}? ev = valueRefThis[(Domain)ns]
 	|	ev=constant[ns]
 	;
 
 
-protected valueRef[Domain domain]
-	returns[Evaluable evaluable]
+protected classTypeObjectOrAttributePath[ClassType classType, Container functionNs]
+	returns [ClassTypeObjectPath classTypeObjectPath]
+	{
+		classTypeObjectPath = null;
+		ObjectPath objectPath = null;
+		int start = mark();
+		Iterator<Viewable<?>> restrictions = classType.iteratorRestrictedTo();
+		List<ObjectPath> objectPaths = new ArrayList<ObjectPath>();
+	}
+	:
+	{!restrictions.hasNext()}?
+		objectPath = objectOrAttributePath[classType.isStructure() ? modelInterlis.ANYSTRUCTURE : modelInterlis.ANYCLASS, functionNs]
+		{
+			classTypeObjectPath = new ClassTypeObjectPath(new ObjectPath[] { objectPath });
+		}
+	|
+		objectPath = objectOrAttributePath[restrictions.next(), functionNs]
+		{
+			objectPaths.add(objectPath);
+			while (restrictions.hasNext()) {
+				rewind(start);
+				objectPath = objectOrAttributePath(restrictions.next(), functionNs);
+				objectPaths.add(objectPath);
+			}
+			classTypeObjectPath = new ClassTypeObjectPath(objectPaths.toArray(new ObjectPath[objectPaths.size()]));
+		}
+	;
+
+protected valueRefThis[Domain domain]
+	returns[ValueRefThis evaluable]
 	{
 		evaluable = null;
 	}

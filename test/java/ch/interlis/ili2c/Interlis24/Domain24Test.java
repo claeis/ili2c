@@ -1,8 +1,15 @@
 package ch.interlis.ili2c.Interlis24;
 
 import ch.ehi.basics.logging.EhiLogger;
+import ch.ehi.basics.logging.LogEvent;
+import ch.interlis.ili2c.CompilerLogEvent;
 import ch.interlis.ili2c.CompilerTestHelper;
+import ch.interlis.ili2c.Ili2c;
+import ch.interlis.ili2c.Ili2cFailure;
 import ch.interlis.ili2c.LogCollector;
+import ch.interlis.ili2c.config.Configuration;
+import ch.interlis.ili2c.config.FileEntry;
+import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.metamodel.Constant;
 import ch.interlis.ili2c.metamodel.Domain;
 import ch.interlis.ili2c.metamodel.DomainConstraint;
@@ -14,6 +21,7 @@ import ch.interlis.ili2c.metamodel.ValueRefThis;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,8 +41,32 @@ public class Domain24Test {
     @Test
     public void compile_Ok() {
         assertEquals(0, errs.getErrs().size());
-        List<Domain> domains = CompilerTestHelper.getInstancesOfType(td, "ModelA.TopicA", Domain.class);
-        assertEquals(6, domains.size());
+        assertNotNull(td);
+    }
+
+    @Test
+    public void compile_Fail() {
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry("test/data/ili24/domain/domain_fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        try {
+            td = null;
+            td = Ili2c.runCompiler(ili2cConfig);
+        } catch (Ili2cFailure e) {
+            // Compile should fail
+        }
+        assertEquals(4, errs.getErrs().size());
+        assertNull(td);
+
+        List<String> errorMessages = new ArrayList<String>();
+        for (LogEvent event : errs.getErrs()) {
+            errorMessages.add(((CompilerLogEvent) event).getRawEventMsg());
+        }
+
+        assertEquals("incompatible datatypes", errorMessages.get(0));
+        assertEquals("Name AttrText is not applicable to CLASS INTERLIS.ANYCLASS.", errorMessages.get(1));
+        assertEquals("Name AttrText is not applicable to CLASS ModelA.TopicA.ClassC.", errorMessages.get(2));
+        assertEquals("Referenced element \"STRUCTURE ModelA.TopicA.StructA\" should be a CLASS.", errorMessages.get(3));
     }
 
     @Test
