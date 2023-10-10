@@ -33,13 +33,13 @@ public class Constraints24Test {
 	public void setUp(){
 		errs=new LogCollector();
 		EhiLogger.getInstance().addListener(errs);
-		td = CompilerTestHelper.GetTransferDescription("test/data/ili24/constraints/Constraints.ili");
+		td = CompilerTestHelper.getTransferDescription("test/data/ili24/constraints/Constraints.ili");
 	}
 
 	@Test
-	public void Constraints_Compile() throws Exception {
+	public void constraintsCompile() {
 		assertEquals(0,errs.getErrs().size());
-		List<Constraint> foundConstraints = CompilerTestHelper.GetInstancesOfType(td,"ModelA.TopicA.ClassA", Constraint.class);
+		List<Constraint> foundConstraints = CompilerTestHelper.getInstancesOfType(td,"ModelA.TopicA.ClassA", Constraint.class);
 		List<String> foundConstraintsNames = new ArrayList<String>();
 		for (Constraint constraint: foundConstraints) {
 			foundConstraintsNames.add(constraint.getScopedName());
@@ -85,40 +85,40 @@ public class Constraints24Test {
 	}
 
 	@Test
-	public void MandatoryConstraint(){
+	public void mandatoryConstraint(){
 		MandatoryConstraint constraint = (MandatoryConstraint) td.getElement("ModelA.TopicA.ClassA.Constraint1");
 		assertEquals(Expression.GreaterThan.class, constraint.getCondition().getClass());
 	}
 
 	@Test
-	public void MandatoryConstraintNamed(){
+	public void mandatoryConstraintNamed(){
 		MandatoryConstraint constraint = (MandatoryConstraint) td.getElement("ModelA.TopicA.ClassA.NamedMandatory");
 		assertEquals("NamedMandatory", constraint.getName());
 		assertEquals(Expression.GreaterThan.class, constraint.getCondition().getClass());
 	}
 
 	@Test
-	public void PlausibilityConstraint(){
+	public void plausibilityConstraint(){
 		PlausibilityConstraint constraint = (PlausibilityConstraint) td.getElement("ModelA.TopicA.ClassA.Constraint3");
 		assertEquals(Expression.GreaterThan.class, constraint.getCondition().getClass());
 	}
 
 	@Test
-	public void PlausibilityConstraintNamed(){
+	public void plausibilityConstraintNamed(){
 		PlausibilityConstraint constraint = (PlausibilityConstraint) td.getElement("ModelA.TopicA.ClassA.NamedPlausibility");
 		assertEquals("NamedPlausibility", constraint.getName());
 		assertEquals(Expression.GreaterThan.class, constraint.getCondition().getClass());
 	}
 
 	@Test
-	public void ExistenceConstraint(){
+	public void existenceConstraint(){
 		ExistenceConstraint constraint = (ExistenceConstraint) td.getElement("ModelA.TopicA.ClassA.Constraint5");
 		assertEquals("attr1", constraint.getRestrictedAttribute().getLastPathEl().getName());
 		assertEquals("attrOther", constraint.iteratorRequiredIn().next().getLastPathEl().getName());
 	}
 
 	@Test
-	public void ExistenceConstraintNamed(){
+	public void existenceConstraintNamed(){
 		ExistenceConstraint constraint = (ExistenceConstraint) td.getElement("ModelA.TopicA.ClassA.NamedExistenceConstraint");
 		assertEquals("NamedExistenceConstraint", constraint.getName());
 		assertEquals("attr1", constraint.getRestrictedAttribute().getLastPathEl().getName());
@@ -126,7 +126,7 @@ public class Constraints24Test {
 	}
 
 	@Test
-	public void UniquenessConstraint(){
+	public void uniquenessConstraint(){
 		UniquenessConstraint constraint = (UniquenessConstraint) td.getElement("ModelA.TopicA.ClassA.Constraint7");
 		assertFalse(constraint.getBasket());
 		assertFalse(constraint.getLocal());
@@ -134,7 +134,7 @@ public class Constraints24Test {
 	}
 
 	@Test
-	public void UniquenessConstraintBasket(){
+	public void uniquenessConstraintBasket(){
 		UniquenessConstraint constraint = (UniquenessConstraint) td.getElement("ModelA.TopicA.ClassA.Constraint8");
 		assertTrue(constraint.getBasket());
 		assertFalse(constraint.getLocal());
@@ -142,7 +142,7 @@ public class Constraints24Test {
 	}
 
 	@Test
-	public void UniquenessConstraintNamed(){
+	public void uniquenessConstraintNamed(){
 		UniquenessConstraint constraint = (UniquenessConstraint) td.getElement("ModelA.TopicA.ClassA.NamedUnique");
 		assertFalse(constraint.getBasket());
 		assertFalse(constraint.getLocal());
@@ -151,7 +151,7 @@ public class Constraints24Test {
 	}
 
 	@Test
-	public void UniquenessConstraintNamedBasket(){
+	public void uniquenessConstraintNamedBasket(){
 		UniquenessConstraint constraint = (UniquenessConstraint) td.getElement("ModelA.TopicA.ClassA.NamedUniqueBasket");
 		assertTrue(constraint.getBasket());
 		assertFalse(constraint.getLocal());
@@ -160,7 +160,7 @@ public class Constraints24Test {
 	}
 
 	@Test
-	public void UniquenessConstraintLocal(){
+	public void uniquenessConstraintLocal(){
 		UniquenessConstraint constraint = (UniquenessConstraint) td.getElement("ModelA.TopicA.ClassA.Constraint11");
 		assertTrue(constraint.getLocal());
 		assertFalse(constraint.getBasket());
@@ -168,7 +168,7 @@ public class Constraints24Test {
 	}
 
 	@Test
-	public void UniquenessConstraintNamedLocal(){
+	public void uniquenessConstraintNamedLocal(){
 		UniquenessConstraint constraint = (UniquenessConstraint) td.getElement("ModelA.TopicA.ClassA.NamedUniqueLocal");
 		assertTrue(constraint.getLocal());
 		assertFalse(constraint.getBasket());
@@ -177,7 +177,7 @@ public class Constraints24Test {
 	}
 
 	@Test
-	public void UniquenessConstraintNamedBasketLocal(){
+	public void uniquenessConstraintNamedBasketLocal(){
 		UniquenessConstraint constraint = (UniquenessConstraint) td.getElement("ModelA.TopicA.ClassA.NamedUniqueBasketLocal");
 		assertTrue(constraint.getBasket());
 		assertTrue(constraint.getLocal());
@@ -186,14 +186,14 @@ public class Constraints24Test {
 	}
 
 	@Test
-	public void SetConstraint(){
+	public void setConstraint(){
 		SetConstraint constraint = (SetConstraint) td.getElement("ModelA.TopicA.ClassA.Constraint14");
 		assertFalse(constraint.getBasket());
 		assertEquals(Expression.GreaterThanOrEqual.class, constraint.getCondition().getClass());
 	}
 
 	@Test
-	public void SetConstraintNamed(){
+	public void setConstraintNamed(){
 		SetConstraint constraint = (SetConstraint) td.getElement("ModelA.TopicA.ClassA.NamedSetConstraint");
 		assertEquals("NamedSetConstraint", constraint.getName());
 		assertFalse(constraint.getBasket());
@@ -201,14 +201,14 @@ public class Constraints24Test {
 	}
 
 	@Test
-	public void SetConstraintBasket(){
+	public void setConstraintBasket(){
 		SetConstraint constraint = (SetConstraint) td.getElement("ModelA.TopicA.ClassA.Constraint16");
 		assertTrue(constraint.getBasket());
 		assertEquals(Expression.GreaterThanOrEqual.class, constraint.getCondition().getClass());
 	}
 
 	@Test
-	public void SetConstraintNamedBasket(){
+	public void setConstraintNamedBasket(){
 		SetConstraint constraint = (SetConstraint) td.getElement("ModelA.TopicA.ClassA.NamedSetConstraintBasket");
 		assertTrue(constraint.getBasket());
 		assertEquals("NamedSetConstraintBasket", constraint.getName());

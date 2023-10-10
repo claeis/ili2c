@@ -5,7 +5,6 @@ import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.metamodel.Container;
 import ch.interlis.ili2c.metamodel.Element;
-import ch.interlis.ili2c.metamodel.Model;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import org.junit.Assert;
 
@@ -14,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CompilerTestHelper {
-    public static TransferDescription GetTransferDescription(String filePath){
+    public static TransferDescription getTransferDescription(String filePath){
         Configuration ili2cConfig=new Configuration();
         FileEntry fileEntry=new FileEntry(filePath, FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
@@ -26,7 +25,7 @@ public class CompilerTestHelper {
         }
     }
 
-    public static <T extends Element, E extends Element> List<T> GetInstancesOfType(TransferDescription td, String scopedObjectName, Class<T> type) {
+    public static <T extends Element, E extends Element> List<T> getInstancesOfType(TransferDescription td, String scopedObjectName, Class<T> type) {
         ArrayList<T> result = new ArrayList<T>();
         for (Iterator<E> it = ((Container<E>)td.getElement(scopedObjectName)).iterator(); it.hasNext(); ) {
             Element element = it.next();

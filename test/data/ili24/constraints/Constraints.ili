@@ -39,7 +39,8 @@ MODEL ModelA AT "mailto:test@localhost" VERSION "2023-09-05" =
             CONSTRAINT >= 80% attr1 > 2;
             CONSTRAINT NamedPlausibility2: <= 80% attr1 > 2;
             EXISTENCE CONSTRAINT attr1 REQUIRED IN ClassOther : attrOther;
-            EXISTENCE CONSTRAINT NamedExistenceConstraint2: attr1 REQUIRED IN ClassOther : attrOther;            UNIQUE attr1;
+            EXISTENCE CONSTRAINT NamedExistenceConstraint2: attr1 REQUIRED IN ClassOther : attrOther;
+            UNIQUE attr1;
             UNIQUE (BASKET) attr1;
             UNIQUE NamedUnique2: attr1;
             UNIQUE (BASKET) NamedUniqueBasket2: attr1;
