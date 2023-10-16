@@ -2275,6 +2275,13 @@ protected domainConstraint[Domain domain, Container container]
         Evaluable condition = null;
     } : constraintName:NAME COLON condition=expression[domain,predefinedBooleanType,container]
     {
+        if (domain.getType() instanceof ClassType || domain.getType() instanceof AttributePathType) {
+            reportError(
+                formatMessage("err_domainConstraintsNotSupportedOnType", domain.getName()),
+                constraintName.getLine()
+            );
+            return;
+        }
         try {
             DomainConstraint constraint = new DomainConstraint();
             constraint.setName(constraintName.getText());
@@ -5092,44 +5099,8 @@ protected factor[Container ns,Container functionNs]
 			}
 		)?) 
 	| {ns instanceof Viewable}? ev = objectOrAttributePath[(Viewable)ns,functionNs]
-	{
-		if(ev == null){
-			reportError (formatMessage ("err_Container_currentIsNotViewable",
-			ns.toString()), LT(1).getLine());
-		}
-	}
-	| {ns instanceof Domain && ((Domain)ns).getType() instanceof ClassType}? ev = classTypeObjectOrAttributePath[(ClassType)(((Domain)ns).getType()),functionNs]
 	| {ns instanceof Domain}? ev = valueRefThis[(Domain)ns]
-	|	ev=constant[ns]
-	;
-
-
-protected classTypeObjectOrAttributePath[ClassType classType, Container functionNs]
-	returns [ClassTypeObjectPath classTypeObjectPath]
-	{
-		classTypeObjectPath = null;
-		ObjectPath objectPath = null;
-		int start = mark();
-		Iterator<Viewable<?>> restrictions = classType.iteratorRestrictedTo();
-		List<ObjectPath> objectPaths = new ArrayList<ObjectPath>();
-	}
-	:
-	{!restrictions.hasNext()}?
-		objectPath = objectOrAttributePath[classType.isStructure() ? modelInterlis.ANYSTRUCTURE : modelInterlis.ANYCLASS, functionNs]
-		{
-			classTypeObjectPath = new ClassTypeObjectPath(new ObjectPath[] { objectPath });
-		}
-	|
-		objectPath = objectOrAttributePath[restrictions.next(), functionNs]
-		{
-			objectPaths.add(objectPath);
-			while (restrictions.hasNext()) {
-				rewind(start);
-				objectPath = objectOrAttributePath(restrictions.next(), functionNs);
-				objectPaths.add(objectPath);
-			}
-			classTypeObjectPath = new ClassTypeObjectPath(objectPaths.toArray(new ObjectPath[objectPaths.size()]));
-		}
+	| ev=constant[ns]
 	;
 
 protected valueRefThis[Domain domain]

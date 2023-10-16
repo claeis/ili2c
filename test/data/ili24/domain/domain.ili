@@ -11,10 +11,6 @@ MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
             AttrText : TEXT*30;
         END ClassB;
 
-        CLASS ClassC =
-            AttrNum : 0 .. 100;
-        END ClassC;
-
         STRUCTURE StructA =
             AttrText : TEXT*30;
         END StructA;
@@ -27,12 +23,10 @@ MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
         DOMAIN DomainExtends EXTENDS DomainMultiConstraints = 0 .. 50 CONSTRAINTS Max50 : THIS <= 50;
 
         DOMAIN DomainClassType = CLASS;
-        DOMAIN DomainClassTypeDefinedThis = CLASS CONSTRAINTS IsDefined : DEFINED(THIS);
-        DOMAIN DomainClassTypeRestriction1 = CLASS RESTRICTION (ClassA) CONSTRAINTS IsDefined : DEFINED(AttrText);
-        DOMAIN DomainClassTypeRestriction2 = CLASS RESTRICTION (ClassA ; ClassB) CONSTRAINTS IsDefined : DEFINED(THIS->AttrText);
+        DOMAIN DomainClassTypeRestriction1 = CLASS RESTRICTION (ClassA);
+        DOMAIN DomainClassTypeRestriction2 = CLASS RESTRICTION (ClassA ; ClassB);
 
-        DOMAIN DomainStructAttribute = STRUCTURE RESTRICTION (StructA) CONSTRAINTS AttrLength : INTERLIS.len(AttrText) > 2;
-        DOMAIN DomainStructAndClassAttribute = STRUCTURE RESTRICTION (ClassA ; StructA) CONSTRAINTS AttrLength : INTERLIS.len(AttrText) > 2;
-
+        DOMAIN DomainStructAttribute = STRUCTURE RESTRICTION (StructA);
+        DOMAIN DomainStructAndClassAttribute = STRUCTURE RESTRICTION (ClassA ; StructA);
     END TopicA;
 END ModelA.
