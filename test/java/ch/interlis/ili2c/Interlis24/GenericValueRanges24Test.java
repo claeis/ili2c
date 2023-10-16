@@ -1,16 +1,11 @@
 package ch.interlis.ili2c.Interlis24;
 
-import ch.ehi.basics.logging.EhiLogger;
 import ch.interlis.ili2c.CompilerTestHelper;
-import ch.interlis.ili2c.Ili2c;
-import ch.interlis.ili2c.Ili2cFailure;
 import ch.interlis.ili2c.LogCollector;
-import ch.interlis.ili2c.config.Configuration;
-import ch.interlis.ili2c.config.FileEntry;
-import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import org.junit.Test;
 
+import static ch.interlis.ili2c.LogCollectorAssertions.assertContainsError;
 import static org.junit.Assert.*;
 
 public class GenericValueRanges24Test {
@@ -31,57 +26,25 @@ public class GenericValueRanges24Test {
 
     @Test
     public void invalidDimensions() {
-        LogCollector errs = new LogCollector();
-        EhiLogger.getInstance().addListener(errs);
-
-        Configuration ili2cConfig=new Configuration();
-        FileEntry fileEntry=new FileEntry(TEST_OUT + "invalidDimension_fail.ili", FileEntryKind.ILIMODELFILE);
-        ili2cConfig.addFileEntry(fileEntry);
-        try {
-            Ili2c.runCompiler(ili2cConfig);
-        } catch (Ili2cFailure e) {
-        }
+        LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "invalidDimension_fail.ili");
 
         assertEquals(1, errs.getErrs().size());
-
-        String expected = "Expected coord type to have 3 dimensions but it has 2 dimensions.";
-        assertTrue("expected: " + expected, errs.getErrs().get(0).getEventMsg().endsWith(expected));
+        assertContainsError("Expected coord type to have 3 dimensions but it has 2 dimensions.", 1, errs);
     }
 
     @Test
     public void invalidRange() {
-        LogCollector errs = new LogCollector();
-        EhiLogger.getInstance().addListener(errs);
-
-        Configuration ili2cConfig=new Configuration();
-        FileEntry fileEntry=new FileEntry(TEST_OUT + "invalidRange_fail.ili", FileEntryKind.ILIMODELFILE);
-        ili2cConfig.addFileEntry(fileEntry);
-        try {
-            Ili2c.runCompiler(ili2cConfig);
-        } catch (Ili2cFailure e) {
-        }
+        LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "invalidRange_fail.ili");
 
         assertEquals(1, errs.getErrs().size());
-
-        String expected = "When rounded to 0 digits after the dot, the maximum must not exceed the inherited value. However, 200 gets rounded to 200, which is greater than 100.";
-        assertTrue("expected: " + expected, errs.getErrs().get(0).getEventMsg().endsWith(expected));
+        assertContainsError("When rounded to 0 digits after the dot, the maximum must not exceed the inherited value. However, 200 gets rounded to 200, which is greater than 100.", 1, errs);
     }
 
     @Test
     public void contextDomainNotGeneric() {
-        LogCollector errs = new LogCollector();
-        EhiLogger.getInstance().addListener(errs);
-
-        Configuration ili2cConfig=new Configuration();
-        FileEntry fileEntry=new FileEntry(TEST_OUT + "contextDomainNotGeneric_fail.ili", FileEntryKind.ILIMODELFILE);
-        ili2cConfig.addFileEntry(fileEntry);
-        try {
-            Ili2c.runCompiler(ili2cConfig);
-        } catch (Ili2cFailure e) {
-        }
+        LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "contextDomainNotGeneric_fail.ili");
 
         assertEquals(1, errs.getErrs().size());
-        String expected = "The domain CoordA of context Context1 must be generic.";
-        assertTrue("expected: " + expected, errs.getErrs().get(0).getEventMsg().endsWith(expected));
+        assertContainsError("The domain CoordA of context Context1 must be generic.", 1, errs);
     }
 }
