@@ -1,16 +1,10 @@
 INTERLIS 2.4;
 
-
 MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
-
-
-  TOPIC TopicA = 
-
+  TOPIC TopicA =
     CLASS ClassA =
       attr : 10 .. 20 ;
-      MANDATORY CONSTRAINT (attr / 5)>15;
+      MANDATORY CONSTRAINT (attr > 5) => (attr > 3);
     END ClassA;
-
   END TopicA;
-
 END ModelA.
