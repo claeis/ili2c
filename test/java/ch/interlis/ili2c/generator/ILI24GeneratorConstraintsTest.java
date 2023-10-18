@@ -16,6 +16,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 public class ILI24GeneratorConstraintsTest {
 
     private static final String ILI_CONSTRAINTS = "test/data/ili24/constraints/constraints.ili";
+    private static final String ILI_DOMAINS = "test/data/ili24/domain/domain.ili";
 
     private void assertInterlis2GeneratorPrintConstraint(String interlisFilePath, String constraintScopedName, String ExpectedOutput) {
         // compile model
@@ -116,5 +117,13 @@ public class ILI24GeneratorConstraintsTest {
                 ILI_CONSTRAINTS,
                 "ModelA.TopicA.ClassA.NamedExistenceConstraint",
                 "EXISTENCE CONSTRAINT NamedExistenceConstraint: attr1 REQUIRED IN ModelA.TopicA.ClassOther:attrOther;\r\n");
+    }
+
+    @Test
+    public void domainConstraint() {
+        assertInterlis2GeneratorPrintConstraint(
+                ILI_DOMAINS,
+                "ModelA.TopicA.DomainTextRestricted.Values",
+                "Values: THIS == \"SomeConstant\" OR THIS == \"OtherConstant\"");
     }
 }

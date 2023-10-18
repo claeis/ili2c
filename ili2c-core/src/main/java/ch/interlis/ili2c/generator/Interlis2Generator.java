@@ -33,6 +33,7 @@ import ch.interlis.ili2c.metamodel.ContextDefs;
 import ch.interlis.ili2c.metamodel.DecompositionView;
 import ch.interlis.ili2c.metamodel.DerivedUnit;
 import ch.interlis.ili2c.metamodel.Domain;
+import ch.interlis.ili2c.metamodel.DomainConstraint;
 import ch.interlis.ili2c.metamodel.Element;
 import ch.interlis.ili2c.metamodel.EnumTreeValueType;
 import ch.interlis.ili2c.metamodel.EnumValType;
@@ -1087,6 +1088,12 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
         ipw.println(';');
     }
 
+    protected void printDomainConstraint(DomainConstraint constraint, String language) {
+        // the domain constraint name is mandatory
+        ipw.print(constraint.getName() + ": ");
+        printExpression(constraint.getContainer(), constraint.getCondition(), language);
+    }
+
   public void printConstraint(Constraint elt) {
 	  printConstraint(elt,null);
   }
@@ -1115,6 +1122,8 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
             printExistenceConstraint((ExistenceConstraint) elt, language);
         } else if (elt instanceof SetConstraint) {
             printSetConstraint((SetConstraint) elt, language);
+        } else if (elt instanceof DomainConstraint) {
+            printDomainConstraint((DomainConstraint) elt, language);
         }
     }
 
