@@ -27,6 +27,5 @@ MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
         DOMAIN DomainClassTypeRestriction2 = CLASS RESTRICTION (ClassA ; ClassB);
 
         DOMAIN DomainStructAttribute = STRUCTURE RESTRICTION (StructA);
-        DOMAIN DomainStructAndClassAttribute = STRUCTURE RESTRICTION (ClassA ; StructA);
     END TopicA;
 END ModelA.

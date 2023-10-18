@@ -12,13 +12,12 @@ MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
         END StructA;
 
         DOMAIN DomainConstraintWrongType = TEXT*30 CONSTRAINTS Min : THIS > 10;
-        DOMAIN DomainClassTypeStruct = CLASS RESTRICTION (ClassA ; StructA);
 
         DOMAIN DomainClassTypeUnrestricted = CLASS CONSTRAINTS AnyConstraint : "A" == "A";
         DOMAIN DomainClassTypeRestriction = CLASS RESTRICTION (ClassA) CONSTRAINTS AnyConstraint : "A" == "A";
 
         DOMAIN DomainStructUnrestricted = STRUCTURE CONSTRAINTS AnyConstraint : "A" == "A";
-        DOMAIN DomainStructAndClass = STRUCTURE RESTRICTION (ClassA ; StructA) CONSTRAINTS AnyConstraint : "A" == "A";
+        DOMAIN DomainStructRestriction = STRUCTURE RESTRICTION (StructA) CONSTRAINTS AnyConstraint : "A" == "A";
 
     END TopicA;
 END ModelA.

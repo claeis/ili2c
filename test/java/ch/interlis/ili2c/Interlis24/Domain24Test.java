@@ -55,7 +55,7 @@ public class Domain24Test {
         } catch (Ili2cFailure e) {
             // Compile should fail
         }
-        assertEquals(6, errs.getErrs().size());
+        assertEquals(5, errs.getErrs().size());
         assertNull(td);
 
         List<String> errorMessages = new ArrayList<String>();
@@ -64,11 +64,10 @@ public class Domain24Test {
         }
 
         assertEquals("incompatible datatypes", errorMessages.get(0));
-        assertEquals("Referenced element \"STRUCTURE ModelA.TopicA.StructA\" should be a CLASS.", errorMessages.get(1));
-        assertEquals("Domain constraints are not supported on DomainClassTypeUnrestricted for given type.", errorMessages.get(2));
-        assertEquals("Domain constraints are not supported on DomainClassTypeRestriction for given type.", errorMessages.get(3));
-        assertEquals("Domain constraints are not supported on DomainStructUnrestricted for given type.", errorMessages.get(4));
-        assertEquals("Domain constraints are not supported on DomainStructAndClass for given type.", errorMessages.get(5));
+        assertEquals("Domain constraints are not supported on DomainClassTypeUnrestricted for given type.", errorMessages.get(1));
+        assertEquals("Domain constraints are not supported on DomainClassTypeRestriction for given type.", errorMessages.get(2));
+        assertEquals("Domain constraints are not supported on DomainStructUnrestricted for given type.", errorMessages.get(3));
+        assertEquals("Domain constraints are not supported on DomainStructRestriction for given type.", errorMessages.get(4));
     }
 
     @Test

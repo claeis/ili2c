@@ -3361,27 +3361,18 @@ protected classType[Container scope,Type extending]
 		Viewable restrictedTo;
 	}
 	: ( "CLASS" 
-		( restriction:"RESTRICTION" LPAREN restrictedTo=classRef[scope]
+		( "RESTRICTION" LPAREN restrictedTo=classOrAssociationRef[scope]
 			{ bt.addRestrictedTo(restrictedTo); }
-			(SEMI restrictedTo=classRef[scope]
+			(SEMI restrictedTo=classOrAssociationRef[scope]
 				{ bt.addRestrictedTo(restrictedTo); }
 			)*
-			{
-				Iterator<Viewable<?>> iterator = bt.iteratorRestrictedTo();
-				while (iterator.hasNext()) {
-					Table table = (Table) iterator.next();
-					if (!table.isIdentifiable()) {
-						reportError(formatMessage("err_classType_restrictionClassRequired", table.toString()), restriction.getLine());
-					}
-				}
-			}
 			RPAREN
 		)?
 	)
 	| ( "STRUCTURE" {bt.setStructure(true);}
-		( "RESTRICTION" LPAREN restrictedTo=classRef[scope]
+		( "RESTRICTION" LPAREN restrictedTo=structureRef[scope]
 				{ bt.addRestrictedTo(restrictedTo); }
-			(SEMI restrictedTo=classRef[scope]
+			(SEMI restrictedTo=structureRef[scope]
 				{ bt.addRestrictedTo(restrictedTo); }
 			)*
 			RPAREN
