@@ -1,0 +1,23 @@
+INTERLIS 2.4;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+    TOPIC TopicA =
+
+        CLASS ClassA =
+            AttrText : TEXT*30;
+        END ClassA;
+
+        STRUCTURE StructA =
+            AttrText : TEXT*30;
+        END StructA;
+
+        DOMAIN DomainConstraintWrongType = TEXT*30 CONSTRAINTS Min : THIS > 10;
+
+        DOMAIN DomainClassTypeUnrestricted = CLASS CONSTRAINTS AnyConstraint : "A" == "A";
+        DOMAIN DomainClassTypeRestriction = CLASS RESTRICTION (ClassA) CONSTRAINTS AnyConstraint : "A" == "A";
+
+        DOMAIN DomainStructUnrestricted = STRUCTURE CONSTRAINTS AnyConstraint : "A" == "A";
+        DOMAIN DomainStructRestriction = STRUCTURE RESTRICTION (StructA) CONSTRAINTS AnyConstraint : "A" == "A";
+
+    END TopicA;
+END ModelA.
