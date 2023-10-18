@@ -104,6 +104,7 @@ import ch.interlis.ili2c.metamodel.UnionView;
 import ch.interlis.ili2c.metamodel.UniqueEl;
 import ch.interlis.ili2c.metamodel.UniquenessConstraint;
 import ch.interlis.ili2c.metamodel.Unit;
+import ch.interlis.ili2c.metamodel.ValueRefThis;
 import ch.interlis.ili2c.metamodel.View;
 import ch.interlis.ili2c.metamodel.Viewable;
 import ch.interlis.ili2c.metamodel.ViewableAlias;
@@ -969,6 +970,12 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
 
     if (expr instanceof Objects) {
         ipw.print("ALL");
+        return;
+    }
+
+
+    if (expr instanceof ValueRefThis) {
+        ipw.print("THIS");
         return;
     }
 
