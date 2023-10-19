@@ -8,7 +8,7 @@ MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
     ConcreteCoordA = COORD 0 .. 200, 0 .. 200;
 
   CONTEXT default =
-    CoordA = ConcreteCoordA;
+    CoordA = ConcreteCoordA; !! the definition of domain ConcreteCoordA must fit into the range of CoordA
 
   TOPIC TopicA =
     CLASS ClassA =
