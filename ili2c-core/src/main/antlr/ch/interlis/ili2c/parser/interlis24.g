@@ -4554,7 +4554,10 @@ protected uniquenessConstraint[Viewable v,Container context]
 		constr.setSourceLine(u.getLine());
 		try{
 			if(n!=null){constr.setName(n.getText());}
-			constr.setBasket(b!=null);
+			constr.setPerBasket(b!=null);
+			if (constr.perBasket() && constr.getLocal()) {
+				reportError (formatMessage ("err_uniqueness_basketAndLocal",(String)null), u.getLine());
+			}
 		} catch (Exception ex) {
 			reportError(ex, u.getLine());
 		}
@@ -4730,7 +4733,7 @@ protected setConstraint [Viewable v,Container context]
 	SEMI
 	{
 	  constr.setSourceLine(tok.getLine());
-      constr.setBasket(b!=null);
+      constr.setPerBasket(b!=null);
 	  if(v instanceof Table && !((Table)v).isIdentifiable()){
 			reportError (formatMessage ("err_constraint_illegalSetInStruct",
 				v.getScopedName(null)), tok.getLine());
