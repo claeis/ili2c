@@ -4555,6 +4555,9 @@ protected uniquenessConstraint[Viewable v,Container context]
 		try{
 			if(n!=null){constr.setName(n.getText());}
 			constr.setPerBasket(b!=null);
+			if (constr.perBasket() && constr.getLocal()) {
+				reportError (formatMessage ("err_uniqueness_basketAndLocal",(String)null), u.getLine());
+			}
 		} catch (Exception ex) {
 			reportError(ex, u.getLine());
 		}
