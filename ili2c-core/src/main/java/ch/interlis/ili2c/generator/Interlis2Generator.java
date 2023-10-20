@@ -1007,7 +1007,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
 
     protected void printSetConstraint(SetConstraint sc, String language) {
         ipw.print("SET CONSTRAINT");
-        if (sc.getBasket()) {
+        if (sc.perBasket()) {
             ipw.print(" (BASKET)");
         }
         if (sc.hasCustomName()) {
@@ -1029,7 +1029,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
         UniqueEl uel = uc.getElements();
         Iterator<ObjectPath> pathi = uel.iteratorAttribute();
         ipw.print("UNIQUE ");
-        if (uc.getBasket()) {
+        if (uc.perBasket()) {
             ipw.print("(BASKET) ");
         }
         if (uc.hasCustomName()) {

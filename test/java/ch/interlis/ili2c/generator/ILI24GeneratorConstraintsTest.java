@@ -80,18 +80,26 @@ public class ILI24GeneratorConstraintsTest {
     }
 
     @Test
-    public void uniqueConstraintNamedBasketLocal() {
+    public void uniqueConstraintNamedBasket() {
         assertInterlis2GeneratorPrintConstraint(
                 ILI_CONSTRAINTS,
-                "ModelA.TopicA.ClassA.NamedUniqueBasketLocal",
-                "UNIQUE (BASKET) NamedUniqueBasketLocal: (LOCAL) attr2: structAttr;\r\n");
+                "ModelA.TopicA.ClassA.NamedUniqueBasket",
+                "UNIQUE (BASKET) NamedUniqueBasket: attr1;\r\n");
+    }
+
+    @Test
+    public void uniqueConstraintNamedLocal() {
+        assertInterlis2GeneratorPrintConstraint(
+                ILI_CONSTRAINTS,
+                "ModelA.TopicA.ClassA.NamedUniqueLocal",
+                "UNIQUE NamedUniqueLocal: (LOCAL) attr2: structAttr;\r\n");
     }
 
     @Test
     public void setConstraint() {
         assertInterlis2GeneratorPrintConstraint(
                 ILI_CONSTRAINTS,
-                "ModelA.TopicA.ClassA.Constraint14",
+                "ModelA.TopicA.ClassA.Constraint13",
                 "SET CONSTRAINT\r\n  INTERLIS.objectCount (ALL) >= 0;\r\n");
     }
 
