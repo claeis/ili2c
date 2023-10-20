@@ -1,5 +1,6 @@
 package ch.interlis.ili2c;
 
+import ch.ehi.basics.logging.EhiLogger;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
@@ -22,6 +23,21 @@ public class CompilerTestHelper {
         } catch (Ili2cFailure e) {
             Assert.fail(String.format("Compilation of %s failed", filePath));
             return null;
+        }
+    }
+
+    public static LogCollector getCompileErrors(String filePath) {
+        LogCollector logger = new LogCollector();
+        EhiLogger.getInstance().addListener(logger);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(filePath, FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        try {
+            Ili2c.runCompiler(ili2cConfig);
+            Assert.fail(String.format("Compilation of %s succeeded, but was expected to fail", filePath));
+            return logger;
+        } catch (Ili2cFailure e) {
+            return logger;
         }
     }
 
