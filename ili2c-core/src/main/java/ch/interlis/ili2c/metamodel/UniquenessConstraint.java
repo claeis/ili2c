@@ -24,7 +24,7 @@ public class UniquenessConstraint extends Constraint
 	private UniqueEl elements=null;
         private boolean local=false;
         private Evaluable preCondition=null;
-        private boolean basket=false;
+        private boolean perBasket = false;
 	public UniquenessConstraint()
 	{
 	}
@@ -51,12 +51,12 @@ public class UniquenessConstraint extends Constraint
     return local;
    }
 
-   public void setBasket(boolean isBasket){
-        basket = isBasket;
+   public void setPerBasket(boolean isBasket){
+        perBasket = isBasket;
    }
 
-   public boolean getBasket() {
-        return basket;
+   public boolean perBasket() {
+        return perBasket;
    }
 public Evaluable getPreCondition() {
 	return preCondition;
