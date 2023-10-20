@@ -12,6 +12,9 @@
 package ch.interlis.ili2c.metamodel;
 
 
+import java.util.AbstractCollection;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.beans.PropertyVetoException;
@@ -28,7 +31,7 @@ import ch.ehi.basics.logging.EhiLogger;
 
     @author <a href="sb@adasys.ch">Sascha Brawer</a>, Adasys AG, CH-8006 Zurich
 */
-public class Domain extends AbstractLeafElement
+public class Domain extends ExtendableContainer<DomainConstraint>
 {
   protected String name = null;
   protected Type type = null;
@@ -36,9 +39,8 @@ public class Domain extends AbstractLeafElement
   protected boolean    _final = false;
   protected boolean    _mandatory = false;
 
-  protected Domain extending = null;
-  protected Set<Domain> extendedBy = Collections.newSetFromMap(new WeakHashMap<Domain, Boolean>());
   protected Set<Type> aliasedBy = Collections.newSetFromMap(new WeakHashMap<Type, Boolean>());
+  protected List<DomainConstraint> constraints = new ArrayList<DomainConstraint>();
 
 
   public Domain ()
@@ -46,7 +48,7 @@ public class Domain extends AbstractLeafElement
   }
 
 
-  public Domain (String name, Type type, Domain extending, boolean _abstract, boolean _final)
+    public Domain (String name, Type type, Domain extending, boolean _abstract, boolean _final)
   {
     checkNameSanity(name, /* empty names acceptable? */ false);
     this.name = name;
@@ -65,6 +67,26 @@ public class Domain extends AbstractLeafElement
       throw new IllegalStateException (ex.toString());
     }
   }
+
+    @Override
+    protected Collection<DomainConstraint> createElements() {
+        return new AbstractCollection<DomainConstraint>() {
+            @Override
+            public Iterator<DomainConstraint> iterator() {
+                return constraints.iterator();
+            }
+
+            @Override
+            public int size() {
+                return constraints.size();
+            }
+
+            @Override
+            public boolean add(DomainConstraint domainConstraint) {
+                return constraints.add(domainConstraint);
+            }
+        };
+    }
 
 
   /** Determines the current value of the <code>name</code> property.
@@ -316,7 +338,7 @@ public class Domain extends AbstractLeafElement
   */
   public Domain getExtending ()
   {
-    return extending;
+    return (Domain)super.getExtending();
   }
 
 
@@ -327,7 +349,7 @@ public class Domain extends AbstractLeafElement
   public boolean isExtendingIndirectly (Domain dd)
   {
     for (Domain parent = this; parent != null;
-         parent = parent.extending)
+         parent = parent.getExtending())
     {
       if (parent == dd)
         return true;
@@ -374,30 +396,7 @@ public class Domain extends AbstractLeafElement
   public void setExtending (Domain extending)
     throws java.beans.PropertyVetoException
   {
-	Domain oldValue = this.extending;
-	Domain newValue = extending;
-
-    /* Check whether there is anything to do. The JavaBeans
-       specification strongly recommends this check to avoid
-       certain infinite loops which might occur otherwise.
-    */
-    if (oldValue == newValue)
-      return;
-
-    /* Can't extend a FINAL object. */
-    if ((newValue != null) && newValue.isFinal ())
-      throw new IllegalArgumentException(
-        formatMessage("err_cantExtendFinal", newValue.toString()));
-
-    /* Ensure that the extension graph will be acyclic. */
-	if ((newValue != null) && newValue.isExtendingIndirectly (this))
-      throw new IllegalArgumentException(formatMessage(
-        "err_cyclicExtension", this.toString(), newValue.toString()));
-
-
-    /* Give interested parties a chance to oppose to the change. */
-	fireVetoableChange ("extending", oldValue, newValue);
-
+    super.setExtending(extending);
     /* Let the type decide whether it wants to extend extending.type.
        Good change for complaints. The JavaBeans protocol allows for
        exceptions after the fireVetoableChange above.
@@ -409,17 +408,6 @@ public class Domain extends AbstractLeafElement
       else
         type.setExtending (extending.getType());
     }
-
-    /* Perform the change. */
-    if (oldValue != null)
-      oldValue.extendedBy.remove (this);
-    this.extending = newValue;
-    if (newValue != null)
-      newValue.extendedBy.add (this);
-
-
-    /* Inform interested parties about the change. */
-    firePropertyChange ("extending", oldValue, newValue);
   }
 
 

@@ -2270,8 +2270,32 @@ protected cardinality
   ;
 
 
+protected domainConstraint[Domain domain, Container container]
+    {
+        Evaluable condition = null;
+    } : constraintName:NAME COLON condition=expression[domain,predefinedBooleanType,container]
+    {
+        if (domain.getType() instanceof ClassType || domain.getType() instanceof AttributePathType) {
+            reportError(
+                formatMessage("err_domainConstraintsNotSupportedOnType", domain.getName()),
+                constraintName.getLine()
+            );
+            return;
+        }
+        try {
+            DomainConstraint constraint = new DomainConstraint();
+            constraint.setName(constraintName.getText());
+            constraint.setCondition(condition);
+            domain.add(constraint);
+        } catch (Exception ex) {
+            reportError(ex, constraintName.getLine());
+        }
+    }
+    ;
+
 protected domainDef[Container container]
 	{
+	  Domain dd = null;
 	  Domain     extending = null;
 	  Type       extendingType = null;
 	  Type       declared = null;
@@ -2292,14 +2316,8 @@ protected domainDef[Container container]
 		(	"MANDATORY" (declared=type[container,extendingType,null,(mods&ch.interlis.ili2c.metamodel.Properties.eGENERIC)!=0])?
 		|	declared=type[container,extendingType,null,(mods&ch.interlis.ili2c.metamodel.Properties.eGENERIC)!=0]
 		)
-		( "CONSTRAINTS" 
-		NAME COLON expression[container,predefinedBooleanType,container] 
-			(COMMA NAME COLON expression[container,predefinedBooleanType,container] 
-			)*
-		)?
-		SEMI
 		{
-		Domain dd = new Domain ();
+		dd = new Domain ();
 
 		try {
 		dd.setName (n.getText());
@@ -2357,6 +2375,11 @@ protected domainDef[Container container]
 		reportError(ex, n.getLine());
 		}
 		}
+		( "CONSTRAINTS"
+			domainConstraint[dd, container]
+			(COMMA domainConstraint[dd, container])*
+		)?
+		SEMI
 	;
 
 protected domainDefs[Container container]
@@ -4773,7 +4796,7 @@ protected term[Container ns, Type expectedType, Container functionNs]
     }
     (
       o:IMPLIES {lineNumber = o.getLine();}
-      expr = term0 [ns, expectedType, functionNs]
+      right = term0 [ns, expectedType, functionNs]
       {
       	if(right==null){
       		dirty=true;
@@ -5067,17 +5090,21 @@ protected factor[Container ns,Container functionNs]
 			{ inspFactor.setRestriction(inspRestriction); 
 			}
 		)?) 
-	|	({
-			if(!(ns instanceof Viewable)){
-				reportError (formatMessage ("err_Container_currentIsNotViewable",
-				ns.toString()), LT(1).getLine());
-			}
-		}
-		ev=objectOrAttributePath[(Viewable)ns,functionNs]
-		)
-	|	ev=constant[ns]
-		
+	| {ns instanceof Viewable}? ev = objectOrAttributePath[(Viewable)ns,functionNs]
+	| {ns instanceof Domain}? ev = valueRefThis[(Domain)ns]
+	| ev=constant[ns]
 	;
+
+protected valueRefThis[Domain domain]
+	returns[ValueRefThis evaluable]
+	{
+		evaluable = null;
+	}
+	: "THIS" {
+		evaluable = new ValueRefThis(domain.getType());
+	}
+	;
+
 
 protected objectOrAttributePath[Viewable start,Container context]
 	returns[ObjectPath object]
