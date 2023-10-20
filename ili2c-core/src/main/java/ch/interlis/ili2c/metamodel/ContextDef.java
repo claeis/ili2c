@@ -1,5 +1,7 @@
 package ch.interlis.ili2c.metamodel;
 
+import java.util.List;
+
 public class ContextDef extends AbstractLeafElement{
     protected int nameIdx;
     private Domain generic=null;
@@ -19,5 +21,21 @@ public class ContextDef extends AbstractLeafElement{
     }
     public Domain[] getConcretes() {
         return concretes;
+    }
+
+    @Override
+    public void checkIntegrity(List<Ili2cSemanticException> errs) throws IllegalStateException {
+        super.checkIntegrity(errs);
+        Type genericType = generic.getType();
+        if (genericType instanceof AbstractCoordType) {
+            AbstractCoordType genericCoord = (AbstractCoordType) genericType;
+            if (!genericCoord.isGeneric()) {
+                throw new IllegalStateException(formatMessage("err_contextdef_domain_not_generic", generic.getName(), this.getName()));
+            }
+        }
+
+        for (Domain concrete : concretes) {
+            concrete.getType().checkTypeExtension(genericType);
+        }
     }
 }

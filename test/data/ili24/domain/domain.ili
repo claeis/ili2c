@@ -1,0 +1,31 @@
+INTERLIS 2.4;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+    TOPIC TopicA =
+
+        CLASS ClassA =
+            AttrText : TEXT*30;
+        END ClassA;
+
+        CLASS ClassB =
+            AttrText : TEXT*30;
+        END ClassB;
+
+        STRUCTURE StructA =
+            AttrText : TEXT*30;
+        END StructA;
+
+        DOMAIN DomainText = TEXT*30;
+        DOMAIN DomainTextRestricted = TEXT*30 CONSTRAINTS Values : THIS == "SomeConstant" OR THIS == "OtherConstant";
+        DOMAIN DomainConstraintConstant = TEXT*30 CONSTRAINTS Constant : INTERLIS.len("Constant") > 2;
+        DOMAIN DomainConstraintThis = TEXT*30 CONSTRAINTS Length : INTERLIS.len(THIS) > 2;
+        DOMAIN DomainMultiConstraints = 0 .. 100 CONSTRAINTS Min : THIS > 10, Max100 : THIS <= 100;
+        DOMAIN DomainExtends EXTENDS DomainMultiConstraints = 0 .. 50 CONSTRAINTS Max50 : THIS <= 50;
+
+        DOMAIN DomainClassType = CLASS;
+        DOMAIN DomainClassTypeRestriction1 = CLASS RESTRICTION (ClassA);
+        DOMAIN DomainClassTypeRestriction2 = CLASS RESTRICTION (ClassA ; ClassB);
+
+        DOMAIN DomainStructAttribute = STRUCTURE RESTRICTION (StructA);
+    END TopicA;
+END ModelA.

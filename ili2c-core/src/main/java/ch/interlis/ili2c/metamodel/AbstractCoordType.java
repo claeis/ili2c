@@ -111,6 +111,18 @@ public abstract class AbstractCoordType extends BaseType
         throw new Ili2cSemanticException (rsrc.getString (
         "err_coordType_ExtOther"));
     }
+
+    AbstractCoordType coordToExtend = (AbstractCoordType) wantToExtend;
+    if (dimensions.length != coordToExtend.dimensions.length) {
+        throw new Ili2cSemanticException(formatMessage(
+                "err_coordType_incompatible",
+                Integer.toString(coordToExtend.dimensions.length),
+                Integer.toString(dimensions.length)));
+    }
+
+    for (int i = 0; i < dimensions.length; i++) {
+      dimensions[i].checkTypeExtension(coordToExtend.dimensions[i]);
+    }
   }
   public boolean checkStructuralEquivalence (Element with)
   {

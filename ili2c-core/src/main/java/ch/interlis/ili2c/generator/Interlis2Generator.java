@@ -28,6 +28,8 @@ import ch.interlis.ili2c.metamodel.ConditionalExpression;
 import ch.interlis.ili2c.metamodel.Constant;
 import ch.interlis.ili2c.metamodel.Constraint;
 import ch.interlis.ili2c.metamodel.Container;
+import ch.interlis.ili2c.metamodel.ContextDef;
+import ch.interlis.ili2c.metamodel.ContextDefs;
 import ch.interlis.ili2c.metamodel.DecompositionView;
 import ch.interlis.ili2c.metamodel.DerivedUnit;
 import ch.interlis.ili2c.metamodel.Domain;
@@ -1353,6 +1355,53 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
 
   }
 
+    public void printContextSyntax(Container<?> scope, ContextDef contextDef) {
+      printContextSyntax(scope, contextDef, null);
+    }
+
+    public void printContextSyntax(Container<?> scope, ContextDef contextDef, String language) {
+        printRef(scope, contextDef.getGeneric(), language);
+        ipw.print(" = ");
+        boolean first = true;
+        for (Domain domain : contextDef.getConcretes()) {
+            if (first) {
+                first = false;
+            } else {
+                ipw.print(" OR ");
+            }
+            printRef(scope, domain, language);
+        }
+        ipw.println(";");
+    }
+
+    public void printContext(Container<?> scope, ContextDefs contextDefs) {
+        printContext(scope, contextDefs, false, null);
+    }
+
+    public void printContext(Container<?> scope, ContextDefs contextDefs, boolean suppressDoc, String language) {
+        if (contextDefs == null) {
+            printError();
+            return;
+        }
+
+        if (!suppressDoc) {
+            printDocumentation(contextDefs, language);
+            printMetaValues(contextDefs, contextDefs.getMetaValues(), language, contextDefs.getScopedName());
+        }
+
+        ipw.print("CONTEXT ");
+        ipw.print(contextDefs.getName());
+        ipw.println(" =");
+        ipw.indent();
+
+        Iterator<ContextDef> contexts = contextDefs.iterator();
+        while (contexts.hasNext()) {
+            ContextDef contextDef = contexts.next();
+            printContextSyntax(scope, contextDef, language);
+        }
+
+        ipw.unindent();
+    }
 
   private void printName(Element elt, String language) {
       ipw.print(getElementName(elt,language));
