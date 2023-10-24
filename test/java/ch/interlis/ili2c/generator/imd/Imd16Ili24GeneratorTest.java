@@ -24,7 +24,7 @@ public class Imd16Ili24GeneratorTest {
     private static final String OUT_FILE = "Simple24-out.imd";
     private static final String SIMPLE24_ILI = "test/data/imdgenerator/Simple24.ili";
     private static final String ILIS_META16_ILI = "standard/IlisMeta16.ili";
-    private static HashMap<String, IomObject> metaObjects = new HashMap<String, IomObject>();
+    private static final HashMap<String, IomObject> metaObjects = new HashMap<String, IomObject>();
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -65,16 +65,16 @@ public class Imd16Ili24GeneratorTest {
 
     @Test
     public void genericDomain() {
-        assertTrue(metaObjects.containsKey("Simple24.TestA.GenericDomain"));
-        IomObject iomObject = metaObjects.get("Simple24.TestA.GenericDomain");
+        assertTrue(metaObjects.containsKey("Simple24.GenericDomain"));
+        IomObject iomObject = metaObjects.get("Simple24.GenericDomain");
         String generic = iomObject.getattrvalue("Generic");
         assertEquals("true", generic);
     }
 
     @Test
     public void nonGenericDomain() {
-        assertTrue(metaObjects.containsKey("Simple24.TestA.Coord"));
-        IomObject iomObject = metaObjects.get("Simple24.TestA.Coord");
+        assertTrue(metaObjects.containsKey("Simple24.Coord"));
+        IomObject iomObject = metaObjects.get("Simple24.Coord");
         String generic = iomObject.getattrvalue("Generic");
         assertEquals("false", generic);
     }
@@ -85,5 +85,38 @@ public class Imd16Ili24GeneratorTest {
         IomObject iomObject = metaObjects.get("Simple24.TestA.ClassA1.attr1.TYPE");
         String generic = iomObject.getattrvalue("Generic");
         assertEquals("false", generic);
+    }
+
+    @Test
+    public void context() {
+        assertTrue(metaObjects.containsKey("Simple24.default"));
+        IomObject contextObject = metaObjects.get("Simple24.default");
+        String name = contextObject.getattrvalue("Name");
+        assertEquals("default", name);
+    }
+
+    @Test
+    public void genericDef() {
+        assertTrue(metaObjects.containsKey("Simple24.default.GenericDomain"));
+        IomObject genericDef = metaObjects.get("Simple24.default.GenericDomain");
+        IomObject context = genericDef.getattrobj("Context", 0);
+        IomObject genericDomain = genericDef.getattrobj("GenericDomain", 0);
+
+        assertEquals("Simple24.default", context.getobjectrefoid());
+        assertEquals("Simple24.GenericDomain", genericDomain.getobjectrefoid());
+    }
+
+    @Test
+    public void concreteForGeneric() {
+        String[] concretes = { "Coord", "Coord2" };
+        for (String concrete : concretes) {
+            assertTrue(metaObjects.containsKey("Simple24.default.GenericDomain." + concrete));
+            IomObject concreteForGeneric = metaObjects.get("Simple24.default.GenericDomain." + concrete);
+            IomObject genericDef = concreteForGeneric.getattrobj("GenericDef", 0);
+            IomObject concreteDomain = concreteForGeneric.getattrobj("ConcreteDomain", 0);
+
+            assertEquals("Simple24.default.GenericDomain", genericDef.getobjectrefoid());
+            assertEquals("Simple24." + concrete, concreteDomain.getobjectrefoid());
+        }
     }
 }

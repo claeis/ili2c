@@ -2,11 +2,15 @@ INTERLIS 2.4;
 
 MODEL Simple24 AT "mailto:noreply@localhost" VERSION "2023-10-24" =
 
-  TOPIC TestA =
+  DOMAIN
+    GenericDomain (GENERIC) = COORD NUMERIC, NUMERIC;
+    Coord = COORD 0 .. 100, 0 .. 100;
+    Coord2 = COORD 100 .. 200, 0 .. 100;
 
-    DOMAIN
-      GenericDomain (GENERIC) = COORD NUMERIC, NUMERIC;
-      Coord = COORD 0 .. 100, 0 .. 100;
+  CONTEXT default =
+    GenericDomain = Coord OR Coord2;
+
+  TOPIC TestA =
 
     CLASS ClassA1 =
       attr1 : TEXT*60;
