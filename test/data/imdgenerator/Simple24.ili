@@ -1,15 +1,18 @@
 INTERLIS 2.4;
 
-MODEL Simple24
-  AT "mailto:ce@eisenhutinformatik.ch" VERSION "2016-12-21" =
-    
+MODEL Simple24 AT "mailto:noreply@localhost" VERSION "2023-10-24" =
+
   TOPIC TestA =
-    
+
+    DOMAIN
+      GenericDomain (GENERIC) = COORD NUMERIC, NUMERIC;
+      Coord = COORD 0 .. 100, 0 .. 100;
+
     CLASS ClassA1 =
-    	attr1 : TEXT*60;
+      attr1 : TEXT*60;
+      pos : GenericDomain;
     END ClassA1;
-    
+
   END TestA;
-  
-  
+
 END Simple24.

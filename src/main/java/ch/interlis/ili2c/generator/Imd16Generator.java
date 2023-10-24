@@ -1650,11 +1650,8 @@ public class Imd16Generator {
 				iomAxisSpec.setCoordType(iomCoord.getobjectoid());
 				out.write(new ObjectEvent(iomAxisSpec));
 			}
-			if(coord instanceof ch.interlis.ili2c.metamodel.MultiCoordType){
-				iomCoord.setMulti(true);
-			}else{
-				iomCoord.setMulti(false);
-			}
+			iomCoord.setMulti(coord instanceof ch.interlis.ili2c.metamodel.MultiCoordType);
+			iomCoord.setGeneric(coord.isGeneric());
 			iomType=iomCoord;
 		}else if(type instanceof ch.interlis.ili2c.metamodel.EnumerationType){
 			EnumType iomEnumType=new EnumType(typeTid);
