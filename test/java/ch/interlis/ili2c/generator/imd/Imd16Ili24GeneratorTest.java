@@ -119,4 +119,22 @@ public class Imd16Ili24GeneratorTest {
             assertEquals("Simple24." + concrete, concreteDomain.getobjectrefoid());
         }
     }
+
+    @Test
+    public void modelAttributes24() {
+        assertTrue(metaObjects.containsKey("Simple24"));
+        IomObject simpleModel = metaObjects.get("Simple24");
+
+        assertTrue(metaObjects.containsKey("ModelAttributes24"));
+        IomObject attributesModel = metaObjects.get("ModelAttributes24");
+
+        assertNotEquals("true", simpleModel.getattrvalue("NoIncrementalTransfer"));
+        assertEquals("true", attributesModel.getattrvalue("NoIncrementalTransfer"));
+
+        assertNull(simpleModel.getattrvalue("CharSetIANAName"));
+        assertEquals("UTF-8", attributesModel.getattrvalue("CharSetIANAName"));
+
+        assertNull(simpleModel.getattrvalue("xmlns"));
+        assertEquals("http://www.interlis.ch/custom/namespace", attributesModel.getattrvalue("xmlns"));
+    }
 }

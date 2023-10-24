@@ -20,3 +20,9 @@ MODEL Simple24 AT "mailto:noreply@localhost" VERSION "2023-10-24" =
   END TestA;
 
 END Simple24.
+
+MODEL ModelAttributes24 NOINCREMENTALTRANSFER AT "mailto:noreply@localhost" VERSION "2023-10-24" =
+  CHARSET "UTF-8";
+  XMLNS "http://www.interlis.ch/custom/namespace";
+
+END ModelAttributes24.
