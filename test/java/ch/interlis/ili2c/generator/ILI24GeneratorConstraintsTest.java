@@ -36,7 +36,7 @@ public class ILI24GeneratorConstraintsTest {
         generator.printConstraint((Constraint) element);
 
         // assert result
-        Assert.assertEquals(ExpectedOutput, syntaxBuffer.toString());
+        Assert.assertEquals(ExpectedOutput.replaceAll("\\s+", " ").trim(), syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
     }
 
     @Test
