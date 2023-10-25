@@ -52,3 +52,4 @@ public class CompilerTestHelper {
         return result;
     }
 }
+
