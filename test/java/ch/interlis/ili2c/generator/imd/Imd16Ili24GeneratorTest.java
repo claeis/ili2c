@@ -170,4 +170,46 @@ public class Imd16Ili24GeneratorTest {
         assertNotNull(multiSurfaceType);
         assertEquals("true", multiSurfaceType.getattrvalue("Multi"));
     }
+
+    @Test
+    public void implicationExpression() {
+        IomObject constraint = metaObjects.get("Simple24.TestA.ClassA1.implicationConstraint");
+        assertNotNull(constraint);
+
+        IomObject expression = constraint.getattrobj("LogicalExpression", 0);
+        assertNotNull(expression);
+        assertEquals("Implication", expression.getattrvalue("Operation"));
+    }
+
+    @Test
+    public void multiplyAndDivideExpressions() {
+        IomObject constraint = metaObjects.get("Simple24.TestA.ClassA1.multDivConstraint");
+        assertNotNull(constraint);
+        IomObject logicalExpression = constraint.getattrobj("LogicalExpression", 0);
+        assertNotNull(logicalExpression);
+
+        IomObject multiplyExpression = logicalExpression.getattrobj("SubExpressions", 0);
+        assertNotNull(multiplyExpression);
+        assertEquals("Mult", multiplyExpression.getattrvalue("Operation"));
+
+        IomObject divideExpression = logicalExpression.getattrobj("SubExpressions", 1);
+        assertNotNull(divideExpression);
+        assertEquals("Div", divideExpression.getattrvalue("Operation"));
+    }
+
+    @Test
+    public void addAndSubtractExpressions() {
+        IomObject constraint = metaObjects.get("Simple24.TestA.ClassA1.addSubConstraint");
+        assertNotNull(constraint);
+        IomObject logicalExpression = constraint.getattrobj("LogicalExpression", 0);
+        assertNotNull(logicalExpression);
+
+        IomObject addExpression = logicalExpression.getattrobj("SubExpressions", 0);
+        assertNotNull(addExpression);
+        assertEquals("Add", addExpression.getattrvalue("Operation"));
+
+        IomObject subtractExpression = logicalExpression.getattrobj("SubExpressions", 1);
+        assertNotNull(subtractExpression);
+        assertEquals("Sub", subtractExpression.getattrvalue("Operation"));
+    }
 }

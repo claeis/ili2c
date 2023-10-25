@@ -1071,6 +1071,41 @@ public class Imd16Generator {
 			ch.interlis.ili2c.metamodel.MetaObject metaObj=refMetaObj.getReferred();
 			iomPathEl.setRef(metaObj.getContainer().getScopedName(null)+"."+metaObj.getName());
 			iomExpr.addPathEls(iomPathEl);
+		} else if (e instanceof ch.interlis.ili2c.metamodel.Expression.Implication) {
+			CompoundExpr iomExpr = new CompoundExpr();
+			ret = iomExpr;
+			iomExpr.setOperation(CompoundExpr_Operation.Implication);
+			ch.interlis.ili2c.metamodel.Expression.Implication implication = (ch.interlis.ili2c.metamodel.Expression.Implication) e;
+			iomExpr.addSubExpressions(visitExpression(implication.getLeft()));
+			iomExpr.addSubExpressions(visitExpression(implication.getRight()));
+		} else if (e instanceof ch.interlis.ili2c.metamodel.Expression.Multiplication) {
+			CompoundExpr iomExpr = new CompoundExpr();
+			ret = iomExpr;
+			iomExpr.setOperation(CompoundExpr_Operation.Mult);
+			ch.interlis.ili2c.metamodel.Expression.Multiplication multiplication = (ch.interlis.ili2c.metamodel.Expression.Multiplication) e;
+			iomExpr.addSubExpressions(visitExpression(multiplication.getLeft()));
+			iomExpr.addSubExpressions(visitExpression(multiplication.getRight()));
+		} else if (e instanceof ch.interlis.ili2c.metamodel.Expression.Division) {
+			CompoundExpr iomExpr = new CompoundExpr();
+			ret = iomExpr;
+			iomExpr.setOperation(CompoundExpr_Operation.Div);
+			ch.interlis.ili2c.metamodel.Expression.Division division = (ch.interlis.ili2c.metamodel.Expression.Division) e;
+			iomExpr.addSubExpressions(visitExpression(division.getLeft()));
+			iomExpr.addSubExpressions(visitExpression(division.getRight()));
+		} else if (e instanceof ch.interlis.ili2c.metamodel.Expression.Addition) {
+			CompoundExpr iomExpr = new CompoundExpr();
+			ret = iomExpr;
+			iomExpr.setOperation(CompoundExpr_Operation.Add);
+			ch.interlis.ili2c.metamodel.Expression.Addition addition = (ch.interlis.ili2c.metamodel.Expression.Addition) e;
+			iomExpr.addSubExpressions(visitExpression(addition.getLeft()));
+			iomExpr.addSubExpressions(visitExpression(addition.getRight()));
+		} else if (e instanceof ch.interlis.ili2c.metamodel.Expression.Subtraction) {
+			CompoundExpr iomExpr = new CompoundExpr();
+			ret = iomExpr;
+			iomExpr.setOperation(CompoundExpr_Operation.Sub);
+			ch.interlis.ili2c.metamodel.Expression.Subtraction subtraction = (ch.interlis.ili2c.metamodel.Expression.Subtraction) e;
+			iomExpr.addSubExpressions(visitExpression(subtraction.getLeft()));
+			iomExpr.addSubExpressions(visitExpression(subtraction.getRight()));
 		}else if(e instanceof ch.interlis.ili2c.metamodel.Expression.Conjunction){
 		    CompoundExpr iomExpr=new CompoundExpr();
 		    ret=iomExpr;
