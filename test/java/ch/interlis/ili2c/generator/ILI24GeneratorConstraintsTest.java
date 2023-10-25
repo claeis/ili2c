@@ -15,7 +15,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 
 public class ILI24GeneratorConstraintsTest {
 
-    private static final String ILI_CONSTRAINTS = "test/data/ili24/constraints/constraints.ili";
+    private static final String ILI_CONSTRAINTS = "test/data/ili24/constraints/Constraints.ili";
     private static final String ILI_DOMAINS = "test/data/ili24/domain/domain.ili";
 
     private void assertInterlis2GeneratorPrintConstraint(String interlisFilePath, String constraintScopedName, String ExpectedOutput) {
