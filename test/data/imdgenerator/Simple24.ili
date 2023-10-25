@@ -6,6 +6,13 @@ MODEL Simple24 AT "mailto:noreply@localhost" VERSION "2023-10-24" =
     GenericDomain (GENERIC) = COORD NUMERIC, NUMERIC;
     Coord = COORD 0 .. 100, 0 .. 100;
     Coord2 = COORD 100 .. 200, 0 .. 100;
+    MultiCoord = MULTICOORD 0 .. 100, 0 .. 100;
+
+    Line = POLYLINE WITH (STRAIGHTS) VERTEX Coord;
+    MultiLine = MULTIPOLYLINE WITH (STRAIGHTS) VERTEX Coord;
+
+    Surface = SURFACE WITH (STRAIGHTS) VERTEX Coord WITHOUT OVERLAPS > 0.1;
+    MultiSurface = MULTISURFACE WITH (STRAIGHTS) VERTEX Coord WITHOUT OVERLAPS > 0.1;
 
   CONTEXT default =
     GenericDomain = Coord OR Coord2;
