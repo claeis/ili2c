@@ -96,13 +96,29 @@ public class Imd16Ili24GeneratorTest {
     }
 
     @Test
-    public void genericDef() {
+    public void contextGenericDef() {
         IomObject genericDef = metaObjects.get("Simple24.default.GenericDomain");
         assertNotNull(genericDef);
         IomObject context = genericDef.getattrobj("Context", 0);
         IomObject genericDomain = genericDef.getattrobj("GenericDomain", 0);
 
         assertEquals("Simple24.default", context.getobjectrefoid());
+        assertEquals("Simple24.GenericDomain", genericDomain.getobjectrefoid());
+    }
+
+    @Test
+    public void topicNoDeferredGenericDef() {
+        assertFalse(metaObjects.containsKey("Simple24.TestA.BASKET.GenericDomain"));
+    }
+
+    @Test
+    public void topicDeferredGenericDef() {
+        IomObject deferredGenericDef = metaObjects.get("DeferredGeneric24.TestA.BASKET.GenericDomain");
+        assertNotNull(deferredGenericDef);
+        IomObject context = deferredGenericDef.getattrobj("Context", 0);
+        IomObject genericDomain = deferredGenericDef.getattrobj("GenericDomain", 0);
+
+        assertEquals("DeferredGeneric24.TestA.BASKET", context.getobjectrefoid());
         assertEquals("Simple24.GenericDomain", genericDomain.getobjectrefoid());
     }
 
@@ -116,6 +132,20 @@ public class Imd16Ili24GeneratorTest {
             IomObject concreteDomain = concreteForGeneric.getattrobj("ConcreteDomain", 0);
 
             assertEquals("Simple24.default.GenericDomain", genericDef.getobjectrefoid());
+            assertEquals("Simple24." + concrete, concreteDomain.getobjectrefoid());
+        }
+    }
+
+    @Test
+    public void topicConcreteForGeneric() {
+        String[] concretes = { "Coord", "Coord2" };
+        for (String concrete : concretes) {
+            IomObject concreteForGeneric = metaObjects.get("DeferredGeneric24.TestA.BASKET.GenericDomain." + concrete);
+            assertNotNull(concreteForGeneric);
+            IomObject genericDef = concreteForGeneric.getattrobj("GenericDef", 0);
+            IomObject concreteDomain = concreteForGeneric.getattrobj("ConcreteDomain", 0);
+
+            assertEquals("DeferredGeneric24.TestA.BASKET.GenericDomain", genericDef.getobjectrefoid());
             assertEquals("Simple24." + concrete, concreteDomain.getobjectrefoid());
         }
     }

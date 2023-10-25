@@ -40,3 +40,13 @@ MODEL ModelAttributes24 NOINCREMENTALTRANSFER AT "mailto:noreply@localhost" VERS
   XMLNS "http://www.interlis.ch/custom/namespace";
 
 END ModelAttributes24.
+
+MODEL DeferredGeneric24 AT "mailto:noreply@localhost" VERSION "2023-10-24" =
+  IMPORTS Simple24;
+
+  TOPIC TestA =
+    DEFERRED GENERICS Simple24.GenericDomain;
+
+  END TestA;
+
+END DeferredGeneric24.

@@ -227,8 +227,9 @@ public class Imd16Generator {
 
 		out.write(new ObjectEvent(subModel));
 		visitMetaValues(topic.getMetaValues(),subModel.getobjectoid());
-		
-		DataUnit dataUnit = new DataUnit( topic.getScopedName(null)+"."+UNIT_META_NAME );
+
+		String dataUnitOid = topic.getScopedName(null)+"."+UNIT_META_NAME;
+		DataUnit dataUnit = new DataUnit(dataUnitOid);
 		dataUnit.setElementInPackage( subModel.getobjectoid() );
 		// DataUnit 		
 		dataUnit.setViewUnit( topic.isViewTopic() );
@@ -263,6 +264,23 @@ public class Imd16Generator {
 			te.setClassInBasket(v.getScopedName(null));
 			te.setOfDataUnit(dataUnit.getobjectoid());
 			out.write(new ObjectEvent(te));
+		}
+
+		ch.interlis.ili2c.metamodel.Model model = (ch.interlis.ili2c.metamodel.Model) topic.getContainer(ch.interlis.ili2c.metamodel.Model.class);
+		for (ch.interlis.ili2c.metamodel.Domain deferredGeneric : topic.getDefferedGenerics()) {
+			String genericDefOid = dataUnitOid + "." + deferredGeneric.getName();
+			GenericDef genericDef = new GenericDef(genericDefOid);
+			genericDef.setContext(dataUnitOid);
+			genericDef.setGenericDomain(deferredGeneric.getScopedName());
+			out.write(new ObjectEvent(genericDef));
+
+			ch.interlis.ili2c.metamodel.Domain[] allowedDomains = model.resolveGenericDomain(deferredGeneric);
+			for (ch.interlis.ili2c.metamodel.Domain allowed : allowedDomains) {
+				ConcreteForGeneric concreteForGeneric = new ConcreteForGeneric();
+				concreteForGeneric.setGenericDef(genericDefOid);
+				concreteForGeneric.setConcreteDomain(allowed.getScopedName());
+				out.write(new ObjectEvent(concreteForGeneric));
+			}
 		}
 		
 		visitElements(topic);
