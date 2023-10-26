@@ -11,7 +11,7 @@ INTERLIS 2.4;
  *  - constraints as meta elements
  *  - ...
  */
-MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2022-10-10" =
+MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2023-10-26ceis" =
 
   DOMAIN
     BasketOID = OID TEXT;  !! Filename
@@ -638,7 +638,7 @@ MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2022-10-10" =
     END UnaryExpr;
 
     STRUCTURE CompoundExpr EXTENDS Expression =
-      Operation: (Implication, And, Or, Mult, Div,  !! 2.4: Implication
+      Operation: (Implication, And, Or, Mult, Div, Plus, Minus, !! 2.4: Implication, Plus, Minus
                   Relation (Equal, NotEqual,
                   LessOrEqual, GreaterOrEqual,
                   Less, Greater));
@@ -732,6 +732,7 @@ MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2022-10-10" =
     ASSOCIATION ExistenceDef =   !! 2.4
       ExistenceConstraint -<#> ExistenceConstraint;
       ExistsIn -- Class;
+      Attr : MANDATORY PathOrInspFactor;
     END ExistenceDef;
 
     CLASS UniqueConstraint EXTENDS Constraint =
@@ -742,6 +743,7 @@ MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2022-10-10" =
 
     CLASS SetConstraint EXTENDS Constraint =
       Where: BAG {0..1} OF Expression;
+      PerBasket: BOOLEAN; !! 2.4
       Constraint: Expression;
     END SetConstraint;
 
