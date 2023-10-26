@@ -1,5 +1,7 @@
 LATEST
 ---------------------------
+- repos: default connectTimeout=15s, readTimeout=40s
+
 
 ili2c 5.3.3 (2023-08-03)
 ---------------------------

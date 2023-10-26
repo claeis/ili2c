@@ -1443,6 +1443,15 @@ public class RepositoryAccess {
 				// uc.connect();
 				// 
 				conn = url.openConnection();
+                // java  -Dsun.net.client.defaultConnectTimeout=15000
+                // java  -Dsun.net.client.defaultReadTimeout=40000
+				if(conn.getConnectTimeout()==0) {
+	                conn.setConnectTimeout(15*1000);
+				}
+				if(conn.getReadTimeout()==0) {
+	                conn.setReadTimeout(40*1000);
+				}
+				
 			} catch (IOException e) {
 				if(localFileExists){
 					EhiLogger.logAdaption(e.toString()+"; use local copy of remote file "+filename);
