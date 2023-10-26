@@ -4541,24 +4541,27 @@ protected existenceConstraint[Viewable v,Container context]
 protected uniquenessConstraint[Viewable v,Container context]
 	returns [UniquenessConstraint constr]
   	{
-	Evaluable preCond=null;
-		constr=new UniquenessConstraint();
+	    Evaluable preCond=null;
+	    constr=null;
 	}
-	: u:"UNIQUE" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON) => n:NAME COLON )?
-	{
-		  constr.setSourceLine(u.getLine());
-		try{
-			if(n!=null){constr.setName(n.getText());}
-		} catch (Exception ex) {
-			reportError(ex, u.getLine());
-		}
-	}
+	: u:"UNIQUE" ( (LPAREN "BASKET") => LPAREN b:"BASKET" RPAREN )? ((NAME COLON) => n:NAME COLON )?
   	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,context] COLON
 	)?
 	( constr=globalUniqueness[v,context]
 	| constr=localUniqueness[v]
 	)
 	{
+		constr.setSourceLine(u.getLine());
+		try{
+			if(n!=null){constr.setName(n.getText());}
+			constr.setPerBasket(b!=null);
+			if (constr.perBasket() && constr.getLocal()) {
+				reportError (formatMessage ("err_uniqueness_basketAndLocal",(String)null), u.getLine());
+			}
+		} catch (Exception ex) {
+			reportError(ex, u.getLine());
+		}
+
 		if(preCond!=null){ 
 			if(!preCond.isDirty() && !preCond.isLogical()){
 				reportError (formatMessage ("err_expr_noLogical",(String)null),
@@ -4715,7 +4718,7 @@ protected setConstraint [Viewable v,Container context]
 	Evaluable condition=null;
   constr = new SetConstraint();
 }
-  : tok:"SET" "CONSTRAINT" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON)=> n:NAME COLON )?
+  : tok:"SET" "CONSTRAINT" ( (LPAREN "BASKET") => LPAREN b:"BASKET" RPAREN )? ((NAME COLON)=> n:NAME COLON )?
   	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,context] COLON
 		{
 			if(!preCond.isDirty() && !preCond.isLogical()){
@@ -4730,6 +4733,7 @@ protected setConstraint [Viewable v,Container context]
 	SEMI
 	{
 	  constr.setSourceLine(tok.getLine());
+      constr.setPerBasket(b!=null);
 	  if(v instanceof Table && !((Table)v).isIdentifiable()){
 			reportError (formatMessage ("err_constraint_illegalSetInStruct",
 				v.getScopedName(null)), tok.getLine());
