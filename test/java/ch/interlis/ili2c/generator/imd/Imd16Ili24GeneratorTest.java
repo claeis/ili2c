@@ -8,14 +8,18 @@ import ch.interlis.ili2c.config.GenerateOutputKind;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.iom.IomObject;
 import ch.interlis.iom_j.xtf.Xtf24Reader;
+import ch.interlis.iox.EndBasketEvent;
 import ch.interlis.iox.EndTransferEvent;
 import ch.interlis.iox.IoxEvent;
 import ch.interlis.iox.ObjectEvent;
+import ch.interlis.iox.StartBasketEvent;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -24,7 +28,10 @@ public class Imd16Ili24GeneratorTest {
     private static final String OUT_FILE = "Simple24-out.imd";
     private static final String SIMPLE24_ILI = "test/data/imdgenerator/Simple24.ili";
     private static final String ILIS_META16_ILI = "standard/IlisMeta16.ili";
-    private static final HashMap<String, IomObject> metaObjects = new HashMap<String, IomObject>();
+    private static final HashMap<String, List<IomObject>> metaObjects = new HashMap<String, List<IomObject>>();
+
+    private static final String MODEL_SIMPLE24 = "MODEL.Simple24";
+    private static final String MODEL_DEFERREDGENERICS24 = "MODEL.DeferredGeneric24";
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -47,25 +54,62 @@ public class Imd16Ili24GeneratorTest {
 
         // gather all objects from imd16 file
         IoxEvent event;
+        String currentBasketKey = null;
         do {
             event = reader.read();
-            if (event instanceof ObjectEvent) {
+            if (event instanceof StartBasketEvent) {
+                currentBasketKey = ((StartBasketEvent) event).getBid();
+                metaObjects.put(currentBasketKey, new ArrayList<IomObject>());
+            } else if (event instanceof EndBasketEvent) {
+                currentBasketKey = null;
+            } else if (event instanceof ObjectEvent) {
                 IomObject iomObj = ((ObjectEvent) event).getIomObject();
-                if (iomObj.getobjectoid() != null) {
-                    metaObjects.put(iomObj.getobjectoid(), iomObj);
+                if (currentBasketKey == null) {
+                    fail("Object without basket: " + iomObj.getobjecttag());
                 }
+                metaObjects.get(currentBasketKey).add(iomObj);
             }
         } while (!(event instanceof EndTransferEvent));
     }
 
+    private List<IomObject> getMetaObjectsWithTag(String model, String key) {
+        List<IomObject> result = new ArrayList<IomObject>();
+        for (IomObject iomObj : metaObjects.get(model)) {
+            if (key.equals(iomObj.getobjecttag())) {
+                result.add(iomObj);
+            }
+        }
+        return result;
+    }
+
+    private IomObject getMetaObjectByTid(String key) {
+        List<IomObject> result = new ArrayList<IomObject>();
+        for (List<IomObject> modelObjects : metaObjects.values()) {
+            for (IomObject iomObj : modelObjects) {
+                if (key.equals(iomObj.getobjectoid())) {
+                    result.add(iomObj);
+                }
+            }
+        }
+        switch (result.size()) {
+            case 0:
+                return null;
+            case 1:
+                return result.get(0);
+            default:
+                fail("Multiple objects with TID " + key + " found.");
+                return null;
+        }
+    }
+
     @Test
     public void containsClass() {
-        assertTrue(metaObjects.containsKey("Simple24.TestA.ClassA1"));
+        assertNotNull(getMetaObjectByTid("Simple24.TestA.ClassA1"));
     }
 
     @Test
     public void genericDomain() {
-        IomObject iomObject = metaObjects.get("Simple24.GenericDomain");
+        IomObject iomObject = getMetaObjectByTid("Simple24.GenericDomain");
         assertNotNull(iomObject);
         String generic = iomObject.getattrvalue("Generic");
         assertEquals("true", generic);
@@ -73,7 +117,7 @@ public class Imd16Ili24GeneratorTest {
 
     @Test
     public void nonGenericDomain() {
-        IomObject iomObject = metaObjects.get("Simple24.Coord");
+        IomObject iomObject = getMetaObjectByTid("Simple24.Coord");
         assertNotNull(iomObject);
         String generic = iomObject.getattrvalue("Generic");
         assertEquals("false", generic);
@@ -81,7 +125,7 @@ public class Imd16Ili24GeneratorTest {
 
     @Test
     public void textType() {
-        IomObject iomObject = metaObjects.get("Simple24.TestA.ClassA1.attr1.TYPE");
+        IomObject iomObject = getMetaObjectByTid("Simple24.TestA.ClassA1.attr1.TYPE");
         assertNotNull(iomObject);
         String generic = iomObject.getattrvalue("Generic");
         assertEquals("false", generic);
@@ -89,7 +133,7 @@ public class Imd16Ili24GeneratorTest {
 
     @Test
     public void context() {
-        IomObject contextObject = metaObjects.get("Simple24.default");
+        IomObject contextObject = getMetaObjectByTid("Simple24.default");
         assertNotNull(contextObject);
         String name = contextObject.getattrvalue("Name");
         assertEquals("default", name);
@@ -97,7 +141,7 @@ public class Imd16Ili24GeneratorTest {
 
     @Test
     public void contextGenericDef() {
-        IomObject genericDef = metaObjects.get("Simple24.default.GenericDomain");
+        IomObject genericDef = getMetaObjectByTid("Simple24.default.GenericDomain");
         assertNotNull(genericDef);
         IomObject context = genericDef.getattrobj("Context", 0);
         IomObject genericDomain = genericDef.getattrobj("GenericDomain", 0);
@@ -108,12 +152,12 @@ public class Imd16Ili24GeneratorTest {
 
     @Test
     public void topicNoDeferredGenericDef() {
-        assertFalse(metaObjects.containsKey("Simple24.TestA.BASKET.GenericDomain"));
+        assertNull(getMetaObjectByTid("Simple24.TestA.BASKET.GenericDomain"));
     }
 
     @Test
     public void topicDeferredGenericDef() {
-        IomObject deferredGenericDef = metaObjects.get("DeferredGeneric24.TestA.BASKET.GenericDomain");
+        IomObject deferredGenericDef = getMetaObjectByTid("DeferredGeneric24.TestA.BASKET.GenericDomain");
         assertNotNull(deferredGenericDef);
         IomObject context = deferredGenericDef.getattrobj("Context", 0);
         IomObject genericDomain = deferredGenericDef.getattrobj("GenericDomain", 0);
@@ -124,38 +168,44 @@ public class Imd16Ili24GeneratorTest {
 
     @Test
     public void concreteForGeneric() {
-        String[] concretes = { "Coord", "Coord2" };
-        for (String concrete : concretes) {
-            IomObject concreteForGeneric = metaObjects.get("Simple24.default.GenericDomain." + concrete);
-            assertNotNull(concreteForGeneric);
+        String[] expectedConcretes = {"Coord", "Coord2"};
+
+        List<IomObject> concreteForGenerics = getMetaObjectsWithTag(MODEL_SIMPLE24, "IlisMeta16.ModelData.ConcreteForGeneric");
+        assertEquals(expectedConcretes.length, concreteForGenerics.size());
+
+        for (int i = 0; i < expectedConcretes.length; i++) {
+            IomObject concreteForGeneric = concreteForGenerics.get(i);
             IomObject genericDef = concreteForGeneric.getattrobj("GenericDef", 0);
             IomObject concreteDomain = concreteForGeneric.getattrobj("ConcreteDomain", 0);
 
             assertEquals("Simple24.default.GenericDomain", genericDef.getobjectrefoid());
-            assertEquals("Simple24." + concrete, concreteDomain.getobjectrefoid());
+            assertEquals("Simple24." + expectedConcretes[i], concreteDomain.getobjectrefoid());
         }
     }
 
     @Test
     public void topicConcreteForGeneric() {
-        String[] concretes = { "Coord", "Coord2" };
-        for (String concrete : concretes) {
-            IomObject concreteForGeneric = metaObjects.get("DeferredGeneric24.TestA.BASKET.GenericDomain." + concrete);
-            assertNotNull(concreteForGeneric);
+        String[] expectedConcretes = {"Coord", "Coord2"};
+
+        List<IomObject> concreteForGenerics = getMetaObjectsWithTag(MODEL_DEFERREDGENERICS24, "IlisMeta16.ModelData.ConcreteForGeneric");
+        assertEquals(expectedConcretes.length, concreteForGenerics.size());
+
+        for (int i = 0; i < expectedConcretes.length; i++) {
+            IomObject concreteForGeneric = concreteForGenerics.get(i);
             IomObject genericDef = concreteForGeneric.getattrobj("GenericDef", 0);
             IomObject concreteDomain = concreteForGeneric.getattrobj("ConcreteDomain", 0);
 
             assertEquals("DeferredGeneric24.TestA.BASKET.GenericDomain", genericDef.getobjectrefoid());
-            assertEquals("Simple24." + concrete, concreteDomain.getobjectrefoid());
+            assertEquals("Simple24." + expectedConcretes[i], concreteDomain.getobjectrefoid());
         }
     }
 
     @Test
     public void modelAttributes24() {
-        IomObject simpleModel = metaObjects.get("Simple24");
+        IomObject simpleModel = getMetaObjectByTid("Simple24");
         assertNotNull(simpleModel);
 
-        IomObject attributesModel = metaObjects.get("ModelAttributes24");
+        IomObject attributesModel = getMetaObjectByTid("ModelAttributes24");
         assertNotNull(attributesModel);
 
         assertNotEquals("true", simpleModel.getattrvalue("NoIncrementalTransfer"));
@@ -170,40 +220,40 @@ public class Imd16Ili24GeneratorTest {
 
     @Test
     public void multiCoordType() {
-        IomObject coordType = metaObjects.get("Simple24.Coord");
+        IomObject coordType = getMetaObjectByTid("Simple24.Coord");
         assertNotNull(coordType);
         assertEquals("false", coordType.getattrvalue("Multi"));
 
-        IomObject multiCoordType = metaObjects.get("Simple24.MultiCoord");
+        IomObject multiCoordType = getMetaObjectByTid("Simple24.MultiCoord");
         assertNotNull(multiCoordType);
         assertEquals("true", multiCoordType.getattrvalue("Multi"));
     }
 
     @Test
     public void multiLineType() {
-        IomObject lineType = metaObjects.get("Simple24.Line");
+        IomObject lineType = getMetaObjectByTid("Simple24.Line");
         assertNotNull(lineType);
         assertEquals("false", lineType.getattrvalue("Multi"));
 
-        IomObject multiLineType = metaObjects.get("Simple24.MultiLine");
+        IomObject multiLineType = getMetaObjectByTid("Simple24.MultiLine");
         assertNotNull(multiLineType);
         assertEquals("true", multiLineType.getattrvalue("Multi"));
     }
 
     @Test
     public void multiSurfaceType() {
-        IomObject surfaceType = metaObjects.get("Simple24.Surface");
+        IomObject surfaceType = getMetaObjectByTid("Simple24.Surface");
         assertNotNull(surfaceType);
         assertEquals("false", surfaceType.getattrvalue("Multi"));
 
-        IomObject multiSurfaceType = metaObjects.get("Simple24.MultiSurface");
+        IomObject multiSurfaceType = getMetaObjectByTid("Simple24.MultiSurface");
         assertNotNull(multiSurfaceType);
         assertEquals("true", multiSurfaceType.getattrvalue("Multi"));
     }
 
     @Test
     public void implicationExpression() {
-        IomObject constraint = metaObjects.get("Simple24.TestA.ClassA1.implicationConstraint");
+        IomObject constraint = getMetaObjectByTid("Simple24.TestA.ClassA1.implicationConstraint");
         assertNotNull(constraint);
 
         IomObject expression = constraint.getattrobj("LogicalExpression", 0);
@@ -213,7 +263,7 @@ public class Imd16Ili24GeneratorTest {
 
     @Test
     public void multiplyAndDivideExpressions() {
-        IomObject constraint = metaObjects.get("Simple24.TestA.ClassA1.multDivConstraint");
+        IomObject constraint = getMetaObjectByTid("Simple24.TestA.ClassA1.multDivConstraint");
         assertNotNull(constraint);
         IomObject logicalExpression = constraint.getattrobj("LogicalExpression", 0);
         assertNotNull(logicalExpression);
@@ -229,7 +279,7 @@ public class Imd16Ili24GeneratorTest {
 
     @Test
     public void addAndSubtractExpressions() {
-        IomObject constraint = metaObjects.get("Simple24.TestA.ClassA1.addSubConstraint");
+        IomObject constraint = getMetaObjectByTid("Simple24.TestA.ClassA1.addSubConstraint");
         assertNotNull(constraint);
         IomObject logicalExpression = constraint.getattrobj("LogicalExpression", 0);
         assertNotNull(logicalExpression);
