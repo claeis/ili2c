@@ -1,14 +1,14 @@
 
 package ch.interlis.ili2c.generator;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import ch.ehi.basics.types.OutParam;
 
 import ch.ehi.basics.logging.EhiLogger;
-import ch.interlis.iom.IomConstants;
+import ch.interlis.ili2c.metamodel.DomainConstraint;
+import ch.interlis.ili2c.metamodel.ValueRefThis;
 import ch.interlis.iom_j.ViewableProperties;
 import ch.interlis.iom_j.xtf.XtfWriterBase;
 import ch.interlis.iom_j.xtf.XtfModel;
@@ -453,6 +453,7 @@ public class Imd16Generator {
 			ch.interlis.ili2c.metamodel.Element element = (ch.interlis.ili2c.metamodel.Element)it.next();
 			if ( element instanceof ch.interlis.ili2c.metamodel.Constraint ) {
 				Constraint iomConstraint=visitConstraint((ch.interlis.ili2c.metamodel.Constraint)element,cnstrMetaAttrs,iomClass.getobjectoid());
+				iomConstraint.setToClass(iomClass.getobjectoid());
 				out.write(new ObjectEvent(iomConstraint));
 			} else if ( element instanceof ch.interlis.ili2c.metamodel.Parameter ) {
 				visitParameter((ch.interlis.ili2c.metamodel.Parameter)element,paramOrderPos);
@@ -639,6 +640,21 @@ public class Imd16Generator {
 	throws IoxException
 	{
 		visitDomainType(new OutParam<String>(),domain.getType(),domain);
+
+		// visit domain constraints
+		if (!domain.isEmpty()) {
+			Iterator<DomainConstraint> it = domain.iterator();
+			ArrayList<MetaAttribute> metaAttributes = new ArrayList<MetaAttribute>();
+			while (it.hasNext()) {
+				DomainConstraint constraint = it.next();
+				Constraint iomConstraint = visitConstraint(constraint, metaAttributes, domain.getScopedName(null));
+				iomConstraint.setToDomain(domain.getScopedName(null));
+				out.write(new ObjectEvent(iomConstraint));
+			}
+			for(MetaAttribute val:metaAttributes){
+				out.write(new ObjectEvent(val));
+			}
+		}
 	}
 	private void visitAttribute(ch.interlis.ili2c.metamodel.LocalAttribute attr,int attrPos)
 	throws IoxException
@@ -906,18 +922,19 @@ public class Imd16Generator {
 			Iterator requiredInIt=existenceConstraint.iteratorRequiredIn();
 			while(requiredInIt.hasNext()){
 				ch.interlis.ili2c.metamodel.ObjectPath objPath=(ch.interlis.ili2c.metamodel.ObjectPath)requiredInIt.next();
-				ExistenceDef iomExistsIn = new ExistenceDef();
-				visitObjectPathEls(iomExistsIn,objPath);
-				iomExistsIn.setViewable(objPath.getRoot().getScopedName(null));
-				iomConstraint.addExistsIn(iomExistsIn);
+				ExistenceDef iomExistsIn = new ExistenceDef(null);
+				iomExistsIn.setExistsIn(objPath.getRoot().getScopedName(null));
+				iomExistsIn.setExistenceConstraint(cnstrdTid);
+				iomExistsIn.setAttr(visitObjectPath(objPath));
+				out.write(new ObjectEvent(iomExistsIn));
 			}
 			iomCnstrt=iomConstraint;
-		}else if(cnstrt instanceof ch.interlis.ili2c.metamodel.MandatoryConstraint){
-			ch.interlis.ili2c.metamodel.MandatoryConstraint mandatoryConstraint = (ch.interlis.ili2c.metamodel.MandatoryConstraint)cnstrt;
+		}else if(cnstrt instanceof ch.interlis.ili2c.metamodel.MandatoryConstraint
+				|| cnstrt instanceof ch.interlis.ili2c.metamodel.DomainConstraint){
 			SimpleConstraint iomConstraint = new SimpleConstraint(cnstrdTid);
 			iomCnstrt=iomConstraint;
 			
-			ch.interlis.ili2c.metamodel.Evaluable condition = mandatoryConstraint.getCondition();
+			ch.interlis.ili2c.metamodel.Evaluable condition = (cnstrt).getCondition();
 			Expression expr = visitExpression(condition);
 			iomConstraint.setLogicalExpression( expr );
 			
@@ -954,7 +971,11 @@ public class Imd16Generator {
 			    	  iomUniqueConstraint.addUniqueDef(visitObjectPathEls(iomExpr,attr));
 				}
 			} else {
-				iomUniqueConstraint.setKind( UniqueConstraint_Kind.GlobalU );
+				if (uc.perBasket()) {
+					iomUniqueConstraint.setKind(UniqueConstraint_Kind.BasketU);
+				} else {
+					iomUniqueConstraint.setKind(UniqueConstraint_Kind.GlobalU);
+				}
 				Iterator attri=uc.getElements().iteratorAttribute();
 				while(attri.hasNext()){
 			    	  ch.interlis.ili2c.metamodel.ObjectPath attr=(ch.interlis.ili2c.metamodel.ObjectPath)attri.next();
@@ -974,6 +995,7 @@ public class Imd16Generator {
 			if(sc.getPreCondition()!=null){
 				iomConstraint.setWhere( visitExpression(sc.getPreCondition()) );
 			}
+			iomConstraint.setPerBasket(sc.perBasket());
 		}else{	
 			throw new IllegalArgumentException("unexpected constraint type "+cnstrt.getClass().getName());
 		}
@@ -1274,6 +1296,13 @@ public class Imd16Generator {
 		// }else if(e instanceof ch.interlis.ili2c.metamodel.ViewableAlias){ 
 		    // a VieableAlias should not appear as part of an expression
 			
+		} else if (e instanceof ValueRefThis) {
+			PathOrInspFactor iomExpr = new PathOrInspFactor();
+			ret = iomExpr;
+
+			PathEl iomPathEl = new PathEl();
+			iomPathEl.setKind(PathEl_Kind.This);
+			iomExpr.addPathEls(iomPathEl);
 		}else{
 			throw new IllegalArgumentException( "Unknown subclass: " + e.getClass() );
 		}

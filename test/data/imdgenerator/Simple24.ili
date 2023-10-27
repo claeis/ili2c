@@ -14,13 +14,24 @@ MODEL Simple24 AT "mailto:noreply@localhost" VERSION "2023-10-24" =
     Surface = SURFACE WITH (STRAIGHTS) VERTEX Coord WITHOUT OVERLAPS > 0.1;
     MultiSurface = MULTISURFACE WITH (STRAIGHTS) VERTEX Coord WITHOUT OVERLAPS > 0.1;
 
+    DomainConstraintThis = TEXT*60 CONSTRAINTS Length : INTERLIS.len(THIS) > 2;
+
   CONTEXT default =
     GenericDomain = Coord OR Coord2;
 
   TOPIC TestA =
 
+    CLASS ClassOther =
+        attrOther : TEXT*60;
+    END ClassOther;
+
+    STRUCTURE StructA =
+        structAttr: TEXT*100;
+    END StructA;
+
     CLASS ClassA1 =
       attr1 : TEXT*60;
+      attr2: BAG {1..*} OF StructA;
       pos : GenericDomain;
       number : 0 .. 100;
     MANDATORY CONSTRAINT implicationConstraint :
@@ -29,6 +40,22 @@ MODEL Simple24 AT "mailto:noreply@localhost" VERSION "2023-10-24" =
       (number * 2) > (number / 2);
     MANDATORY CONSTRAINT addSubConstraint :
       (number + 1) > (number - 1);
+    MANDATORY CONSTRAINT NamedMandatory:
+      number > 1;
+    CONSTRAINT NamedPlausibility: <= 80%
+      number > 2;
+    EXISTENCE CONSTRAINT NamedExistenceConstraint:
+      attr1 REQUIRED IN ClassOther : attrOther;
+    UNIQUE NamedUnique:
+      attr1;
+    UNIQUE (BASKET) NamedUniqueBasket:
+      attr1;
+    UNIQUE NamedUniqueLocal:
+      (LOCAL) attr2 : structAttr;
+    SET CONSTRAINT NamedSetConstraint:
+      INTERLIS.objectCount(ALL) >= 0;
+    SET CONSTRAINT (BASKET) NamedSetConstraintBasket:
+      INTERLIS.objectCount(ALL) >= 0;
     END ClassA1;
 
   END TestA;

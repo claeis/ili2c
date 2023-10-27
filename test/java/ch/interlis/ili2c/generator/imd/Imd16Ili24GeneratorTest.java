@@ -292,4 +292,101 @@ public class Imd16Ili24GeneratorTest {
         assertNotNull(subtractExpression);
         assertEquals("Sub", subtractExpression.getattrvalue("Operation"));
     }
+
+    @Test
+    public void mandatoryConstraint() {
+        IomObject mandatoryConstraint = getMetaObjectByTid("Simple24.TestA.ClassA1.NamedMandatory");
+        assertNotNull(mandatoryConstraint);
+        assertEquals("NamedMandatory", mandatoryConstraint.getattrvalue("Name"));
+        assertEquals("Simple24.TestA.ClassA1", mandatoryConstraint.getattrobj("ToClass", 0).getobjectrefoid());
+        assertEquals("MandC", mandatoryConstraint.getattrvalue("Kind"));
+        assertNotNull(mandatoryConstraint.getattrobj("LogicalExpression", 0));
+    }
+
+    @Test
+    public void plausibilityConstraint() {
+        IomObject plausibilityConstraint = getMetaObjectByTid("Simple24.TestA.ClassA1.NamedPlausibility");
+        assertNotNull(plausibilityConstraint);
+        assertEquals("NamedPlausibility", plausibilityConstraint.getattrvalue("Name"));
+        assertEquals("Simple24.TestA.ClassA1", plausibilityConstraint.getattrobj("ToClass", 0).getobjectrefoid());
+        assertEquals("HighPercC", plausibilityConstraint.getattrvalue("Kind"));
+        assertEquals("80.0", plausibilityConstraint.getattrvalue("Percentage"));
+        assertNotNull(plausibilityConstraint.getattrobj("LogicalExpression", 0));
+    }
+
+    @Test
+    public void existenceConstraint() {
+        IomObject existenceConstraint = getMetaObjectByTid("Simple24.TestA.ClassA1.NamedExistenceConstraint");
+        assertNotNull(existenceConstraint);
+        assertEquals("NamedExistenceConstraint", existenceConstraint.getattrvalue("Name"));
+        assertEquals("Simple24.TestA.ClassA1", existenceConstraint.getattrobj("ToClass", 0).getobjectrefoid());
+        assertNotNull(existenceConstraint.getattrobj("Attr", 0));
+
+        List<IomObject> existenceDefs = getMetaObjectsWithTag(MODEL_SIMPLE24, "IlisMeta16.ModelData.ExistenceDef");
+        assertEquals(1, existenceDefs.size());
+        IomObject existenceDef = existenceDefs.get(0);
+
+        assertEquals("Simple24.TestA.ClassA1.NamedExistenceConstraint", existenceDef.getattrobj("ExistenceConstraint", 0).getobjectrefoid());
+        assertEquals("Simple24.TestA.ClassOther", existenceDef.getattrobj("ExistsIn", 0).getobjectrefoid());
+        assertNotNull(existenceDef.getattrobj("Attr", 0));
+    }
+
+    @Test
+    public void uniqueConstraintGlobal() {
+        IomObject uniqueConstraint = getMetaObjectByTid("Simple24.TestA.ClassA1.NamedUnique");
+        assertNotNull(uniqueConstraint);
+        assertEquals("NamedUnique", uniqueConstraint.getattrvalue("Name"));
+        assertEquals("Simple24.TestA.ClassA1", uniqueConstraint.getattrobj("ToClass", 0).getobjectrefoid());
+        assertEquals("GlobalU", uniqueConstraint.getattrvalue("Kind"));
+        assertNotNull(uniqueConstraint.getattrobj("UniqueDef", 0));
+    }
+
+    @Test
+    public void uniqueConstraintBasket() {
+        IomObject uniqueConstraint = getMetaObjectByTid("Simple24.TestA.ClassA1.NamedUniqueBasket");
+        assertNotNull(uniqueConstraint);
+        assertEquals("NamedUniqueBasket", uniqueConstraint.getattrvalue("Name"));
+        assertEquals("Simple24.TestA.ClassA1", uniqueConstraint.getattrobj("ToClass", 0).getobjectrefoid());
+        assertEquals("BasketU", uniqueConstraint.getattrvalue("Kind"));
+        assertNotNull(uniqueConstraint.getattrobj("UniqueDef", 0));
+    }
+
+    @Test
+    public void uniqueConstraintLocal() {
+        IomObject uniqueConstraint = getMetaObjectByTid("Simple24.TestA.ClassA1.NamedUniqueLocal");
+        assertNotNull(uniqueConstraint);
+        assertEquals("NamedUniqueLocal", uniqueConstraint.getattrvalue("Name"));
+        assertEquals("Simple24.TestA.ClassA1", uniqueConstraint.getattrobj("ToClass", 0).getobjectrefoid());
+        assertEquals("LocalU", uniqueConstraint.getattrvalue("Kind"));
+        assertNotNull(uniqueConstraint.getattrobj("UniqueDef", 0));
+    }
+
+    @Test
+    public void setConstraintGlobal() {
+        IomObject setConstraint = getMetaObjectByTid("Simple24.TestA.ClassA1.NamedSetConstraint");
+        assertNotNull(setConstraint);
+        assertEquals("NamedSetConstraint", setConstraint.getattrvalue("Name"));
+        assertEquals("Simple24.TestA.ClassA1", setConstraint.getattrobj("ToClass", 0).getobjectrefoid());
+        assertEquals("false", setConstraint.getattrvalue("PerBasket"));
+        assertNotNull(setConstraint.getattrobj("Constraint", 0));
+    }
+
+    @Test
+    public void setConstraintBasket() {
+        IomObject setConstraint = getMetaObjectByTid("Simple24.TestA.ClassA1.NamedSetConstraintBasket");
+        assertNotNull(setConstraint);
+        assertEquals("NamedSetConstraintBasket", setConstraint.getattrvalue("Name"));
+        assertEquals("Simple24.TestA.ClassA1", setConstraint.getattrobj("ToClass", 0).getobjectrefoid());
+        assertEquals("true", setConstraint.getattrvalue("PerBasket"));
+        assertNotNull(setConstraint.getattrobj("Constraint", 0));
+    }
+
+    @Test
+    public void domainConstraint() {
+        IomObject domainConstraint = getMetaObjectByTid("Simple24.DomainConstraintThis.Length");
+        assertNotNull(domainConstraint);
+        assertEquals("Length", domainConstraint.getattrvalue("Name"));
+        assertEquals("Simple24.DomainConstraintThis", domainConstraint.getattrobj("ToDomain", 0).getobjectrefoid());
+        assertNotNull(domainConstraint.getattrobj("LogicalExpression", 0));
+    }
 }
