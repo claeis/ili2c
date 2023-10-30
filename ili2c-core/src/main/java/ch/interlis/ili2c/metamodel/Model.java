@@ -594,6 +594,12 @@ public void setXmlns(String xmlns) {
 	      Set<Model> visitedModels=new HashSet<Model>();
 	      return resolveGenericDomain_deepFirstSearch(generic,this,visitedModels);
 	  }
+
+    public Domain[] resolveGenericDomainFromImportedModels(Domain generic) {
+        Set<Model> visitedModels = new HashSet<Model>();
+        return resolveGenericDomain_deepFirstSearch(generic, this, visitedModels);
+    }
+
     private static Domain[] resolveGenericDomain_deepFirstSearch(Domain generic,Model model,Set<Model> visitedModels) {
         Model imps[]=model.getImporting();
         for(int i=imps.length-1;i>=0;i--) {
