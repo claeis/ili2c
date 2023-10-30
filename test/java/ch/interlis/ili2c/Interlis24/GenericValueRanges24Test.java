@@ -47,4 +47,21 @@ public class GenericValueRanges24Test {
         assertEquals(1, errs.getErrs().size());
         assertContainsError("The domain CoordA of context Context1 must be generic.", 1, errs);
     }
+
+    @Test
+    public void deferredDomainNoContext() {
+        LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "deferredDomainNoContext_fail.ili");
+
+        assertEquals(1, errs.getErrs().size());
+        assertContainsError("ModelA.TopicA has no accessible context definition for deferred generic Coord2.", 1, errs);
+    }
+
+    @Test
+    public void invalidDeferredDomain() {
+        LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "invalidDeferredDomain_fail.ili");
+
+        assertEquals(2, errs.getErrs().size());
+        assertContainsError("There is no domain \"InexistentDomain\" in MODEL ModelA.", 1, errs);
+        assertContainsError("ModelA.TopicA has no accessible context definition for deferred generic InexistentDomain.", 1, errs);
+    }
 }

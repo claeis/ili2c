@@ -325,6 +325,15 @@ private void checkIntegrityAbstract(List<Ili2cSemanticException> errs) {
             }
           }
     }
+
+    // check whether all deferred generics have a context definition
+    Model model = (Model) getContainer(Model.class);
+    for (Domain domain : deferredGenerics) {
+        Domain[] resolved = model.resolveGenericDomain(domain);
+        if (resolved == null) {
+            errs.add(new Ili2cSemanticException(getSourceLine(), formatMessage("err_topic_deferredGenericMissingContext", getScopedName(), domain.getName())));
+        }
+    }
 }
 @Override
 public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
