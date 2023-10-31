@@ -245,6 +245,7 @@ public class Imd16Generator {
 			dataUnit.setSuper( topic.getExtending().getScopedName(null) +"."+UNIT_META_NAME);
 		}
 		dataUnit.setFinal( topic.isFinal() );
+		dataUnit.setGeneric(false);
 		
 		Iterator depi=topic.getDependentOn();
 		while(depi.hasNext()){
@@ -314,6 +315,7 @@ public class Imd16Generator {
 			iomClass.setSuper( classDef.getExtending().getScopedName(null));
 		}
 		iomClass.setFinal( classDef.isFinal() );
+		iomClass.setGeneric(false);
 		iomClass.setEmbeddedRoleTransfer(false );
 		
 		int attrOrderPos=1;
@@ -577,6 +579,7 @@ public class Imd16Generator {
 			iomGraphic.setSuper( graphic.getExtending().getScopedName(null));
 		}
 		iomGraphic.setFinal( graphic.isFinal() );
+		iomGraphic.setGeneric(false);
 		
 		iomGraphic.setBase(graphic.getBasedOn().getScopedName(null));
 		
@@ -615,6 +618,7 @@ public class Imd16Generator {
 			iomGraphic.setSuper( graphic.getExtending().getScopedName(null));
 		}
 		iomGraphic.setFinal( graphic.isFinal() );
+		iomGraphic.setGeneric(false);
 		
 		iomGraphic.set_class(graphic.getGenerating().getScopedName(null));
 		
@@ -676,6 +680,7 @@ public class Imd16Generator {
 			}
 			iomAttr.setAbstract( attr.isAbstract() );
 			iomAttr.setFinal( attr.isFinal() );
+			iomAttr.setGeneric(false);
 			
 			ch.interlis.ili2c.metamodel.Evaluable[] derv=((ch.interlis.ili2c.metamodel.LocalAttribute)attr).getBasePaths();
 			if(derv!=null){
@@ -774,6 +779,7 @@ public class Imd16Generator {
 			}
 			iomParam.setAbstract( param.isAbstract() );
 			iomParam.setFinal( param.isFinal() );
+			iomParam.setGeneric(false);
 			
 			ch.interlis.ili2c.metamodel.Type type=param.getType();
 			if(type instanceof ch.interlis.ili2c.metamodel.TypeAlias){
@@ -822,6 +828,7 @@ public class Imd16Generator {
 		}
 		iomRole.setAbstract( role.isAbstract() );
 		iomRole.setFinal( role.isFinal() );
+		iomRole.setGeneric(false);
 		
 		// mandatory has no meaning for a Role, but set it to keep instance compliant with model
 		iomRole.setMandatory(true);
@@ -1497,6 +1504,7 @@ public class Imd16Generator {
 		}
 		iomMb.setAbstract(mb.isAbstract());
 		iomMb.setFinal(mb.isFinal());
+		iomMb.setGeneric(false);
 		iomMb.setKind(mb.isSignData()?MetaBasketDef_Kind.SignB:MetaBasketDef_Kind.RefSystemB);
 		iomMb.setMetaDataTopic(mb.getTopic().getScopedName(null)+"."+UNIT_META_NAME);
 		out.write(new ObjectEvent(iomMb));
@@ -1541,6 +1549,7 @@ public class Imd16Generator {
 			iomUnit.setSuper( unit.getExtending().getScopedName(null));
 		}
 		iomUnit.setFinal( unit.isFinal() );
+		iomUnit.setGeneric(false);
 		
 		if(unit instanceof ch.interlis.ili2c.metamodel.BaseUnit){
 			iomUnit.setKind( Unit_Kind.BaseU );
@@ -1752,6 +1761,7 @@ public class Imd16Generator {
 			iomTopNode.setEnumType(iomEnumType.getobjectoid(),1);
 			iomTopNode.setAbstract(false);
 			iomTopNode.setFinal(false);
+			iomTopNode.setGeneric(false);
 			out.write(new ObjectEvent(iomTopNode));
 			visitEnumeration(iomTopNode.getobjectoid(),enm);
 			iomType=iomEnumType;
@@ -2014,6 +2024,7 @@ public class Imd16Generator {
 		}
 		iomType.setAbstract( type.isAbstract() );
 		iomType.setFinal( false );
+		iomType.setGeneric(false);
 		if(iomType instanceof DomainType){
 			((DomainType)iomType).setMandatory(attr.getDomain().isMandatoryConsideringAliases());
 		}
@@ -2071,6 +2082,7 @@ public class Imd16Generator {
 		iomType.setName(LOCAL_TYPE_NAME);
 		iomType.setAbstract( type.isAbstract() );
 		iomType.setFinal( false );
+		iomType.setGeneric(false);
 		if(iomType instanceof DomainType){
 			((DomainType)iomType).setMandatory(func.getDomain().isMandatoryConsideringAliases());
 		}
@@ -2085,6 +2097,7 @@ public class Imd16Generator {
 		iomType.setName(arg.getName());
 		iomType.setAbstract( type.isAbstract() );
 		iomType.setFinal( false );
+		iomType.setGeneric(false);
 		if(iomType instanceof DomainType){
 			((DomainType)iomType).setMandatory(arg.getType().isMandatoryConsideringAliases());
 		}
@@ -2103,6 +2116,7 @@ public class Imd16Generator {
 		}
 		iomType.setAbstract( type.isAbstract() );
 		iomType.setFinal( false );
+		iomType.setGeneric(false);
 		if(iomType instanceof DomainType){
 			((DomainType)iomType).setMandatory(param.getType().isMandatoryConsideringAliases());
 		}
@@ -2137,6 +2151,7 @@ public class Imd16Generator {
 			iomNum.setAbstract(true);
 			iomNum.setFinal(false);
 		}
+		iomNum.setGeneric(false);
 		iomNum.setCircular(num.isCircular());
 		if(num.getRotation()!=ch.interlis.ili2c.metamodel.NumericType.ROTATION_NONE){
 			iomNum.setClockwise(num.getRotation()==ch.interlis.ili2c.metamodel.NumericType.ROTATION_CLOCKWISE?true:false);
@@ -2180,6 +2195,7 @@ public class Imd16Generator {
 			iomE.setParentNode(parentOid,orderpos++);
 			iomE.setAbstract(false);
 			iomE.setFinal(false);
+			iomE.setGeneric(false);
 			out.write(new ObjectEvent(iomE));
 			visitMetaValues(e.getMetaValues(),iomE.getobjectoid());
 			ch.interlis.ili2c.metamodel.Enumeration sub=e.getSubEnumeration();
