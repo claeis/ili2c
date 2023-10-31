@@ -11,7 +11,7 @@ INTERLIS 2.4;
  *  - constraints as meta elements
  *  - ...
  */
-MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2023-10-26ceis" =
+MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2023-10-30ceis" =
 
   DOMAIN
     BasketOID = OID TEXT;  !! Filename
@@ -638,7 +638,7 @@ MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2023-10-26ceis" =
     END UnaryExpr;
 
     STRUCTURE CompoundExpr EXTENDS Expression =
-      Operation: (Implication, And, Or, Mult, Div, Plus, Minus, !! 2.4: Implication, Plus, Minus
+      Operation: (Implication, And, Or, Mult, Div, Add, Sub, !! 2.4: Implication, Add, Sub
                   Relation (Equal, NotEqual,
                   LessOrEqual, GreaterOrEqual,
                   Less, Greater));

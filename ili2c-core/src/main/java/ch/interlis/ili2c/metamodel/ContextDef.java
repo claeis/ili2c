@@ -37,5 +37,24 @@ public class ContextDef extends AbstractLeafElement{
         for (Domain concrete : concretes) {
             concrete.getType().checkTypeExtension(genericType);
         }
+
+        Model model = (Model) getContainer(Model.class);
+        Domain[] concretesAllowedInImportedModel = model.resolveGenericDomainFromImportedModels(generic);
+        if (concretesAllowedInImportedModel != null) {
+            for (Domain concrete : concretes) {
+                if (!matchesOrExtendsAllowedDomain(concrete, concretesAllowedInImportedModel)) {
+                    throw new IllegalStateException(formatMessage("err_contextdef_domain_not_extending", concrete.getName(), generic.getName()));
+                }
+            }
+        }
+    }
+
+    private boolean matchesOrExtendsAllowedDomain(Domain concrete, Domain[] allowedInImportedModel) {
+        for (Domain allowed : allowedInImportedModel) {
+            if (concrete == allowed || concrete.isExtendingIndirectly(allowed)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

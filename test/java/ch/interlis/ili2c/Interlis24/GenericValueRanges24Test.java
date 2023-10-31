@@ -49,6 +49,20 @@ public class GenericValueRanges24Test {
     }
 
     @Test
+    public void multipleContextsExtending() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "multipleContextsExtending.ili");
+        assertNotNull(td);
+    }
+
+    @Test
+    public void multipleContextsNotExtending() {
+        LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "multipleContextsNotExtending_fail.ili");
+
+        assertEquals(1, errs.getErrs().size());
+        assertContainsError("The domain Coord2_SmallArea_CHLV95 must match or extend a domain of the existing context for generic type Coord2.", 1, errs);
+    }
+
+    @Test
     public void deferredDomainNoContext() {
         LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "deferredDomainNoContext_fail.ili");
 
