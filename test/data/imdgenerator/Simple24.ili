@@ -21,9 +21,13 @@ MODEL Simple24 AT "mailto:noreply@localhost" VERSION "2023-10-24" =
 
   TOPIC TestA =
 
-    CLASS ClassOther =
+    CLASS ClassOther1 =
         attrOther : TEXT*60;
-    END ClassOther;
+    END ClassOther1;
+
+    CLASS ClassOther2 =
+        attrOther : TEXT*60;
+    END ClassOther2;
 
     STRUCTURE StructA =
         structAttr: TEXT*100;
@@ -45,7 +49,7 @@ MODEL Simple24 AT "mailto:noreply@localhost" VERSION "2023-10-24" =
     CONSTRAINT NamedPlausibility: <= 80%
       number > 2;
     EXISTENCE CONSTRAINT NamedExistenceConstraint:
-      attr1 REQUIRED IN ClassOther : attrOther;
+      attr1 REQUIRED IN ClassOther1 : attrOther;
     UNIQUE NamedUnique:
       attr1;
     UNIQUE (BASKET) NamedUniqueBasket:
@@ -57,6 +61,11 @@ MODEL Simple24 AT "mailto:noreply@localhost" VERSION "2023-10-24" =
     SET CONSTRAINT (BASKET) NamedSetConstraintBasket:
       INTERLIS.objectCount(ALL) >= 0;
     END ClassA1;
+
+    CONSTRAINTS OF ClassA1 =
+      EXISTENCE CONSTRAINT NamedExistenceConstraintOutsideClass:
+        attr1 REQUIRED IN ClassOther1 : attrOther OR ClassOther2 : attrOther;
+    END;
 
   END TestA;
 

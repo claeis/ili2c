@@ -8,6 +8,7 @@ import ch.ehi.basics.types.OutParam;
 
 import ch.ehi.basics.logging.EhiLogger;
 import ch.interlis.ili2c.metamodel.DomainConstraint;
+import ch.interlis.ili2c.metamodel.ObjectPath;
 import ch.interlis.ili2c.metamodel.ValueRefThis;
 import ch.interlis.iom_j.ViewableProperties;
 import ch.interlis.iom_j.xtf.XtfWriterBase;
@@ -926,14 +927,14 @@ public class Imd16Generator {
 			ExistenceConstraint iomConstraint = new ExistenceConstraint(cnstrdTid);
 			PathOrInspFactor iomRestrictedAttr=visitObjectPath(existenceConstraint.getRestrictedAttribute());
 			iomConstraint.setAttr(iomRestrictedAttr);
-			Iterator requiredInIt=existenceConstraint.iteratorRequiredIn();
-			while(requiredInIt.hasNext()){
-				ch.interlis.ili2c.metamodel.ObjectPath objPath=(ch.interlis.ili2c.metamodel.ObjectPath)requiredInIt.next();
+
+			Iterator<ObjectPath> requiredInIt = existenceConstraint.iteratorRequiredIn();
+			while (requiredInIt.hasNext()) {
+				ObjectPath objPath = requiredInIt.next();
 				ExistenceDef iomExistsIn = new ExistenceDef();
 				iomExistsIn.setExistsIn(objPath.getRoot().getScopedName(null));
-				iomExistsIn.setExistenceConstraint(cnstrdTid);
 				iomExistsIn.setAttr(visitObjectPath(objPath));
-				out.write(new ObjectEvent(iomExistsIn));
+				iomConstraint.addRequiredIn(iomExistsIn);
 			}
 			iomCnstrt=iomConstraint;
 		}else if(cnstrt instanceof ch.interlis.ili2c.metamodel.MandatoryConstraint

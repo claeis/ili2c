@@ -321,14 +321,25 @@ public class Imd16Ili24GeneratorTest {
         assertEquals("NamedExistenceConstraint", existenceConstraint.getattrvalue("Name"));
         assertEquals("Simple24.TestA.ClassA1", existenceConstraint.getattrobj("ToClass", 0).getobjectrefoid());
         assertNotNull(existenceConstraint.getattrobj("Attr", 0));
+        assertEquals(1, existenceConstraint.getattrvaluecount("RequiredIn"));
 
-        List<IomObject> existenceDefs = getMetaObjectsWithTag(MODEL_SIMPLE24, "IlisMeta16.ModelData.ExistenceDef");
-        assertEquals(1, existenceDefs.size());
-        IomObject existenceDef = existenceDefs.get(0);
-
-        assertEquals("Simple24.TestA.ClassA1.NamedExistenceConstraint", existenceDef.getattrobj("ExistenceConstraint", 0).getobjectrefoid());
-        assertEquals("Simple24.TestA.ClassOther", existenceDef.getattrobj("ExistsIn", 0).getobjectrefoid());
+        IomObject existenceDef = existenceConstraint.getattrobj("RequiredIn", 0);
         assertNotNull(existenceDef.getattrobj("Attr", 0));
+    }
+
+    @Test
+    public void existenceConstraintOutsideClass() {
+        IomObject existenceConstraint = getMetaObjectByTid("Simple24.TestA.ClassA1.NamedExistenceConstraintOutsideClass");
+        assertNotNull(existenceConstraint);
+        assertEquals("NamedExistenceConstraintOutsideClass", existenceConstraint.getattrvalue("Name"));
+        assertEquals("Simple24.TestA.ClassA1", existenceConstraint.getattrobj("ToClass", 0).getobjectrefoid());
+        assertNotNull(existenceConstraint.getattrobj("Attr", 0));
+        assertEquals(2, existenceConstraint.getattrvaluecount("RequiredIn"));
+
+        for (int i = 0; i < 2; i++) {
+            IomObject existenceDef = existenceConstraint.getattrobj("RequiredIn", i);
+            assertNotNull(existenceDef.getattrobj("Attr", 0));
+        }
     }
 
     @Test
