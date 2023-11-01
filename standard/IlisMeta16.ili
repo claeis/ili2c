@@ -725,15 +725,15 @@ MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2023-10-30ceis" =
       LogicalExpression: Expression;
     END SimpleConstraint;
 
-    CLASS ExistenceConstraint EXTENDS Constraint =
-      Attr : MANDATORY PathOrInspFactor;
-    END ExistenceConstraint;
-
-    ASSOCIATION ExistenceDef =   !! 2.4
-      ExistenceConstraint -<#> ExistenceConstraint;
-      ExistsIn -- Class;
+    STRUCTURE ExistenceDef =   !! 2.4
+      ExistsIn : MANDATORY REFERENCE TO (EXTERNAL) IlisMeta16.ModelData.Class;
       Attr : MANDATORY PathOrInspFactor;
     END ExistenceDef;
+
+    CLASS ExistenceConstraint EXTENDS Constraint =
+      Attr : MANDATORY PathOrInspFactor;
+      RequiredIn : BAG {1..*} OF ExistenceDef;
+    END ExistenceConstraint;
 
     CLASS UniqueConstraint EXTENDS Constraint =
       Where: BAG {0..1} OF Expression;
