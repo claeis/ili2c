@@ -942,7 +942,7 @@ public class Imd16Generator {
 			SimpleConstraint iomConstraint = new SimpleConstraint(cnstrdTid);
 			iomCnstrt=iomConstraint;
 			
-			ch.interlis.ili2c.metamodel.Evaluable condition = (cnstrt).getCondition();
+			ch.interlis.ili2c.metamodel.Evaluable condition = cnstrt.getCondition();
 			Expression expr = visitExpression(condition);
 			iomConstraint.setLogicalExpression( expr );
 			
