@@ -61,4 +61,38 @@ public class GenericValueRanges24Test {
         assertEquals(1, errs.getErrs().size());
         assertContainsError("The domain Coord2_SmallArea_CHLV95 must match or extend a domain of the existing context for generic type Coord2.", 1, errs);
     }
+
+    @Test
+    public void deferredDomainNoContext() {
+        LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "deferredDomainNoContext_fail.ili");
+
+        assertEquals(1, errs.getErrs().size());
+        assertContainsError("ModelA.TopicA has no accessible context definition for deferred generic Coord2.", 1, errs);
+    }
+
+    @Test
+    public void invalidDeferredDomain() {
+        LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "invalidDeferredDomain_fail.ili");
+
+        assertEquals(3, errs.getErrs().size());
+        assertContainsError("There is no domain \"InexistentDomain\" in MODEL ModelA.", 1, errs);
+        assertContainsError("ModelA.TopicA has no accessible context definition for deferred generic InexistentDomain.", 1, errs);
+        assertContainsError("ModelA.TopicA has an unused deferred generic definition for InexistentDomain.", 1, errs);
+    }
+
+    @Test
+    public void deferredMissing() {
+        LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "deferredMissing_fail.ili");
+
+        assertEquals(1, errs.getErrs().size());
+        assertContainsError("ModelA.TopicA is missing a deferred generic definition for Coord2.", 1, errs);
+    }
+
+    @Test
+    public void deferredUnusedType() {
+        LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "deferredUnusedType_fail.ili");
+
+        assertEquals(1, errs.getErrs().size());
+        assertContainsError("ModelA.TopicA has an unused deferred generic definition for Coord2.", 1, errs);
+    }
 }

@@ -862,4 +862,27 @@ public abstract class AttributeDef
             errs.add(new Ili2cSemanticException (getSourceLine(),formatMessage("err_diff_attributeType",getScopedName(),baseElement.getScopedName())));
         }
     }
+
+    @Override
+    public void checkIntegrity(List<Ili2cSemanticException> errs) throws IllegalStateException {
+        super.checkIntegrity(errs);
+
+        if (getDomain() instanceof TypeAlias) {
+            Domain domain = ((TypeAlias) getDomain()).getAliasing();
+            Type domainType = domain.getType();
+
+            AbstractCoordType coordType = null;
+            if (domainType instanceof AbstractCoordType) {
+                coordType = (AbstractCoordType) domainType;
+            } else if (domainType instanceof LineType) {
+                domain = ((LineType) domainType).getControlPointDomain();
+                coordType = (AbstractCoordType) domain.getType();
+            }
+
+            if (coordType != null && coordType.isGeneric()) {
+                Topic topic = (Topic) getContainer(Topic.class);
+                topic.addUsedGenericDomain(domain);
+            }
+        }
+    }
 }

@@ -21,10 +21,10 @@ MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
     Coord2 = Coord2_CHLV03 OR Coord2_CHLV95;
 
   TOPIC TopicA =
-    DEFERRED GENERICS Coord2;
+    DEFERRED GENERICS Coord2; !! DEFERRED can not be specified for an unused type
 
     CLASS ClassA =
-      attrA : Coord2;
+      attrA : Coord2_CHLV03;
     END ClassA;
   END TopicA;
 

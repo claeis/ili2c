@@ -32,6 +32,7 @@ public class Topic extends AbstractPatternDef<Element>
   private ArrayList<Domain> deferredGenerics=new ArrayList<Domain>();
 
   protected List<Topic> dependsOn = new LinkedList<Topic>();
+  private final Set<Domain> usedGenericDomains = new HashSet<Domain>();
 
 
   public Topic()
@@ -300,6 +301,7 @@ public class Topic extends AbstractPatternDef<Element>
 
 @Override
 public void checkIntegrity(List<Ili2cSemanticException> errs) throws IllegalStateException {
+    usedGenericDomains.clear();
     super.checkIntegrity(errs);
     checkIntegrityAbstract(errs);
 }
@@ -325,7 +327,32 @@ private void checkIntegrityAbstract(List<Ili2cSemanticException> errs) {
             }
           }
     }
+
+    // check whether all deferred generics have a context definition
+    Model model = (Model) getContainer(Model.class);
+    for (Domain domain : deferredGenerics) {
+        Domain[] resolved = model.resolveGenericDomain(domain);
+        if (resolved == null) {
+            errs.add(new Ili2cSemanticException(getSourceLine(), formatMessage("err_topic_deferredGenericMissingContext", getScopedName(), domain.getName())));
+        }
+
+        if (!usedGenericDomains.contains(domain)) {
+            errs.add(new Ili2cSemanticException(getSourceLine(), formatMessage("err_topic_deferredGenericUnused", getScopedName(), domain.getName())));
+        }
+    }
+
+    for (Domain domain : usedGenericDomains) {
+        Domain[] resolved = model.resolveGenericDomain(domain);
+        if (resolved != null && resolved.length > 1 && !deferredGenerics.contains(domain)) {
+            errs.add(new Ili2cSemanticException(getSourceLine(), formatMessage("err_topic_deferredGenericMissing", getScopedName(), domain.getName())));
+        }
+    }
 }
+
+public void addUsedGenericDomain(Domain domain) {
+    usedGenericDomains.add(domain);
+}
+
 @Override
 public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)
   throws java.lang.IllegalStateException
