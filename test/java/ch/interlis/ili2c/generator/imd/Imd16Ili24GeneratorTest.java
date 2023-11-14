@@ -321,10 +321,13 @@ public class Imd16Ili24GeneratorTest {
         assertEquals("NamedExistenceConstraint", existenceConstraint.getattrvalue("Name"));
         assertEquals("Simple24.TestA.ClassA1", existenceConstraint.getattrobj("ToClass", 0).getobjectrefoid());
         assertNotNull(existenceConstraint.getattrobj("Attr", 0));
+        assertEquals("Simple24.TestA.ClassA1.attr1", existenceConstraint.getattrobj("Attr", 0).getattrobj("PathEls", 0).getattrobj("Ref", 0).getobjectrefoid());
         assertEquals(1, existenceConstraint.getattrvaluecount("RequiredIn"));
 
         IomObject existenceDef = existenceConstraint.getattrobj("RequiredIn", 0);
+        assertEquals("Simple24.TestA.ClassOther1", existenceDef.getattrobj("ExistsIn", 0).getobjectrefoid());
         assertNotNull(existenceDef.getattrobj("Attr", 0));
+        assertEquals("Simple24.TestA.ClassOther1.attrOther", existenceDef.getattrobj("Attr", 0).getattrobj("PathEls", 0).getattrobj("Ref", 0).getobjectrefoid());
     }
 
     @Test
@@ -334,12 +337,18 @@ public class Imd16Ili24GeneratorTest {
         assertEquals("NamedExistenceConstraintOutsideClass", existenceConstraint.getattrvalue("Name"));
         assertEquals("Simple24.TestA.ClassA1", existenceConstraint.getattrobj("ToClass", 0).getobjectrefoid());
         assertNotNull(existenceConstraint.getattrobj("Attr", 0));
+        assertEquals("Simple24.TestA.ClassA1.attr1", existenceConstraint.getattrobj("Attr", 0).getattrobj("PathEls", 0).getattrobj("Ref", 0).getobjectrefoid());
         assertEquals(2, existenceConstraint.getattrvaluecount("RequiredIn"));
 
-        for (int i = 0; i < 2; i++) {
-            IomObject existenceDef = existenceConstraint.getattrobj("RequiredIn", i);
-            assertNotNull(existenceDef.getattrobj("Attr", 0));
-        }
+        IomObject existenceDef = existenceConstraint.getattrobj("RequiredIn", 0);
+        assertEquals("Simple24.TestA.ClassOther1", existenceDef.getattrobj("ExistsIn", 0).getobjectrefoid());
+        assertNotNull(existenceDef.getattrobj("Attr", 0));
+        assertEquals("Simple24.TestA.ClassOther1.attrOther", existenceDef.getattrobj("Attr", 0).getattrobj("PathEls", 0).getattrobj("Ref", 0).getobjectrefoid());
+
+        existenceDef = existenceConstraint.getattrobj("RequiredIn", 1);
+        assertEquals("Simple24.TestA.ClassOther2", existenceDef.getattrobj("ExistsIn", 0).getobjectrefoid());
+        assertNotNull(existenceDef.getattrobj("Attr", 0));
+        assertEquals("Simple24.TestA.ClassOther2.attrOther", existenceDef.getattrobj("Attr", 0).getattrobj("PathEls", 0).getattrobj("Ref", 0).getobjectrefoid());
     }
 
     @Test
