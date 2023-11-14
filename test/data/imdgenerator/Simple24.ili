@@ -36,6 +36,8 @@ MODEL Simple24 AT "mailto:noreply@localhost" VERSION "2023-10-24" =
     CLASS ClassA1 =
       attr1 : TEXT*60;
       attr2: BAG {1..*} OF StructA;
+      listOfPrimitive: LIST OF TEXT*40;
+      bagOfPrimitive: BAG OF Coord;
       pos : GenericDomain;
       number : 0 .. 100;
     MANDATORY CONSTRAINT implicationConstraint :

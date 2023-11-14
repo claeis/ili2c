@@ -400,4 +400,42 @@ public class Imd16Ili24GeneratorTest {
         assertEquals("Simple24.DomainConstraintThis", domainConstraint.getattrobj("ToDomain", 0).getobjectrefoid());
         assertNotNull(domainConstraint.getattrobj("LogicalExpression", 0));
     }
+
+    @Test
+    public void listOfPrimitiveType() {
+        IomObject attribute = getMetaObjectByTid("Simple24.TestA.ClassA1.listOfPrimitive");
+        IomObject multiValue = getMetaObjectByTid("Simple24.TestA.ClassA1.listOfPrimitive.MVT");
+        IomObject type = getMetaObjectByTid("Simple24.TestA.ClassA1.listOfPrimitive.TYPE");
+        assertNotNull(attribute);
+        assertNotNull(multiValue);
+        assertNotNull(type);
+
+        assertEquals("Simple24.TestA.ClassA1.listOfPrimitive.MVT", attribute.getattrobj("Type", 0).getobjectrefoid());
+        assertEquals("listOfPrimitive", attribute.getattrvalue("Name"));
+
+        assertEquals("Simple24.TestA.ClassA1.listOfPrimitive.TYPE", multiValue.getattrobj("BaseType", 0).getobjectrefoid());
+        assertEquals("Simple24.TestA.ClassA1.listOfPrimitive", multiValue.getattrobj("LTParent", 0).getobjectrefoid());
+        assertEquals("MVT", multiValue.getattrvalue("Name"));
+        assertEquals("true", multiValue.getattrvalue("Ordered"));
+        assertEquals("0", multiValue.getattrobj("Multiplicity", 0).getattrvalue("Min"));
+    }
+
+    @Test
+    public void bagOfPrimitiveType() {
+        IomObject attribute = getMetaObjectByTid("Simple24.TestA.ClassA1.bagOfPrimitive");
+        IomObject multiValue = getMetaObjectByTid("Simple24.TestA.ClassA1.bagOfPrimitive.MVT");
+        IomObject type = getMetaObjectByTid("Simple24.Coord");
+        assertNotNull(attribute);
+        assertNotNull(multiValue);
+        assertNotNull(type);
+
+        assertEquals("Simple24.TestA.ClassA1.bagOfPrimitive.MVT", attribute.getattrobj("Type", 0).getobjectrefoid());
+        assertEquals("bagOfPrimitive", attribute.getattrvalue("Name"));
+
+        assertEquals("Simple24.Coord", multiValue.getattrobj("BaseType", 0).getobjectrefoid());
+        assertEquals("Simple24.TestA.ClassA1.bagOfPrimitive", multiValue.getattrobj("LTParent", 0).getobjectrefoid());
+        assertEquals("MVT", multiValue.getattrvalue("Name"));
+        assertEquals("false", multiValue.getattrvalue("Ordered"));
+        assertEquals("0", multiValue.getattrobj("Multiplicity", 0).getattrvalue("Min"));
+    }
 }
