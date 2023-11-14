@@ -1,0 +1,12 @@
+INTERLIS 2.4;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+    DOMAIN
+        Coord (GENERIC) = COORD NUMERIC, NUMERIC;
+
+    TOPIC TestA =
+        CLASS ClassA =
+            attr1 : Coord;
+        END ClassA;
+    END TestA;
+END ModelA.

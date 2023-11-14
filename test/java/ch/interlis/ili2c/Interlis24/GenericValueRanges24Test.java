@@ -8,6 +8,8 @@ import org.junit.Test;
 import static ch.interlis.ili2c.LogCollectorAssertions.assertContainsError;
 import static org.junit.Assert.*;
 
+import org.junit.Ignore;
+
 public class GenericValueRanges24Test {
 
     private static final String TEST_OUT = "test/data/ili24/genericValueRanges/";
@@ -23,7 +25,14 @@ public class GenericValueRanges24Test {
         TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "contextInDifferentModel.ili");
         assertNotNull(td);
     }
+    @Test
+    @Ignore("FIXME")
+    public void missingContext() {
+        LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "MissingContext24.ili");
 
+        assertEquals(1, errs.getErrs().size());
+        assertContainsError("The Context for DOMAIN ModelA.Coord is missing", 1, errs);
+    }
     @Test
     public void invalidDimensions() {
         LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "invalidDimension_fail.ili");
