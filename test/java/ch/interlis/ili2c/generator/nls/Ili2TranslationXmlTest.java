@@ -16,13 +16,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ch.ehi.basics.settings.Settings;
+import ch.interlis.ili2c.Ili2cSettings;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
 import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.generator.nls.TranslationElement;
-import ch.interlis.ili2c.gui.UserSettings;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 
 /**
@@ -30,7 +30,8 @@ import ch.interlis.ili2c.metamodel.TransferDescription;
  * */
 public class Ili2TranslationXmlTest {
 	
-	private static final String FILEPATH = "test\\data\\ili2translationxml\\EnumOk.ili";
+	private static final String SRCPATH = "test/data/ili2translationxml/";
+    private static final String SRC_GENERAL = SRCPATH+"EnumOk.ili";
 	
 	/** Es ueberprueft, ob das MODEL korrekt in das xml file geschrieben wurde.
 	 * @throws Exception 
@@ -38,8 +39,8 @@ public class Ili2TranslationXmlTest {
 	@Test
 	public void model() throws Exception {
 		// ili lesen und xml schreiben
-		final String xmlFileName = FILEPATH + ".xml";
-		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(FILEPATH)), new File(xmlFileName));
+		final String xmlFileName = SRC_GENERAL + ".xml";
+		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
@@ -83,8 +84,8 @@ public class Ili2TranslationXmlTest {
 	@Test
 	public void topic() throws Exception {
 		// ili lesen und xml schreiben
-		final String xmlFileName = FILEPATH + ".xml";
-		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(FILEPATH)), new File(xmlFileName));
+		final String xmlFileName = SRC_GENERAL + ".xml";
+		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
@@ -107,8 +108,8 @@ public class Ili2TranslationXmlTest {
 	@Test
 	public void topicMetaAttribute() throws Exception {
 		// ili lesen und xml schreiben
-		final String xmlFileName = FILEPATH + ".xml";
-		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(FILEPATH)), new File(xmlFileName));
+		final String xmlFileName = SRC_GENERAL + ".xml";
+		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
@@ -132,8 +133,8 @@ public class Ili2TranslationXmlTest {
 	@Test
 	public void structure() throws Exception {
 		// ili lesen und xml schreiben
-		final String xmlFileName = FILEPATH + ".xml";
-		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(FILEPATH)), new File(xmlFileName));
+		final String xmlFileName = SRC_GENERAL + ".xml";
+		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
@@ -157,8 +158,8 @@ public class Ili2TranslationXmlTest {
 	@Test
 	public void classTest() throws Exception {
 		// ili lesen und xml schreiben
-		final String xmlFileName = FILEPATH + ".xml";
-		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(FILEPATH)), new File(xmlFileName));
+		final String xmlFileName = SRC_GENERAL + ".xml";
+		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
@@ -174,16 +175,50 @@ public class Ili2TranslationXmlTest {
 		}
 		fail("CLASS can not be found!");
 	}
+    @Test
+    public void functionTest() throws Exception {
+        // ili lesen und xml schreiben
+        final String xmlFileName = SRC_GENERAL + ".xml";
+        Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
+        // xml lesen
+        ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
+        
+        {
+            TranslationElement ele=getByScopedName(modelElements,"EnumOkA.FunctionA");
+            assertNotNull(ele);
+            assertEquals("FunctionA", ele.getName_de());
+            assertEquals("FunctionB", ele.getName_fr());
+            assertEquals(ElementType.FUNCTION,ele.getElementType());
+        }
+        {
+            TranslationElement ele=getByScopedName(modelElements,"EnumOkA.FunctionA.argA");
+            assertNotNull(ele);
+            assertEquals("argA", ele.getName_de());
+            assertEquals("argB", ele.getName_fr());
+            assertEquals(ElementType.FORMAL_ARGUMENT,ele.getElementType());
+        }
+    }
 
-	/**
+	private TranslationElement getByScopedName(ModelElements modelElements, String scopedName) {
+        for (TranslationElement ele : modelElements) {
+            if (ele.getScopedName() != null) {
+                if (ele.getScopedName().equals(scopedName)) {
+                    return ele;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
 	 * Es ueberprueft, ob das ATTRIBUTE korrekt in das XML file geschrieben wurde.
 	 * @throws Exception 
 	 * */
 	@Test
 	public void attribute() throws Exception {
 		// ili lesen und xml schreiben
-		final String xmlFileName = FILEPATH + ".xml";
-		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(FILEPATH)), new File(xmlFileName));
+		final String xmlFileName = SRC_GENERAL + ".xml";
+		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
@@ -209,8 +244,8 @@ public class Ili2TranslationXmlTest {
 	@Test
 	public void enumeration() throws Exception {
 		// ili lesen und xml schreiben
-		final String xmlFileName = FILEPATH + ".xml";
-		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(FILEPATH)), new File(xmlFileName));
+		final String xmlFileName = SRC_GENERAL + ".xml";
+		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
@@ -236,8 +271,8 @@ public class Ili2TranslationXmlTest {
 	@Test
 	public void enumerationSubEnum() throws Exception {
 		// ili lesen und xml schreiben
-		final String xmlFileName = FILEPATH + ".xml";
-		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(FILEPATH)), new File(xmlFileName));
+		final String xmlFileName = SRC_GENERAL + ".xml";
+		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
@@ -261,8 +296,8 @@ public class Ili2TranslationXmlTest {
 	@Test
 	public void enumerationElementMetaAttribute() throws Exception {
 		// ili lesen und xml schreiben
-		final String xmlFileName = FILEPATH + ".xml";
-		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(FILEPATH)), new File(xmlFileName));
+		final String xmlFileName = SRC_GENERAL + ".xml";
+		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
@@ -286,8 +321,8 @@ public class Ili2TranslationXmlTest {
 	@Test
 	public void association() throws Exception {
 		// ili lesen und xml schreiben
-		final String xmlFileName = FILEPATH + ".xml";
-		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(FILEPATH)), new File(xmlFileName));
+		final String xmlFileName = SRC_GENERAL + ".xml";
+		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
@@ -310,8 +345,8 @@ public class Ili2TranslationXmlTest {
 	@Test
 	public void role() throws Exception {
 		// ili lesen und xml schreiben
-		final String xmlFileName = FILEPATH + ".xml";
-		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(FILEPATH)), new File(xmlFileName));
+		final String xmlFileName = SRC_GENERAL + ".xml";
+		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
@@ -335,8 +370,8 @@ public class Ili2TranslationXmlTest {
 	@Test
 	public void constraintWithoutExplicitName() throws Exception {
 		// ili lesen und xml schreiben
-		final String xmlFileName = FILEPATH + ".xml";
-		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(FILEPATH)), new File(xmlFileName));
+		final String xmlFileName = SRC_GENERAL + ".xml";
+		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
@@ -360,8 +395,8 @@ public class Ili2TranslationXmlTest {
 	@Test
 	public void constraintWithExplicitName() throws Exception {
 		// ili lesen und xml schreiben
-		final String xmlFileName = FILEPATH + ".xml";
-		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(FILEPATH)), new File(xmlFileName));
+		final String xmlFileName = SRC_GENERAL + ".xml";
+		Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
@@ -419,10 +454,10 @@ public class Ili2TranslationXmlTest {
 	
 		Settings settings = new Settings();
 		String currentDir = iliFile1.getAbsoluteFile().getParent();
-		settings.setValue(UserSettings.ILIDIRS, UserSettings.DEFAULT_ILIDIRS);
+		settings.setValue(Ili2cSettings.ILIDIRS, Ili2cSettings.DEFAULT_ILIDIRS);
 		HashMap<String, String> pathMap = new HashMap<String, String>();
-		pathMap.put(UserSettings.ILI_DIR, currentDir);
-		settings.setTransientObject(UserSettings.ILIDIRS_PATHMAP, pathMap);
+		pathMap.put(Ili2cSettings.ILI_DIR, currentDir);
+		settings.setTransientObject(Ili2cSettings.ILIDIRS_PATHMAP, pathMap);
 		TransferDescription td = null;
 		td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig, settings);
 		return td;

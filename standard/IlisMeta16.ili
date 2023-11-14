@@ -1,13 +1,22 @@
 INTERLIS 2.4;
 
-!! 2016-12-10 ceis ASSOCIATION ExistenceDef replaced with ExistenceConstraint/ExistsIn
-!!@precursorVersion=2015-12-17
-MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
+/** 2022-10-10 MANDATORY constraint in class DataUnit added
+ */
+
+!!@precursorVersion=2020-06-17
+
+/** Base: IlisMeta07 VERSION "2022-04-28"
+ *  Modifications for I2.4:
+ *  - generics!
+ *  - constraints as meta elements
+ *  - ...
+ */
+MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2023-10-30ceis" =
 
   DOMAIN
-    BasketOID = OID TEXT; /* Filename */
-    MetaElemOID = OID TEXT; /* Namepath: Model... */
-    LanguageCode = MANDATORY TEXT*5;
+    BasketOID = OID TEXT;  !! Filename
+    MetaElemOID = OID TEXT;  !! Namepath: Model...
+    LanguageCode = TEXT*5;
 
 
   TOPIC ModelData =
@@ -15,11 +24,12 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
     OID AS IlisMeta16.MetaElemOID;
 
     DOMAIN
-      Code = 0..255; !! 1 byte code
-      MultRange = 0..2147483647; /* Max Int32 */
+      Code = 0..255;  !! 1 byte code
+      MultRange = 0..2147483647;  !! Max Int32
       LengthRange EXTENDS MultRange = 1..2147483647;
 
-    /* MetaElems in general */
+    /** MetaElements in general
+     */
 
     STRUCTURE DocText =
       Name: TEXT;
@@ -27,13 +37,15 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
     END DocText;
 
     CLASS MetaElement (ABSTRACT) =
-      /* OID: <Parent-OID>.Name */
+      /** OID: <Parent-OID>.Name
+       */
       Name: MANDATORY TEXT;
       Documentation: LIST OF DocText;
     END MetaElement;
 
     CLASS MetaAttribute =
-      /* OID: <Parent-OID>.METAOBJECT.Name */
+      /** OID: <Parent-OID>.METAOBJECT.Name
+       */
       Name: MANDATORY TEXT;
       Value: MANDATORY TEXT;
     END MetaAttribute;
@@ -54,40 +66,43 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       Super (EXTERNAL) -- {0..1} ExtendableME;
     END Inheritance;
 
-    /* Models */
+    /** Models
+     */
 
     CLASS Package (ABSTRACT) EXTENDS MetaElement =
     END Package;
 
     STRUCTURE Ili1Format =
       isFree: MANDATORY BOOLEAN;
-      LineSize: LengthRange; !! defined when isFree == False
+      LineSize: LengthRange;  !! defined when isFree == False
       tidSize: LengthRange;  !! defined when isFree == False
       blankCode: MANDATORY Code;
       undefinedCode: MANDATORY Code;
       continueCode: MANDATORY Code;
       Font: MANDATORY TEXT;
       tidKind: MANDATORY (TID_I16, TID_I32, TID_ANY, TID_EXPLANATION);
-      tidExplanation: TEXT; !! defined when tidKind == TID_EXPLANATION
+      tidExplanation: TEXT;  !! defined when tidKind == TID_EXPLANATION
     END Ili1Format;
 
     CLASS Model EXTENDS Package =
-      /* MetaElement.Name := ModelName as defined in the INTERLIS-Model */
+      /** MetaElement.Name := ModelName as defined in the INTERLIS-Model
+       */
       iliVersion: MANDATORY TEXT;
-      Contracted: MANDATORY BOOLEAN;
+      Contracted: BOOLEAN;
       Kind: MANDATORY (NormalM, TypeM, RefSystemM, SymbologyM);
       Language: LanguageCode;
       At: TEXT;
       Version: TEXT;
-      NoIncrementalTransfer: BOOLEAN; !! 2.4
-      CharSetIANAName: TEXT; !! 2.4
-      xmlns: TEXT; !! 2.4
+      NoIncrementalTransfer: BOOLEAN;  !! 2.4
+      CharSetIANAName: TEXT;  !! 2.4
+      xmlns: TEXT;  !! 2.4
       ili1Transfername: TEXT;
       ili1Format: Ili1Format;
     END Model;
 
     CLASS SubModel EXTENDS Package =
-      /* MetaElement.Name := TopicName as defined in the INTERLIS-Model */
+      /** MetaElement.Name := TopicName as defined in the INTERLIS-Model
+       */
     END SubModel;
 
     ASSOCIATION PackageElements =
@@ -117,41 +132,44 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
     END Constraint;
 
     CLASS DomainType (ABSTRACT) EXTENDS Type =
-      /* MetaElement.Name :=
-         DomainName if defined explicitly as a domain,
-         "Type" if defined within an attribute definition */
+      /** MetaElement.Name :=
+       * DomainName if defined explicitly as a domain,
+       * "Type" if defined within an attribute definition
+       */
       Mandatory: MANDATORY BOOLEAN;
     END DomainType;
 
     ASSOCIATION DomainConstraint =  !! 2.4
-       ToDomain -<#> DomainType;
-       Constraint -- {0..*} Constraint;
+      ToDomain -<#> DomainType;
+      Constraint -- {0..*} Constraint;
     END DomainConstraint;
-    
 
-    /* Classes */
+    /** Classes
+     */
 
     CLASS Class EXTENDS Type =
-      /* MetaElement.Name := StructureName, ClassName,
-                             AssociationName, ViewName
-                             as defined in the INTERLIS-Model */
+      /** MetaElement.Name := StructureName, ClassName,
+       *                      AssociationName, ViewName
+       *                      as defined in the INTERLIS-Model
+       */
       Kind: MANDATORY (Structure, Class, View, Association);
-      Multiplicity: Multiplicity; /* for associations only */
+      Multiplicity: Multiplicity;  !! for associations only
       EmbeddedRoleTransfer: MANDATORY BOOLEAN;
-      ili1OptionalTable: BOOLEAN; !! INTERLIS1 only
+      ili1OptionalTable: BOOLEAN;  !! INTERLIS 1 only
     END Class;
 
     CLASS AttrOrParam EXTENDS ExtendableME =
-      /* MetaElement.Name := AttributeName, ParameterName
-                             as defined in the INTERLIS-Model */
+      /** MetaElement.Name := AttributeName, ParameterName
+       *                      as defined in the INTERLIS-Model
+       */
       SubdivisionKind: (NoSubDiv, SubDiv, ContSubDiv);
       Transient: BOOLEAN;
       Derivates: LIST OF Expression;
     END AttrOrParam;
-    
+
     ASSOCIATION ClassConstraint =  !! 2.4
-       ToClass -<#> Class;
-       Constraint -- {0..*} Constraint;
+      ToClass -<#> Class;
+      Constraint -- {0..*} Constraint;
     END ClassConstraint;
 
     ASSOCIATION LocalType =
@@ -178,7 +196,8 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
                               DEFINED(ClassParameter->Transient));
     END ClassParam;
 
-    /* types related to other types */
+    /** Types related to other types
+     */
 
     CLASS TypeRelatedType (ABSTRACT) EXTENDS DomainType =
     END TypeRelatedType;
@@ -193,16 +212,19 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       TypeRestriction (EXTERNAL) -- Type;
     END TypeRestriction;
 
-    /* bag type */
+    /** Bag type
+     */
 
     CLASS MultiValue EXTENDS TypeRelatedType =
-      /* MetaElement.Name := "Type" because always defined
-                              within an attribute definition */
+      /** MetaElement.Name := "Type" because always defined
+       *                      within an attribute definition
+       */
       Ordered: MANDATORY BOOLEAN;
       Multiplicity: Multiplicity;
     END MultiValue;
 
-    /* references and associations */
+    /** References and associations
+     */
 
     CLASS ClassRelatedType (ABSTRACT) EXTENDS DomainType =
     END ClassRelatedType;
@@ -222,7 +244,8 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
     END ReferenceType;
 
     CLASS Role EXTENDS ReferenceType =
-      /* MetaElement.Name := RoleName as defined in the INTERLIS-Model */
+      /** MetaElement.Name := RoleName as defined in the INTERLIS-Model
+       */
       Strongness: MANDATORY (Assoc, Aggr, Comp);
       Ordered: MANDATORY BOOLEAN;
       Multiplicity: Multiplicity;
@@ -259,7 +282,8 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       AssocAcc -- Role OR ExplicitAssocAccess;
     END AssocAcc;
 
-    /* Information for easy transfer */
+    /** Information for easy transfer
+     */
 
     ASSOCIATION TransferElement =
       TransferClass -- Class;
@@ -273,10 +297,11 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       Ili1RefAttr (ORDERED) -- AttrOrParam OR Role;
     END Ili1TransferElement;
 
-    /* DataUnits */
+    /** DataUnits
+     */
 
     CLASS DataUnit EXTENDS ExtendableME =
-      Name (EXTENDED): TEXT := "BASKET";
+      Name (EXTENDED): MANDATORY TEXT := "BASKET";
       ViewUnit: MANDATORY BOOLEAN;
       DataUnitName: MANDATORY TEXT;
     END DataUnit;
@@ -290,41 +315,47 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       OfDataUnit -- DataUnit;
       ClassInBasket (EXTERNAL) -- Class;
     END AllowedInBasket;
-    
-    /* Generics and Contexts */  !! 2.4
-    
+
+    /** Generics and Contexts
+     */  !! 2.4
+
     CLASS Context EXTENDS MetaElement =
+      /** MetaElement.Name := ContextName as defined in the INTERLIS-Model
+       */
     END Context;
-        
-    ASSOCIATION GenericDef = 
-       OID AS MetaElemOID; !! <Context-OID>.<GenericDomain->Name>
+
+    ASSOCIATION GenericDef =
+       OID AS MetaElemOID;  !! <Context-OID>.<GenericDomain->Name>
        Context -<#> Context OR DataUnit;
        GenericDomain -- DomainType;
     MANDATORY CONSTRAINT
        GenericDomain->Generic;
     END GenericDef;
-    
+
     ASSOCIATION ConcreteForGeneric =
        GenericDef -<> GenericDef;
        ConcreteDomain -- DomainType;
     MANDATORY CONSTRAINT
-       NOT (ConcreteDomain->Generic);
+       NOT (ConcreteDomain->Abstract) AND NOT (ConcreteDomain->Generic);
     END ConcreteForGeneric;
-        
 
-    /* Units */
+    /** Units
+     */
 
     CLASS Unit EXTENDS ExtendableME =
-      /* MetaElement.Name := ShortName as defined in the INTERLIS-Model */
+      /** MetaElement.Name := ShortName as defined in the INTERLIS-Model
+       */
       Kind: MANDATORY (BaseU, DerivedU , ComposedU);
       Definition: Expression;
     MANDATORY CONSTRAINT ((Kind != #BaseU) == DEFINED(Definition));
     END Unit;
 
-    /* MetaObjects */
+    /** MetaObjects
+     */
 
     CLASS MetaBasketDef EXTENDS ExtendableME =
-      /* MetaElement.Name := BasketName as defined in the INTERLIS-Model */
+      /** MetaElement.Name := BasketName as defined in the INTERLIS-Model
+       */
       Kind: MANDATORY (SignB, RefSystemB);
     END MetaBasketDef;
 
@@ -334,8 +365,8 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
     END MetaDataUnit;
 
     CLASS MetaObjectDef EXTENDS MetaElement =
-      /* MetaElement.Name := MetaObjectName as defined
-         in the INTERLIS-Model */
+      /** MetaElement.Name := MetaObjectName as defined in the INTERLIS-Model
+       */
       IsRefSystem: MANDATORY BOOLEAN;
     END MetaObjectDef;
 
@@ -349,7 +380,8 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       Class -- {1} Class;
     END MetaObjectClass;
 
-    /* base types */
+    /** Base types
+     */
 
     CLASS BooleanType EXTENDS DomainType =
     END BooleanType;
@@ -364,15 +396,17 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
     END BlackboxType;
 
     CLASS NumType EXTENDS DomainType =
-      /* MetaElement.Name :=
-         DomainName if defined explicitly as a domain,
-         "Type" if defined within an attribute definition,
-         "C1", "C2", "C3" if defined within a coordinate type */
+      /** MetaElement.Name :=
+       *  DomainName if defined explicitly as a domain,
+       *  "Type" if defined within an attribute definition,
+       *  "C1", "C2", "C3" if defined within a coordinate type
+       */
       Min: TEXT;
       Max: TEXT;
       Circular: BOOLEAN;
       Clockwise: BOOLEAN;
-      /* Constraint, dass Clockwise oder Refsys */
+      /** Constraint, that Clockwise or Refsys
+       */
     END NumType;
 
     ASSOCIATION NumUnit =
@@ -380,7 +414,9 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       Unit (EXTERNAL) -- {0..1} Unit;
     END NumUnit;
 
-    DOMAIN AxisInd = 1..3;
+    DOMAIN
+      AxisInd = 1..3;
+
     CLASS CoordType EXTENDS DomainType =
       NullAxis: AxisInd;
       PiHalfAxis: AxisInd;
@@ -407,14 +443,15 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       Struct (EXTERNAL) -- {1} Class;
     END StructOfFormat;
 
-    /* OID Definition */
+    /** OID Definition
+     */
 
     CLASS AnyOIDType EXTENDS DomainType =
     END AnyOIDType;
 
     ASSOCIATION ObjectOID =
       Class -- Class;
-      Oid (EXTERNAL) -- {0..1} DomainType /* No OID, if no assoc */
+      Oid (EXTERNAL) -- {0..1} DomainType  !! No OID, if no assoc
                                RESTRICTION (TextType; NumType; AnyOIDType);
     END ObjectOID;
 
@@ -424,11 +461,12 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
                                RESTRICTION (TextType; NumType; AnyOIDType);
     END BasketOID;
 
-    /* Functions */
+    /** Functions
+     */
 
     CLASS FunctionDef EXTENDS MetaElement =
-      /* MetaElement.Name := FunctionName as defined in the INTERLIS-Model
-      */
+      /** MetaElement.Name := FunctionName as defined in the INTERLIS-Model
+       */
       Explanation: TEXT;
     END FunctionDef;
 
@@ -443,8 +481,8 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
     END ResultType;
 
     CLASS Argument EXTENDS MetaElement =
-      /* MetaElement.Name := ArgumentName as defined in the INTERLIS-Model
-      */
+      /** MetaElement.Name := ArgumentName as defined in the INTERLIS-Model
+       */
       Kind: MANDATORY (Type, EnumVal, EnumTreeVal);
     END Argument;
 
@@ -459,7 +497,8 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
     MANDATORY CONSTRAINT (Argument->Kind == #Type);
     END ArgumentType;
 
-    /* Class and attribute reference types */
+    /** Class and attribute reference types
+     */
 
     CLASS ClassRefType EXTENDS ClassRelatedType =
     END ClassRefType;
@@ -481,17 +520,18 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       Type (EXTERNAL) -- Type;
     END ARefRestriction;
 
-    /* Enumerations */
+    /** Enumerations
+     */
 
     CLASS EnumType EXTENDS DomainType =
       Order: MANDATORY (Unordered, Ordered, Circular);
     END EnumType;
 
     CLASS EnumNode EXTENDS ExtendableME =
-      /* MetaElement.Name := "TOP" for topnode,
-                             enumeration value (without constant prefix #)
-                             for all real nodes
-      */
+      /** MetaElement.Name := "TOP" for topnode,
+       *                      enumeration value (without constant prefix #)
+       *                      for all real nodes
+       */
     END EnumNode;
 
     ASSOCIATION TopNode =
@@ -504,8 +544,9 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       Node (ORDERED) -- EnumNode;
     END SubNode;
 
-    /* Extended enumerations have complete definitions.
-       Inherited nodes refer to base node */
+    /** Extended enumerations have complete definitions.
+     *  Inherited nodes refer to base node
+     */
 
     CLASS EnumTreeValueType EXTENDS DomainType =
     END EnumTreeValueType;
@@ -515,11 +556,12 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       ET (EXTERNAL) -- {1} EnumType;
     END TreeValueTypeOf;
 
-    /* Line types */
+    /** Line types
+     */
 
     CLASS LineForm EXTENDS MetaElement =
-      /* MetaElement.Name := LineFormName as defined in the INTERLIS-Model
-      */
+      /** MetaElement.Name := LineFormName as defined in the INTERLIS-Model
+       */
     END LineForm;
 
     ASSOCIATION LineFormStructure =
@@ -549,22 +591,24 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       LAStructure (EXTERNAL) -- {0..1} Class;
     END LineAttr;
 
-    /* Views */
+    /** Views
+     */
 
     CLASS View EXTENDS Class =
       FormationKind: MANDATORY (Projection, Join, Union,
                                 Aggregation (All, Equal),
                                 Inspection (Normal, Area));
-
-      FormationParameter: LIST OF Expression; /* PathOrInspFactor only */
-                          /* Aggr.Equal: UniqueEl
-                             Inspection: Attributepath */
+      FormationParameter: LIST OF Expression;  !! PathOrInspFactor only
+                          /** Aggr.Equal: UniqueEl
+                           *  Inspection: Attributepath
+                           */
       Where: Expression;
       Transient: MANDATORY BOOLEAN;
     END View;
 
     CLASS RenamedBaseView EXTENDS ExtendableME =
-      /* MetaElement.Name := Name as defined in the INTERLIS-Model */
+      /** MetaElement.Name := Name as defined in the INTERLIS-Model
+       */
       OrNull: BOOLEAN;
     END RenamedBaseView;
 
@@ -585,7 +629,8 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       (DeriAssoc->Kind == #Association) AND (View->Kind == #View);
     END DerivedAssoc;
 
-    /* Expressions, factors */
+    /** Expressions, factors
+     */
 
     STRUCTURE UnaryExpr EXTENDS Expression =
       Operation: (Not, Defined);
@@ -593,7 +638,7 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
     END UnaryExpr;
 
     STRUCTURE CompoundExpr EXTENDS Expression =
-      Operation: (Implication, And, Or, Mult, Div, !! 2.4: Implication
+      Operation: (Implication, And, Or, Mult, Div, Add, Sub, !! 2.4: Implication, Add, Sub
                   Relation (Equal, NotEqual,
                   LessOrEqual, GreaterOrEqual,
                   Less, Greater));
@@ -606,7 +651,7 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
     STRUCTURE PathEl =
       Kind: (This, ThisArea, ThatArea, Parent,
              ReferenceAttr, AssocPath, Role, ViewBase,
-             Attribute, MetaObject);
+             Attribute, MetaObject) ORDERED;
       Ref: REFERENCE TO (EXTERNAL) MetaElement;
       NumIndex: MultRange;
       SpecIndex: (First, Last);
@@ -671,7 +716,8 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       Explanation: MANDATORY TEXT;
     END UnitFunction;
 
-    /* Constraints */
+    /** Constraints
+     */
 
     CLASS SimpleConstraint EXTENDS Constraint =
       Kind: (MandC, LowPercC, HighPercC);
@@ -679,15 +725,16 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
       LogicalExpression: Expression;
     END SimpleConstraint;
 
-    STRUCTURE ExistenceDef EXTENDS PathOrInspFactor =
-      Viewable: MANDATORY REFERENCE TO Class;
+    STRUCTURE ExistenceDef =   !! 2.4
+      ExistsIn : MANDATORY REFERENCE TO (EXTERNAL) IlisMeta16.ModelData.Class;
+      Attr : MANDATORY PathOrInspFactor;
     END ExistenceDef;
 
     CLASS ExistenceConstraint EXTENDS Constraint =
       Attr : MANDATORY PathOrInspFactor;
-      ExistsIn: BAG {1..*} OF ExistenceDef;
+      RequiredIn : BAG {1..*} OF ExistenceDef;
     END ExistenceConstraint;
-    
+
     CLASS UniqueConstraint EXTENDS Constraint =
       Where: BAG {0..1} OF Expression;
       Kind: MANDATORY (GlobalU, BasketU, LocalU);  !! 2.4: BasketU
@@ -696,13 +743,16 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
 
     CLASS SetConstraint EXTENDS Constraint =
       Where: BAG {0..1} OF Expression;
+      PerBasket: BOOLEAN; !! 2.4
       Constraint: Expression;
     END SetConstraint;
 
-    /* Graphic */
+    /** Graphic
+     */
 
     CLASS Graphic EXTENDS ExtendableME =
-      /* MetaElement.Name := Name as defined in the INTERLIS-Model */
+      /** MetaElement.Name := Name as defined in the INTERLIS-Model
+       */
       Where: Expression;
     END Graphic;
 
@@ -722,7 +772,8 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
     END CondSignParamAssignment;
 
     CLASS DrawingRule EXTENDS ExtendableME =
-      /* MetaElement.Name := Name as defined in the INTERLIS-Model */
+      /** MetaElement.Name := Name as defined in the INTERLIS-Model
+       */
       Rule: LIST OF CondSignParamAssignment;
     END DrawingRule;
 
@@ -755,11 +806,10 @@ MODEL IlisMeta16 (en) AT "http://interlis.ch" VERSION "2016-12-10" =
 
     CLASS Translation =
       NO OID;
-      Language: LanguageCode;
+      Language: MANDATORY LanguageCode;
       Translations: BAG OF METranslation;
     END Translation;
 
   END ModelTranslation;
 
 END IlisMeta16.
-

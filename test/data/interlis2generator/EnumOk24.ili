@@ -1,0 +1,101 @@
+INTERLIS 2.4;
+
+
+/** Das ist Dokumentation zum Modell in DE */
+
+CONTRACTED MODEL EnumOk24A (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+  IMPORTS Units;
+  IMPORTS CoordSys;
+
+  REFSYSTEM BASKET BCoordSys ~ CoordSys.CoordsysTopic
+    OBJECTS OF GeoCartesian2D: CHLV95;
+
+  FUNCTION FunctionA(dummy:BOOLEAN; dummy2:BOOLEAN):BOOLEAN;
+
+  STRUCTURE Klothoide EXTENDS INTERLIS.LineSegment=
+    a : 0.0 .. 10.0;
+  END Klothoide;
+  
+  LINE FORM
+    LineFormA : Klothoide;
+
+  DOMAIN
+  Coord2 = COORD
+      2460000.000 .. 2870000.000 [INTERLIS.m] {CHLV95[1]},
+      1045000.000 .. 1310000.000 [INTERLIS.m] {CHLV95[2]},
+      ROTATION 2 -> 1;
+    
+  Gebietseinteilung = AREA WITH (ARCS, STRAIGHTS, LineFormA) VERTEX Coord2
+       WITHOUT OVERLAPS > 0.05;
+
+  STRUCTURE LocalisedUriDE =
+    Text : MANDATORY INTERLIS.URI;
+  END LocalisedUriDE;
+
+
+  UNIT
+
+    CubicMeterPerSecond [m3secA] = (Units.m3 / INTERLIS.s);
+	
+	!!@ dispName="Topic A"
+	TOPIC TopicA =
+	
+		STRUCTURE StructureA =
+		END StructureA;
+
+    	CLASS Dokument =
+    		Titel : MANDATORY TEXT*80;
+    		Web : LocalisedUriDE;
+    	END Dokument;
+
+    	CLASS Rechtsvorschrift EXTENDS Dokument =
+		END Rechtsvorschrift;
+	
+		/** Das ist CLASS Dokumentation in DE */
+		CLASS ClassA =
+			geomA : Coord2;
+			/** Das ist Dokumentation in DE */
+			attrA : (a1,
+				/** enum docu zu a2 */
+				!!@ dispName="a 2"
+				a2(a21,a22));
+			angleA : CoordSys.Angle_DMS;
+			MANDATORY CONSTRAINT DEFINED(attrA);
+			!!@ name=UniqueConstraintA
+			UNIQUE attrA;
+		END ClassA;
+		
+		ASSOCIATION =
+			roleA1 -- ClassA;
+			roleA2 -- ClassA;
+			MANDATORY CONSTRAINT DEFINED(roleA1->attrA);
+		END;
+
+		VIEW ClassA_V
+    		PROJECTION OF A~ClassA;
+    		=
+    		ALL OF A;
+    	END ClassA_V;
+		
+		CLASS SymbolA EXTENDS INTERLIS.SIGN =
+			PARAMETER
+				PosA: MANDATORY Coord2;
+		END SymbolA;
+	END TopicA;
+
+	TOPIC GrafikA =
+	DEPENDS ON TopicA;
+		SIGN BASKET BTopicA ~ TopicA
+			OBJECTS OF SymbolA: Punktsignatur;
+/*
+		GRAPHIC PunktGrafikA BASED ON EnumOkA.TopicA.ClassA =
+		SymbolA OF EnumOkA.TopicA.SymbolA: (
+		Sign := {BTopicA.Punktsignatur};
+		PosA := geomA
+		);
+		END PunktGrafikA;
+*/
+	END GrafikA;
+
+END EnumOk24A.
+

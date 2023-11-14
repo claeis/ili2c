@@ -1,0 +1,32 @@
+INTERLIS 2.3;
+
+MODEL model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+	TOPIC TopicA (ABSTRACT) =
+		CLASS aclass (ABSTRACT) =
+		END aclass;
+	END TopicA;
+	TOPIC TopicAp EXTENDS TopicA =
+	    CLASS aclassX EXTENDS aclass =
+	    END aclassX;
+	END TopicAp;
+	
+	TOPIC TopicB (ABSTRACT) =
+		CLASS bclass (ABSTRACT) =
+		END bclass;
+	    CLASS bclassX EXTENDS bclass =
+	    END bclassX;
+	END TopicB;
+	TOPIC TopicBp EXTENDS TopicB =
+	END TopicBp;
+	
+	TOPIC TopicC (ABSTRACT) =
+		CLASS cclass (ABSTRACT) =
+		END cclass;
+	END TopicC;
+	TOPIC TopicCp EXTENDS TopicC =
+	    CLASS cclass (EXTENDED) =
+	    END cclass;
+	END TopicCp;
+
+END model.

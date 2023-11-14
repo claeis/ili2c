@@ -1,0 +1,67 @@
+plugins {
+    id 'antlr'
+}
+
+version rootProject.version
+
+dependencies {
+	implementation 'ch.ehi:ehibasics:1.4.1'
+	implementation "antlr:antlr:2.7.7" 
+	antlr "antlr:antlr:2.7.7" 
+}
+
+def generatedResources = "$buildDir/generated-resources/main"
+
+def getGitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine git, 'rev-parse', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+sourceSets {
+    main {
+    	output.dir(generatedResources, builtBy: 'generateVersionFile')
+        resources {
+            srcDirs = ["src/main/resources"]
+            exclude "ch/interlis/ili2c/Version.properties"
+        }
+    }
+}
+
+task generateVersionFile {
+	def versionPropsFile = new File(generatedResources,"ch/interlis/ili2c/Version.properties")
+	def version="$project.version"
+	def hash=getGitHash()
+	inputs.property("version","$project.version")
+	inputs.property("hash",getGitHash())
+	outputs.file versionPropsFile
+	doLast {
+		def versionProps = new Properties()
+		versionProps.setProperty('version', version)
+		versionProps.setProperty('versionCommit', hash)
+		versionPropsFile.getParentFile().mkdirs();
+		versionProps.store(versionPropsFile.newWriter(), null);
+	}
+}
+
+compileJava.dependsOn(generateVersionFile)
+
+artifacts {
+    archives(jar.archivePath){
+    	builtBy jar
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+        	configuration = configurations.deployerJars
+			repository(url: rootProject.repos_url+'/web/jars'){
+            	authentication(userName: rootProject.repos_usr, password: rootProject.repos_pwd)
+            }
+        }
+    }
+}

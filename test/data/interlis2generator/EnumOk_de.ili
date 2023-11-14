@@ -8,7 +8,7 @@ CONTRACTED MODEL EnumOkA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "
   REFSYSTEM BASKET BCoordSysA ~ CoordSys.CoordsysTopic
     OBJECTS OF GeoCartesian2D: CHLV95;
 
-  FUNCTION FunctionA(dummy:BOOLEAN):BOOLEAN;
+  FUNCTION FunctionA(dummy:BOOLEAN; dummy2:BOOLEAN):BOOLEAN;
 
   STRUCTURE Klothoide EXTENDS INTERLIS.LineSegment=
     a : 0.0 .. 10.0;

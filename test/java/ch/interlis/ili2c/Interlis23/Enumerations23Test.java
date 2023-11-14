@@ -39,6 +39,26 @@ public class Enumerations23Test {
 		td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
 		assertNull(td);
 	}
+    @Test
+    public void extendedAttr() throws Exception {
+        Settings settings=new Settings();
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"ExtendedAttr.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+        assertNotNull(td);
+    }
+    @Test
+    public void extendedAttrFail() throws Exception {
+        Settings settings=new Settings();
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"ExtendedAttrFail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig,settings);
+        assertNull(td);
+    }
 	
 	// This test checks an extended enumeration type.
 	@Ignore

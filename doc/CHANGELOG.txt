@@ -1,5 +1,150 @@
 LATEST
 ---------------------------
+
+ili2c 5.3.4 (2023-11-14)
+---------------------------
+- ili2.4: Check deferred statement (#91)
+- ili2.4: Verify coords match or extend a concrete definition when overriding a generic context (#91)
+- ili2.4: Add (BASKET) on UNIQUE and SET constraints (#90)
+- ili2.4: Add additional checks for context definitions (#91)
+- ili2.4: Add constraints to domains (#89)
+- ili2.4: Test & Fix Expressions (#86)
+- ili2 export: Print context and context syntax (#91)
+- ili2 export: Improve constraint print (#95)
+- repos: default connectTimeout=15s, readTimeout=40s
+
+ili2c 5.3.3 (2023-08-03)
+---------------------------
+- repos clone: unset/clear precursorVersion
+- ili2.4:  support Expression with +, -, *, / (#86) 
+- ili2 export API: add ilishaper hooks
+- NLSXML: fix export of FormalArgument
+- ili2.4 export: fix TransferDescription
+- IliManager.getConfig(models) support ili1-translation-of
+- API: Viewable.getRoles() renamed to getDefinedRoles()
+- iox-ili-1.21.18
+
+ili2c 5.3.2 (2022-12-30)
+---------------------------
+- API: added resolvePathMap()
+- iox-ili-1.21.15
+
+ili2c 5.3.1 (2022-12-07)
+---------------------------
+- iox-ili-1.21.14
+
+ili2c 5.3.0 (2022-10-21)
+---------------------------
+- fix memory leak in metamodel (#76)
+- ili2.4: LIST/BAG with simple types (#74) 
+- ili2.4: support DATE/DATETIME/TIMEOFDAY (#73) 
+- ili2.4: support MULTICOORD, MULTIPOLYLINE, MULTISURFACE, MULTIAREA (#72)
+- verify type compatibility in EXISTENCE CONSTRAINT (#77) 
+- fix reference to INTERLIS.ANYCLASS must not be external
+- fix missing MANDATORY in extended references (#40) 
+- fix --check-repo-ilis does not find "INTERLIS" model (#75) 
+- make DEFAULT_ILIDIRS available as env var (#64)
+- fix  UNIQUE: Missing error message if 0..n-RoleDef-PathEl (#71) 
+- iox-ili-1.21.13
+
+ili2c 5.2.8 (2022-08-24)
+---------------------------
+- metamodel: added AbstractEnumerationType
+- IliManager.ILIDATA_URI_PREFIX added (iox-ili#91)
+- iox-ili-1.21.12
+
+ili2c 5.2.7 (2022-07-08)
+---------------------------
+- metamodel: add ili linenr to constraints 
+- ili2 export: added missing ';' between formal arguments in FUNCTION definition
+- ModelMetadata added baseUri (#70)
+- ModelLister.visitedRepositories() added (#70)
+- isDomainName()/isDomainUri()/isDomainHalignment()/isDomainValignment() added
+- fix JRE 1.6 compatibility
+- iox-ili-1.21.10
+
+ili2c 5.2.6 (2022-04-29)
+---------------------------
+- ili repos access: filter browseOnly entries before version chaining (#67)
+- imd export: fixed NPE in ModelDef without language (#65)
+- iox-ili-1.21.10
+
+ili2c 5.2.5 (2021-12-28)
+---------------------------
+- fix check-repo-ilis: "The name of the model conflicts with..."
+- iox-ili-1.21.9
+
+ili2c 5.2.4 (2021-11-24)
+---------------------------
+- Interlis2Generator: add printType(..,withCardinality)
+- iox-ili-1.21.8
+
+ili2c 5.2.3 (2021-09-10)
+---------------------------
+- added IliManager.getIliFiles()
+- NLSXML: ModelElements.sort() ignore case
+- ili2 export: added missing constraint doc
+- ili2 export: fixed NPE if no crs or language trafo 
+- ili2 export: adjust spaces/newlines to umleditor output
+- ili2 export: use qualified name in references
+- check-repo-ilis: use local empty folder to read ili file from, to avoid not detecting missing deps in ilimodels.xml
+- ili-cache: set ILI_CACHE_FILENAME=MD5 to use short filenames in $HOME/.ilicache
+- iox-ili-1.21.6
+
+ili2c 5.2.2 (2021-04-30)
+---------------------------
+- added native-image config
+- Separate GUI (Swing) classes from Main class (#52)
+- iox-ili-1.21.6
+- ehibasics-1.4.1
+
+ili2c 5.2.1 (2021-04-23)
+---------------------------
+- enable spaces in paths of ilimodels.xml entries
+- add runtime support of RunTimeParameterDef / MODEL MinimalRuntimeSystem01 (ilivalidator#221)
+- fix type check of RuntimeParameterDef application
+
+ili2c 5.2.0 (2021-03-05)
+---------------------------
+- fix validation of EXTENDED ViewDef
+- fix validation of datatype compatibility in constraints of ViewDef
+- fix validation of ViewDef translation (#41)
+- enable role-access in VIEW with ALL OF (#6)
+- add success message at end of cmdline run
+
+ili2c 5.1.5 (2020-12-28)
+---------------------------
+- fix validation of FunctionDef translation (#41)
+- fix validation of LineFormTypeDef translation (#41)
+- fix validation of MetaDataBasketDef translation (#41)
+- fix validation of RuntimeParameterDef translation (#41)
+- fix failing parser, if single line comment after end of model (#55)
+- ehibasics-1.4.0
+- iox-ili-1.21.4
+
+ili2c 5.1.4 (2020-10-02)
+---------------------------
+- info message if modelscan of local ili-file fails (ili2db#364)
+- iox-ili-1.21.3
+
+ili2c 5.1.3 (2020-09-28)
+---------------------------
+- iox-ili-1.21.2
+
+ili2c 5.1.2 (2020-08-28)
+---------------------------
+- fix validation of MandatoryConstraint translation (#41)
+- fix validation of PlausibilityConstraint translation (#41)
+- fix validation of SetConstraint translation (#41)
+- fix validation of ExistenceConstraint translation (#41)
+- fix validation of UniquenessConstraint translation (#41)
+- fix report topic with inherited abstract class without concrete class (#54)
+- fix report extended attribute without extended enumeration (#53)
+- rename --ilidirs to --modeldir (#50)
+- iox-ili-1.21.1
+
+ili2c 5.1.1 (2020-05-01)
+---------------------------
 - verifiy that mandatory constraint has logical expression (#17)
 - check datatype compatibility in constraints (#17)
 - test of expressions in MANDATORY CONSTRAINTs (#31)
@@ -8,6 +153,7 @@ LATEST
 - improve core/tool separation
 - adjust error message to 2.4 (#48)
 - added UserSettings.ILI_LANGUAGE_VERSION to force language version
+- iox-ili-1.21.0
 
 ili2c 5.0.8 (2020-04-01)
 ---------------------------

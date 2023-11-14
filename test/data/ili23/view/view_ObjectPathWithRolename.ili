@@ -1,0 +1,47 @@
+INTERLIS 2.3;
+
+CONTRACTED MODEL ModelA AT "mailto:ceis@localhost" VERSION "2016-03-29" =
+	TOPIC Topic =
+		
+		CLASS ClassK =
+			attrK : TEXT*10;
+		END ClassK;
+		
+		CLASS ClassL =
+			attrL : TEXT*10;
+		END ClassL;
+		
+		ASSOCIATION n2n =
+		  roleK_n2n -- {0..*} ClassK;
+		  roleL_n2n -- {0..*} ClassL;
+		END n2n;
+
+		ASSOCIATION n21 =
+		  roleK_n21 -- {0..1} ClassK;
+		  roleL_n21 -- {0..*} ClassL;
+		END n21;
+		
+  	VIEW View_n2n
+   	PROJECTION OF n2n;
+    	=
+       ALL OF n2n;
+       MANDATORY CONSTRAINT roleK_n2n->attrK<>roleL_n2n->attrL; !! requires fix in ili2c
+    END View_n2n;
+
+  	VIEW View_n21
+   	PROJECTION OF ClassL;
+    	=
+       ALL OF ClassL;
+       MANDATORY CONSTRAINT roleK_n21->attrK<>"a";
+    END View_n21;
+
+  	VIEW View_class_n2n
+   	PROJECTION OF ClassK;
+    	=
+       ALL OF ClassK;
+       MANDATORY CONSTRAINT INTERLIS.objectCount(roleL_n2n)>0;
+    END View_class_n2n;
+    
+	END Topic;
+END ModelA.
+

@@ -1,0 +1,31 @@
+INTERLIS 2.4;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  DOMAIN
+    Coord2 (GENERIC) = COORD NUMERIC, NUMERIC;
+
+    !!@CRS=EPSG:21781
+    Coord2_CHLV03 EXTENDS Coord2 = COORD
+      460000.000 .. 870000.000,
+       45000.000 .. 310000.000,
+      ROTATION 2 -> 1;
+
+    !!@CRS=EPSG:2056
+    Coord2_CHLV95 EXTENDS Coord2 = COORD
+      2460000.000 .. 2870000.000,
+      1045000.000 .. 1310000.000,
+      ROTATION 2 -> 1;
+
+  CONTEXT default =
+    Coord2 = Coord2_CHLV03 OR Coord2_CHLV95;
+
+  TOPIC TopicA =
+    DEFERRED GENERICS Coord2;
+
+    CLASS ClassA =
+      attrA : Coord2;
+    END ClassA;
+  END TopicA;
+
+END ModelA.

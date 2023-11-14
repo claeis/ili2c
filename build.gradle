@@ -1,0 +1,217 @@
+allprojects {
+	group 'ch.interlis'
+	apply plugin: "java"
+	apply plugin: "maven"
+	
+    if(!JavaVersion.current().isJava8()){
+      compileJava.options.compilerArgs.addAll(['--release', '6'])
+    }else{
+      sourceCompatibility = JavaVersion.VERSION_1_6 
+      targetCompatibility = JavaVersion.VERSION_1_6
+    }
+	compileJava.options.encoding = 'US-ASCII'
+	
+	configurations {
+		deployerJars
+	}
+	dependencies {
+		testCompile group: 'junit', name: 'junit', version: '4.12'
+		deployerJars "org.apache.maven.wagon:wagon-ftp:3.3.3"
+		deployerJars "org.apache.maven.wagon:wagon-ssh:3.3.3"
+	}
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		maven {
+			url "http://jars.interlis.ch"
+		}
+	}
+}
+
+version '5.3.4'+System.getProperty('release','-SNAPSHOT')
+
+configurations {
+	scpAntTask
+}
+
+// to get the latest SNAPSHOT uncomment the following lines
+//configurations.all {
+    // check for updates every build
+    // resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+//}
+
+dependencies {
+    implementation "ch.interlis:iox-api:1.0.3"
+    implementation("ch.interlis:iox-ili:1.21.18") {
+    	exclude group: 'net.iharder', module: 'base64'
+    	exclude group: 'com.vividsolutions', module: 'jts-core'
+    }
+    runtime	group: 'javax.xml.bind',name:'jaxb-api', version:'2.3.1'
+    runtime	group: 'com.sun.xml.bind',name:'jaxb-core', version:'2.3.0.1'
+    runtime	group: 'com.sun.xml.bind',name:'jaxb-impl', version:'2.3.2'
+    runtime group: 'javax.activation', name: 'activation', version: '1.1.1'
+    testImplementation "com.vividsolutions:jts-core:1.14.0"
+    
+	scpAntTask "org.apache.ant:ant-jsch:1.10.7"
+    
+    implementation project('ili2c-core')
+}
+
+
+Properties properties = new Properties()
+File propFile=project.rootProject.file('user.properties')
+if(propFile.exists()){
+	properties.load(propFile.newDataInputStream())
+}
+ext {
+	git = System.getProperty('git',properties.get('git','git'))
+	repos_pwd = System.getProperty('repos_pwd',properties.get('repos_pwd','repos_pwd'))
+	repos_usr = System.getProperty('repos_usr',properties.get('repos_usr','repos_usr'))
+	repos_host = System.getProperty('repos_host',properties.get('repos_host','ftp.interlis.ch'))
+	repos_dir = System.getProperty('repos_dir',properties.get('repos_dir',''))
+	repos_url = 'scp://'+repos_host+'/'+repos_dir
+	python= System.getProperty('python',properties.get('python','python'))
+	rst2html= System.getProperty('rst2html',properties.get('rst2html','rst2html'))
+}
+
+sourceSets {
+    test {
+        java {
+            srcDirs = ['test/java']
+        }
+        resources {
+            srcDirs = ['test/data']
+        }
+    }
+}
+
+task usrdoc(type:Exec) {
+	group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = 'Builds the user documentation (html)'
+	def infile=new File(project.projectDir,'doc/ili2c.rst')
+	def outfile=new File('docs/ili2c.html')
+	inputs.file infile
+	outputs.file outfile
+	doFirst{
+		new File(project.buildDir,'docs').mkdir()
+	}
+		workingDir = project.buildDir
+		executable python
+		args = [rst2html, infile, outfile]
+}
+
+task ilidoc(type:Exec) {
+	group = JavaBasePlugin.DOCUMENTATION_GROUP
+    description = 'Builds the ilidoc documentation (html)'
+	def infile=new File(project.projectDir,'doc/ilidoc.rst')
+	def outfile=new File('docs/ilidoc.html')
+	inputs.file infile
+	outputs.file outfile
+	doFirst{
+		new File(project.buildDir,'docs').mkdir()
+	}
+		workingDir = project.buildDir
+		executable python
+		args = [rst2html, infile, outfile]
+}
+
+task fatjar(type: Jar) {
+	archiveFileName='ili2c.jar'
+  manifest {
+    attributes(
+      "Main-Class": "ch.interlis.ili2c.Main"
+    )
+  }
+  from sourceSets.main.output
+
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
+}
+
+
+task bindist(type: Zip, dependsOn: fatjar) {
+	baseName = project.name
+	destinationDir = file('dist')
+	from fatjar
+	from("doc"){
+		include "LICENSE.*"
+		include "CHANGELOG.txt"
+		include "README.txt"
+		include "index.html" 
+		into('doc')
+	}
+	from("standard") {
+		include("**/*.ili")
+		into('standard')
+	}
+	from ("xsd"){
+		include "**/*.xsd"
+		into "xsd"
+	}
+	from ("iliuml") {
+		include "*.uml"
+		into "iliuml"
+	}
+}
+
+artifacts {
+	archives(bindist.archivePath) {
+        type 'zip'
+        classifier 'bindist'
+        builtBy bindist
+    }
+    archives(jar.archivePath){
+    	builtBy jar
+    }
+}
+
+task printArchives {
+	doLast {
+		println jar.archivePath
+		println project(":ili2c-core").jar.archivePath
+	}
+}
+
+test {
+    testLogging.exceptionFormat = 'full'
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+        	configuration = configurations.deployerJars
+			repository(url: repos_url+'/web/jars'){
+            	authentication(userName: repos_usr, password: repos_pwd)
+            }
+        }
+    }
+}
+
+ant.taskdef(name: 'myscp',
+			classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
+			classpath: configurations.scpAntTask.asPath)
+
+task uploadBindist(dependsOn: bindist) {
+	doLast {
+		def dist= bindist.archiveFile.get().asFile.parent
+		def srcFileName=bindist.archiveFile.get().asFile.name
+		def targetFileName='ili2c-'+project.version+'.zip'
+		def json = groovy.json.JsonOutput.toJson([filename: 'https://downloads.interlis.ch/ili2c/'+targetFileName, version: project.version ,date: new Date().format( 'yyyy-MM-dd' )])
+		def releaseFile = new File(dist,"ili2c-release.json")
+		releaseFile.write(json)
+
+		ant.myscp(password: repos_pwd,
+			remoteTofile: repos_usr+'@'+repos_host+':'+repos_dir+"/web/downloads/ili2c/"+targetFileName,
+			localFile: bindist.archiveFile.get().asFile) 
+		
+		ant.myscp(password: repos_pwd,
+			todir: repos_usr+'@'+repos_host+':'+repos_dir+"/web/downloads/ili2c") {
+				fileset(dir: dist ) {
+					include(name: releaseFile.name)
+				}
+		}
+	}
+}
+

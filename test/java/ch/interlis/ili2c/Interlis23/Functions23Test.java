@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import ch.ehi.basics.logging.EhiLogger;
+import ch.interlis.ili2c.CompilerLogEvent;
 import ch.interlis.ili2c.Ili2c;
 import ch.interlis.ili2c.Ili2cFailure;
 import ch.interlis.ili2c.LogCollector;
@@ -32,6 +33,39 @@ public class Functions23Test {
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}
+    @Test
+    public void functions_textArg() {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"functions_textArg.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+        }
+        assertNotNull(td);
+        assertEquals(0,errs.getErrs().size());
+    }
+    @Test
+    @Ignore("requires #29")
+    public void functions_mtextArg_Fail() {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"functions_mtextArg_Fail.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+        }
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        assertEquals("unexpected cardinality of role \"ModelA.TopicA.b2c:c\".", logEvent.getRawEventMsg());
+    }
 	
 	// This test checks if the compiler detects a function definition at topic level in an uncontracted model.
 	@Ignore

@@ -1,0 +1,21 @@
+INTERLIS 2.4;
+
+MODEL ModelA AT "mailto:test@localhost" VERSION "2023-09-05" =
+    TOPIC TopicA =
+
+        STRUCTURE StructA =
+            structAttr: TEXT*100;
+        END StructA;
+
+        CLASS ClassA =
+            attr1: BAG {1..*} OF StructA;
+            UNIQUE (BASKET) (LOCAL) attr1 : structAttr;
+            UNIQUE (BASKET) NamedUniqueBasketLocal: (LOCAL) attr1 : structAttr;
+        END ClassA;
+
+        CONSTRAINTS OF ClassA =
+            UNIQUE (BASKET) (LOCAL) attr1 : structAttr;
+            UNIQUE (BASKET) NamedUniqueBasketLocal2: (LOCAL) attr1 : structAttr;
+        END;
+    END TopicA;
+END ModelA.

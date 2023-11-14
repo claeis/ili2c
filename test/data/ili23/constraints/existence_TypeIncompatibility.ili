@@ -1,0 +1,19 @@
+INTERLIS 2.3;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC TopicA =
+
+
+		CLASS ClassA =
+			otherAttr : 1 .. 20;
+		END ClassA;
+
+		CLASS ClassB =
+			attr : TEXT*10;
+			EXISTENCE CONSTRAINT attr REQUIRED IN ClassA:otherAttr; !! Fail: TEXT!=NUMERIC
+		END ClassB;
+		
+
+	END TopicA;
+
+END ModelA.

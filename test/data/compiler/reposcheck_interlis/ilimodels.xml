@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TRANSFER xmlns="http://www.interlis.ch/INTERLIS2.3">
+	<HEADERSECTION SENDER="mkilimodelsxml-5.0.9-20200406" VERSION="2.3">
+		<MODELS>
+			<MODEL NAME="IliRepository20" VERSION="2020-01-15" URI="http://models.interlis.ch/core"></MODEL>
+		</MODELS>
+	</HEADERSECTION>
+	<DATASECTION>
+		<IliRepository20.RepositoryIndex BID="b1">
+			<IliRepository20.RepositoryIndex.ModelMetadata TID="0">
+				<Name>ModelA</Name>
+				<SchemaLanguage>ili2_3</SchemaLanguage>
+				<File>ModelA.ili</File>
+				<Version>1</Version>
+				<publishingDate>2020-03-23</publishingDate>
+				<dependsOnModel>
+					<IliRepository20.ModelName_>
+						<value>INTERLIS</value>
+					</IliRepository20.ModelName_>
+				</dependsOnModel>
+				<Issuer>http://www.interlis.ch/ili2c/tests/</Issuer>
+				<browseOnly>false</browseOnly>
+			</IliRepository20.RepositoryIndex.ModelMetadata>
+		</IliRepository20.RepositoryIndex>
+	</DATASECTION>
+</TRANSFER>
