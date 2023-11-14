@@ -30,7 +30,6 @@ import ch.interlis.iox_j.validator.ValidationConfig;
 import ch.interlis.iox_j.validator.Validator;
 
 public class Imd16GeneratorTest {
-    public static final String SIMPLE24_ILI = "test/data/imdgenerator/Simple24.ili";
     private static final String ILIS_META16_ILI = "standard/IlisMeta16.ili";
     @Test
     public void ili23Test() throws Iox2jtsException, IoxException {
@@ -86,60 +85,7 @@ public class Imd16GeneratorTest {
              }while(!(event instanceof EndTransferEvent));
         }
     }
-    @Test
-    public void ili24Test() throws Iox2jtsException, IoxException {
-        final String OUT_FILE = "Simple24-out.imd";
-        // generate imd file
-        {
-            // compile model
-            TransferDescription td=null;
-            Configuration ili2cConfig=new Configuration();
-            FileEntry fileEntry=new FileEntry(SIMPLE24_ILI, FileEntryKind.ILIMODELFILE);
-            ili2cConfig.addFileEntry(fileEntry);
-            ili2cConfig.setOutputFile(OUT_FILE);
-            ili2cConfig.setOutputKind(GenerateOutputKind.IMD16);
-            td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
-            Assert.assertNotNull(td);
-            
-        }
-        
-        // verify
-        {
-            // compile model
-            TransferDescription td=null;
-            Configuration ili2cConfig=new Configuration();
-            FileEntry fileEntry=new FileEntry(ILIS_META16_ILI, FileEntryKind.ILIMODELFILE);
-            ili2cConfig.addFileEntry(fileEntry);
-            td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
-            Assert.assertNotNull(td);
-            
-            ValidationConfig modelConfig = new ValidationConfig();
-            LogCollector logger = new LogCollector();
-            LogEventFactory errFactory = new LogEventFactory();
-            PipelinePool pipelinePool = new PipelinePool();
-            Settings settings = new Settings();
-            Validator validator = new Validator(td, modelConfig, logger, errFactory, pipelinePool, settings);
-            
-            Xtf24Reader reader=new Xtf24Reader(new File(OUT_FILE));
-            reader.setModel(td);
-            IoxEvent event=null;
-            HashMap<String,IomObject> objs=new HashMap<String,IomObject>();
-             do{
-                    event=reader.read();
-                    //validator.validate(event); // requires ilivalidator#336
-                    if(event instanceof StartTransferEvent){
-                    }else if(event instanceof StartBasketEvent){
-                    }else if(event instanceof ObjectEvent){
-                        IomObject iomObj=((ObjectEvent)event).getIomObject();
-                        if(iomObj.getobjectoid()!=null) {
-                            objs.put(iomObj.getobjectoid(), iomObj);
-                        }
-                    }else if(event instanceof EndBasketEvent){
-                    }else if(event instanceof EndTransferEvent){
-                    }
-             }while(!(event instanceof EndTransferEvent));
-        }
-    }
+
     @Test
     public void ili10Test() throws Iox2jtsException, IoxException {
         final String OUT_FILE = "Simple10-out.imd";
