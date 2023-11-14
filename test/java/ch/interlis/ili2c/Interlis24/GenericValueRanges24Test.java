@@ -25,14 +25,15 @@ public class GenericValueRanges24Test {
         TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "contextInDifferentModel.ili");
         assertNotNull(td);
     }
+
     @Test
-    @Ignore("FIXME")
     public void missingContext() {
         LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "MissingContext24.ili");
 
         assertEquals(1, errs.getErrs().size());
-        assertContainsError("The Context for DOMAIN ModelA.Coord is missing", 1, errs);
+        assertContainsError("ModelA.TestA is missing a context definition for generic DOMAIN ModelA.Coord.", 1, errs);
     }
+
     @Test
     public void invalidDimensions() {
         LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "invalidDimension_fail.ili");
@@ -75,8 +76,9 @@ public class GenericValueRanges24Test {
     public void deferredDomainNoContext() {
         LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "deferredDomainNoContext_fail.ili");
 
-        assertEquals(1, errs.getErrs().size());
+        assertEquals(2, errs.getErrs().size());
         assertContainsError("ModelA.TopicA has no accessible context definition for deferred generic Coord2.", 1, errs);
+        assertContainsError("ModelA.TopicA is missing a context definition for generic DOMAIN ModelA.Coord2.", 1, errs);
     }
 
     @Test
