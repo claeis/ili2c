@@ -19,7 +19,7 @@ MODEL Simple24 AT "mailto:noreply@localhost" VERSION "2023-10-24" =
   CONTEXT default =
     GenericDomain = Coord OR Coord2;
 
-  TOPIC TestA =
+  TOPIC TestA (ABSTRACT) =
 
     CLASS ClassOther1 =
         attrOther : TEXT*60;
@@ -82,7 +82,7 @@ END ModelAttributes24.
 MODEL DeferredGeneric24 AT "mailto:noreply@localhost" VERSION "2023-10-24" =
   IMPORTS Simple24;
 
-  TOPIC TestA =
+  TOPIC TestA (ABSTRACT) =
     DEFERRED GENERICS Simple24.GenericDomain;
 
   END TestA;
