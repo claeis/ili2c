@@ -343,7 +343,9 @@ private void checkIntegrityAbstract(List<Ili2cSemanticException> errs) {
 
     for (Domain domain : usedGenericDomains) {
         Domain[] resolved = model.resolveGenericDomain(domain);
-        if (resolved != null && resolved.length > 1 && !deferredGenerics.contains(domain)) {
+        if (resolved == null) {
+            errs.add(new Ili2cSemanticException(getSourceLine(), formatMessage("err_topic_genericMissingContext", getScopedName(), domain.toString())));
+        } else if (resolved.length > 1 && !deferredGenerics.contains(domain)) {
             errs.add(new Ili2cSemanticException(getSourceLine(), formatMessage("err_topic_deferredGenericMissing", getScopedName(), domain.getName())));
         }
     }
