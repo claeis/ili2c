@@ -1573,8 +1573,13 @@ public class Imd16Generator {
 					if ( completeExpression != null ) {
 						newExpression.addSubExpressions( completeExpression );
 					}
-					newExpression.setOperation( CompoundExpr_Operation.And ); // TODO should be * or /
-
+					if(op=='*') {
+	                    newExpression.setOperation( CompoundExpr_Operation.Mult );
+					}else if (op=='/'){
+	                    newExpression.setOperation( CompoundExpr_Operation.Div );
+					}else {
+	                    throw new IllegalArgumentException( "Unknown ComposedUnit operator: '" + op +"'");
+					}
 					operator = op;
 					completeExpression = newExpression;
 				}
@@ -1584,31 +1589,46 @@ public class Imd16Generator {
 			}
 			iomUnit.setDefinition( completeExpression );
 		}else if(unit instanceof ch.interlis.ili2c.metamodel.DerivedUnit){
-			ch.interlis.ili2c.metamodel.DerivedUnit derivedUnit=(ch.interlis.ili2c.metamodel.DerivedUnit)unit;
-			iomUnit.setKind( Unit_Kind.DerivedU );
-			
-			Expression expr = null;
-			if(false){
-				// TODO DerivedUnit
-				if ( derivedUnit instanceof ch.interlis.ili2c.metamodel.NumericallyDerivedUnit ) {
-					ch.interlis.ili2c.metamodel.NumericallyDerivedUnit numericallyDerivedUnit = (ch.interlis.ili2c.metamodel.NumericallyDerivedUnit)derivedUnit;
-					ch.interlis.ili2c.metamodel.NumericallyDerivedUnit.Factor[] conversionFactors = numericallyDerivedUnit.getConversionFactors();
-					conversionFactors[0].getConversionFactor(); // OPEN: Wie ConversionFactor mappen?
-					conversionFactors[0].getConversionOperator();				
-					
-				} else if ( derivedUnit instanceof ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit ) {
-					ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit functionallyDerivedUnit = (ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit)derivedUnit;
-					// Bsp fuer Explanation: " 10**(dB/20) * 0.00002 "
-					functionallyDerivedUnit.getExplanation(); // OPEN: Wie getExplanation mappen? 
-					
-				} else {
-					throw new IllegalArgumentException( "Unknown subclass: " + derivedUnit.getClass() );
-				}
-				
-				iomUnit.setDefinition( expr );
-				
-			}
-			
+            ch.interlis.ili2c.metamodel.DerivedUnit derivedUnit = (ch.interlis.ili2c.metamodel.DerivedUnit) unit;
+            iomUnit.setKind(Unit_Kind.DerivedU);
+            if (derivedUnit instanceof ch.interlis.ili2c.metamodel.NumericallyDerivedUnit) {
+                ch.interlis.ili2c.metamodel.NumericallyDerivedUnit numericallyDerivedUnit = (ch.interlis.ili2c.metamodel.NumericallyDerivedUnit) derivedUnit;
+                ch.interlis.ili2c.metamodel.NumericallyDerivedUnit.Factor[] unitFactors = numericallyDerivedUnit
+                        .getConversionFactors();
+                CompoundExpr completeExpression = null;
+                char operator = '\0';
+                for (int i = 0; i < unitFactors.length; i++) {
+                    char op = unitFactors[i].getConversionOperator();
+                    if (op != operator) {
+                        CompoundExpr newExpression = new CompoundExpr();
+                        if (completeExpression != null) {
+                            newExpression.addSubExpressions(completeExpression);
+                        }
+                        if (op == '*') {
+                            newExpression.setOperation(CompoundExpr_Operation.Mult);
+                        } else if (op == '/') {
+                            newExpression.setOperation(CompoundExpr_Operation.Div);
+                        } else {
+                            throw new IllegalArgumentException("Unknown DerivedUnit operator: '" + op + "'");
+                        }
+                        operator = op;
+                        completeExpression = newExpression;
+                    }
+                    Constant decConst = new Constant();
+                    decConst.setType(Constant_Type.Numeric);
+                    decConst.setValue(unitFactors[i].getConversionFactor().toString());
+                    completeExpression.addSubExpressions(decConst);
+                }
+                iomUnit.setDefinition(completeExpression);
+            } else if (derivedUnit instanceof ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit) {
+                ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit functionallyDerivedUnit = (ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit) derivedUnit;
+                // Bsp fuer Explanation: " 10**(dB/20) * 0.00002 "
+                UnitFunction funcExpr = new UnitFunction();
+                funcExpr.setExplanation(functionallyDerivedUnit.getExplanation());
+                iomUnit.setDefinition(funcExpr);
+            } else {
+                throw new IllegalArgumentException("Unknown subclass: " + derivedUnit.getClass());
+            }
 		}
 		
 		out.write(new ObjectEvent(iomUnit));

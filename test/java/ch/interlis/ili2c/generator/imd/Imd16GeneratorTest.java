@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
+import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.settings.Settings;
 import ch.interlis.ili2c.LogCollector;
 import ch.interlis.ili2c.config.Configuration;
@@ -31,6 +32,7 @@ import ch.interlis.iox_j.validator.Validator;
 
 public class Imd16GeneratorTest {
     private static final String ILIS_META16_ILI = "standard/IlisMeta16.ili";
+    private static final String UNITS23_ILI = "standard/Units.ili";
     @Test
     public void ili23Test() throws Iox2jtsException, IoxException {
         final String OUT_FILE = "Simple23-out.imd";
@@ -40,6 +42,61 @@ public class Imd16GeneratorTest {
             TransferDescription td=null;
             Configuration ili2cConfig=new Configuration();
             FileEntry fileEntry=new FileEntry(ImdGeneratorTest.SIMPLE23_ILI, FileEntryKind.ILIMODELFILE);
+            ili2cConfig.addFileEntry(fileEntry);
+            ili2cConfig.setOutputFile(OUT_FILE);
+            ili2cConfig.setOutputKind(GenerateOutputKind.IMD16);
+            td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+            Assert.assertNotNull(td);
+            
+        }
+        
+        // verify
+        {
+            // compile model
+            TransferDescription td=null;
+            Configuration ili2cConfig=new Configuration();
+            FileEntry fileEntry=new FileEntry(ILIS_META16_ILI, FileEntryKind.ILIMODELFILE);
+            ili2cConfig.addFileEntry(fileEntry);
+            td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+            Assert.assertNotNull(td);
+            
+            ValidationConfig modelConfig = new ValidationConfig();
+            LogCollector logger = new LogCollector();
+            LogEventFactory errFactory = new LogEventFactory();
+            PipelinePool pipelinePool = new PipelinePool();
+            Settings settings = new Settings();
+            Validator validator = new Validator(td, modelConfig, logger, errFactory, pipelinePool, settings);
+            
+            Xtf24Reader reader=new Xtf24Reader(new File(OUT_FILE));
+            reader.setModel(td);
+            IoxEvent event=null;
+            HashMap<String,IomObject> objs=new HashMap<String,IomObject>();
+             do{
+                    event=reader.read();
+                    //validator.validate(event); // requires ilivalidator#336
+                    if(event instanceof StartTransferEvent){
+                    }else if(event instanceof StartBasketEvent){
+                    }else if(event instanceof ObjectEvent){
+                        IomObject iomObj=((ObjectEvent)event).getIomObject();
+                        if(iomObj.getobjectoid()!=null) {
+                            objs.put(iomObj.getobjectoid(), iomObj);
+                        }
+                    }else if(event instanceof EndBasketEvent){
+                    }else if(event instanceof EndTransferEvent){
+                    }
+             }while(!(event instanceof EndTransferEvent));
+        }
+    }
+    @Test
+    public void units23Test() throws Iox2jtsException, IoxException {
+        final String OUT_FILE = "Units23-out.imd";
+        // generate imd file
+        {
+            EhiLogger.getInstance().setTraceFilter(false);
+            // compile model
+            TransferDescription td=null;
+            Configuration ili2cConfig=new Configuration();
+            FileEntry fileEntry=new FileEntry(UNITS23_ILI, FileEntryKind.ILIMODELFILE);
             ili2cConfig.addFileEntry(fileEntry);
             ili2cConfig.setOutputFile(OUT_FILE);
             ili2cConfig.setOutputKind(GenerateOutputKind.IMD16);
