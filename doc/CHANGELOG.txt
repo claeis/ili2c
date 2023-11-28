@@ -5,6 +5,7 @@ LATEST
 
 ili2c 5.3.4 (2023-11-14)
 ---------------------------
+- only ili2c-core release
 - ili2.4: Check deferred statement (#91)
 - ili2.4: Verify coords match or extend a concrete definition when overriding a generic context (#91)
 - ili2.4: Add (BASKET) on UNIQUE and SET constraints (#90)
