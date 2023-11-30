@@ -2227,40 +2227,32 @@ public class Imd16Generator {
 		
 	}
 
-	private void visitContextDefs(ch.interlis.ili2c.metamodel.ContextDefs contextDefs)
+	private void visitContextDef(ch.interlis.ili2c.metamodel.ContextDef contextDef)
 	throws IoxException
 	{
-		String contextOid = contextDefs.getScopedName();
+		String contextOid = contextDef.getScopedName();
 		Context iomContext = new Context(contextOid);
-		iomContext.setName(contextDefs.getName());
-		if (contextDefs.getDocumentation() != null) {
+		iomContext.setName(contextDef.getName());
+		if (contextDef.getDocumentation() != null) {
 			DocText doc = new DocText();
-			doc.setText(contextDefs.getDocumentation());
+			doc.setText(contextDef.getDocumentation());
 			iomContext.addDocumentation(doc);
 		}
 		out.write(new ObjectEvent(iomContext));
 
-		Iterator<ch.interlis.ili2c.metamodel.ContextDef> contextIterator = contextDefs.iterator();
-		while (contextIterator.hasNext()) {
-			visitContextDef(contextOid, contextIterator.next());
-		}
-	}
+        String genericDefOid = contextOid + "." + contextDef.getGeneric().getName();
+        GenericDef iomGenericDef = new GenericDef(genericDefOid);
+        iomGenericDef.setContext(contextOid);
+        iomGenericDef.setGenericDomain(contextDef.getGeneric().getScopedName());
+        out.write(new ObjectEvent(iomGenericDef));
 
-	private void visitContextDef(String contextOid, ch.interlis.ili2c.metamodel.ContextDef contextDef)
-	throws IoxException
-	{
-		String genericDefOid = contextOid + "." + contextDef.getGeneric().getName();
-		GenericDef iomGenericDef = new GenericDef(genericDefOid);
-		iomGenericDef.setContext(contextOid);
-		iomGenericDef.setGenericDomain(contextDef.getGeneric().getScopedName());
-		out.write(new ObjectEvent(iomGenericDef));
-
-		for (ch.interlis.ili2c.metamodel.Domain concrete : contextDef.getConcretes()) {
-			ConcreteForGeneric iomConcrete = new ConcreteForGeneric();
-			iomConcrete.setGenericDef(genericDefOid);
-			iomConcrete.setConcreteDomain(concrete.getScopedName());
-			out.write(new ObjectEvent(iomConcrete));
-		}
+        for (ch.interlis.ili2c.metamodel.Domain concrete : contextDef.getConcretes()) {
+            ConcreteForGeneric iomConcrete = new ConcreteForGeneric();
+            iomConcrete.setGenericDef(genericDefOid);
+            iomConcrete.setConcreteDomain(concrete.getScopedName());
+            out.write(new ObjectEvent(iomConcrete));
+        }
+        visitMetaValues(contextDef.getMetaValues(),iomContext.getobjectoid());
 	}
 
 	private void visitElements(ch.interlis.ili2c.metamodel.Container container)
@@ -2291,8 +2283,8 @@ public class Imd16Generator {
 				visitMetaDataUseDef((ch.interlis.ili2c.metamodel.MetaDataUseDef)next);
 			}else if(next instanceof ch.interlis.ili2c.metamodel.Graphic){
 				visitGraphic((ch.interlis.ili2c.metamodel.Graphic)next);
-			}else if(next instanceof ch.interlis.ili2c.metamodel.ContextDefs){
-				visitContextDefs((ch.interlis.ili2c.metamodel.ContextDefs)next);
+			}else if(next instanceof ch.interlis.ili2c.metamodel.ContextDef){
+				visitContextDef((ch.interlis.ili2c.metamodel.ContextDef)next);
 			}
 		}
 	

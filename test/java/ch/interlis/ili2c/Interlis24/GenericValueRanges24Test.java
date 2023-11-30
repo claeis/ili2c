@@ -55,9 +55,15 @@ public class GenericValueRanges24Test {
         LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "contextDomainNotGeneric_fail.ili");
 
         assertEquals(1, errs.getErrs().size());
-        assertContainsError("The domain CoordA of context Context1 must be generic.", 1, errs);
+        assertContainsError("The domain CoordA of context default must be generic.", 1, errs);
     }
 
+    @Test
+    public void multipleContexts() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "multipleContexts.ili");
+        assertNotNull(td);
+    }
+    
     @Test
     public void multipleContextsExtending() {
         TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "multipleContextsExtending.ili");

@@ -3285,20 +3285,13 @@ protected rotationDef
 
 protected contextDefs[Container container]
 	{
-	  ContextDefs defs=null;
-	  int nameIdx=1;
 	}
-	:	"CONTEXT"  n:NAME EQUALS 
-		{defs=new ContextDefs(n.getText());
-		}
+	:	"CONTEXT" 
 		( 
-		contextDef[container,defs,nameIdx++] 
+		contextDef[container] 
 		)*
-		{
-		container.add(defs);
-		}
 	;
-protected contextDef[Container container,ContextDefs defs,int nameIdx]
+protected contextDef[Container container]
 	{
 	  String ilidoc=null;
 	  Settings metaValues=null;
@@ -3307,6 +3300,7 @@ protected contextDef[Container container,ContextDefs defs,int nameIdx]
 	  ArrayList<Domain> concreteCoordDefs=new ArrayList<Domain>();
 	}
 	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
+		n:NAME EQUALS
 		genericCoordDef=domainRef[container]
 		eq:EQUALS
 		concreteCoordDef=domainRef[container]
@@ -3317,10 +3311,10 @@ protected contextDef[Container container,ContextDefs defs,int nameIdx]
 			}
 		)*
 		{
-			ContextDef def=new ContextDef(nameIdx,genericCoordDef,concreteCoordDefs.toArray(new Domain[concreteCoordDefs.size()]));
+			ContextDef def=new ContextDef(n.getText(),genericCoordDef,concreteCoordDefs.toArray(new Domain[concreteCoordDefs.size()]));
 			def.setDocumentation(ilidoc);
 			def.setMetaValues(metaValues);
-			defs.add(def);
+			container.add(def);
 		}
 		SEMI
 	;

@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 
 import ch.interlis.ili2c.CompilerTestHelper;
 import ch.interlis.ili2c.metamodel.ContextDef;
-import ch.interlis.ili2c.metamodel.ContextDefs;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -181,25 +180,24 @@ public class ILI24GeneratorTest {
     public void context() {
         TransferDescription td = CompilerTestHelper.getTransferDescription(CONTEXT_ILI_FILE);
         assertNotNull(td);
-        ContextDefs contextDefs = (ContextDefs) td.getElement("ModelA.default");
+        ContextDef contextDef = (ContextDef) td.getElement("ModelA.default");
 
         java.io.StringWriter syntaxBuffer = new java.io.StringWriter();
         Interlis2Generator makeSyntax = Interlis2Generator.generateElements24(syntaxBuffer,td);
-        makeSyntax.printContext(contextDefs.getContainer(), contextDefs);
+        makeSyntax.printContext(contextDef.getContainer(), contextDef);
 
-        Assert.assertEquals("CONTEXT default = ModelA.Coord2 = ModelA.Coord2_CHLV03 OR ModelA.Coord2_CHLV95;", syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+        Assert.assertEquals("default = ModelA.Coord2 = ModelA.Coord2_CHLV03 OR ModelA.Coord2_CHLV95;", syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
     }
 
     @Test
     public void contextSyntax() {
         TransferDescription td = CompilerTestHelper.getTransferDescription(CONTEXT_ILI_FILE);
         assertNotNull(td);
-        ContextDefs contextDefs = (ContextDefs) td.getElement("ModelA.default");
-        ContextDef contextDef = contextDefs.iterator().next();
+        ContextDef contextDef = (ContextDef) td.getElement("ModelA.default");
 
         java.io.StringWriter syntaxBuffer = new java.io.StringWriter();
         Interlis2Generator makeSyntax = Interlis2Generator.generateElements24(syntaxBuffer,td);
-        makeSyntax.printContextSyntax(contextDefs.getContainer(), contextDef);
+        makeSyntax.printContextSyntax(contextDef.getContainer(), contextDef);
 
         Assert.assertEquals("ModelA.Coord2 = ModelA.Coord2_CHLV03 OR ModelA.Coord2_CHLV95;", syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
     }

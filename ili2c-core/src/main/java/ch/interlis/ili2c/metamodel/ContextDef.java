@@ -3,18 +3,18 @@ package ch.interlis.ili2c.metamodel;
 import java.util.List;
 
 public class ContextDef extends AbstractLeafElement{
-    protected int nameIdx;
+    protected String name=null;
     private Domain generic=null;
     private Domain concretes[]=null;
-    public ContextDef(int nameIdx,Domain generic,Domain concretes[]) {
-        this.nameIdx = nameIdx;
+    public ContextDef(String name,Domain generic,Domain concretes[]) {
+        this.name = name;
         this.generic=generic;
         this.concretes=concretes;
     }
     @Override
     public String getName()
     {
-        return "Context"+nameIdx;
+        return name;
     }
     public Domain getGeneric() {
         return generic;

@@ -29,7 +29,6 @@ import ch.interlis.ili2c.metamodel.Constant;
 import ch.interlis.ili2c.metamodel.Constraint;
 import ch.interlis.ili2c.metamodel.Container;
 import ch.interlis.ili2c.metamodel.ContextDef;
-import ch.interlis.ili2c.metamodel.ContextDefs;
 import ch.interlis.ili2c.metamodel.DecompositionView;
 import ch.interlis.ili2c.metamodel.DerivedUnit;
 import ch.interlis.ili2c.metamodel.Domain;
@@ -1390,31 +1389,26 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
         ipw.println(";");
     }
 
-    public void printContext(Container<?> scope, ContextDefs contextDefs) {
-        printContext(scope, contextDefs, false, null);
+    public void printContext(Container<?> scope, ContextDef contextDef) {
+        printContext(scope, contextDef, false, null);
     }
 
-    public void printContext(Container<?> scope, ContextDefs contextDefs, boolean suppressDoc, String language) {
-        if (contextDefs == null) {
+    public void printContext(Container<?> scope, ContextDef contextDef, boolean suppressDoc, String language) {
+        if (contextDef == null) {
             printError();
             return;
         }
 
         if (!suppressDoc) {
-            printDocumentation(contextDefs, language);
-            printMetaValues(contextDefs, contextDefs.getMetaValues(), language, contextDefs.getScopedName());
+            printDocumentation(contextDef, language);
+            printMetaValues(contextDef, contextDef.getMetaValues(), language, contextDef.getScopedName());
         }
 
-        ipw.print("CONTEXT ");
-        ipw.print(contextDefs.getName());
+        ipw.print(contextDef.getName());
         ipw.println(" =");
         ipw.indent();
 
-        Iterator<ContextDef> contexts = contextDefs.iterator();
-        while (contexts.hasNext()) {
-            ContextDef contextDef = contexts.next();
-            printContextSyntax(scope, contextDef, language);
-        }
+        printContextSyntax(scope, contextDef, language);
 
         ipw.unindent();
     }
@@ -3024,6 +3018,18 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
         }
         printParameter (container, (Parameter) elt, language);
         lastClass = Parameter.class;
+      }
+      else if (elt instanceof ContextDef)
+      {
+        if (lastClass!=ContextDef.class)
+        {
+          ipw.println();
+          ipw.println ("CONTEXT");
+        }
+        ipw.indent();
+        printContext(container, (ContextDef) elt);
+        ipw.unindent();
+        lastClass = ContextDef.class;
       }
       else if (elt instanceof Domain)
       {
