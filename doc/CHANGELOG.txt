@@ -1,6 +1,25 @@
 LATEST
 ---------------------------
 
+ili2c 5.4.0 (2023-12-04)
+---------------------------
+- imd export: fixed DerivedUnits export (#114)
+- ili2.4: fix ContextDef parser / remove ContextDefs from metamodel (#118)
+- iox-ili-1.22.0
+
+ili2c 5.3.4 (2023-11-14)
+---------------------------
+- only ili2c-core release
+- ili2.4: Check deferred statement (#91)
+- ili2.4: Verify coords match or extend a concrete definition when overriding a generic context (#91)
+- ili2.4: Add (BASKET) on UNIQUE and SET constraints (#90)
+- ili2.4: Add additional checks for context definitions (#91)
+- ili2.4: Add constraints to domains (#89)
+- ili2.4: Test & Fix Expressions (#86)
+- ili2 export: Print context and context syntax (#91)
+- ili2 export: Improve constraint print (#95)
+- repos: default connectTimeout=15s, readTimeout=40s
+
 ili2c 5.3.3 (2023-08-03)
 ---------------------------
 - repos clone: unset/clear precursorVersion

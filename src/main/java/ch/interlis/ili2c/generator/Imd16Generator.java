@@ -1,14 +1,15 @@
 
 package ch.interlis.ili2c.generator;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import ch.ehi.basics.types.OutParam;
 
 import ch.ehi.basics.logging.EhiLogger;
-import ch.interlis.iom.IomConstants;
+import ch.interlis.ili2c.metamodel.DomainConstraint;
+import ch.interlis.ili2c.metamodel.ObjectPath;
+import ch.interlis.ili2c.metamodel.ValueRefThis;
 import ch.interlis.iom_j.ViewableProperties;
 import ch.interlis.iom_j.xtf.XtfWriterBase;
 import ch.interlis.iom_j.xtf.XtfModel;
@@ -166,7 +167,7 @@ public class Imd16Generator {
 		
 		for ( int i = 0; i < importing.length; i++ ) {
 			ch.interlis.ili2c.metamodel.Model importable = importing[i];
-			Import iomImport = new Import( null );
+			Import iomImport = new Import();
 			iomImport.setImportingP( modelOid );
 			iomImport.setImportedP( importable.getScopedName(null) );
 			
@@ -227,8 +228,9 @@ public class Imd16Generator {
 
 		out.write(new ObjectEvent(subModel));
 		visitMetaValues(topic.getMetaValues(),subModel.getobjectoid());
-		
-		DataUnit dataUnit = new DataUnit( topic.getScopedName(null)+"."+UNIT_META_NAME );
+
+		String dataUnitOid = topic.getScopedName(null)+"."+UNIT_META_NAME;
+		DataUnit dataUnit = new DataUnit(dataUnitOid);
 		dataUnit.setElementInPackage( subModel.getobjectoid() );
 		// DataUnit 		
 		dataUnit.setViewUnit( topic.isViewTopic() );
@@ -244,11 +246,12 @@ public class Imd16Generator {
 			dataUnit.setSuper( topic.getExtending().getScopedName(null) +"."+UNIT_META_NAME);
 		}
 		dataUnit.setFinal( topic.isFinal() );
+		dataUnit.setGeneric(false);
 		
 		Iterator depi=topic.getDependentOn();
 		while(depi.hasNext()){
 			ch.interlis.ili2c.metamodel.Topic dep=(ch.interlis.ili2c.metamodel.Topic)depi.next();
-			Dependency dependency=new Dependency(null);
+			Dependency dependency=new Dependency();
 			dependency.setDependent(topic.getScopedName(null)+"."+UNIT_META_NAME);
 			dependency.setUsing(dep.getScopedName(null)+"."+UNIT_META_NAME);
 			out.write(new ObjectEvent(dependency));
@@ -259,10 +262,27 @@ public class Imd16Generator {
 		Iterator tei=topic.getTransferViewables().iterator();
 		while(tei.hasNext()){
 			ch.interlis.ili2c.metamodel.Viewable v=(ch.interlis.ili2c.metamodel.Viewable)tei.next();
-			AllowedInBasket te=new AllowedInBasket(null);
+			AllowedInBasket te=new AllowedInBasket();
 			te.setClassInBasket(v.getScopedName(null));
 			te.setOfDataUnit(dataUnit.getobjectoid());
 			out.write(new ObjectEvent(te));
+		}
+
+		ch.interlis.ili2c.metamodel.Model model = (ch.interlis.ili2c.metamodel.Model) topic.getContainer(ch.interlis.ili2c.metamodel.Model.class);
+		for (ch.interlis.ili2c.metamodel.Domain deferredGeneric : topic.getDefferedGenerics()) {
+			String genericDefOid = dataUnitOid + "." + deferredGeneric.getName();
+			GenericDef genericDef = new GenericDef(genericDefOid);
+			genericDef.setContext(dataUnitOid);
+			genericDef.setGenericDomain(deferredGeneric.getScopedName());
+			out.write(new ObjectEvent(genericDef));
+
+			ch.interlis.ili2c.metamodel.Domain[] allowedDomains = model.resolveGenericDomain(deferredGeneric);
+			for (ch.interlis.ili2c.metamodel.Domain allowed : allowedDomains) {
+				ConcreteForGeneric concreteForGeneric = new ConcreteForGeneric();
+				concreteForGeneric.setGenericDef(genericDefOid);
+				concreteForGeneric.setConcreteDomain(allowed.getScopedName());
+				out.write(new ObjectEvent(concreteForGeneric));
+			}
 		}
 		
 		visitElements(topic);
@@ -296,6 +316,7 @@ public class Imd16Generator {
 			iomClass.setSuper( classDef.getExtending().getScopedName(null));
 		}
 		iomClass.setFinal( classDef.isFinal() );
+		iomClass.setGeneric(false);
 		iomClass.setEmbeddedRoleTransfer(false );
 		
 		int attrOrderPos=1;
@@ -435,6 +456,7 @@ public class Imd16Generator {
 			ch.interlis.ili2c.metamodel.Element element = (ch.interlis.ili2c.metamodel.Element)it.next();
 			if ( element instanceof ch.interlis.ili2c.metamodel.Constraint ) {
 				Constraint iomConstraint=visitConstraint((ch.interlis.ili2c.metamodel.Constraint)element,cnstrMetaAttrs,iomClass.getobjectoid());
+				iomConstraint.setToClass(iomClass.getobjectoid());
 				out.write(new ObjectEvent(iomConstraint));
 			} else if ( element instanceof ch.interlis.ili2c.metamodel.Parameter ) {
 				visitParameter((ch.interlis.ili2c.metamodel.Parameter)element,paramOrderPos);
@@ -470,7 +492,7 @@ public class Imd16Generator {
 				if(attr.getContainer()==classDef){
 					visitAttribute((ch.interlis.ili2c.metamodel.LocalAttribute)attr,attrOrderPos);
 				}
-				TransferElement iomTe=new TransferElement(null);
+				TransferElement iomTe=new TransferElement();
 				iomTe.setTransferClass(iomClass.getobjectoid());
 				iomTe.setTransferElement(getAttrTid(attr), attrOrderPos++);
 				out.write(new ObjectEvent(iomTe));
@@ -481,7 +503,7 @@ public class Imd16Generator {
 				// not an embedded role and roledef not defined in a lightweight association?
 				if (!obj.embedded){
 					if(!((ch.interlis.ili2c.metamodel.AssociationDef)classDef).isLightweight()){
-						TransferElement iomTe=new TransferElement(null);
+						TransferElement iomTe=new TransferElement();
 						iomTe.setTransferClass(iomClass.getobjectoid());
 						iomTe.setTransferElement(getRoleTid((ch.interlis.ili2c.metamodel.RoleDef)role), attrOrderPos++);
 						out.write(new ObjectEvent(iomTe));
@@ -490,7 +512,7 @@ public class Imd16Generator {
 					// a role of an embedded association
 					ch.interlis.ili2c.metamodel.AssociationDef roleOwner = (ch.interlis.ili2c.metamodel.AssociationDef) role.getContainer();
 					if(roleOwner.getDerivedFrom()==null){
-						TransferElement iomTe=new TransferElement(null);
+						TransferElement iomTe=new TransferElement();
 						iomTe.setTransferClass(iomClass.getobjectoid());
 						iomTe.setTransferElement(getRoleTid((ch.interlis.ili2c.metamodel.RoleDef)role), attrOrderPos++);
 						out.write(new ObjectEvent(iomTe));
@@ -506,7 +528,7 @@ public class Imd16Generator {
 			for(ch.interlis.ili2c.metamodel.ViewableTransferElement obj:ili1attrs){
 				if (obj.obj instanceof ch.interlis.ili2c.metamodel.AttributeDef) {
 					ch.interlis.ili2c.metamodel.AttributeDef attr = (ch.interlis.ili2c.metamodel.AttributeDef) obj.obj;
-					Ili1TransferElement iomTe=new Ili1TransferElement(null);
+					Ili1TransferElement iomTe=new Ili1TransferElement();
 					iomTe.setIli1TransferClass(iomClass.getobjectoid());
 					iomTe.setIli1RefAttr(getAttrTid(attr), itfattrOrderPos++);
 					out.write(new ObjectEvent(iomTe));
@@ -517,7 +539,7 @@ public class Imd16Generator {
 					// not an embedded role and roledef not defined in a lightweight association?
 					if (!obj.embedded){
 						if(!((ch.interlis.ili2c.metamodel.AssociationDef)classDef).isLightweight()){
-							Ili1TransferElement iomTe=new Ili1TransferElement(null);
+							Ili1TransferElement iomTe=new Ili1TransferElement();
 							iomTe.setIli1TransferClass(iomClass.getobjectoid());
 							iomTe.setIli1RefAttr(getRoleTid((ch.interlis.ili2c.metamodel.RoleDef)role), itfattrOrderPos++);
 							out.write(new ObjectEvent(iomTe));
@@ -526,7 +548,7 @@ public class Imd16Generator {
 						// a role of an embedded association
 						ch.interlis.ili2c.metamodel.AssociationDef roleOwner = (ch.interlis.ili2c.metamodel.AssociationDef) role.getContainer();
 						if(roleOwner.getDerivedFrom()==null){
-							Ili1TransferElement iomTe=new Ili1TransferElement(null);
+							Ili1TransferElement iomTe=new Ili1TransferElement();
 							iomTe.setIli1TransferClass(iomClass.getobjectoid());
 							iomTe.setIli1RefAttr(getRoleTid((ch.interlis.ili2c.metamodel.RoleDef)role), itfattrOrderPos++);
 							out.write(new ObjectEvent(iomTe));
@@ -558,6 +580,7 @@ public class Imd16Generator {
 			iomGraphic.setSuper( graphic.getExtending().getScopedName(null));
 		}
 		iomGraphic.setFinal( graphic.isFinal() );
+		iomGraphic.setGeneric(false);
 		
 		iomGraphic.setBase(graphic.getBasedOn().getScopedName(null));
 		
@@ -596,6 +619,7 @@ public class Imd16Generator {
 			iomGraphic.setSuper( graphic.getExtending().getScopedName(null));
 		}
 		iomGraphic.setFinal( graphic.isFinal() );
+		iomGraphic.setGeneric(false);
 		
 		iomGraphic.set_class(graphic.getGenerating().getScopedName(null));
 		
@@ -621,6 +645,21 @@ public class Imd16Generator {
 	throws IoxException
 	{
 		visitDomainType(new OutParam<String>(),domain.getType(),domain);
+
+		// visit domain constraints
+		if (!domain.isEmpty()) {
+			Iterator<DomainConstraint> it = domain.iterator();
+			ArrayList<MetaAttribute> metaAttributes = new ArrayList<MetaAttribute>();
+			while (it.hasNext()) {
+				DomainConstraint constraint = it.next();
+				Constraint iomConstraint = visitConstraint(constraint, metaAttributes, domain.getScopedName(null));
+				iomConstraint.setToDomain(domain.getScopedName(null));
+				out.write(new ObjectEvent(iomConstraint));
+			}
+			for(MetaAttribute val:metaAttributes){
+				out.write(new ObjectEvent(val));
+			}
+		}
 	}
 	private void visitAttribute(ch.interlis.ili2c.metamodel.LocalAttribute attr,int attrPos)
 	throws IoxException
@@ -642,6 +681,7 @@ public class Imd16Generator {
 			}
 			iomAttr.setAbstract( attr.isAbstract() );
 			iomAttr.setFinal( attr.isFinal() );
+			iomAttr.setGeneric(false);
 			
 			ch.interlis.ili2c.metamodel.Evaluable[] derv=((ch.interlis.ili2c.metamodel.LocalAttribute)attr).getBasePaths();
 			if(derv!=null){
@@ -740,6 +780,7 @@ public class Imd16Generator {
 			}
 			iomParam.setAbstract( param.isAbstract() );
 			iomParam.setFinal( param.isFinal() );
+			iomParam.setGeneric(false);
 			
 			ch.interlis.ili2c.metamodel.Type type=param.getType();
 			if(type instanceof ch.interlis.ili2c.metamodel.TypeAlias){
@@ -788,6 +829,7 @@ public class Imd16Generator {
 		}
 		iomRole.setAbstract( role.isAbstract() );
 		iomRole.setFinal( role.isFinal() );
+		iomRole.setGeneric(false);
 		
 		// mandatory has no meaning for a Role, but set it to keep instance compliant with model
 		iomRole.setMandatory(true);
@@ -797,7 +839,7 @@ public class Imd16Generator {
 			ch.interlis.ili2c.metamodel.ReferenceType ref=(ch.interlis.ili2c.metamodel.ReferenceType)refi.next();
 			ch.interlis.ili2c.metamodel.AbstractClassDef target=ref.getReferred();
 
-			BaseClass iomBaseClass=new BaseClass(null);
+			BaseClass iomBaseClass=new BaseClass();
 			iomBaseClass.setCRT(iomRole.getobjectoid());
 			iomBaseClass.setBaseClass(target.getScopedName(null));
 			out.write(new ObjectEvent(iomBaseClass));
@@ -805,7 +847,7 @@ public class Imd16Generator {
 			Iterator targeti=ref.iteratorRestrictedTo();
 			while(targeti.hasNext()){
 				target=(ch.interlis.ili2c.metamodel.AbstractClassDef)targeti.next();
-				ClassRestriction iomRestriction=new ClassRestriction(null);
+				ClassRestriction iomRestriction=new ClassRestriction();
 				iomRestriction.setClassRestriction(target.getScopedName(null));
 				iomRestriction.setCRTR(iomRole.getobjectoid());
 				out.write(new ObjectEvent(iomRestriction));
@@ -885,21 +927,22 @@ public class Imd16Generator {
 			ExistenceConstraint iomConstraint = new ExistenceConstraint(cnstrdTid);
 			PathOrInspFactor iomRestrictedAttr=visitObjectPath(existenceConstraint.getRestrictedAttribute());
 			iomConstraint.setAttr(iomRestrictedAttr);
-			Iterator requiredInIt=existenceConstraint.iteratorRequiredIn();
-			while(requiredInIt.hasNext()){
-				ch.interlis.ili2c.metamodel.ObjectPath objPath=(ch.interlis.ili2c.metamodel.ObjectPath)requiredInIt.next();
+
+			Iterator<ObjectPath> requiredInIt = existenceConstraint.iteratorRequiredIn();
+			while (requiredInIt.hasNext()) {
+				ObjectPath objPath = requiredInIt.next();
 				ExistenceDef iomExistsIn = new ExistenceDef();
-				visitObjectPathEls(iomExistsIn,objPath);
-				iomExistsIn.setViewable(objPath.getRoot().getScopedName(null));
-				iomConstraint.addExistsIn(iomExistsIn);
+				iomExistsIn.setExistsIn(objPath.getRoot().getScopedName(null));
+				iomExistsIn.setAttr(visitObjectPath(objPath));
+				iomConstraint.addRequiredIn(iomExistsIn);
 			}
 			iomCnstrt=iomConstraint;
-		}else if(cnstrt instanceof ch.interlis.ili2c.metamodel.MandatoryConstraint){
-			ch.interlis.ili2c.metamodel.MandatoryConstraint mandatoryConstraint = (ch.interlis.ili2c.metamodel.MandatoryConstraint)cnstrt;
+		}else if(cnstrt instanceof ch.interlis.ili2c.metamodel.MandatoryConstraint
+				|| cnstrt instanceof ch.interlis.ili2c.metamodel.DomainConstraint){
 			SimpleConstraint iomConstraint = new SimpleConstraint(cnstrdTid);
 			iomCnstrt=iomConstraint;
 			
-			ch.interlis.ili2c.metamodel.Evaluable condition = mandatoryConstraint.getCondition();
+			ch.interlis.ili2c.metamodel.Evaluable condition = cnstrt.getCondition();
 			Expression expr = visitExpression(condition);
 			iomConstraint.setLogicalExpression( expr );
 			
@@ -936,7 +979,11 @@ public class Imd16Generator {
 			    	  iomUniqueConstraint.addUniqueDef(visitObjectPathEls(iomExpr,attr));
 				}
 			} else {
-				iomUniqueConstraint.setKind( UniqueConstraint_Kind.GlobalU );
+				if (uc.perBasket()) {
+					iomUniqueConstraint.setKind(UniqueConstraint_Kind.BasketU);
+				} else {
+					iomUniqueConstraint.setKind(UniqueConstraint_Kind.GlobalU);
+				}
 				Iterator attri=uc.getElements().iteratorAttribute();
 				while(attri.hasNext()){
 			    	  ch.interlis.ili2c.metamodel.ObjectPath attr=(ch.interlis.ili2c.metamodel.ObjectPath)attri.next();
@@ -956,6 +1003,7 @@ public class Imd16Generator {
 			if(sc.getPreCondition()!=null){
 				iomConstraint.setWhere( visitExpression(sc.getPreCondition()) );
 			}
+			iomConstraint.setPerBasket(sc.perBasket());
 		}else{	
 			throw new IllegalArgumentException("unexpected constraint type "+cnstrt.getClass().getName());
 		}
@@ -1071,6 +1119,41 @@ public class Imd16Generator {
 			ch.interlis.ili2c.metamodel.MetaObject metaObj=refMetaObj.getReferred();
 			iomPathEl.setRef(metaObj.getContainer().getScopedName(null)+"."+metaObj.getName());
 			iomExpr.addPathEls(iomPathEl);
+		} else if (e instanceof ch.interlis.ili2c.metamodel.Expression.Implication) {
+			CompoundExpr iomExpr = new CompoundExpr();
+			ret = iomExpr;
+			iomExpr.setOperation(CompoundExpr_Operation.Implication);
+			ch.interlis.ili2c.metamodel.Expression.Implication implication = (ch.interlis.ili2c.metamodel.Expression.Implication) e;
+			iomExpr.addSubExpressions(visitExpression(implication.getLeft()));
+			iomExpr.addSubExpressions(visitExpression(implication.getRight()));
+		} else if (e instanceof ch.interlis.ili2c.metamodel.Expression.Multiplication) {
+			CompoundExpr iomExpr = new CompoundExpr();
+			ret = iomExpr;
+			iomExpr.setOperation(CompoundExpr_Operation.Mult);
+			ch.interlis.ili2c.metamodel.Expression.Multiplication multiplication = (ch.interlis.ili2c.metamodel.Expression.Multiplication) e;
+			iomExpr.addSubExpressions(visitExpression(multiplication.getLeft()));
+			iomExpr.addSubExpressions(visitExpression(multiplication.getRight()));
+		} else if (e instanceof ch.interlis.ili2c.metamodel.Expression.Division) {
+			CompoundExpr iomExpr = new CompoundExpr();
+			ret = iomExpr;
+			iomExpr.setOperation(CompoundExpr_Operation.Div);
+			ch.interlis.ili2c.metamodel.Expression.Division division = (ch.interlis.ili2c.metamodel.Expression.Division) e;
+			iomExpr.addSubExpressions(visitExpression(division.getLeft()));
+			iomExpr.addSubExpressions(visitExpression(division.getRight()));
+		} else if (e instanceof ch.interlis.ili2c.metamodel.Expression.Addition) {
+			CompoundExpr iomExpr = new CompoundExpr();
+			ret = iomExpr;
+			iomExpr.setOperation(CompoundExpr_Operation.Add);
+			ch.interlis.ili2c.metamodel.Expression.Addition addition = (ch.interlis.ili2c.metamodel.Expression.Addition) e;
+			iomExpr.addSubExpressions(visitExpression(addition.getLeft()));
+			iomExpr.addSubExpressions(visitExpression(addition.getRight()));
+		} else if (e instanceof ch.interlis.ili2c.metamodel.Expression.Subtraction) {
+			CompoundExpr iomExpr = new CompoundExpr();
+			ret = iomExpr;
+			iomExpr.setOperation(CompoundExpr_Operation.Sub);
+			ch.interlis.ili2c.metamodel.Expression.Subtraction subtraction = (ch.interlis.ili2c.metamodel.Expression.Subtraction) e;
+			iomExpr.addSubExpressions(visitExpression(subtraction.getLeft()));
+			iomExpr.addSubExpressions(visitExpression(subtraction.getRight()));
 		}else if(e instanceof ch.interlis.ili2c.metamodel.Expression.Conjunction){
 		    CompoundExpr iomExpr=new CompoundExpr();
 		    ret=iomExpr;
@@ -1221,6 +1304,13 @@ public class Imd16Generator {
 		// }else if(e instanceof ch.interlis.ili2c.metamodel.ViewableAlias){ 
 		    // a VieableAlias should not appear as part of an expression
 			
+		} else if (e instanceof ValueRefThis) {
+			PathOrInspFactor iomExpr = new PathOrInspFactor();
+			ret = iomExpr;
+
+			PathEl iomPathEl = new PathEl();
+			iomPathEl.setKind(PathEl_Kind.This);
+			iomExpr.addPathEls(iomPathEl);
 		}else{
 			throw new IllegalArgumentException( "Unknown subclass: " + e.getClass() );
 		}
@@ -1415,6 +1505,7 @@ public class Imd16Generator {
 		}
 		iomMb.setAbstract(mb.isAbstract());
 		iomMb.setFinal(mb.isFinal());
+		iomMb.setGeneric(false);
 		iomMb.setKind(mb.isSignData()?MetaBasketDef_Kind.SignB:MetaBasketDef_Kind.RefSystemB);
 		iomMb.setMetaDataTopic(mb.getTopic().getScopedName(null)+"."+UNIT_META_NAME);
 		out.write(new ObjectEvent(iomMb));
@@ -1459,6 +1550,7 @@ public class Imd16Generator {
 			iomUnit.setSuper( unit.getExtending().getScopedName(null));
 		}
 		iomUnit.setFinal( unit.isFinal() );
+		iomUnit.setGeneric(false);
 		
 		if(unit instanceof ch.interlis.ili2c.metamodel.BaseUnit){
 			iomUnit.setKind( Unit_Kind.BaseU );
@@ -1481,8 +1573,13 @@ public class Imd16Generator {
 					if ( completeExpression != null ) {
 						newExpression.addSubExpressions( completeExpression );
 					}
-					newExpression.setOperation( CompoundExpr_Operation.And ); // TODO should be * or /
-
+					if(op=='*') {
+	                    newExpression.setOperation( CompoundExpr_Operation.Mult );
+					}else if (op=='/'){
+	                    newExpression.setOperation( CompoundExpr_Operation.Div );
+					}else {
+	                    throw new IllegalArgumentException( "Unknown ComposedUnit operator: '" + op +"'");
+					}
 					operator = op;
 					completeExpression = newExpression;
 				}
@@ -1492,31 +1589,46 @@ public class Imd16Generator {
 			}
 			iomUnit.setDefinition( completeExpression );
 		}else if(unit instanceof ch.interlis.ili2c.metamodel.DerivedUnit){
-			ch.interlis.ili2c.metamodel.DerivedUnit derivedUnit=(ch.interlis.ili2c.metamodel.DerivedUnit)unit;
-			iomUnit.setKind( Unit_Kind.DerivedU );
-			
-			Expression expr = null;
-			if(false){
-				// TODO DerivedUnit
-				if ( derivedUnit instanceof ch.interlis.ili2c.metamodel.NumericallyDerivedUnit ) {
-					ch.interlis.ili2c.metamodel.NumericallyDerivedUnit numericallyDerivedUnit = (ch.interlis.ili2c.metamodel.NumericallyDerivedUnit)derivedUnit;
-					ch.interlis.ili2c.metamodel.NumericallyDerivedUnit.Factor[] conversionFactors = numericallyDerivedUnit.getConversionFactors();
-					conversionFactors[0].getConversionFactor(); // OPEN: Wie ConversionFactor mappen?
-					conversionFactors[0].getConversionOperator();				
-					
-				} else if ( derivedUnit instanceof ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit ) {
-					ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit functionallyDerivedUnit = (ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit)derivedUnit;
-					// Bsp fuer Explanation: " 10**(dB/20) * 0.00002 "
-					functionallyDerivedUnit.getExplanation(); // OPEN: Wie getExplanation mappen? 
-					
-				} else {
-					throw new IllegalArgumentException( "Unknown subclass: " + derivedUnit.getClass() );
-				}
-				
-				iomUnit.setDefinition( expr );
-				
-			}
-			
+            ch.interlis.ili2c.metamodel.DerivedUnit derivedUnit = (ch.interlis.ili2c.metamodel.DerivedUnit) unit;
+            iomUnit.setKind(Unit_Kind.DerivedU);
+            if (derivedUnit instanceof ch.interlis.ili2c.metamodel.NumericallyDerivedUnit) {
+                ch.interlis.ili2c.metamodel.NumericallyDerivedUnit numericallyDerivedUnit = (ch.interlis.ili2c.metamodel.NumericallyDerivedUnit) derivedUnit;
+                ch.interlis.ili2c.metamodel.NumericallyDerivedUnit.Factor[] unitFactors = numericallyDerivedUnit
+                        .getConversionFactors();
+                CompoundExpr completeExpression = null;
+                char operator = '\0';
+                for (int i = 0; i < unitFactors.length; i++) {
+                    char op = unitFactors[i].getConversionOperator();
+                    if (op != operator) {
+                        CompoundExpr newExpression = new CompoundExpr();
+                        if (completeExpression != null) {
+                            newExpression.addSubExpressions(completeExpression);
+                        }
+                        if (op == '*') {
+                            newExpression.setOperation(CompoundExpr_Operation.Mult);
+                        } else if (op == '/') {
+                            newExpression.setOperation(CompoundExpr_Operation.Div);
+                        } else {
+                            throw new IllegalArgumentException("Unknown DerivedUnit operator: '" + op + "'");
+                        }
+                        operator = op;
+                        completeExpression = newExpression;
+                    }
+                    Constant decConst = new Constant();
+                    decConst.setType(Constant_Type.Numeric);
+                    decConst.setValue(unitFactors[i].getConversionFactor().toString());
+                    completeExpression.addSubExpressions(decConst);
+                }
+                iomUnit.setDefinition(completeExpression);
+            } else if (derivedUnit instanceof ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit) {
+                ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit functionallyDerivedUnit = (ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit) derivedUnit;
+                // Bsp fuer Explanation: " 10**(dB/20) * 0.00002 "
+                UnitFunction funcExpr = new UnitFunction();
+                funcExpr.setExplanation(functionallyDerivedUnit.getExplanation());
+                iomUnit.setDefinition(funcExpr);
+            } else {
+                throw new IllegalArgumentException("Unknown subclass: " + derivedUnit.getClass());
+            }
 		}
 		
 		out.write(new ObjectEvent(iomUnit));
@@ -1645,16 +1757,13 @@ public class Imd16Generator {
 				visitNumericalType(iomNum, num);
 				iomNum.setMandatory(true);
 				out.write(new ObjectEvent(iomNum));
-				AxisSpec iomAxisSpec=new AxisSpec(null);
+				AxisSpec iomAxisSpec=new AxisSpec();
 				iomAxisSpec.setAxis(iomNum.getobjectoid(),dimi+1);
 				iomAxisSpec.setCoordType(iomCoord.getobjectoid());
 				out.write(new ObjectEvent(iomAxisSpec));
 			}
-			if(coord instanceof ch.interlis.ili2c.metamodel.MultiCoordType){
-				iomCoord.setMulti(true);
-			}else{
-				iomCoord.setMulti(false);
-			}
+			iomCoord.setMulti(coord instanceof ch.interlis.ili2c.metamodel.MultiCoordType);
+			iomCoord.setGeneric(coord.isGeneric());
 			iomType=iomCoord;
 		}else if(type instanceof ch.interlis.ili2c.metamodel.EnumerationType){
 			EnumType iomEnumType=new EnumType(typeTid);
@@ -1673,6 +1782,7 @@ public class Imd16Generator {
 			iomTopNode.setEnumType(iomEnumType.getobjectoid(),1);
 			iomTopNode.setAbstract(false);
 			iomTopNode.setFinal(false);
+			iomTopNode.setGeneric(false);
 			out.write(new ObjectEvent(iomTopNode));
 			visitEnumeration(iomTopNode.getobjectoid(),enm);
 			iomType=iomEnumType;
@@ -1709,7 +1819,7 @@ public class Imd16Generator {
 		}else if(type instanceof ch.interlis.ili2c.metamodel.ClassType){
 			ClassRefType iomClassType=new ClassRefType(typeTid);
 			ch.interlis.ili2c.metamodel.ClassType classtype=(ch.interlis.ili2c.metamodel.ClassType)type;
-			BaseClass iomBaseClass=new BaseClass(null);
+			BaseClass iomBaseClass=new BaseClass();
 			iomBaseClass.setCRT(iomClassType.getobjectoid());
 			if(classtype.isStructure()){
 				iomBaseClass.setBaseClass(td.INTERLIS.ANYSTRUCTURE.getScopedName(null));					
@@ -1720,7 +1830,7 @@ public class Imd16Generator {
 
 			Iterator resti=classtype.iteratorRestrictedTo();
 			while(resti.hasNext()){
-				ClassRestriction iomRestriction=new ClassRestriction(null);
+				ClassRestriction iomRestriction=new ClassRestriction();
 				ch.interlis.ili2c.metamodel.Table rest=(ch.interlis.ili2c.metamodel.Table)resti.next();
 				iomRestriction.setClassRestriction(rest.getScopedName(null));					
 				iomRestriction.setCRTR(iomClassType.getobjectoid());
@@ -1737,7 +1847,7 @@ public class Imd16Generator {
 			iomMultiValue.setBaseType(comp.getComponentType().getScopedName(null));
 			Iterator resti=comp.iteratorRestrictedTo();
 			while(resti.hasNext()){
-				TypeRestriction iomRestriction=new TypeRestriction(null);
+				TypeRestriction iomRestriction=new TypeRestriction();
 				ch.interlis.ili2c.metamodel.Table rest=(ch.interlis.ili2c.metamodel.Table)resti.next();
 				iomRestriction.setTypeRestriction(rest.getScopedName(null));					
 				iomRestriction.setTRTR(iomMultiValue.getobjectoid());
@@ -1792,7 +1902,7 @@ public class Imd16Generator {
 			}
 			ch.interlis.ili2c.metamodel.LineForm lf[]=lineType.getLineForms();
 			for(int lfi=0;lfi<lf.length;lfi++){
-				LinesForm iomLf=new LinesForm(null);
+				LinesForm iomLf=new LinesForm();
 				iomLf.setLineType(iomLineType.getobjectoid());
 				iomLf.setLineForm(lf[lfi].getScopedName(null));
 				out.write(new ObjectEvent(iomLf));
@@ -1802,7 +1912,7 @@ public class Imd16Generator {
 			ClassRefType iomMetaType=new ClassRefType(typeTid);
 			ch.interlis.ili2c.metamodel.MetaobjectType meta=(ch.interlis.ili2c.metamodel.MetaobjectType)type;
 			ch.interlis.ili2c.metamodel.Table ref=meta.getReferred();
-			BaseClass iomBaseClass=new BaseClass(null);
+			BaseClass iomBaseClass=new BaseClass();
 			iomBaseClass.setCRT(iomMetaType.getobjectoid());
 			if(ref==null){
 				iomBaseClass.setBaseClass(td.INTERLIS.METAOBJECT.getScopedName(null));
@@ -1815,14 +1925,14 @@ public class Imd16Generator {
 			ch.interlis.ili2c.metamodel.ObjectType ot=(ch.interlis.ili2c.metamodel.ObjectType)type;
 			ObjectType iomObjectType=new ObjectType(typeTid);
 			iomObjectType.setMultiple(ot.isObjects());
-			BaseClass iomBaseClass= new BaseClass(null);
+			BaseClass iomBaseClass= new BaseClass();
 			iomBaseClass.setCRT(iomObjectType.getobjectoid());
 			iomBaseClass.setBaseClass(ot.getRef().getScopedName(null));
 			out.write(new ObjectEvent(iomBaseClass));
 			Iterator ri=ot.iteratorRestrictedTo();
 			while(ri.hasNext()){
 				ch.interlis.ili2c.metamodel.AbstractClassDef r=(ch.interlis.ili2c.metamodel.AbstractClassDef)ri.next();
-				ClassRestriction iomClassRestriction= new ClassRestriction(null);
+				ClassRestriction iomClassRestriction= new ClassRestriction();
 				iomClassRestriction.setCRTR(iomObjectType.getobjectoid());
 				iomClassRestriction.setClassRestriction(r.getScopedName(null));
 				out.write(new ObjectEvent(iomClassRestriction));
@@ -1851,7 +1961,7 @@ public class Imd16Generator {
 			ch.interlis.ili2c.metamodel.ReferenceType ref=(ch.interlis.ili2c.metamodel.ReferenceType)type;
 
 			ch.interlis.ili2c.metamodel.AbstractClassDef target=ref.getReferred();
-			BaseClass iomBaseClass=new BaseClass(null);
+			BaseClass iomBaseClass=new BaseClass();
 			iomBaseClass.setCRT(iomRefType.getobjectoid());
 			iomBaseClass.setBaseClass(target.getScopedName(null));
 			out.write(new ObjectEvent(iomBaseClass));
@@ -1859,7 +1969,7 @@ public class Imd16Generator {
 			Iterator targeti=ref.iteratorRestrictedTo();
 			while(targeti.hasNext()){
 				target=(ch.interlis.ili2c.metamodel.AbstractClassDef)targeti.next();
-				ClassRestriction iomRestriction=new ClassRestriction(null);
+				ClassRestriction iomRestriction=new ClassRestriction();
 				iomRestriction.setClassRestriction(target.getScopedName(null));
 				iomRestriction.setCRTR(iomRefType.getobjectoid());
 				out.write(new ObjectEvent(iomRestriction));
@@ -1935,6 +2045,7 @@ public class Imd16Generator {
 		}
 		iomType.setAbstract( type.isAbstract() );
 		iomType.setFinal( false );
+		iomType.setGeneric(false);
 		if(iomType instanceof DomainType){
 			((DomainType)iomType).setMandatory(attr.getDomain().isMandatoryConsideringAliases());
 		}
@@ -1992,6 +2103,7 @@ public class Imd16Generator {
 		iomType.setName(LOCAL_TYPE_NAME);
 		iomType.setAbstract( type.isAbstract() );
 		iomType.setFinal( false );
+		iomType.setGeneric(false);
 		if(iomType instanceof DomainType){
 			((DomainType)iomType).setMandatory(func.getDomain().isMandatoryConsideringAliases());
 		}
@@ -2006,6 +2118,7 @@ public class Imd16Generator {
 		iomType.setName(arg.getName());
 		iomType.setAbstract( type.isAbstract() );
 		iomType.setFinal( false );
+		iomType.setGeneric(false);
 		if(iomType instanceof DomainType){
 			((DomainType)iomType).setMandatory(arg.getType().isMandatoryConsideringAliases());
 		}
@@ -2024,6 +2137,7 @@ public class Imd16Generator {
 		}
 		iomType.setAbstract( type.isAbstract() );
 		iomType.setFinal( false );
+		iomType.setGeneric(false);
 		if(iomType instanceof DomainType){
 			((DomainType)iomType).setMandatory(param.getType().isMandatoryConsideringAliases());
 		}
@@ -2058,6 +2172,7 @@ public class Imd16Generator {
 			iomNum.setAbstract(true);
 			iomNum.setFinal(false);
 		}
+		iomNum.setGeneric(false);
 		iomNum.setCircular(num.isCircular());
 		if(num.getRotation()!=ch.interlis.ili2c.metamodel.NumericType.ROTATION_NONE){
 			iomNum.setClockwise(num.getRotation()==ch.interlis.ili2c.metamodel.NumericType.ROTATION_CLOCKWISE?true:false);
@@ -2067,7 +2182,7 @@ public class Imd16Generator {
 		}
 		ch.interlis.ili2c.metamodel.RefSystemRef refSysRef=num.getReferenceSystem();
 		if(refSysRef!=null){
-			NumsRefSys iomRefSysRef=new NumsRefSys(null);
+			NumsRefSys iomRefSysRef=new NumsRefSys();
 			if(refSysRef instanceof ch.interlis.ili2c.metamodel.RefSystemRef.CoordDomain){
 				ch.interlis.ili2c.metamodel.RefSystemRef.CoordDomain rs=(ch.interlis.ili2c.metamodel.RefSystemRef.CoordDomain)refSysRef;
 				iomRefSysRef.setobjectrefoid(rs.getReferredDomain().getScopedName(null));
@@ -2101,6 +2216,7 @@ public class Imd16Generator {
 			iomE.setParentNode(parentOid,orderpos++);
 			iomE.setAbstract(false);
 			iomE.setFinal(false);
+			iomE.setGeneric(false);
 			out.write(new ObjectEvent(iomE));
 			visitMetaValues(e.getMetaValues(),iomE.getobjectoid());
 			ch.interlis.ili2c.metamodel.Enumeration sub=e.getSubEnumeration();
@@ -2110,6 +2226,35 @@ public class Imd16Generator {
 		}
 		
 	}
+
+	private void visitContextDef(ch.interlis.ili2c.metamodel.ContextDef contextDef)
+	throws IoxException
+	{
+		String contextOid = contextDef.getScopedName();
+		Context iomContext = new Context(contextOid);
+		iomContext.setName(contextDef.getName());
+		if (contextDef.getDocumentation() != null) {
+			DocText doc = new DocText();
+			doc.setText(contextDef.getDocumentation());
+			iomContext.addDocumentation(doc);
+		}
+		out.write(new ObjectEvent(iomContext));
+
+        String genericDefOid = contextOid + "." + contextDef.getGeneric().getName();
+        GenericDef iomGenericDef = new GenericDef(genericDefOid);
+        iomGenericDef.setContext(contextOid);
+        iomGenericDef.setGenericDomain(contextDef.getGeneric().getScopedName());
+        out.write(new ObjectEvent(iomGenericDef));
+
+        for (ch.interlis.ili2c.metamodel.Domain concrete : contextDef.getConcretes()) {
+            ConcreteForGeneric iomConcrete = new ConcreteForGeneric();
+            iomConcrete.setGenericDef(genericDefOid);
+            iomConcrete.setConcreteDomain(concrete.getScopedName());
+            out.write(new ObjectEvent(iomConcrete));
+        }
+        visitMetaValues(contextDef.getMetaValues(),iomContext.getobjectoid());
+	}
+
 	private void visitElements(ch.interlis.ili2c.metamodel.Container container)
 	throws IoxException
 	{
@@ -2138,6 +2283,8 @@ public class Imd16Generator {
 				visitMetaDataUseDef((ch.interlis.ili2c.metamodel.MetaDataUseDef)next);
 			}else if(next instanceof ch.interlis.ili2c.metamodel.Graphic){
 				visitGraphic((ch.interlis.ili2c.metamodel.Graphic)next);
+			}else if(next instanceof ch.interlis.ili2c.metamodel.ContextDef){
+				visitContextDef((ch.interlis.ili2c.metamodel.ContextDef)next);
 			}
 		}
 	

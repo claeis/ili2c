@@ -2270,8 +2270,32 @@ protected cardinality
   ;
 
 
+protected domainConstraint[Domain domain, Container container]
+    {
+        Evaluable condition = null;
+    } : constraintName:NAME COLON condition=expression[domain,predefinedBooleanType,container]
+    {
+        if (domain.getType() instanceof ClassType || domain.getType() instanceof AttributePathType) {
+            reportError(
+                formatMessage("err_domainConstraintsNotSupportedOnType", domain.getName()),
+                constraintName.getLine()
+            );
+            return;
+        }
+        try {
+            DomainConstraint constraint = new DomainConstraint();
+            constraint.setName(constraintName.getText());
+            constraint.setCondition(condition);
+            domain.add(constraint);
+        } catch (Exception ex) {
+            reportError(ex, constraintName.getLine());
+        }
+    }
+    ;
+
 protected domainDef[Container container]
 	{
+	  Domain dd = null;
 	  Domain     extending = null;
 	  Type       extendingType = null;
 	  Type       declared = null;
@@ -2292,14 +2316,8 @@ protected domainDef[Container container]
 		(	"MANDATORY" (declared=type[container,extendingType,null,(mods&ch.interlis.ili2c.metamodel.Properties.eGENERIC)!=0])?
 		|	declared=type[container,extendingType,null,(mods&ch.interlis.ili2c.metamodel.Properties.eGENERIC)!=0]
 		)
-		( "CONSTRAINTS" 
-		NAME COLON expression[container,predefinedBooleanType,container] 
-			(COMMA NAME COLON expression[container,predefinedBooleanType,container] 
-			)*
-		)?
-		SEMI
 		{
-		Domain dd = new Domain ();
+		dd = new Domain ();
 
 		try {
 		dd.setName (n.getText());
@@ -2357,6 +2375,11 @@ protected domainDef[Container container]
 		reportError(ex, n.getLine());
 		}
 		}
+		( "CONSTRAINTS"
+			domainConstraint[dd, container]
+			(COMMA domainConstraint[dd, container])*
+		)?
+		SEMI
 	;
 
 protected domainDefs[Container container]
@@ -3262,20 +3285,13 @@ protected rotationDef
 
 protected contextDefs[Container container]
 	{
-	  ContextDefs defs=null;
-	  int nameIdx=1;
 	}
-	:	"CONTEXT"  n:NAME EQUALS 
-		{defs=new ContextDefs(n.getText());
-		}
+	:	"CONTEXT" 
 		( 
-		contextDef[container,defs,nameIdx++] 
+		contextDef[container] 
 		)*
-		{
-		container.add(defs);
-		}
 	;
-protected contextDef[Container container,ContextDefs defs,int nameIdx]
+protected contextDef[Container container]
 	{
 	  String ilidoc=null;
 	  Settings metaValues=null;
@@ -3284,6 +3300,7 @@ protected contextDef[Container container,ContextDefs defs,int nameIdx]
 	  ArrayList<Domain> concreteCoordDefs=new ArrayList<Domain>();
 	}
 	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
+		n:NAME EQUALS
 		genericCoordDef=domainRef[container]
 		eq:EQUALS
 		concreteCoordDef=domainRef[container]
@@ -3294,10 +3311,10 @@ protected contextDef[Container container,ContextDefs defs,int nameIdx]
 			}
 		)*
 		{
-			ContextDef def=new ContextDef(nameIdx,genericCoordDef,concreteCoordDefs.toArray(new Domain[concreteCoordDefs.size()]));
+			ContextDef def=new ContextDef(n.getText(),genericCoordDef,concreteCoordDefs.toArray(new Domain[concreteCoordDefs.size()]));
 			def.setDocumentation(ilidoc);
 			def.setMetaValues(metaValues);
-			defs.add(def);
+			container.add(def);
 		}
 		SEMI
 	;
@@ -4518,24 +4535,27 @@ protected existenceConstraint[Viewable v,Container context]
 protected uniquenessConstraint[Viewable v,Container context]
 	returns [UniquenessConstraint constr]
   	{
-	Evaluable preCond=null;
-		constr=new UniquenessConstraint();
+	    Evaluable preCond=null;
+	    constr=null;
 	}
-	: u:"UNIQUE" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON) => n:NAME COLON )?
-	{
-		  constr.setSourceLine(u.getLine());
-		try{
-			if(n!=null){constr.setName(n.getText());}
-		} catch (Exception ex) {
-			reportError(ex, u.getLine());
-		}
-	}
+	: u:"UNIQUE" ( (LPAREN "BASKET") => LPAREN b:"BASKET" RPAREN )? ((NAME COLON) => n:NAME COLON )?
   	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,context] COLON
 	)?
 	( constr=globalUniqueness[v,context]
 	| constr=localUniqueness[v]
 	)
 	{
+		constr.setSourceLine(u.getLine());
+		try{
+			if(n!=null){constr.setName(n.getText());}
+			constr.setPerBasket(b!=null);
+			if (constr.perBasket() && constr.getLocal()) {
+				reportError (formatMessage ("err_uniqueness_basketAndLocal",(String)null), u.getLine());
+			}
+		} catch (Exception ex) {
+			reportError(ex, u.getLine());
+		}
+
 		if(preCond!=null){ 
 			if(!preCond.isDirty() && !preCond.isLogical()){
 				reportError (formatMessage ("err_expr_noLogical",(String)null),
@@ -4692,7 +4712,7 @@ protected setConstraint [Viewable v,Container context]
 	Evaluable condition=null;
   constr = new SetConstraint();
 }
-  : tok:"SET" "CONSTRAINT" ( (LPAREN "BASKET") => LPAREN "BASKET" RPAREN )? ((NAME COLON)=> n:NAME COLON )?
+  : tok:"SET" "CONSTRAINT" ( (LPAREN "BASKET") => LPAREN b:"BASKET" RPAREN )? ((NAME COLON)=> n:NAME COLON )?
   	( "WHERE" preCond=expression[v, /* expectedType */ predefinedBooleanType,context] COLON
 		{
 			if(!preCond.isDirty() && !preCond.isLogical()){
@@ -4707,6 +4727,7 @@ protected setConstraint [Viewable v,Container context]
 	SEMI
 	{
 	  constr.setSourceLine(tok.getLine());
+      constr.setPerBasket(b!=null);
 	  if(v instanceof Table && !((Table)v).isIdentifiable()){
 			reportError (formatMessage ("err_constraint_illegalSetInStruct",
 				v.getScopedName(null)), tok.getLine());
@@ -4772,7 +4793,7 @@ protected term[Container ns, Type expectedType, Container functionNs]
     }
     (
       o:IMPLIES {lineNumber = o.getLine();}
-      expr = term0 [ns, expectedType, functionNs]
+      right = term0 [ns, expectedType, functionNs]
       {
       	if(right==null){
       		dirty=true;
@@ -5066,17 +5087,21 @@ protected factor[Container ns,Container functionNs]
 			{ inspFactor.setRestriction(inspRestriction); 
 			}
 		)?) 
-	|	({
-			if(!(ns instanceof Viewable)){
-				reportError (formatMessage ("err_Container_currentIsNotViewable",
-				ns.toString()), LT(1).getLine());
-			}
-		}
-		ev=objectOrAttributePath[(Viewable)ns,functionNs]
-		)
-	|	ev=constant[ns]
-		
+	| {ns instanceof Viewable}? ev = objectOrAttributePath[(Viewable)ns,functionNs]
+	| {ns instanceof Domain}? ev = valueRefThis[(Domain)ns]
+	| ev=constant[ns]
 	;
+
+protected valueRefThis[Domain domain]
+	returns[ValueRefThis evaluable]
+	{
+		evaluable = null;
+	}
+	: "THIS" {
+		evaluable = new ValueRefThis(domain.getType());
+	}
+	;
+
 
 protected objectOrAttributePath[Viewable start,Container context]
 	returns[ObjectPath object]

@@ -1,12 +1,17 @@
 INTERLIS 2.4;
 
+/** 2022-10-10 MANDATORY constraint in class DataUnit added
+ */
+
+!!@precursorVersion=2020-06-17
+
 /** Base: IlisMeta07 VERSION "2022-04-28"
  *  Modifications for I2.4:
  *  - generics!
  *  - constraints as meta elements
  *  - ...
  */
-MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2022-06-17-ceis" =
+MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2023-10-30ceis" =
 
   DOMAIN
     BasketOID = OID TEXT;  !! Filename
@@ -633,7 +638,7 @@ MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2022-06-17-ceis" =
     END UnaryExpr;
 
     STRUCTURE CompoundExpr EXTENDS Expression =
-      Operation: (Implication, And, Or, Mult, Div,  !! 2.4: Implication
+      Operation: (Implication, And, Or, Mult, Div, Add, Sub, !! 2.4: Implication, Add, Sub
                   Relation (Equal, NotEqual,
                   LessOrEqual, GreaterOrEqual,
                   Less, Greater));
@@ -720,14 +725,15 @@ MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2022-06-17-ceis" =
       LogicalExpression: Expression;
     END SimpleConstraint;
 
+    STRUCTURE ExistenceDef =   !! 2.4
+      ExistsIn : MANDATORY REFERENCE TO (EXTERNAL) IlisMeta16.ModelData.Class;
+      Attr : MANDATORY PathOrInspFactor;
+    END ExistenceDef;
+
     CLASS ExistenceConstraint EXTENDS Constraint =
       Attr : MANDATORY PathOrInspFactor;
+      RequiredIn : BAG {1..*} OF ExistenceDef;
     END ExistenceConstraint;
-
-    ASSOCIATION ExistenceDef =   !! 2.4
-      ExistenceConstraint -<#> ExistenceConstraint;
-      ExistsIn -- Class;
-    END ExistenceDef;
 
     CLASS UniqueConstraint EXTENDS Constraint =
       Where: BAG {0..1} OF Expression;
@@ -737,6 +743,7 @@ MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2022-06-17-ceis" =
 
     CLASS SetConstraint EXTENDS Constraint =
       Where: BAG {0..1} OF Expression;
+      PerBasket: BOOLEAN; !! 2.4
       Constraint: Expression;
     END SetConstraint;
 

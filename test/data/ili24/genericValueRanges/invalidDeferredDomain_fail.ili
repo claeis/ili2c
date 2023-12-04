@@ -1,16 +1,13 @@
 INTERLIS 2.4;
 
-
 MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
 
-
-  TOPIC TopicA = 
+  TOPIC TopicA =
+    DEFERRED GENERICS InexistentDomain;
 
     CLASS ClassA =
-      attr : 10 .. 20 ;
-      MANDATORY CONSTRAINT (attr / 5)>15;
+      attrA : TEXT*20;
     END ClassA;
-
   END TopicA;
 
 END ModelA.

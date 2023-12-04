@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
+import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.settings.Settings;
 import ch.interlis.ili2c.LogCollector;
 import ch.interlis.ili2c.config.Configuration;
@@ -30,8 +31,8 @@ import ch.interlis.iox_j.validator.ValidationConfig;
 import ch.interlis.iox_j.validator.Validator;
 
 public class Imd16GeneratorTest {
-    public static final String SIMPLE24_ILI = "test/data/imdgenerator/Simple24.ili";
     private static final String ILIS_META16_ILI = "standard/IlisMeta16.ili";
+    private static final String UNITS23_ILI = "standard/Units.ili";
     @Test
     public void ili23Test() throws Iox2jtsException, IoxException {
         final String OUT_FILE = "Simple23-out.imd";
@@ -87,14 +88,15 @@ public class Imd16GeneratorTest {
         }
     }
     @Test
-    public void ili24Test() throws Iox2jtsException, IoxException {
-        final String OUT_FILE = "Simple24-out.imd";
+    public void units23Test() throws Iox2jtsException, IoxException {
+        final String OUT_FILE = "Units23-out.imd";
         // generate imd file
         {
+            EhiLogger.getInstance().setTraceFilter(false);
             // compile model
             TransferDescription td=null;
             Configuration ili2cConfig=new Configuration();
-            FileEntry fileEntry=new FileEntry(SIMPLE24_ILI, FileEntryKind.ILIMODELFILE);
+            FileEntry fileEntry=new FileEntry(UNITS23_ILI, FileEntryKind.ILIMODELFILE);
             ili2cConfig.addFileEntry(fileEntry);
             ili2cConfig.setOutputFile(OUT_FILE);
             ili2cConfig.setOutputKind(GenerateOutputKind.IMD16);
@@ -140,6 +142,7 @@ public class Imd16GeneratorTest {
              }while(!(event instanceof EndTransferEvent));
         }
     }
+
     @Test
     public void ili10Test() throws Iox2jtsException, IoxException {
         final String OUT_FILE = "Simple10-out.imd";

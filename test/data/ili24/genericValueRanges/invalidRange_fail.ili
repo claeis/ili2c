@@ -1,0 +1,19 @@
+INTERLIS 2.4;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  DOMAIN
+    CoordA (GENERIC) = COORD 0 .. 100, NUMERIC;
+
+    ConcreteCoordA = COORD 0 .. 200, 0 .. 200;
+
+  CONTEXT default =
+    CoordA = ConcreteCoordA; !! the definition of domain ConcreteCoordA must fit into the range of CoordA
+
+  TOPIC TopicA =
+    CLASS ClassA =
+      attrA : CoordA;
+    END ClassA;
+  END TopicA;
+
+END ModelA.
