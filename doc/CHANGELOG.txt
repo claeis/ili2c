@@ -1,8 +1,11 @@
 LATEST
 ---------------------------
+
+ili2c 5.4.0 (2023-12-04)
+---------------------------
 - imd export: fixed DerivedUnits export (#114)
 - ili2.4: fix ContextDef parser / remove ContextDefs from metamodel (#118)
-- iox-ili-1.22.0+
+- iox-ili-1.22.0
 
 ili2c 5.3.4 (2023-11-14)
 ---------------------------
