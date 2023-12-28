@@ -65,6 +65,12 @@ public class GenericValueRanges24Test {
     }
     
     @Test
+    public void multipleContextsB() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "multipleContextsB.ili");
+        assertNotNull(td);
+    }
+    
+    @Test
     public void multipleContextsExtending() {
         TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "multipleContextsExtending.ili");
         assertNotNull(td);

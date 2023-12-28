@@ -402,6 +402,19 @@ options
             }
     }
 
+	protected boolean isNewName(Container scope,String name)
+	{
+	
+	while(scope!=null){
+		Element ele=scope.getElement(Element.class,name);
+		if(ele==null && scope instanceof Model){
+			ele=((Model)scope).getImportedElement(Element.class, name);
+		}
+		if(ele!=null)return false;
+		scope=scope.getContainer();
+	}
+	return true;
+	}
 	protected Domain resolveDomainRef(Container scope,String[] nams, int lin)
 	{
 	      Model model;
@@ -3285,13 +3298,12 @@ protected rotationDef
 
 protected contextDefs[Container container]
 	{
+	int nameIdx=1;
 	}
 	:	"CONTEXT" 
-		( 
-		contextDef[container] 
-		)*
+			( n:NAME EQUALS ( {!isNewName(container,LT(1).getText())}? contextDef[container,n.getText(),nameIdx++] )* )*
 	;
-protected contextDef[Container container]
+protected contextDef[Container container,String name,int nameIdx]
 	{
 	  String ilidoc=null;
 	  Settings metaValues=null;
@@ -3299,8 +3311,8 @@ protected contextDef[Container container]
 	  Domain concreteCoordDef=null;
 	  ArrayList<Domain> concreteCoordDefs=new ArrayList<Domain>();
 	}
-	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
-		n:NAME EQUALS
+	:
+		{ ilidoc=getIliDoc();metaValues=getMetaValues();}
 		genericCoordDef=domainRef[container]
 		eq:EQUALS
 		concreteCoordDef=domainRef[container]
@@ -3311,7 +3323,10 @@ protected contextDef[Container container]
 			}
 		)*
 		{
-			ContextDef def=new ContextDef(n.getText(),genericCoordDef,concreteCoordDefs.toArray(new Domain[concreteCoordDefs.size()]));
+			if(nameIdx>1){
+				name=name+nameIdx;
+			}
+			ContextDef def=new ContextDef(name,genericCoordDef,concreteCoordDefs.toArray(new Domain[concreteCoordDefs.size()]));
 			def.setDocumentation(ilidoc);
 			def.setMetaValues(metaValues);
 			container.add(def);
