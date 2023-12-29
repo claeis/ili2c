@@ -5,12 +5,6 @@ MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
   DOMAIN
     Coord2 (GENERIC) = COORD NUMERIC, NUMERIC;
 
-  TOPIC TopicA (ABSTRACT) =
-    CLASS ClassA =
-      attrA : Coord2;
-    END ClassA;
-  END TopicA;
-
 END ModelA.
 
 MODEL ModelB AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"  =
@@ -32,8 +26,30 @@ MODEL ModelB AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"  =
   CONTEXT default =
     Coord2 = Coord2_CHLV03 OR Coord2_CHLV95;
 
-  TOPIC TopicB EXTENDS TopicA =
-      DEFERRED GENERICS Coord2;
-
-  END TopicB;
 END ModelB.
+
+MODEL ModelC AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"  =
+
+    STRUCTURE StructA =
+    END StructA;
+  
+END ModelC.
+
+MODEL ModelD AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"  =
+  IMPORTS ModelA,ModelB,ModelC;
+
+    STRUCTURE StructA EXTENDS ModelC.StructA =
+      attrA : POLYLINE WITH (STRAIGHTS) VERTEX ModelA.Coord2;
+    END StructA;
+  
+  TOPIC TopicA =
+    DEFERRED GENERICS ModelA.Coord2;
+
+    CLASS ClassA =
+      attrA : ModelC.StructA;
+    END ClassA;
+  
+  END TopicA;
+  
+END ModelD.
+
