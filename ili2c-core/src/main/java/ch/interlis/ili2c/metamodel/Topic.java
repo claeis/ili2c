@@ -32,7 +32,6 @@ public class Topic extends AbstractPatternDef<Element>
   private ArrayList<Domain> deferredGenerics=new ArrayList<Domain>();
 
   protected List<Topic> dependsOn = new LinkedList<Topic>();
-  private final Set<Domain> usedGenericDomains = new HashSet<Domain>();
 
 
   public Topic()
@@ -301,7 +300,6 @@ public class Topic extends AbstractPatternDef<Element>
 
 @Override
 public void checkIntegrity(List<Ili2cSemanticException> errs) throws IllegalStateException {
-    usedGenericDomains.clear();
     super.checkIntegrity(errs);
     checkIntegrityAbstract(errs);
 }
@@ -328,6 +326,8 @@ private void checkIntegrityAbstract(List<Ili2cSemanticException> errs) {
           }
     }
 
+    Set<Domain> usedGenericDomains = getUsedGenericDomains(this);
+    
     // check whether all deferred generics have a context definition
     Model model = (Model) getContainer(Model.class);
     for (Domain domain : deferredGenerics) {
@@ -351,9 +351,119 @@ private void checkIntegrityAbstract(List<Ili2cSemanticException> errs) {
     }
 }
 
-public void addUsedGenericDomain(Domain domain) {
-    usedGenericDomains.add(domain);
+
+private Set<Domain> getUsedGenericDomains(Topic topic) {
+    HashSet<Element> accu=new HashSet<Element>();
+    HashSet<Model> accuScope=new HashSet<Model>();
+    visitTopic(accu,accuScope,topic);
+    for(Model m:accuScope) {
+        visitModel(accu,accuScope,m);
+    }
+
+    Set<Domain> ret=new HashSet<Domain>();
+    for(Element e:accu) {
+        if(e instanceof AttributeDef) {
+            AttributeDef attr=(AttributeDef)e;
+            Type type=attr.getDomain();
+            if(type instanceof TypeAlias) {
+                Domain domain=((TypeAlias)type).getAliasing();
+                type=domain.getType();
+                if(type instanceof AbstractCoordType && ((AbstractCoordType) type).isGeneric()) {
+                    ret.add(domain);
+                }else if(type instanceof LineType) {
+                    domain=((LineType)type).getControlPointDomain();
+                    type=domain.getType();
+                    if(type instanceof AbstractCoordType && ((AbstractCoordType) type).isGeneric()) {
+                        ret.add(domain);
+                    }
+                }
+            }else if(type instanceof AbstractCoordType && ((AbstractCoordType) type).isGeneric()) {
+                throw new IllegalStateException("unexpected GENERIC CoordType at attr "+attr.getScopedName());
+            }else if(type instanceof LineType) {
+                Domain domain=((LineType)type).getControlPointDomain();
+                type=domain.getType();
+                if(type instanceof AbstractCoordType && ((AbstractCoordType) type).isGeneric()) {
+                    ret.add(domain);
+                }
+            }
+        }
+    }
+    return ret;
 }
+private void visitModel(HashSet<Element> accu,HashSet<Model> accuScope, Model model)
+{
+    if(model.equals(PredefinedModel.getInstance())){
+        return;
+    }
+    Iterator topici=model.iterator();
+    while(topici.hasNext()){
+        Object tObj=topici.next();
+        if(tObj instanceof Viewable){
+            visitViewable(accu,accuScope,(Viewable)tObj);
+        }
+    }
+}
+private void visitTopic(HashSet<Element> visitedElements,HashSet<Model> accuScope,Topic def)
+{
+    if(visitedElements.contains(def)){
+        return;
+    }
+    visitedElements.add(def);
+    Iterator classi=def.iterator();
+    while(classi.hasNext()){
+        Object classo=classi.next();
+        if(classo instanceof Viewable){
+            visitViewable(visitedElements,accuScope,(Viewable)classo);
+        }
+    }
+    // base topic
+    Topic base=(Topic)def.getExtending();
+    if(base!=null){
+        visitTopic(visitedElements,accuScope,base);
+    }
+    
+    // parent model
+    Model model=(Model)def.getContainer(Model.class);
+    if(!accuScope.contains(model)){
+        accuScope.add(model);
+    }
+}
+private void visitViewable(HashSet<Element> visitedElements,HashSet<Model> accuScope,Viewable def)
+{
+    if(visitedElements.contains(def)){
+        return;
+    }
+    visitedElements.add(def);
+    
+    //  generateViewable(def);
+    Iterator attri=def.iterator();
+    while(attri.hasNext()){
+        Object attro=attri.next();
+        if(attro instanceof AttributeDef){
+            AttributeDef attr=(AttributeDef)attro;
+            if(!visitedElements.contains(attr)) {
+                visitedElements.add(attr);
+            }
+            Type type=attr.getDomain();
+            if(type instanceof CompositionType){
+                CompositionType compType=(CompositionType)type;
+                visitViewable(visitedElements,accuScope,compType.getComponentType());
+                Iterator resti=compType.iteratorRestrictedTo();
+                while(resti.hasNext()){
+                    Viewable rest=(Viewable)resti.next();
+                    visitViewable(visitedElements,accuScope,rest);
+                }
+            }
+        }
+    }
+    // base viewable
+    Viewable base=(Viewable)def.getExtending();
+    if(base!=null){
+        visitViewable(visitedElements,accuScope,base);
+    }
+}
+
+
 
 @Override
 public void checkTranslationOf(List<Ili2cSemanticException> errs,String name,String baseName)

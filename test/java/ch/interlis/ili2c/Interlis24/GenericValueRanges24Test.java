@@ -65,6 +65,12 @@ public class GenericValueRanges24Test {
     }
     
     @Test
+    public void multipleContextsB() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "multipleContextsB.ili");
+        assertNotNull(td);
+    }
+    
+    @Test
     public void multipleContextsExtending() {
         TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "multipleContextsExtending.ili");
         assertNotNull(td);
@@ -112,4 +118,19 @@ public class GenericValueRanges24Test {
         assertEquals(1, errs.getErrs().size());
         assertContainsError("ModelA.TopicA has an unused deferred generic definition for Coord2.", 1, errs);
     }
+    
+    @Test
+    public void genericInStructAttr() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "GenericInStructAttr.ili");
+
+        assertNotNull(td);
+    }
+    @Test
+    public void genericInStructAttr_MissignDeferred_Fail() {
+        LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "GenericInStructAttr_MissignDeferred_Fail.ili");
+
+        assertEquals(1, errs.getErrs().size());
+        assertContainsError("ModelD.TopicA is missing a deferred generic definition for Coord2.", 1, errs);
+    }
+    
 }
