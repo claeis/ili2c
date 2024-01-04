@@ -618,7 +618,7 @@ public abstract class Expression extends Evaluable
         if(ret!=null) {
             return ret;
         }
-        Equality other=(Equality)otherEv;
+        Addition other=(Addition)otherEv;
         if(left.getClass()!=other.left.getClass()) {
             return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
         }
@@ -673,7 +673,7 @@ public abstract class Expression extends Evaluable
         if(ret!=null) {
             return ret;
         }
-        Equality other=(Equality)otherEv;
+        Subtraction other=(Subtraction)otherEv;
         if(left.getClass()!=other.left.getClass()) {
             return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
         }
@@ -728,7 +728,7 @@ public abstract class Expression extends Evaluable
         if(ret!=null) {
             return ret;
         }
-        Equality other=(Equality)otherEv;
+        Multiplication other=(Multiplication)otherEv;
         if(left.getClass()!=other.left.getClass()) {
             return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
         }
@@ -783,7 +783,7 @@ public abstract class Expression extends Evaluable
         if(ret!=null) {
             return ret;
         }
-        Equality other=(Equality)otherEv;
+        Division other=(Division)otherEv;
         if(left.getClass()!=other.left.getClass()) {
             return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
         }
@@ -838,7 +838,7 @@ public abstract class Expression extends Evaluable
         if(ret!=null) {
             return ret;
         }
-        GreaterThan other=(GreaterThan)otherEv;
+        Implication other=(Implication)otherEv;
         if(left.getClass()!=other.left.getClass()) {
             return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_expressionMismatch"));
         }
