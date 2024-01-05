@@ -494,12 +494,30 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
       printError ();
       ipw.println("<unknown view type>");
     }
-    ipw.println ("; =");
+    ipw.println (";");
+    
+    printSelection(view, language);
 
+    ipw.println ("=");
 
 	printElements(view, language);
 	printEnd(view, language);
   }
+protected void printSelection(Container view, String language) {
+    Iterator it = view.iterator();
+    while (it.hasNext()) {
+        Element elt=(Element)it.next();
+        if (elt instanceof ExpressionSelection)
+        {
+          ipw.println("WHERE");
+          ipw.indent();
+          printExpression (((ExpressionSelection) elt).getSelected(),
+                           ((ExpressionSelection) elt).getCondition(), language);
+          ipw.println (';');
+          ipw.unindent();
+        }
+    }
+}
   
   public void printGraphic (Graphic graph) {
 	  printGraphic(graph,null);
@@ -525,6 +543,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
    printStart ("GRAPHIC", graph, /* basedOn */ graph.getBasedOn(),language);
    ipw.println (" =");
    ipw.indent ();
+   printSelection(graph,language);
     printElements (graph,language);
     printEnd (graph, language);
   }
@@ -729,6 +748,13 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
     }
 
 
+    if (expr instanceof Expression.Implication)
+    {
+        printExpression (scope, ((Expression.Implication) expr).getLeft(), 1, language);
+        ipw.print (" => ");
+        printExpression (scope, ((Expression.Implication) expr).getRight(), 1, language);
+        return;
+    }
 
     if (expr instanceof Expression.Disjunction)
     {
@@ -742,6 +768,20 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
         printExpression (scope, disjoined[i], 2, language);
       }
       return;
+    }
+    if (expr instanceof Expression.Addition)
+    {
+        printExpression (scope, ((Expression.Addition) expr).getLeft(), 2, language);
+        ipw.print (" + ");
+        printExpression (scope, ((Expression.Addition) expr).getRight(), 2, language);
+        return;
+    }
+    if (expr instanceof Expression.Subtraction)
+    {
+        printExpression (scope, ((Expression.Subtraction) expr).getLeft(), 2, language);
+        ipw.print (" - ");
+        printExpression (scope, ((Expression.Subtraction) expr).getRight(), 2, language);
+        return;
     }
 
 
@@ -757,6 +797,20 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
         printExpression (scope, conjoined[i], 3, language);
       }
       return;
+    }
+    if (expr instanceof Expression.Multiplication)
+    {
+        printExpression (scope, ((Expression.Multiplication) expr).getLeft(), 3, language);
+        ipw.print (" * ");
+        printExpression (scope, ((Expression.Multiplication) expr).getRight(), 3, language);
+        return;
+    }
+    if (expr instanceof Expression.Division)
+    {
+        printExpression (scope, ((Expression.Division) expr).getLeft(), 3, language);
+        ipw.print (" / ");
+        printExpression (scope, ((Expression.Division) expr).getRight(), 3, language);
+        return;
     }
 
     if (expr instanceof Expression.Negation)
@@ -3071,18 +3125,6 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
 			lastClass = Constraint.class;
 		}
 
-      }
-      else if (elt instanceof ExpressionSelection)
-      {
-        if (lastClass != null)
-          ipw.println();
-        ipw.println("WHERE");
-        ipw.indent();
-        printExpression (((ExpressionSelection) elt).getSelected(),
-                         ((ExpressionSelection) elt).getCondition(), language);
-        ipw.println (';');
-        ipw.unindent();
-        lastClass = ExpressionSelection.class;
       }
       else if (elt instanceof SignAttribute)
       {
