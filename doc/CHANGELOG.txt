@@ -2,6 +2,7 @@ LATEST
 ---------------------------
 - fix validation of translated Expression with +, -, *, /, ->
 - ili2 export: fix kind of MODEL
+- ili2 export: fix THIS
 
 ili2c 5.4.1 (2023-12-29)
 ---------------------------

@@ -2879,6 +2879,8 @@ protected Unit getTypeUnit(NumericalType type) {
 			    }
 				
 			}
+        } else if (elv[i] instanceof PathElThis) {
+            ipw.print("THIS");
 		}
 	}
 	
