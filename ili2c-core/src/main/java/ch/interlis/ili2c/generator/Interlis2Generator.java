@@ -704,7 +704,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
     {
       FunctionCall f = (FunctionCall) expr;
       printRef (scope, f.getFunction(),language);
-      ipw.print (" (");
+      ipw.print ("(");
       Evaluable[] args = f.getArguments();
       if (args == null)
         printError ();
@@ -823,7 +823,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
 
     if (expr instanceof Expression.DefinedCheck)
     {
-      ipw.print ("DEFINED (");
+      ipw.print ("DEFINED(");
       printExpression (scope, ((Expression.DefinedCheck) expr).getArgument(), 7, language);
       ipw.print (')');
       return;
@@ -2868,17 +2868,48 @@ protected Unit getTypeUnit(NumericalType type) {
 			        ipw.print(name);
 			    }
 			}
-		} else if (elv[i] instanceof PathElAssocRole) {
-			PathElAssocRole assocRole = (PathElAssocRole) elv[i];
-			if (assocRole.getRole() instanceof RoleDef) {
-			    String name = getEnumerationElementNameInLanguage(assocRole.getRole().getScopedName(), language);
-			    if (name == null || name == "") {
-			        ipw.print(elv[i].getName());
-			    } else {
-			        ipw.print(name);
-			    }
-				
-			}
+        } else if (elv[i] instanceof PathElBase) {
+            PathElBase pathEl = (PathElBase) elv[i];
+            String scopedEleName=pathEl.getCurrentViewable().getScopedName()+"."+pathEl.getName();
+            String name = getEnumerationElementNameInLanguage(scopedEleName, language);
+            if (name == null || name == "") {
+                ipw.print(elv[i].getName());
+            } else {
+                ipw.print(name);
+            }
+        } else if (elv[i] instanceof PathElAssocRole) {
+            PathElAssocRole assocRole = (PathElAssocRole) elv[i];
+            if (assocRole.getRole() instanceof RoleDef) {
+                String name = getEnumerationElementNameInLanguage(assocRole.getRole().getScopedName(), language);
+                if (name == null || name == "") {
+                    ipw.print(elv[i].getName());
+                } else {
+                    ipw.print(name);
+                }
+                
+            }
+        } else if (elv[i] instanceof PathElAbstractClassRole) {
+            PathElAbstractClassRole assocRole = (PathElAbstractClassRole) elv[i];
+            if (assocRole.getRole() instanceof RoleDef) {
+                String name = getEnumerationElementNameInLanguage(assocRole.getRole().getScopedName(), language);
+                if (name == null || name == "") {
+                    ipw.print(elv[i].getName());
+                } else {
+                    ipw.print(name);
+                }
+                
+            }
+        } else if (elv[i] instanceof AssociationPath) {
+            AssociationPath assocRole = (AssociationPath) elv[i];
+            if (assocRole.getTargetRole() instanceof RoleDef) {
+                String name = getEnumerationElementNameInLanguage(assocRole.getTargetRole().getScopedName(), language);
+                if (name == null || name == "") {
+                    ipw.print("\\\\"+elv[i].getName());
+                } else {
+                    ipw.print("\\\\"+name);
+                }
+                
+            }
         } else if (elv[i] instanceof PathElThis) {
             ipw.print("THIS");
 		}
