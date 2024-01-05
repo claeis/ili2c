@@ -11,103 +11,7 @@ import ch.interlis.ili2c.generator.TransformationParameter.ModelTransformation;
 import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
 import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.generator.nls.TranslationElement;
-import ch.interlis.ili2c.metamodel.AbstractClassDef;
-import ch.interlis.ili2c.metamodel.AbstractCoordType;
-import ch.interlis.ili2c.metamodel.AreaType;
-import ch.interlis.ili2c.metamodel.AssociationDef;
-import ch.interlis.ili2c.metamodel.AttributeDef;
-import ch.interlis.ili2c.metamodel.AttributePathType;
-import ch.interlis.ili2c.metamodel.AttributeRef;
-import ch.interlis.ili2c.metamodel.BasketType;
-import ch.interlis.ili2c.metamodel.BlackboxType;
-import ch.interlis.ili2c.metamodel.Cardinality;
-import ch.interlis.ili2c.metamodel.ClassType;
-import ch.interlis.ili2c.metamodel.ComposedUnit;
-import ch.interlis.ili2c.metamodel.CompositionType;
-import ch.interlis.ili2c.metamodel.ConditionalExpression;
-import ch.interlis.ili2c.metamodel.Constant;
-import ch.interlis.ili2c.metamodel.Constraint;
-import ch.interlis.ili2c.metamodel.Container;
-import ch.interlis.ili2c.metamodel.ContextDef;
-import ch.interlis.ili2c.metamodel.DecompositionView;
-import ch.interlis.ili2c.metamodel.DerivedUnit;
-import ch.interlis.ili2c.metamodel.Domain;
-import ch.interlis.ili2c.metamodel.DomainConstraint;
-import ch.interlis.ili2c.metamodel.Element;
-import ch.interlis.ili2c.metamodel.EnumTreeValueType;
-import ch.interlis.ili2c.metamodel.EnumValType;
-import ch.interlis.ili2c.metamodel.EnumerationType;
-import ch.interlis.ili2c.metamodel.Evaluable;
-import ch.interlis.ili2c.metamodel.ExistenceConstraint;
-import ch.interlis.ili2c.metamodel.Expression;
-import ch.interlis.ili2c.metamodel.ExpressionSelection;
-import ch.interlis.ili2c.metamodel.ExtendableContainer;
-import ch.interlis.ili2c.metamodel.FormalArgument;
-import ch.interlis.ili2c.metamodel.FormattedType;
-import ch.interlis.ili2c.metamodel.FormattedTypeBaseAttrRef;
-import ch.interlis.ili2c.metamodel.Function;
-import ch.interlis.ili2c.metamodel.FunctionCall;
-import ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit;
-import ch.interlis.ili2c.metamodel.Graphic;
-import ch.interlis.ili2c.metamodel.GraphicParameterDef;
-import ch.interlis.ili2c.metamodel.Importable;
-import ch.interlis.ili2c.metamodel.JoinView;
-import ch.interlis.ili2c.metamodel.LineForm;
-import ch.interlis.ili2c.metamodel.LineType;
-import ch.interlis.ili2c.metamodel.LocalAttribute;
-import ch.interlis.ili2c.metamodel.MandatoryConstraint;
-import ch.interlis.ili2c.metamodel.MetaDataUseDef;
-import ch.interlis.ili2c.metamodel.MetaObject;
-import ch.interlis.ili2c.metamodel.MetaobjectType;
-import ch.interlis.ili2c.metamodel.Model;
-import ch.interlis.ili2c.metamodel.MultiAreaType;
-import ch.interlis.ili2c.metamodel.MultiCoordType;
-import ch.interlis.ili2c.metamodel.MultiPolylineType;
-import ch.interlis.ili2c.metamodel.MultiSurfaceOrAreaType;
-import ch.interlis.ili2c.metamodel.MultiSurfaceType;
-import ch.interlis.ili2c.metamodel.NoOid;
-import ch.interlis.ili2c.metamodel.NumericType;
-import ch.interlis.ili2c.metamodel.NumericalType;
-import ch.interlis.ili2c.metamodel.NumericallyDerivedUnit;
-import ch.interlis.ili2c.metamodel.OIDType;
-import ch.interlis.ili2c.metamodel.ObjectPath;
-import ch.interlis.ili2c.metamodel.ObjectType;
-import ch.interlis.ili2c.metamodel.Objects;
-import ch.interlis.ili2c.metamodel.Parameter;
-import ch.interlis.ili2c.metamodel.ParameterAssignment;
-import ch.interlis.ili2c.metamodel.ParameterValue;
-import ch.interlis.ili2c.metamodel.PathEl;
-import ch.interlis.ili2c.metamodel.PathElAssocRole;
-import ch.interlis.ili2c.metamodel.PlausibilityConstraint;
-import ch.interlis.ili2c.metamodel.PolylineType;
-import ch.interlis.ili2c.metamodel.PrecisionDecimal;
-import ch.interlis.ili2c.metamodel.PredefinedModel;
-import ch.interlis.ili2c.metamodel.Projection;
-import ch.interlis.ili2c.metamodel.Properties;
-import ch.interlis.ili2c.metamodel.RefSystemRef;
-import ch.interlis.ili2c.metamodel.ReferenceType;
-import ch.interlis.ili2c.metamodel.RoleDef;
-import ch.interlis.ili2c.metamodel.SetConstraint;
-import ch.interlis.ili2c.metamodel.SignAttribute;
-import ch.interlis.ili2c.metamodel.SignInstruction;
-import ch.interlis.ili2c.metamodel.StructuredUnit;
-import ch.interlis.ili2c.metamodel.StructuredUnitType;
-import ch.interlis.ili2c.metamodel.SurfaceOrAreaType;
-import ch.interlis.ili2c.metamodel.SurfaceType;
-import ch.interlis.ili2c.metamodel.Table;
-import ch.interlis.ili2c.metamodel.TextType;
-import ch.interlis.ili2c.metamodel.Topic;
-import ch.interlis.ili2c.metamodel.TransferDescription;
-import ch.interlis.ili2c.metamodel.Type;
-import ch.interlis.ili2c.metamodel.TypeAlias;
-import ch.interlis.ili2c.metamodel.UnionView;
-import ch.interlis.ili2c.metamodel.UniqueEl;
-import ch.interlis.ili2c.metamodel.UniquenessConstraint;
-import ch.interlis.ili2c.metamodel.Unit;
-import ch.interlis.ili2c.metamodel.ValueRefThis;
-import ch.interlis.ili2c.metamodel.View;
-import ch.interlis.ili2c.metamodel.Viewable;
-import ch.interlis.ili2c.metamodel.ViewableAlias;
+import ch.interlis.ili2c.metamodel.*;
 
 /** A class used to generate an INTERLIS model description as INTERLIS-2.
 */
@@ -1876,6 +1780,13 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 	
 	if(mdef.isContracted()){
 		ipw.print("CONTRACTED ");
+	}
+	if(mdef instanceof RefSystemModel) {
+        ipw.print("REFSYSTEM ");
+	}else if(mdef instanceof SymbologyModel) {
+        ipw.print("SYMBOLOGY ");
+	}else if(mdef instanceof TypeModel) {
+        ipw.print("TYPE ");
 	}
     ipw.print("MODEL ");
     printName(mdef,language);

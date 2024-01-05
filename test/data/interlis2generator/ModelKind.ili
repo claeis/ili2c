@@ -1,0 +1,13 @@
+INTERLIS 2.3;
+
+TYPE MODEL TypeModel (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+END TypeModel.
+
+REFSYSTEM MODEL RefSystemModel (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+END RefSystemModel.
+
+CONTRACTED SYMBOLOGY MODEL SymbologyModel (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+END SymbologyModel.
