@@ -6,6 +6,7 @@ LATEST
 - ili2 export: fix PathElAbstractRole, PathElBase, AssociationPath
 - ili2 export: fix ViewDef/Selection
 - ili2 export: fix +, -, *, /, ->
+- ili2 export: SignParamAssignment/MetaObjectRef
 
 ili2c 5.4.1 (2023-12-29)
 ---------------------------

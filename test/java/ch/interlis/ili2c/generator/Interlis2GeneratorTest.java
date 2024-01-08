@@ -104,7 +104,33 @@ public class Interlis2GeneratorTest {
         assertEquals(SymbologyModel.class, modelEle.getClass());
         assertTrue(modelEle.isContracted());
     }
-	
+
+    @Test
+    public void model_IliBeispiel() throws Exception {
+        final String TEST_ILI="Kap0_IliBeispiel.ili";
+        final String TEST_ILI_OUT=OUTPUT_FOLDER+TEST_ILI;
+        // ili lesen
+        TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(SRC_FOLDER+TEST_ILI));
+        // neues ili schreiben
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(TEST_ILI_OUT),"UTF-8");
+        new Interlis2Generator().generate(out, td, false);
+        out.close();
+        // neues ili lesen
+        TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(TEST_ILI_OUT));
+        assertNotNull(newTd);
+
+        Model modelEle=null;
+        modelEle = (Model)newTd.getElement("Bund");
+        assertNotNull(modelEle);
+        modelEle = (Model)newTd.getElement("Bern");
+        assertNotNull(modelEle);
+        modelEle = (Model)newTd.getElement("SimpleSignsSymbology");
+        assertNotNull(modelEle);
+        modelEle = (Model)newTd.getElement("SimpleGrafik");
+        assertNotNull(modelEle);
+
+    }
+    
     /**
      * Es ueberprueft, ob die FUNCTION korrekt in das ili file geschrieben wurde.
      * @throws Exception      

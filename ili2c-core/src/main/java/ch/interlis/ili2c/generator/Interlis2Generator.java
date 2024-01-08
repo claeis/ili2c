@@ -688,7 +688,7 @@ protected void printSelection(Container view, String language) {
       MetaObject refMO = ((Constant.ReferenceToMetaObject) expr).getReferred();
 
 
-      ipw.print ('"');
+      ipw.print ('{');
       if (refMO != null)
         if (language == null) {
             ipw.print (refMO.getName());
@@ -703,7 +703,7 @@ protected void printSelection(Container view, String language) {
         
       else
         printError ();
-      ipw.print ('"');
+      ipw.print ('}');
       return;
     }
 
