@@ -3,7 +3,9 @@ package ch.interlis.ili2c.generator;
 
 import java.io.File;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import ch.ehi.basics.io.IndentPrintWriter;
 import ch.ehi.basics.logging.EhiLogger;
@@ -34,7 +36,7 @@ public class Interlis2Generator
   private static final String EN = Ili2TranslationXml.EN;
   private static final String DE = Ili2TranslationXml.DE;
   
-  private java.util.ArrayList selfStandingConstraints=null;
+  private java.util.List<Constraint> selfStandingConstraints=null;
   private ModelElements translationConfig;
   private TransformationParameter params = null;
 
@@ -165,7 +167,7 @@ private void setup(
     if (topic == null)
       return;
 
-	selfStandingConstraints=new java.util.ArrayList();
+	selfStandingConstraints=new java.util.ArrayList<Constraint>();
 	
     Topic extending = (Topic) topic.getExtending();
 
@@ -219,11 +221,20 @@ private void setup(
 
 
     printElements(topic, language);
-    Iterator csi=selfStandingConstraints.iterator();
+    printSelfStandingConstraints(selfStandingConstraints,language);
+    ipw.unindent();
+    ipw.println ();
+    ipw.print("END ");
+    printName(topic,language);
+    ipw.println(';');
+    selfStandingConstraints=null;
+  }
+protected void printSelfStandingConstraints(List<Constraint> selfStandingConstraints,String language) {
+    Iterator<Constraint> csi=selfStandingConstraints.iterator();
     Viewable view=null;
 	Viewable lastView=null;
     while(csi.hasNext()){
-    	Constraint cs=(Constraint)csi.next();
+    	Constraint cs=csi.next();
     	view=(Viewable)cs.getContainer();
     	if(view!=lastView){
     		if(lastView!=null){
@@ -254,12 +265,7 @@ private void setup(
 		ipw.unindent();
 		ipw.println("END;");
 	}
-    ipw.unindent();
-    ipw.println ();
-    ipw.print("END ");
-    printName(topic,language);
-    ipw.println(';');
-  }
+}
 protected Iterator getTopicDependsOn(Topic topic) {
     return topic.getDependentOn();
 }
@@ -2983,6 +2989,20 @@ protected Unit getTypeUnit(NumericalType type) {
         Iterator it = container.iterator();
         while (it.hasNext()) {
           ch.interlis.ili2c.metamodel.Element elt = (ch.interlis.ili2c.metamodel.Element) it.next();
+          if(container instanceof Topic) {
+              if(selfStandingConstraints.size()>0) {
+                  List<Constraint> flushConstraints=new ArrayList<Constraint>();
+                  for(Constraint cs:selfStandingConstraints) {
+                      if(elt.getSourceLine()>cs.getSourceLine()) {
+                          flushConstraints.add(cs);
+                      }
+                  }
+                  if(flushConstraints.size()>0) {
+                      selfStandingConstraints.removeAll(flushConstraints);
+                      printSelfStandingConstraints(flushConstraints,language);
+                  }
+              }
+          }
           lastClass = printElement(container, lastClass, elt,language);
         }
         
@@ -3119,7 +3139,7 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
       else if (elt instanceof Constraint)
       {
 		if(((Constraint)elt).isSelfStanding()){
-			selfStandingConstraints.add(elt);
+			selfStandingConstraints.add((Constraint)elt);
 		}else{
 			printConstraint((Constraint)elt, language);
 			lastClass = Constraint.class;

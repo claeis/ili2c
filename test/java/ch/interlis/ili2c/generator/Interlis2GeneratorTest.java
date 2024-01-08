@@ -130,6 +130,26 @@ public class Interlis2GeneratorTest {
         assertNotNull(modelEle);
 
     }
+
+    @Test
+    public void constraintsOf() throws Exception {
+        final String TEST_ILI="ConstraintsOf.ili";
+        final String TEST_ILI_OUT=OUTPUT_FOLDER+TEST_ILI;
+        // ili lesen
+        TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(SRC_FOLDER+TEST_ILI));
+        // neues ili schreiben
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(TEST_ILI_OUT),"UTF-8");
+        new Interlis2Generator().generate(out, td, false);
+        out.close();
+        // neues ili lesen
+        TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(TEST_ILI_OUT));
+        assertNotNull(newTd);
+
+        Element modelEle=null;
+        modelEle = newTd.getElement("ModelA.TopicA.ClassB.C1");
+        assertNotNull(modelEle);
+
+    }
     
     /**
      * Es ueberprueft, ob die FUNCTION korrekt in das ili file geschrieben wurde.

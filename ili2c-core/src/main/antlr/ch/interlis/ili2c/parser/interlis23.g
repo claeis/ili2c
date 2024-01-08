@@ -4689,7 +4689,11 @@ protected constraintsDef[Container scope]
 	  }
 	}
 	( constr=constraintDef[def,scope]
-		{if(constr!=null)def.add(constr);}
+		{if(constr!=null){
+				constr.setSelfStanding(true);
+				def.add(constr);
+			}
+		}
 	)*
 	"END" SEMI
 	;
