@@ -266,6 +266,7 @@ options
 										srcLine);
 								}
 								((Constant.Enumeration)expr).setType((EnumerationType)expr2Type.resolveAliases());
+								((Constant.Enumeration)expr).setSourceOfType(comparedWith.getSourceOfType());
 							}else if(comparedWith instanceof Constant.Enumeration){
 								// validate that constant is a member of the enumeration type
 								String value=((Constant.Enumeration)comparedWith).toString();
@@ -275,6 +276,7 @@ options
 										srcLine);
 								}
 								((Constant.Enumeration)comparedWith).setType((EnumerationType)expr1Type.resolveAliases());
+								((Constant.Enumeration)comparedWith).setSourceOfType(expr.getSourceOfType());
 							}else{
 							 if(expr1Type.resolveAliases()!=expr2Type.resolveAliases()){
 								reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
@@ -297,6 +299,7 @@ options
 										srcLine);
 								}
 								((Constant.Enumeration)expr).setType((EnumTreeValueType)expr2Type.resolveAliases());
+								((Constant.Enumeration)expr).setSourceOfType(comparedWith.getSourceOfType());
 						}else if(expr1Type.resolveAliases() instanceof EnumTreeValueType && comparedWith instanceof Constant.Enumeration){
 								// validate that constant is a member of the enumeration type
 								String value=((Constant.Enumeration)comparedWith).toString();
@@ -306,6 +309,7 @@ options
 										srcLine);
 								}
 								((Constant.Enumeration)comparedWith).setType((EnumTreeValueType)expr1Type.resolveAliases());
+								((Constant.Enumeration)comparedWith).setSourceOfType(expr.getSourceOfType());
 						}else if(expr1Type.resolveAliases() instanceof ObjectType && expr2Type.resolveAliases() instanceof ObjectType){
 							// object
 						}else{

@@ -61,6 +61,7 @@ CONTRACTED MODEL EnumOkA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "
 			MANDATORY CONSTRAINT DEFINED(attrA);
 			!!@ name=UniqueConstraintA
 			UNIQUE attrA;
+			MANDATORY CONSTRAINT attrA==#a2.a21;
 		END ClassA;
 		
 		ASSOCIATION =

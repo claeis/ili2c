@@ -675,15 +675,51 @@ protected void printSelection(Container view, String language) {
         printError ();
       else
       {
-        for (int i = 0; i < val.length; i++)
-        {
-          if (i > 0)
-            ipw.print ('.');
-          if (val[i] == null)
-            printError ();
-          else
-            ipw.print (val[i]);
-        }
+          String scopedName=null;
+          Element attrEle = ((Constant.Enumeration) expr).getSourceOfType();
+          if(attrEle!=null) {
+              if(attrEle instanceof AttributeDef) {
+                  AttributeDef attr=(AttributeDef)attrEle;
+                  if(attr.getDomain() instanceof TypeAlias) {
+                      Domain domain=((TypeAlias)attr.getDomain()).getAliasing();
+                      scopedName=domain.getScopedName();
+                  }else {
+                      scopedName=attr.getScopedName();
+                  }
+              }else if(attrEle instanceof Domain) {
+                  scopedName=((Domain)attrEle).getScopedName();
+              }
+          }
+          if(language==null) {
+              for (int i = 0; i < val.length; i++)
+              {
+                if (i > 0) {
+                  ipw.print ('.');
+                }
+                if (val[i] == null) {
+                  printError ();
+                }else {
+                  ipw.print (val[i]);
+                }
+              }
+          }else {
+              String namePrefix[]=new String[val.length+1];
+              namePrefix[0]=scopedName;
+              for (int i = 0; i < val.length; i++)
+              {
+                if (i > 0) {
+                  ipw.print ('.');
+                }
+                namePrefix[i+1]=namePrefix[i]+"."+val[i];
+                String nameEle=getNameInLanguage(namePrefix[i+1], language);
+                if(nameEle!=null && nameEle.length()>0) {
+                    ipw.print (nameEle);
+                }else {
+                    ipw.print (val[i]);
+                }
+              }
+              
+          }
       }
       return;
     }
@@ -1173,7 +1209,7 @@ protected void printSelection(Container view, String language) {
     	    if (language == null) {
     	        printDocumentation(mo.getDocumentation());
     	    } else {
-    	        String docu = getDocumentationInLanguage(mo,language);
+    	        String docu = getElementDocumentation(mo,language);
     	        if (docu == null || docu == "") {
     	            printDocumentation(mo.getDocumentation());
     	        } else {
@@ -1777,7 +1813,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 					if (language == null) {
 						ipw.println("\""+value+"\"");
 					} else {
-					    String metaValue = getEnumerationElementNameInLanguage(scopedName, language);
+					    String metaValue = getElementNameInLanguage(scopedName, language);
 					    if (metaValue == null || metaValue == "") {
 					        ipw.println("\""+value+"\"");
 					    } else {
@@ -1789,7 +1825,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 					if (language == null) {
 						ipw.println(value);
 					} else {
-					    String metaValue = getEnumerationElementNameInLanguage(scopedName, language);
+					    String metaValue = getElementNameInLanguage(scopedName, language);
 					    if (metaValue == "" || metaValue == null) {
 					        ipw.println(value);
 					    } else {
@@ -1805,7 +1841,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
       if (language == null) {
           printDocumentation(def.getDocumentation());
       } else {
-          String documentation = getDocumentationInLanguage(def, language);
+          String documentation = getElementDocumentation(def, language);
           if (documentation == "" || documentation == null) { 
               printDocumentation(def.getDocumentation());
           } else {
@@ -1950,7 +1986,7 @@ protected String getModelVersion(Model mdef) {
     return version;
 }
 
-	private String getDocumentationInLanguage(Element ele, String language) {
+	private String getElementDocumentation(Element ele, String language) {
 		String modelName = "";
 		Iterator<TranslationElement> iteratorModelElement = translationConfig.iterator();
 
@@ -2689,14 +2725,14 @@ protected Unit getTypeUnit(NumericalType type) {
 			printMetaValues(ee,ee.getMetaValues(), language, scopedName);
 			ipw.print(ee.getName());
 		} else {
-			String docu = getEnumerationElementDocumentationInLanguage(scopedName, language);
+			String docu = getElementDocumentationInLanguage(scopedName, language);
 			if (docu == null || docu == "") {
 			    printDocumentation(ee.getDocumentation());
 			} else {
 			    printDocumentation(docu);
 			}
 			printMetaValues(ee,ee.getMetaValues(), language, scopedName);
-			String name = getEnumerationElementNameInLanguage(scopedName, language);
+			String name = getElementNameInLanguage(scopedName, language);
 			if (name == null || name == "") {
 			    ipw.print(ee.getName());
 			} else {
@@ -2711,7 +2747,7 @@ protected Unit getTypeUnit(NumericalType type) {
 		}
   }
 
-	private String getEnumerationElementNameInLanguage(String scopedNamePrefix, String language) {
+	private String getElementNameInLanguage(String scopedNamePrefix, String language) {
 		String modelName = "";
 		Iterator<TranslationElement> iteratorModelElement = translationConfig.iterator();
 
@@ -2736,7 +2772,7 @@ protected Unit getTypeUnit(NumericalType type) {
 		return "";
 	}
   
-	private String getEnumerationElementDocumentationInLanguage(String scopedNamePrefix, String language) {
+	private String getElementDocumentationInLanguage(String scopedNamePrefix, String language) {
 		String modelName = "";
 		Iterator<TranslationElement> iteratorModelElement = translationConfig.iterator();
 
@@ -2921,7 +2957,7 @@ protected Unit getTypeUnit(NumericalType type) {
 		if (elv[i] instanceof AttributeRef) {
 			AttributeRef attr = (AttributeRef) elv[i];
 			if (attr.getAttr() instanceof LocalAttribute) {
-			    String name = getEnumerationElementNameInLanguage(attr.getAttr().getScopedName(), language);
+			    String name = getElementNameInLanguage(attr.getAttr().getScopedName(), language);
 			    if (name == null || name == "") {
 			        ipw.print(elv[i].getName());
 			    } else {
@@ -2931,7 +2967,7 @@ protected Unit getTypeUnit(NumericalType type) {
         } else if (elv[i] instanceof PathElBase) {
             PathElBase pathEl = (PathElBase) elv[i];
             String scopedEleName=pathEl.getCurrentViewable().getScopedName()+"."+pathEl.getName();
-            String name = getEnumerationElementNameInLanguage(scopedEleName, language);
+            String name = getElementNameInLanguage(scopedEleName, language);
             if (name == null || name == "") {
                 ipw.print(elv[i].getName());
             } else {
@@ -2940,7 +2976,7 @@ protected Unit getTypeUnit(NumericalType type) {
         } else if (elv[i] instanceof PathElAssocRole) {
             PathElAssocRole assocRole = (PathElAssocRole) elv[i];
             if (assocRole.getRole() instanceof RoleDef) {
-                String name = getEnumerationElementNameInLanguage(assocRole.getRole().getScopedName(), language);
+                String name = getElementNameInLanguage(assocRole.getRole().getScopedName(), language);
                 if (name == null || name == "") {
                     ipw.print(elv[i].getName());
                 } else {
@@ -2951,7 +2987,7 @@ protected Unit getTypeUnit(NumericalType type) {
         } else if (elv[i] instanceof PathElAbstractClassRole) {
             PathElAbstractClassRole assocRole = (PathElAbstractClassRole) elv[i];
             if (assocRole.getRole() instanceof RoleDef) {
-                String name = getEnumerationElementNameInLanguage(assocRole.getRole().getScopedName(), language);
+                String name = getElementNameInLanguage(assocRole.getRole().getScopedName(), language);
                 if (name == null || name == "") {
                     ipw.print(elv[i].getName());
                 } else {
@@ -2962,7 +2998,7 @@ protected Unit getTypeUnit(NumericalType type) {
         } else if (elv[i] instanceof AssociationPath) {
             AssociationPath assocRole = (AssociationPath) elv[i];
             if (assocRole.getTargetRole() instanceof RoleDef) {
-                String name = getEnumerationElementNameInLanguage(assocRole.getTargetRole().getScopedName(), language);
+                String name = getElementNameInLanguage(assocRole.getTargetRole().getScopedName(), language);
                 if (name == null || name == "") {
                     ipw.print("\\\\"+elv[i].getName());
                 } else {

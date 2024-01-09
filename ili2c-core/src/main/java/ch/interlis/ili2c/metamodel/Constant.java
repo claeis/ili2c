@@ -395,6 +395,7 @@ public abstract class Constant extends Evaluable
     public static final String OTHERS=new String("OTHERS");
     String[] value;
     Type type=null;
+    Element sourceOfType=null;
 
 
     /** Constructs a new constant enumeration given the
@@ -518,6 +519,13 @@ public abstract class Constant extends Evaluable
             return ((EnumTreeValueType) type).getValues();
         }
         throw new IllegalStateException("unexpected type "+type.getScopedName());
+    }
+    @Override
+    public Element getSourceOfType() {
+        return sourceOfType;
+    }
+    public void setSourceOfType(Element sourceOfType) {
+        this.sourceOfType = sourceOfType;
     }
   } /* Constant.Enumeration */
 
