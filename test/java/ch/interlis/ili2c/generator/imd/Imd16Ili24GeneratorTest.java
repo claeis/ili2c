@@ -1,5 +1,6 @@
 package ch.interlis.ili2c.generator.imd;
 
+import ch.ehi.basics.logging.EhiLogger;
 import ch.interlis.ili2c.CompilerTestHelper;
 import ch.interlis.ili2c.config.Configuration;
 import ch.interlis.ili2c.config.FileEntry;
@@ -35,6 +36,7 @@ public class Imd16Ili24GeneratorTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
+        //EhiLogger.getInstance().setTraceFilter(false);
         // compile simple24 model to imd16
         Configuration ili2cConfig = new Configuration();
         FileEntry fileEntry = new FileEntry(SIMPLE24_ILI, FileEntryKind.ILIMODELFILE);
@@ -268,11 +270,19 @@ public class Imd16Ili24GeneratorTest {
         IomObject logicalExpression = constraint.getattrobj("LogicalExpression", 0);
         assertNotNull(logicalExpression);
 
-        IomObject multiplyExpression = logicalExpression.getattrobj("SubExpressions", 0);
+        IomObject subExpression1 = logicalExpression.getattrobj("SubExpressions", 0);
+        assertNotNull(subExpression1);
+        assertEquals("Nested", subExpression1.getattrvalue("Operation"));
+
+        IomObject multiplyExpression = subExpression1.getattrobj("SubExpression", 0);
         assertNotNull(multiplyExpression);
         assertEquals("Mult", multiplyExpression.getattrvalue("Operation"));
 
-        IomObject divideExpression = logicalExpression.getattrobj("SubExpressions", 1);
+        IomObject subExpression2 = logicalExpression.getattrobj("SubExpressions", 1);
+        assertNotNull(subExpression2);
+        assertEquals("Nested", subExpression2.getattrvalue("Operation"));
+        
+        IomObject divideExpression = subExpression2.getattrobj("SubExpression", 0);
         assertNotNull(divideExpression);
         assertEquals("Div", divideExpression.getattrvalue("Operation"));
     }
@@ -284,11 +294,19 @@ public class Imd16Ili24GeneratorTest {
         IomObject logicalExpression = constraint.getattrobj("LogicalExpression", 0);
         assertNotNull(logicalExpression);
 
-        IomObject addExpression = logicalExpression.getattrobj("SubExpressions", 0);
+        IomObject subExpression1 = logicalExpression.getattrobj("SubExpressions", 0);
+        assertNotNull(subExpression1);
+        assertEquals("Nested", subExpression1.getattrvalue("Operation"));
+
+        IomObject addExpression = subExpression1.getattrobj("SubExpression", 0);
         assertNotNull(addExpression);
         assertEquals("Add", addExpression.getattrvalue("Operation"));
 
-        IomObject subtractExpression = logicalExpression.getattrobj("SubExpressions", 1);
+        IomObject subExpression2 = logicalExpression.getattrobj("SubExpressions", 1);
+        assertNotNull(subExpression2);
+        assertEquals("Nested", subExpression2.getattrvalue("Operation"));
+        
+        IomObject subtractExpression = subExpression2.getattrobj("SubExpression", 0);
         assertNotNull(subtractExpression);
         assertEquals("Sub", subtractExpression.getattrvalue("Operation"));
     }

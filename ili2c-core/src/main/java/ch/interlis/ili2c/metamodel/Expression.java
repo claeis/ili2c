@@ -62,6 +62,56 @@ public abstract class Expression extends Evaluable
     }
     
   }
+  public static class Subexpression extends Expression
+  {
+    protected Evaluable nested;
+
+    /** Constructs a new negated expression.
+    */
+    public Subexpression (Evaluable negated)
+    {
+      this.nested = negated;
+    }
+
+    public Evaluable getSubexpression()
+    {
+      return nested;
+    }
+    @Override
+    public Ili2cSemanticException checkTranslation(Evaluable otherEv,int sourceLine)
+    {
+        Ili2cSemanticException ret=super.checkTranslation(otherEv,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        Subexpression other=(Subexpression)otherEv;
+        if(nested.getClass()!=other.nested.getClass()) {
+            return new Ili2cSemanticException(sourceLine,Element.formatMessage("err_diff_negationMismatch"));
+        }
+        ret=nested.checkTranslation(other.nested,sourceLine);
+        if(ret!=null) {
+            return ret;
+        }
+        return null;
+    }
+    @Override
+    public Type getType() {
+        return nested.getType();
+    }
+    @Override
+    public Element getSourceOfType() {
+        return nested.getSourceOfType();
+    }
+    @Override
+    public boolean isDirty() {
+        return nested.isDirty();
+    }
+    @Override
+    public void setDirty(boolean dirty) {
+        nested.setDirty(dirty);
+    }
+    
+  }
 
 
   /** Denotes a set of disjoined Expressions. A set

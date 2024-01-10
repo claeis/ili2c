@@ -4917,6 +4917,12 @@ protected predicate[Container ns, Type expectedType,Container functionNs]
 			      } catch (Exception ex) {
 			      	reportError (ex, nt.getLine());
 			      }
+			}else{
+			      try {
+			      	expr = new Expression.Subexpression(expr);
+			      } catch (Exception ex) {
+			      	reportError (ex, nt.getLine());
+			      }
 			}
 		    }
 	| def:"DEFINED" LPAREN expr=factor[ns,functionNs] RPAREN

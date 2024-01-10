@@ -554,65 +554,16 @@ protected void printSelection(Container view, String language) {
     printEnd (graph, language);
   }
 
-
-
-  /**
-      1: Disjunction
-      2: Conjunction
-      3: Implication
-      4: Negation
-      5: Equality, Inequality, LessThanOrEqual,
-         GreaterThanOrEqual, LessThan, GreaterThan
-      6: ExistenceCheck
-      7: DefinedCheck
-      8: others (= elements)
-  */
-  protected int getExpressionPrecedence (Evaluable ev)
-  {
-    if (ev instanceof Expression.Disjunction)
-      return 1;
-
-
-    if (ev instanceof Expression.Conjunction)
-      return 2;
-
-
-    if (ev instanceof Expression.Negation)
-      return 4;
-
-
-    if ((ev instanceof Expression.Equality) || (ev instanceof Expression.Inequality)
-        || (ev instanceof Expression.LessThanOrEqual) || (ev instanceof Expression.LessThan)
-        || (ev instanceof Expression.GreaterThanOrEqual) || (ev instanceof Expression.GreaterThan))
-      return 5;
-
-    if (ev instanceof Expression.DefinedCheck)
-      return 7;
-
-
-    return 8;
-  }
-
-
-
   protected void printExpression (Container scope, Evaluable expr,String language)
   {
-    printExpression (scope, expr, 1,language);
+    printExpression (scope, expr, 0,language);
   }
 
 
 
   protected void printExpression (Container scope, Evaluable expr, int precedence, String language)
   {
-    int exprPrec = getExpressionPrecedence (expr);
-    if (exprPrec < precedence)
-    {
-      ipw.print ('(');
-      printExpression (scope, expr, 1,language);
-      ipw.print (')');
-      return;
-    }
-
+    int exprPrec = 0;
 
     if (expr instanceof ObjectPath)
     {
@@ -792,9 +743,9 @@ protected void printSelection(Container view, String language) {
 
     if (expr instanceof Expression.Implication)
     {
-        printExpression (scope, ((Expression.Implication) expr).getLeft(), 1, language);
+        printExpression (scope, ((Expression.Implication) expr).getLeft(), exprPrec, language);
         ipw.print (" => ");
-        printExpression (scope, ((Expression.Implication) expr).getRight(), 1, language);
+        printExpression (scope, ((Expression.Implication) expr).getRight(), exprPrec, language);
         return;
     }
 
@@ -807,22 +758,22 @@ protected void printSelection(Container view, String language) {
           ipw.print (" OR ");
 
 
-        printExpression (scope, disjoined[i], 2, language);
+        printExpression (scope, disjoined[i], exprPrec, language);
       }
       return;
     }
     if (expr instanceof Expression.Addition)
     {
-        printExpression (scope, ((Expression.Addition) expr).getLeft(), 2, language);
+        printExpression (scope, ((Expression.Addition) expr).getLeft(), exprPrec, language);
         ipw.print (" + ");
-        printExpression (scope, ((Expression.Addition) expr).getRight(), 2, language);
+        printExpression (scope, ((Expression.Addition) expr).getRight(), exprPrec, language);
         return;
     }
     if (expr instanceof Expression.Subtraction)
     {
-        printExpression (scope, ((Expression.Subtraction) expr).getLeft(), 2, language);
+        printExpression (scope, ((Expression.Subtraction) expr).getLeft(), exprPrec, language);
         ipw.print (" - ");
-        printExpression (scope, ((Expression.Subtraction) expr).getRight(), 2, language);
+        printExpression (scope, ((Expression.Subtraction) expr).getRight(), exprPrec, language);
         return;
     }
 
@@ -836,91 +787,98 @@ protected void printSelection(Container view, String language) {
           ipw.print (" AND ");
 
 
-        printExpression (scope, conjoined[i], 3, language);
+        printExpression (scope, conjoined[i], exprPrec, language);
       }
       return;
     }
     if (expr instanceof Expression.Multiplication)
     {
-        printExpression (scope, ((Expression.Multiplication) expr).getLeft(), 3, language);
+        printExpression (scope, ((Expression.Multiplication) expr).getLeft(), exprPrec, language);
         ipw.print (" * ");
-        printExpression (scope, ((Expression.Multiplication) expr).getRight(), 3, language);
+        printExpression (scope, ((Expression.Multiplication) expr).getRight(), exprPrec, language);
         return;
     }
     if (expr instanceof Expression.Division)
     {
-        printExpression (scope, ((Expression.Division) expr).getLeft(), 3, language);
+        printExpression (scope, ((Expression.Division) expr).getLeft(), exprPrec, language);
         ipw.print (" / ");
-        printExpression (scope, ((Expression.Division) expr).getRight(), 3, language);
+        printExpression (scope, ((Expression.Division) expr).getRight(), exprPrec, language);
         return;
     }
 
     if (expr instanceof Expression.Negation)
     {
       ipw.print ("NOT (");
-      printExpression (scope, ((Expression.Negation) expr).getNegated(), 5, language);
+      printExpression (scope, ((Expression.Negation) expr).getNegated(), exprPrec, language);
 	  ipw.print (")");
+      return;
+    }
+    if (expr instanceof Expression.Subexpression)
+    {
+      ipw.print ("(");
+      printExpression (scope, ((Expression.Subexpression) expr).getSubexpression(), exprPrec, language);
+      ipw.print (")");
       return;
     }
 
 
     if (expr instanceof Expression.Equality)
     {
-      printExpression (scope, ((Expression.Equality) expr).getLeft(), 6, language);
+      printExpression (scope, ((Expression.Equality) expr).getLeft(), exprPrec, language);
       ipw.print (" == ");
-      printExpression (scope, ((Expression.Equality) expr).getRight(), 6, language);
+      printExpression (scope, ((Expression.Equality) expr).getRight(), exprPrec, language);
       return;
     }
 
 
     if (expr instanceof Expression.Inequality)
     {
-      printExpression (scope, ((Expression.Inequality) expr).getLeft(), 6, language);
+      printExpression (scope, ((Expression.Inequality) expr).getLeft(), exprPrec, language);
       ipw.print (" <> ");
-      printExpression (scope, ((Expression.Inequality) expr).getRight(), 6, language);
+      printExpression (scope, ((Expression.Inequality) expr).getRight(), exprPrec, language);
       return;
     }
 
 
     if (expr instanceof Expression.LessThanOrEqual)
     {
-      printExpression (scope, ((Expression.LessThanOrEqual) expr).getLeft(), 6, language);
+      printExpression (scope, ((Expression.LessThanOrEqual) expr).getLeft(), exprPrec, language);
       ipw.print (" <= ");
-      printExpression (scope, ((Expression.LessThanOrEqual) expr).getRight(), 6, language);
+      printExpression (scope, ((Expression.LessThanOrEqual) expr).getRight(), exprPrec, language);
       return;
     }
 
 
     if (expr instanceof Expression.GreaterThanOrEqual)
     {
-      printExpression (scope, ((Expression.GreaterThanOrEqual) expr).getLeft(), 6, language);
+      printExpression (scope, ((Expression.GreaterThanOrEqual) expr).getLeft(), exprPrec, language);
       ipw.print (" >= ");
-      printExpression (scope, ((Expression.GreaterThanOrEqual) expr).getRight(), 6, language);
+      printExpression (scope, ((Expression.GreaterThanOrEqual) expr).getRight(), exprPrec, language);
       return;
     }
 
 
     if (expr instanceof Expression.LessThan)
     {
-      printExpression (scope, ((Expression.LessThan) expr).getLeft(), 6, language);
+      printExpression (scope, ((Expression.LessThan) expr).getLeft(), exprPrec, language);
       ipw.print (" < ");
-      printExpression (scope, ((Expression.LessThan) expr).getRight(), 6, language);
+      printExpression (scope, ((Expression.LessThan) expr).getRight(), exprPrec, language);
       return;
     }
 
 
     if (expr instanceof Expression.GreaterThan)
     {
-      printExpression (scope, ((Expression.GreaterThan) expr).getLeft(), 6, language);
+      printExpression (scope, ((Expression.GreaterThan) expr).getLeft(), exprPrec, language);
       ipw.print (" > ");
-      printExpression (scope, ((Expression.GreaterThan) expr).getRight(), 6, language);
+      printExpression (scope, ((Expression.GreaterThan) expr).getRight(), exprPrec, language);
       return;
     }
 
     if (expr instanceof Expression.DefinedCheck)
     {
       ipw.print ("DEFINED(");
-      printExpression (scope, ((Expression.DefinedCheck) expr).getArgument(), 7, language);
+      printExpression (scope, ((Expression.DefinedCheck) expr).getArgument(), exprPrec, language);
       ipw.print (')');
       return;
     }
