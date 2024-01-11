@@ -1,8 +1,37 @@
 LATEST
 ---------------------------
 
+ili2c 5.5.0 (2024-01-11)
+---------------------------
+- only ili2c-core release
+- fix validation of translated Expression with +, -, *, /, ->
+- fix validation of #true
+- ili2 export: fix kind of MODEL
+- ili2 export: fix THIS
+- ili2 export: fix PathElAbstractRole, PathElBase, AssociationPath
+- ili2 export: fix ViewDef/Selection
+- ili2 export: fix +, -, *, /, ->
+- ili2 export: SignParamAssignment/MetaObjectRef
+- ili2 export: CONSTRAINTS OF
+- ili2 export: translated EnumerationConst
+- ili2 export: nested Expressions
+- API: new class Expression.Subexpression
+
+ili2c 5.4.1 (2023-12-29)
+---------------------------
+- ili2.4: fix ContextDef parser again
+- ili2.4: fix use of generic domain at model level throws NPE (#120)
+- iox-ili-1.22.1
+
+ili2c 5.4.0 (2023-12-04)
+---------------------------
+- imd export: fixed DerivedUnits export (#114)
+- ili2.4: fix ContextDef parser / remove ContextDefs from metamodel (#118)
+- iox-ili-1.22.0
+
 ili2c 5.3.4 (2023-11-14)
 ---------------------------
+- only ili2c-core release
 - ili2.4: Check deferred statement (#91)
 - ili2.4: Verify coords match or extend a concrete definition when overriding a generic context (#91)
 - ili2.4: Add (BASKET) on UNIQUE and SET constraints (#90)

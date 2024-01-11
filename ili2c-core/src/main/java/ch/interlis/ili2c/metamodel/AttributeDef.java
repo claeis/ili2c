@@ -879,10 +879,6 @@ public abstract class AttributeDef
                 coordType = (AbstractCoordType) domain.getType();
             }
 
-            if (coordType != null && coordType.isGeneric()) {
-                Topic topic = (Topic) getContainer(Topic.class);
-                topic.addUsedGenericDomain(domain);
-            }
         }
     }
 }

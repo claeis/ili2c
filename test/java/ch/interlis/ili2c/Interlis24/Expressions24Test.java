@@ -27,7 +27,8 @@ public class Expressions24Test {
         assertNotNull(td);
         MandatoryConstraint constraint = (MandatoryConstraint)td.getElement("ModelA.TopicA.ClassA.Constraint1");
         Expression.GreaterThan expression = (Expression.GreaterThan) constraint.getCondition();
-        assertTrue(expression.getLeft() instanceof Expression.Addition);
+        assertTrue(expression.getLeft() instanceof Expression.Subexpression);
+        assertTrue(((Expression.Subexpression)expression.getLeft()).getSubexpression() instanceof Expression.Addition);
     }
     @Test
     public void plus_numeric_fail() throws Exception {
@@ -53,7 +54,8 @@ public class Expressions24Test {
         assertNotNull(td);
         MandatoryConstraint constraint = (MandatoryConstraint)td.getElement("ModelA.TopicA.ClassA.Constraint1");
         Expression.GreaterThan expression = (Expression.GreaterThan) constraint.getCondition();
-        assertTrue(expression.getLeft() instanceof Expression.Subtraction);
+        assertTrue(expression.getLeft() instanceof Expression.Subexpression);
+        assertTrue(((Expression.Subexpression)expression.getLeft()).getSubexpression() instanceof Expression.Subtraction);
     }
     @Test
     public void minus_numeric_fail() throws Exception {
@@ -79,7 +81,8 @@ public class Expressions24Test {
         assertNotNull(td);
         MandatoryConstraint constraint = (MandatoryConstraint)td.getElement("ModelA.TopicA.ClassA.Constraint1");
         Expression.GreaterThan expression = (Expression.GreaterThan) constraint.getCondition();
-        assertTrue(expression.getLeft() instanceof Expression.Multiplication);
+        assertTrue(expression.getLeft() instanceof Expression.Subexpression);
+        assertTrue(((Expression.Subexpression)expression.getLeft()).getSubexpression() instanceof Expression.Multiplication);
     }
     @Test
     public void mul_numeric_fail() throws Exception {
@@ -105,7 +108,8 @@ public class Expressions24Test {
         assertNotNull(td);
         MandatoryConstraint constraint = (MandatoryConstraint)td.getElement("ModelA.TopicA.ClassA.Constraint1");
         Expression.GreaterThan expression = (Expression.GreaterThan) constraint.getCondition();
-        assertTrue(expression.getLeft() instanceof Expression.Division);
+        assertTrue(expression.getLeft() instanceof Expression.Subexpression);
+        assertTrue(((Expression.Subexpression)expression.getLeft()).getSubexpression() instanceof Expression.Division);
     }
     @Test
     public void div_numeric_fail() throws Exception {

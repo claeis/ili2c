@@ -8,6 +8,8 @@ import org.junit.Test;
 import static ch.interlis.ili2c.LogCollectorAssertions.assertContainsError;
 import static org.junit.Assert.*;
 
+import org.junit.Ignore;
+
 public class GenericValueRanges24Test {
 
     private static final String TEST_OUT = "test/data/ili24/genericValueRanges/";
@@ -22,6 +24,14 @@ public class GenericValueRanges24Test {
     public void contextInDifferentModel() {
         TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "contextInDifferentModel.ili");
         assertNotNull(td);
+    }
+
+    @Test
+    public void missingContext() {
+        LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "MissingContext24.ili");
+
+        assertEquals(1, errs.getErrs().size());
+        assertContainsError("ModelA.TestA is missing a context definition for generic DOMAIN ModelA.Coord.", 1, errs);
     }
 
     @Test
@@ -45,9 +55,21 @@ public class GenericValueRanges24Test {
         LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "contextDomainNotGeneric_fail.ili");
 
         assertEquals(1, errs.getErrs().size());
-        assertContainsError("The domain CoordA of context Context1 must be generic.", 1, errs);
+        assertContainsError("The domain CoordA of context default must be generic.", 1, errs);
     }
 
+    @Test
+    public void multipleContexts() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "multipleContexts.ili");
+        assertNotNull(td);
+    }
+    
+    @Test
+    public void multipleContextsB() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "multipleContextsB.ili");
+        assertNotNull(td);
+    }
+    
     @Test
     public void multipleContextsExtending() {
         TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "multipleContextsExtending.ili");
@@ -66,8 +88,9 @@ public class GenericValueRanges24Test {
     public void deferredDomainNoContext() {
         LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "deferredDomainNoContext_fail.ili");
 
-        assertEquals(1, errs.getErrs().size());
+        assertEquals(2, errs.getErrs().size());
         assertContainsError("ModelA.TopicA has no accessible context definition for deferred generic Coord2.", 1, errs);
+        assertContainsError("ModelA.TopicA is missing a context definition for generic DOMAIN ModelA.Coord2.", 1, errs);
     }
 
     @Test
@@ -95,4 +118,19 @@ public class GenericValueRanges24Test {
         assertEquals(1, errs.getErrs().size());
         assertContainsError("ModelA.TopicA has an unused deferred generic definition for Coord2.", 1, errs);
     }
+    
+    @Test
+    public void genericInStructAttr() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(TEST_OUT + "GenericInStructAttr.ili");
+
+        assertNotNull(td);
+    }
+    @Test
+    public void genericInStructAttr_MissignDeferred_Fail() {
+        LogCollector errs = CompilerTestHelper.getCompileErrors(TEST_OUT + "GenericInStructAttr_MissignDeferred_Fail.ili");
+
+        assertEquals(1, errs.getErrs().size());
+        assertContainsError("ModelD.TopicA is missing a deferred generic definition for Coord2.", 1, errs);
+    }
+    
 }

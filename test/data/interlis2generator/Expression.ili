@@ -1,0 +1,21 @@
+INTERLIS 2.4;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC TopicA =
+
+    CLASS ClassA =
+      attrA : 0..10;
+      attrB : 0..10;
+      attrC : 0..10;
+    MANDATORY CONSTRAINT (attrA+attrB-attrC)<20;
+    MANDATORY CONSTRAINT (attrA+attrB*attrC)<20;
+    MANDATORY CONSTRAINT (attrA*attrB+attrC)<20;
+    MANDATORY CONSTRAINT (attrA+(attrB-attrC))<20;
+    MANDATORY CONSTRAINT ((attrA+attrB)*attrC)<20;
+    MANDATORY CONSTRAINT (attrA*(attrB+attrC))<20;
+    END ClassA;
+
+  END TopicA;
+
+END ModelA.

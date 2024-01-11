@@ -243,11 +243,11 @@ public abstract class Model extends Importable<Element>
 		return true;
 	}
 
-    if(e instanceof ContextDefs){
+    if(e instanceof ContextDef){
         Element conflicting = getElement ( e.getName());
         if ((conflicting != null) && (conflicting != e)) {
           throw new Ili2cSemanticException (e.getSourceLine(),formatMessage (
-            "err_contextdefs_nonunique",
+            "err_contextdef_nonunique",
             e.getName(),
             Model.this.toString()));
       }
@@ -622,14 +622,10 @@ public void setXmlns(String xmlns) {
           Iterator eleIt=iterator();
           while(eleIt.hasNext()) {
               Object ele=eleIt.next();
-              if(ele instanceof ContextDefs) {
-                  ContextDefs defs=(ContextDefs)ele;
-                  Iterator<ContextDef> defIt=defs.iterator();
-                  while(defIt.hasNext()) {
-                      ContextDef def=defIt.next();
-                      if(def.getGeneric()==generic) {
-                          return def.getConcretes();
-                      }
+              if(ele instanceof ContextDef) {
+                  ContextDef def=(ContextDef)ele;
+                  if(def.getGeneric()==generic) {
+                      return def.getConcretes();
                   }
               }
           }

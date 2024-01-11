@@ -3,7 +3,9 @@ package ch.interlis.ili2c.generator;
 
 import java.io.File;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import ch.ehi.basics.io.IndentPrintWriter;
 import ch.ehi.basics.logging.EhiLogger;
@@ -11,104 +13,7 @@ import ch.interlis.ili2c.generator.TransformationParameter.ModelTransformation;
 import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
 import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.generator.nls.TranslationElement;
-import ch.interlis.ili2c.metamodel.AbstractClassDef;
-import ch.interlis.ili2c.metamodel.AbstractCoordType;
-import ch.interlis.ili2c.metamodel.AreaType;
-import ch.interlis.ili2c.metamodel.AssociationDef;
-import ch.interlis.ili2c.metamodel.AttributeDef;
-import ch.interlis.ili2c.metamodel.AttributePathType;
-import ch.interlis.ili2c.metamodel.AttributeRef;
-import ch.interlis.ili2c.metamodel.BasketType;
-import ch.interlis.ili2c.metamodel.BlackboxType;
-import ch.interlis.ili2c.metamodel.Cardinality;
-import ch.interlis.ili2c.metamodel.ClassType;
-import ch.interlis.ili2c.metamodel.ComposedUnit;
-import ch.interlis.ili2c.metamodel.CompositionType;
-import ch.interlis.ili2c.metamodel.ConditionalExpression;
-import ch.interlis.ili2c.metamodel.Constant;
-import ch.interlis.ili2c.metamodel.Constraint;
-import ch.interlis.ili2c.metamodel.Container;
-import ch.interlis.ili2c.metamodel.ContextDef;
-import ch.interlis.ili2c.metamodel.ContextDefs;
-import ch.interlis.ili2c.metamodel.DecompositionView;
-import ch.interlis.ili2c.metamodel.DerivedUnit;
-import ch.interlis.ili2c.metamodel.Domain;
-import ch.interlis.ili2c.metamodel.DomainConstraint;
-import ch.interlis.ili2c.metamodel.Element;
-import ch.interlis.ili2c.metamodel.EnumTreeValueType;
-import ch.interlis.ili2c.metamodel.EnumValType;
-import ch.interlis.ili2c.metamodel.EnumerationType;
-import ch.interlis.ili2c.metamodel.Evaluable;
-import ch.interlis.ili2c.metamodel.ExistenceConstraint;
-import ch.interlis.ili2c.metamodel.Expression;
-import ch.interlis.ili2c.metamodel.ExpressionSelection;
-import ch.interlis.ili2c.metamodel.ExtendableContainer;
-import ch.interlis.ili2c.metamodel.FormalArgument;
-import ch.interlis.ili2c.metamodel.FormattedType;
-import ch.interlis.ili2c.metamodel.FormattedTypeBaseAttrRef;
-import ch.interlis.ili2c.metamodel.Function;
-import ch.interlis.ili2c.metamodel.FunctionCall;
-import ch.interlis.ili2c.metamodel.FunctionallyDerivedUnit;
-import ch.interlis.ili2c.metamodel.Graphic;
-import ch.interlis.ili2c.metamodel.GraphicParameterDef;
-import ch.interlis.ili2c.metamodel.Importable;
-import ch.interlis.ili2c.metamodel.JoinView;
-import ch.interlis.ili2c.metamodel.LineForm;
-import ch.interlis.ili2c.metamodel.LineType;
-import ch.interlis.ili2c.metamodel.LocalAttribute;
-import ch.interlis.ili2c.metamodel.MandatoryConstraint;
-import ch.interlis.ili2c.metamodel.MetaDataUseDef;
-import ch.interlis.ili2c.metamodel.MetaObject;
-import ch.interlis.ili2c.metamodel.MetaobjectType;
-import ch.interlis.ili2c.metamodel.Model;
-import ch.interlis.ili2c.metamodel.MultiAreaType;
-import ch.interlis.ili2c.metamodel.MultiCoordType;
-import ch.interlis.ili2c.metamodel.MultiPolylineType;
-import ch.interlis.ili2c.metamodel.MultiSurfaceOrAreaType;
-import ch.interlis.ili2c.metamodel.MultiSurfaceType;
-import ch.interlis.ili2c.metamodel.NoOid;
-import ch.interlis.ili2c.metamodel.NumericType;
-import ch.interlis.ili2c.metamodel.NumericalType;
-import ch.interlis.ili2c.metamodel.NumericallyDerivedUnit;
-import ch.interlis.ili2c.metamodel.OIDType;
-import ch.interlis.ili2c.metamodel.ObjectPath;
-import ch.interlis.ili2c.metamodel.ObjectType;
-import ch.interlis.ili2c.metamodel.Objects;
-import ch.interlis.ili2c.metamodel.Parameter;
-import ch.interlis.ili2c.metamodel.ParameterAssignment;
-import ch.interlis.ili2c.metamodel.ParameterValue;
-import ch.interlis.ili2c.metamodel.PathEl;
-import ch.interlis.ili2c.metamodel.PathElAssocRole;
-import ch.interlis.ili2c.metamodel.PlausibilityConstraint;
-import ch.interlis.ili2c.metamodel.PolylineType;
-import ch.interlis.ili2c.metamodel.PrecisionDecimal;
-import ch.interlis.ili2c.metamodel.PredefinedModel;
-import ch.interlis.ili2c.metamodel.Projection;
-import ch.interlis.ili2c.metamodel.Properties;
-import ch.interlis.ili2c.metamodel.RefSystemRef;
-import ch.interlis.ili2c.metamodel.ReferenceType;
-import ch.interlis.ili2c.metamodel.RoleDef;
-import ch.interlis.ili2c.metamodel.SetConstraint;
-import ch.interlis.ili2c.metamodel.SignAttribute;
-import ch.interlis.ili2c.metamodel.SignInstruction;
-import ch.interlis.ili2c.metamodel.StructuredUnit;
-import ch.interlis.ili2c.metamodel.StructuredUnitType;
-import ch.interlis.ili2c.metamodel.SurfaceOrAreaType;
-import ch.interlis.ili2c.metamodel.SurfaceType;
-import ch.interlis.ili2c.metamodel.Table;
-import ch.interlis.ili2c.metamodel.TextType;
-import ch.interlis.ili2c.metamodel.Topic;
-import ch.interlis.ili2c.metamodel.TransferDescription;
-import ch.interlis.ili2c.metamodel.Type;
-import ch.interlis.ili2c.metamodel.TypeAlias;
-import ch.interlis.ili2c.metamodel.UnionView;
-import ch.interlis.ili2c.metamodel.UniqueEl;
-import ch.interlis.ili2c.metamodel.UniquenessConstraint;
-import ch.interlis.ili2c.metamodel.Unit;
-import ch.interlis.ili2c.metamodel.ValueRefThis;
-import ch.interlis.ili2c.metamodel.View;
-import ch.interlis.ili2c.metamodel.Viewable;
-import ch.interlis.ili2c.metamodel.ViewableAlias;
+import ch.interlis.ili2c.metamodel.*;
 
 /** A class used to generate an INTERLIS model description as INTERLIS-2.
 */
@@ -131,7 +36,7 @@ public class Interlis2Generator
   private static final String EN = Ili2TranslationXml.EN;
   private static final String DE = Ili2TranslationXml.DE;
   
-  private java.util.ArrayList selfStandingConstraints=null;
+  private java.util.List<Constraint> selfStandingConstraints=null;
   private ModelElements translationConfig;
   private TransformationParameter params = null;
 
@@ -262,7 +167,7 @@ private void setup(
     if (topic == null)
       return;
 
-	selfStandingConstraints=new java.util.ArrayList();
+	selfStandingConstraints=new java.util.ArrayList<Constraint>();
 	
     Topic extending = (Topic) topic.getExtending();
 
@@ -316,11 +221,20 @@ private void setup(
 
 
     printElements(topic, language);
-    Iterator csi=selfStandingConstraints.iterator();
+    printSelfStandingConstraints(selfStandingConstraints,language);
+    ipw.unindent();
+    ipw.println ();
+    ipw.print("END ");
+    printName(topic,language);
+    ipw.println(';');
+    selfStandingConstraints=null;
+  }
+protected void printSelfStandingConstraints(List<Constraint> selfStandingConstraints,String language) {
+    Iterator<Constraint> csi=selfStandingConstraints.iterator();
     Viewable view=null;
 	Viewable lastView=null;
     while(csi.hasNext()){
-    	Constraint cs=(Constraint)csi.next();
+    	Constraint cs=csi.next();
     	view=(Viewable)cs.getContainer();
     	if(view!=lastView){
     		if(lastView!=null){
@@ -351,12 +265,7 @@ private void setup(
 		ipw.unindent();
 		ipw.println("END;");
 	}
-    ipw.unindent();
-    ipw.println ();
-    ipw.print("END ");
-    printName(topic,language);
-    ipw.println(';');
-  }
+}
 protected Iterator getTopicDependsOn(Topic topic) {
     return topic.getDependentOn();
 }
@@ -591,12 +500,30 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
       printError ();
       ipw.println("<unknown view type>");
     }
-    ipw.println ("; =");
+    ipw.println (";");
+    
+    printSelection(view, language);
 
+    ipw.println ("=");
 
 	printElements(view, language);
 	printEnd(view, language);
   }
+protected void printSelection(Container view, String language) {
+    Iterator it = view.iterator();
+    while (it.hasNext()) {
+        Element elt=(Element)it.next();
+        if (elt instanceof ExpressionSelection)
+        {
+          ipw.println("WHERE");
+          ipw.indent();
+          printExpression (((ExpressionSelection) elt).getSelected(),
+                           ((ExpressionSelection) elt).getCondition(), language);
+          ipw.println (';');
+          ipw.unindent();
+        }
+    }
+}
   
   public void printGraphic (Graphic graph) {
 	  printGraphic(graph,null);
@@ -622,69 +549,21 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
    printStart ("GRAPHIC", graph, /* basedOn */ graph.getBasedOn(),language);
    ipw.println (" =");
    ipw.indent ();
+   printSelection(graph,language);
     printElements (graph,language);
     printEnd (graph, language);
   }
 
-
-
-  /**
-      1: Disjunction
-      2: Conjunction
-      3: Implication
-      4: Negation
-      5: Equality, Inequality, LessThanOrEqual,
-         GreaterThanOrEqual, LessThan, GreaterThan
-      6: ExistenceCheck
-      7: DefinedCheck
-      8: others (= elements)
-  */
-  protected int getExpressionPrecedence (Evaluable ev)
-  {
-    if (ev instanceof Expression.Disjunction)
-      return 1;
-
-
-    if (ev instanceof Expression.Conjunction)
-      return 2;
-
-
-    if (ev instanceof Expression.Negation)
-      return 4;
-
-
-    if ((ev instanceof Expression.Equality) || (ev instanceof Expression.Inequality)
-        || (ev instanceof Expression.LessThanOrEqual) || (ev instanceof Expression.LessThan)
-        || (ev instanceof Expression.GreaterThanOrEqual) || (ev instanceof Expression.GreaterThan))
-      return 5;
-
-    if (ev instanceof Expression.DefinedCheck)
-      return 7;
-
-
-    return 8;
-  }
-
-
-
   protected void printExpression (Container scope, Evaluable expr,String language)
   {
-    printExpression (scope, expr, 1,language);
+    printExpression (scope, expr, 0,language);
   }
 
 
 
   protected void printExpression (Container scope, Evaluable expr, int precedence, String language)
   {
-    int exprPrec = getExpressionPrecedence (expr);
-    if (exprPrec < precedence)
-    {
-      ipw.print ('(');
-      printExpression (scope, expr, 1,language);
-      ipw.print (')');
-      return;
-    }
-
+    int exprPrec = 0;
 
     if (expr instanceof ObjectPath)
     {
@@ -747,15 +626,51 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
         printError ();
       else
       {
-        for (int i = 0; i < val.length; i++)
-        {
-          if (i > 0)
-            ipw.print ('.');
-          if (val[i] == null)
-            printError ();
-          else
-            ipw.print (val[i]);
-        }
+          String scopedName=null;
+          Element attrEle = ((Constant.Enumeration) expr).getSourceOfType();
+          if(attrEle!=null) {
+              if(attrEle instanceof AttributeDef) {
+                  AttributeDef attr=(AttributeDef)attrEle;
+                  if(attr.getDomain() instanceof TypeAlias) {
+                      Domain domain=((TypeAlias)attr.getDomain()).getAliasing();
+                      scopedName=domain.getScopedName();
+                  }else {
+                      scopedName=attr.getScopedName();
+                  }
+              }else if(attrEle instanceof Domain) {
+                  scopedName=((Domain)attrEle).getScopedName();
+              }
+          }
+          if(language==null) {
+              for (int i = 0; i < val.length; i++)
+              {
+                if (i > 0) {
+                  ipw.print ('.');
+                }
+                if (val[i] == null) {
+                  printError ();
+                }else {
+                  ipw.print (val[i]);
+                }
+              }
+          }else {
+              String namePrefix[]=new String[val.length+1];
+              namePrefix[0]=scopedName;
+              for (int i = 0; i < val.length; i++)
+              {
+                if (i > 0) {
+                  ipw.print ('.');
+                }
+                namePrefix[i+1]=namePrefix[i]+"."+val[i];
+                String nameEle=getNameInLanguage(namePrefix[i+1], language);
+                if(nameEle!=null && nameEle.length()>0) {
+                    ipw.print (nameEle);
+                }else {
+                    ipw.print (val[i]);
+                }
+              }
+              
+          }
       }
       return;
     }
@@ -766,7 +681,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
       MetaObject refMO = ((Constant.ReferenceToMetaObject) expr).getReferred();
 
 
-      ipw.print ('"');
+      ipw.print ('{');
       if (refMO != null)
         if (language == null) {
             ipw.print (refMO.getName());
@@ -781,7 +696,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
         
       else
         printError ();
-      ipw.print ('"');
+      ipw.print ('}');
       return;
     }
 
@@ -801,7 +716,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
     {
       FunctionCall f = (FunctionCall) expr;
       printRef (scope, f.getFunction(),language);
-      ipw.print (" (");
+      ipw.print ("(");
       Evaluable[] args = f.getArguments();
       if (args == null)
         printError ();
@@ -826,6 +741,13 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
     }
 
 
+    if (expr instanceof Expression.Implication)
+    {
+        printExpression (scope, ((Expression.Implication) expr).getLeft(), exprPrec, language);
+        ipw.print (" => ");
+        printExpression (scope, ((Expression.Implication) expr).getRight(), exprPrec, language);
+        return;
+    }
 
     if (expr instanceof Expression.Disjunction)
     {
@@ -836,9 +758,23 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
           ipw.print (" OR ");
 
 
-        printExpression (scope, disjoined[i], 2, language);
+        printExpression (scope, disjoined[i], exprPrec, language);
       }
       return;
+    }
+    if (expr instanceof Expression.Addition)
+    {
+        printExpression (scope, ((Expression.Addition) expr).getLeft(), exprPrec, language);
+        ipw.print (" + ");
+        printExpression (scope, ((Expression.Addition) expr).getRight(), exprPrec, language);
+        return;
+    }
+    if (expr instanceof Expression.Subtraction)
+    {
+        printExpression (scope, ((Expression.Subtraction) expr).getLeft(), exprPrec, language);
+        ipw.print (" - ");
+        printExpression (scope, ((Expression.Subtraction) expr).getRight(), exprPrec, language);
+        return;
     }
 
 
@@ -851,77 +787,98 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
           ipw.print (" AND ");
 
 
-        printExpression (scope, conjoined[i], 3, language);
+        printExpression (scope, conjoined[i], exprPrec, language);
       }
       return;
+    }
+    if (expr instanceof Expression.Multiplication)
+    {
+        printExpression (scope, ((Expression.Multiplication) expr).getLeft(), exprPrec, language);
+        ipw.print (" * ");
+        printExpression (scope, ((Expression.Multiplication) expr).getRight(), exprPrec, language);
+        return;
+    }
+    if (expr instanceof Expression.Division)
+    {
+        printExpression (scope, ((Expression.Division) expr).getLeft(), exprPrec, language);
+        ipw.print (" / ");
+        printExpression (scope, ((Expression.Division) expr).getRight(), exprPrec, language);
+        return;
     }
 
     if (expr instanceof Expression.Negation)
     {
       ipw.print ("NOT (");
-      printExpression (scope, ((Expression.Negation) expr).getNegated(), 5, language);
+      printExpression (scope, ((Expression.Negation) expr).getNegated(), exprPrec, language);
 	  ipw.print (")");
+      return;
+    }
+    if (expr instanceof Expression.Subexpression)
+    {
+      ipw.print ("(");
+      printExpression (scope, ((Expression.Subexpression) expr).getSubexpression(), exprPrec, language);
+      ipw.print (")");
       return;
     }
 
 
     if (expr instanceof Expression.Equality)
     {
-      printExpression (scope, ((Expression.Equality) expr).getLeft(), 6, language);
+      printExpression (scope, ((Expression.Equality) expr).getLeft(), exprPrec, language);
       ipw.print (" == ");
-      printExpression (scope, ((Expression.Equality) expr).getRight(), 6, language);
+      printExpression (scope, ((Expression.Equality) expr).getRight(), exprPrec, language);
       return;
     }
 
 
     if (expr instanceof Expression.Inequality)
     {
-      printExpression (scope, ((Expression.Inequality) expr).getLeft(), 6, language);
+      printExpression (scope, ((Expression.Inequality) expr).getLeft(), exprPrec, language);
       ipw.print (" <> ");
-      printExpression (scope, ((Expression.Inequality) expr).getRight(), 6, language);
+      printExpression (scope, ((Expression.Inequality) expr).getRight(), exprPrec, language);
       return;
     }
 
 
     if (expr instanceof Expression.LessThanOrEqual)
     {
-      printExpression (scope, ((Expression.LessThanOrEqual) expr).getLeft(), 6, language);
+      printExpression (scope, ((Expression.LessThanOrEqual) expr).getLeft(), exprPrec, language);
       ipw.print (" <= ");
-      printExpression (scope, ((Expression.LessThanOrEqual) expr).getRight(), 6, language);
+      printExpression (scope, ((Expression.LessThanOrEqual) expr).getRight(), exprPrec, language);
       return;
     }
 
 
     if (expr instanceof Expression.GreaterThanOrEqual)
     {
-      printExpression (scope, ((Expression.GreaterThanOrEqual) expr).getLeft(), 6, language);
+      printExpression (scope, ((Expression.GreaterThanOrEqual) expr).getLeft(), exprPrec, language);
       ipw.print (" >= ");
-      printExpression (scope, ((Expression.GreaterThanOrEqual) expr).getRight(), 6, language);
+      printExpression (scope, ((Expression.GreaterThanOrEqual) expr).getRight(), exprPrec, language);
       return;
     }
 
 
     if (expr instanceof Expression.LessThan)
     {
-      printExpression (scope, ((Expression.LessThan) expr).getLeft(), 6, language);
+      printExpression (scope, ((Expression.LessThan) expr).getLeft(), exprPrec, language);
       ipw.print (" < ");
-      printExpression (scope, ((Expression.LessThan) expr).getRight(), 6, language);
+      printExpression (scope, ((Expression.LessThan) expr).getRight(), exprPrec, language);
       return;
     }
 
 
     if (expr instanceof Expression.GreaterThan)
     {
-      printExpression (scope, ((Expression.GreaterThan) expr).getLeft(), 6, language);
+      printExpression (scope, ((Expression.GreaterThan) expr).getLeft(), exprPrec, language);
       ipw.print (" > ");
-      printExpression (scope, ((Expression.GreaterThan) expr).getRight(), 6, language);
+      printExpression (scope, ((Expression.GreaterThan) expr).getRight(), exprPrec, language);
       return;
     }
 
     if (expr instanceof Expression.DefinedCheck)
     {
-      ipw.print ("DEFINED (");
-      printExpression (scope, ((Expression.DefinedCheck) expr).getArgument(), 7, language);
+      ipw.print ("DEFINED(");
+      printExpression (scope, ((Expression.DefinedCheck) expr).getArgument(), exprPrec, language);
       ipw.print (')');
       return;
     }
@@ -1210,7 +1167,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
     	    if (language == null) {
     	        printDocumentation(mo.getDocumentation());
     	    } else {
-    	        String docu = getDocumentationInLanguage(mo,language);
+    	        String docu = getElementDocumentation(mo,language);
     	        if (docu == null || docu == "") {
     	            printDocumentation(mo.getDocumentation());
     	        } else {
@@ -1390,31 +1347,26 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
         ipw.println(";");
     }
 
-    public void printContext(Container<?> scope, ContextDefs contextDefs) {
-        printContext(scope, contextDefs, false, null);
+    public void printContext(Container<?> scope, ContextDef contextDef) {
+        printContext(scope, contextDef, false, null);
     }
 
-    public void printContext(Container<?> scope, ContextDefs contextDefs, boolean suppressDoc, String language) {
-        if (contextDefs == null) {
+    public void printContext(Container<?> scope, ContextDef contextDef, boolean suppressDoc, String language) {
+        if (contextDef == null) {
             printError();
             return;
         }
 
         if (!suppressDoc) {
-            printDocumentation(contextDefs, language);
-            printMetaValues(contextDefs, contextDefs.getMetaValues(), language, contextDefs.getScopedName());
+            printDocumentation(contextDef, language);
+            printMetaValues(contextDef, contextDef.getMetaValues(), language, contextDef.getScopedName());
         }
 
-        ipw.print("CONTEXT ");
-        ipw.print(contextDefs.getName());
+        ipw.print(contextDef.getName());
         ipw.println(" =");
         ipw.indent();
 
-        Iterator<ContextDef> contexts = contextDefs.iterator();
-        while (contexts.hasNext()) {
-            ContextDef contextDef = contexts.next();
-            printContextSyntax(scope, contextDef, language);
-        }
+        printContextSyntax(scope, contextDef, language);
 
         ipw.unindent();
     }
@@ -1819,7 +1771,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 					if (language == null) {
 						ipw.println("\""+value+"\"");
 					} else {
-					    String metaValue = getEnumerationElementNameInLanguage(scopedName, language);
+					    String metaValue = getElementNameInLanguage(scopedName, language);
 					    if (metaValue == null || metaValue == "") {
 					        ipw.println("\""+value+"\"");
 					    } else {
@@ -1831,7 +1783,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 					if (language == null) {
 						ipw.println(value);
 					} else {
-					    String metaValue = getEnumerationElementNameInLanguage(scopedName, language);
+					    String metaValue = getElementNameInLanguage(scopedName, language);
 					    if (metaValue == "" || metaValue == null) {
 					        ipw.println(value);
 					    } else {
@@ -1847,7 +1799,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
       if (language == null) {
           printDocumentation(def.getDocumentation());
       } else {
-          String documentation = getDocumentationInLanguage(def, language);
+          String documentation = getElementDocumentation(def, language);
           if (documentation == "" || documentation == null) { 
               printDocumentation(def.getDocumentation());
           } else {
@@ -1882,6 +1834,13 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 	
 	if(mdef.isContracted()){
 		ipw.print("CONTRACTED ");
+	}
+	if(mdef instanceof RefSystemModel) {
+        ipw.print("REFSYSTEM ");
+	}else if(mdef instanceof SymbologyModel) {
+        ipw.print("SYMBOLOGY ");
+	}else if(mdef instanceof TypeModel) {
+        ipw.print("TYPE ");
 	}
     ipw.print("MODEL ");
     printName(mdef,language);
@@ -1985,7 +1944,7 @@ protected String getModelVersion(Model mdef) {
     return version;
 }
 
-	private String getDocumentationInLanguage(Element ele, String language) {
+	private String getElementDocumentation(Element ele, String language) {
 		String modelName = "";
 		Iterator<TranslationElement> iteratorModelElement = translationConfig.iterator();
 
@@ -2724,14 +2683,14 @@ protected Unit getTypeUnit(NumericalType type) {
 			printMetaValues(ee,ee.getMetaValues(), language, scopedName);
 			ipw.print(ee.getName());
 		} else {
-			String docu = getEnumerationElementDocumentationInLanguage(scopedName, language);
+			String docu = getElementDocumentationInLanguage(scopedName, language);
 			if (docu == null || docu == "") {
 			    printDocumentation(ee.getDocumentation());
 			} else {
 			    printDocumentation(docu);
 			}
 			printMetaValues(ee,ee.getMetaValues(), language, scopedName);
-			String name = getEnumerationElementNameInLanguage(scopedName, language);
+			String name = getElementNameInLanguage(scopedName, language);
 			if (name == null || name == "") {
 			    ipw.print(ee.getName());
 			} else {
@@ -2746,7 +2705,7 @@ protected Unit getTypeUnit(NumericalType type) {
 		}
   }
 
-	private String getEnumerationElementNameInLanguage(String scopedNamePrefix, String language) {
+	private String getElementNameInLanguage(String scopedNamePrefix, String language) {
 		String modelName = "";
 		Iterator<TranslationElement> iteratorModelElement = translationConfig.iterator();
 
@@ -2771,7 +2730,7 @@ protected Unit getTypeUnit(NumericalType type) {
 		return "";
 	}
   
-	private String getEnumerationElementDocumentationInLanguage(String scopedNamePrefix, String language) {
+	private String getElementDocumentationInLanguage(String scopedNamePrefix, String language) {
 		String modelName = "";
 		Iterator<TranslationElement> iteratorModelElement = translationConfig.iterator();
 
@@ -2956,24 +2915,57 @@ protected Unit getTypeUnit(NumericalType type) {
 		if (elv[i] instanceof AttributeRef) {
 			AttributeRef attr = (AttributeRef) elv[i];
 			if (attr.getAttr() instanceof LocalAttribute) {
-			    String name = getEnumerationElementNameInLanguage(attr.getAttr().getScopedName(), language);
+			    String name = getElementNameInLanguage(attr.getAttr().getScopedName(), language);
 			    if (name == null || name == "") {
 			        ipw.print(elv[i].getName());
 			    } else {
 			        ipw.print(name);
 			    }
 			}
-		} else if (elv[i] instanceof PathElAssocRole) {
-			PathElAssocRole assocRole = (PathElAssocRole) elv[i];
-			if (assocRole.getRole() instanceof RoleDef) {
-			    String name = getEnumerationElementNameInLanguage(assocRole.getRole().getScopedName(), language);
-			    if (name == null || name == "") {
-			        ipw.print(elv[i].getName());
-			    } else {
-			        ipw.print(name);
-			    }
-				
-			}
+        } else if (elv[i] instanceof PathElBase) {
+            PathElBase pathEl = (PathElBase) elv[i];
+            String scopedEleName=pathEl.getCurrentViewable().getScopedName()+"."+pathEl.getName();
+            String name = getElementNameInLanguage(scopedEleName, language);
+            if (name == null || name == "") {
+                ipw.print(elv[i].getName());
+            } else {
+                ipw.print(name);
+            }
+        } else if (elv[i] instanceof PathElAssocRole) {
+            PathElAssocRole assocRole = (PathElAssocRole) elv[i];
+            if (assocRole.getRole() instanceof RoleDef) {
+                String name = getElementNameInLanguage(assocRole.getRole().getScopedName(), language);
+                if (name == null || name == "") {
+                    ipw.print(elv[i].getName());
+                } else {
+                    ipw.print(name);
+                }
+                
+            }
+        } else if (elv[i] instanceof PathElAbstractClassRole) {
+            PathElAbstractClassRole assocRole = (PathElAbstractClassRole) elv[i];
+            if (assocRole.getRole() instanceof RoleDef) {
+                String name = getElementNameInLanguage(assocRole.getRole().getScopedName(), language);
+                if (name == null || name == "") {
+                    ipw.print(elv[i].getName());
+                } else {
+                    ipw.print(name);
+                }
+                
+            }
+        } else if (elv[i] instanceof AssociationPath) {
+            AssociationPath assocRole = (AssociationPath) elv[i];
+            if (assocRole.getTargetRole() instanceof RoleDef) {
+                String name = getElementNameInLanguage(assocRole.getTargetRole().getScopedName(), language);
+                if (name == null || name == "") {
+                    ipw.print("\\\\"+elv[i].getName());
+                } else {
+                    ipw.print("\\\\"+name);
+                }
+                
+            }
+        } else if (elv[i] instanceof PathElThis) {
+            ipw.print("THIS");
 		}
 	}
 	
@@ -2991,6 +2983,20 @@ protected Unit getTypeUnit(NumericalType type) {
         Iterator it = container.iterator();
         while (it.hasNext()) {
           ch.interlis.ili2c.metamodel.Element elt = (ch.interlis.ili2c.metamodel.Element) it.next();
+          if(container instanceof Topic) {
+              if(selfStandingConstraints.size()>0) {
+                  List<Constraint> flushConstraints=new ArrayList<Constraint>();
+                  for(Constraint cs:selfStandingConstraints) {
+                      if(elt.getSourceLine()>cs.getSourceLine()) {
+                          flushConstraints.add(cs);
+                      }
+                  }
+                  if(flushConstraints.size()>0) {
+                      selfStandingConstraints.removeAll(flushConstraints);
+                      printSelfStandingConstraints(flushConstraints,language);
+                  }
+              }
+          }
           lastClass = printElement(container, lastClass, elt,language);
         }
         
@@ -3024,6 +3030,18 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
         }
         printParameter (container, (Parameter) elt, language);
         lastClass = Parameter.class;
+      }
+      else if (elt instanceof ContextDef)
+      {
+        if (lastClass!=ContextDef.class)
+        {
+          ipw.println();
+          ipw.println ("CONTEXT");
+        }
+        ipw.indent();
+        printContext(container, (ContextDef) elt);
+        ipw.unindent();
+        lastClass = ContextDef.class;
       }
       else if (elt instanceof Domain)
       {
@@ -3115,24 +3133,12 @@ protected Class printElement(Container container, Class lastClass, ch.interlis.i
       else if (elt instanceof Constraint)
       {
 		if(((Constraint)elt).isSelfStanding()){
-			selfStandingConstraints.add(elt);
+			selfStandingConstraints.add((Constraint)elt);
 		}else{
 			printConstraint((Constraint)elt, language);
 			lastClass = Constraint.class;
 		}
 
-      }
-      else if (elt instanceof ExpressionSelection)
-      {
-        if (lastClass != null)
-          ipw.println();
-        ipw.println("WHERE");
-        ipw.indent();
-        printExpression (((ExpressionSelection) elt).getSelected(),
-                         ((ExpressionSelection) elt).getCondition(), language);
-        ipw.println (';');
-        ipw.unindent();
-        lastClass = ExpressionSelection.class;
       }
       else if (elt instanceof SignAttribute)
       {

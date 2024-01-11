@@ -221,6 +221,7 @@ options
 										srcLine);
 								}
 								((Constant.Enumeration)expr).setType((EnumerationType)expr2Type.resolveAliases());
+								((Constant.Enumeration)expr).setSourceOfType(comparedWith.getSourceOfType());
 							}else if(comparedWith instanceof Constant.Enumeration){
 								// validate that constant is a member of the enumeration type
 								String value=((Constant.Enumeration)comparedWith).toString();
@@ -230,6 +231,7 @@ options
 										srcLine);
 								}
 								((Constant.Enumeration)comparedWith).setType((EnumerationType)expr1Type.resolveAliases());
+								((Constant.Enumeration)comparedWith).setSourceOfType(expr.getSourceOfType());
 							}else{
 							 if(expr1Type.resolveAliases()!=expr2Type.resolveAliases()){
 								reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
@@ -252,6 +254,7 @@ options
 										srcLine);
 								}
 								((Constant.Enumeration)expr).setType((EnumTreeValueType)expr2Type.resolveAliases());
+								((Constant.Enumeration)expr).setSourceOfType(comparedWith.getSourceOfType());
 						}else if(expr1Type.resolveAliases() instanceof EnumTreeValueType && comparedWith instanceof Constant.Enumeration){
 								// validate that constant is a member of the enumeration type
 								String value=((Constant.Enumeration)comparedWith).toString();
@@ -261,6 +264,7 @@ options
 										srcLine);
 								}
 								((Constant.Enumeration)comparedWith).setType((EnumTreeValueType)expr1Type.resolveAliases());
+								((Constant.Enumeration)comparedWith).setSourceOfType(expr.getSourceOfType());
 						}else if(expr1Type.resolveAliases() instanceof ObjectType && expr2Type.resolveAliases() instanceof ObjectType){
 							// object
 						}else{
@@ -402,6 +406,19 @@ options
             }
     }
 
+	protected boolean isNewName(Container scope,String name)
+	{
+	
+	while(scope!=null){
+		Element ele=scope.getElement(Element.class,name);
+		if(ele==null && scope instanceof Model){
+			ele=((Model)scope).getImportedElement(Element.class, name);
+		}
+		if(ele!=null)return false;
+		scope=scope.getContainer();
+	}
+	return true;
+	}
 	protected Domain resolveDomainRef(Container scope,String[] nams, int lin)
 	{
 	      Model model;
@@ -3285,20 +3302,12 @@ protected rotationDef
 
 protected contextDefs[Container container]
 	{
-	  ContextDefs defs=null;
-	  int nameIdx=1;
+	int nameIdx=1;
 	}
-	:	"CONTEXT"  n:NAME EQUALS 
-		{defs=new ContextDefs(n.getText());
-		}
-		( 
-		contextDef[container,defs,nameIdx++] 
-		)*
-		{
-		container.add(defs);
-		}
+	:	"CONTEXT" 
+			( n:NAME EQUALS ( {!isNewName(container,LT(1).getText())}? contextDef[container,n.getText(),nameIdx++] )* )*
 	;
-protected contextDef[Container container,ContextDefs defs,int nameIdx]
+protected contextDef[Container container,String name,int nameIdx]
 	{
 	  String ilidoc=null;
 	  Settings metaValues=null;
@@ -3306,7 +3315,8 @@ protected contextDef[Container container,ContextDefs defs,int nameIdx]
 	  Domain concreteCoordDef=null;
 	  ArrayList<Domain> concreteCoordDefs=new ArrayList<Domain>();
 	}
-	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
+	:
+		{ ilidoc=getIliDoc();metaValues=getMetaValues();}
 		genericCoordDef=domainRef[container]
 		eq:EQUALS
 		concreteCoordDef=domainRef[container]
@@ -3317,10 +3327,13 @@ protected contextDef[Container container,ContextDefs defs,int nameIdx]
 			}
 		)*
 		{
-			ContextDef def=new ContextDef(nameIdx,genericCoordDef,concreteCoordDefs.toArray(new Domain[concreteCoordDefs.size()]));
+			if(nameIdx>1){
+				name=name+nameIdx;
+			}
+			ContextDef def=new ContextDef(name,genericCoordDef,concreteCoordDefs.toArray(new Domain[concreteCoordDefs.size()]));
 			def.setDocumentation(ilidoc);
 			def.setMetaValues(metaValues);
-			defs.add(def);
+			container.add(def);
 		}
 		SEMI
 	;
@@ -4768,7 +4781,11 @@ protected constraintsDef[Container scope]
 	  }
 	}
 	( constr=constraintDef[def,scope]
-		{if(constr!=null)def.add(constr);}
+		{if(constr!=null){
+				constr.setSelfStanding(true);
+				def.add(constr);
+			}
+		}
 	)*
 	"END" SEMI
 	;
@@ -5024,6 +5041,12 @@ protected predicate[Container ns, Type expectedType,Container functionNs]
 			      try {
 			      	expr = new Expression.Negation (expr);
 			      	expr.setDirty(dirty);
+			      } catch (Exception ex) {
+			      	reportError (ex, nt.getLine());
+			      }
+			}else{
+			      try {
+			      	expr = new Expression.Subexpression(expr);
 			      } catch (Exception ex) {
 			      	reportError (ex, nt.getLine());
 			      }

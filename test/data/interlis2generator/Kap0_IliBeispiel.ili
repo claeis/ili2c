@@ -1,0 +1,105 @@
+INTERLIS 2.3;
+
+/** Datenmodell Bund
+*/
+MODEL Bund (de)
+    AT "mailto:ce@eisenhutinformatik.ch" 
+    VERSION "20070207" =
+  IMPORTS CoordSys;
+  
+  TOPIC Baumkataster =
+  
+    REFSYSTEM BASKET CoordSysBasket ~ CoordSys.CoordsysTopic
+    	OBJECTS OF GeoCartesian2D : CHLV03;
+    
+    DOMAIN
+    LKoord = COORD 480000.00 .. 850000.00 [INTERLIS.m] {CoordSysBasket.CHLV03[1]},
+                    60000.00 .. 320000.00 [INTERLIS.m] {CoordSysBasket.CHLV03[2]};
+
+    UNIT
+    Schweizerfranken [CHF] EXTENDS INTERLIS.MONEY;
+    
+    CLASS Baum =
+      Lage: LKoord;
+    END Baum;
+    
+    CLASS Arbeitnehmer =
+      Vorname : MANDATORY TEXT*30;
+      Name : MANDATORY TEXT*30;
+      inPension : MANDATORY BOOLEAN;
+      Jahreslohn : 0..250000 [CHF];
+      MANDATORY CONSTRAINT
+      !! der Arbeitnehmer muss pensioniert
+      !! sein oder es muss ein Jahreslohn definiert sein
+      inPension==#true OR DEFINED(Jahreslohn);
+    END Arbeitnehmer;
+    
+    ASSOCIATION =
+      Verantwortlicher -- {1} Arbeitnehmer;
+      Baum -- {0..*} Baum;
+    END;
+
+  END Baumkataster;
+
+END Bund.
+
+/** Datenmodell Bern
+*/
+MODEL Bern
+    AT "mailto:ce@eisenhutinformatik.ch" 
+    VERSION "20070207" =
+  IMPORTS Bund;
+  TOPIC Baumkataster EXTENDS Bund.Baumkataster=
+
+    CLASS Baum (EXTENDED) =
+      Bemerkungen: TEXT*2000;
+    END Baum;
+
+  END Baumkataster;
+
+END Bern.
+
+/** Signaturenmodell
+*/
+CONTRACTED SYMBOLOGY MODEL SimpleSignsSymbology
+    AT "mailto:ce@eisenhutinformatik.ch" 
+    VERSION "20070207" =
+
+  DOMAIN
+    Koord2D (ABSTRACT) = COORD NUMERIC, NUMERIC;
+
+  TOPIC SignsTopic =
+
+    CLASS Symbol EXTENDS INTERLIS.SIGN =
+      PARAMETER
+        Pos: MANDATORY Koord2D;
+    END Symbol;
+
+  END SignsTopic;
+
+END SimpleSignsSymbology.
+
+/** Darstellungsbeschreibung
+*/
+MODEL SimpleGrafik
+    AT "mailto:ce@eisenhutinformatik.ch" 
+    VERSION "20070207" =
+  IMPORTS SimpleSignsSymbology;
+  IMPORTS Bund;
+
+  SIGN BASKET SimpleSignsBasket ~ SimpleSignsSymbology.SignsTopic
+    	OBJECTS OF Symbol : Baum;
+
+  TOPIC BaumDarstellungsbeschreibung =
+    DEPENDS ON Bund.Baumkataster;
+
+    GRAPHIC BaumGrafik BASED ON Bund.Baumkataster.Baum =
+    PunktSymbolZeichnugsregel OF SimpleSignsSymbology.SignsTopic.Symbol: (
+        Sign := {SimpleSignsBasket.Baum};
+        Pos := Lage);
+    END BaumGrafik;
+
+  END BaumDarstellungsbeschreibung;
+
+END SimpleGrafik.
+

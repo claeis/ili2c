@@ -395,6 +395,7 @@ public abstract class Constant extends Evaluable
     public static final String OTHERS=new String("OTHERS");
     String[] value;
     Type type=null;
+    Element sourceOfType=null;
 
 
     /** Constructs a new constant enumeration given the
@@ -416,6 +417,9 @@ public abstract class Constant extends Evaluable
     }
     @Override
     public boolean isLogical() {
+        return isBoolean();
+    }
+    private boolean isBoolean() {
         if(value.length==1) {
             if(value[0].equals("true") || value[0].equals("false")) {
                 return true;
@@ -426,6 +430,9 @@ public abstract class Constant extends Evaluable
     @Override
     public Type getType() {
         if(type==null) {
+            if(isBoolean()) {
+                return PredefinedModel.getInstance().BOOLEAN.getType();
+            }
             return new EnumerationType();
         }
         return type;
@@ -433,6 +440,16 @@ public abstract class Constant extends Evaluable
     public void setType(Type type)
     {
         this.type=type;
+    }
+    @Override
+    public Element getSourceOfType() {
+        if(sourceOfType==null && isBoolean()) {
+            return PredefinedModel.getInstance().BOOLEAN;
+        }
+        return sourceOfType;
+    }
+    public void setSourceOfType(Element sourceOfType) {
+        this.sourceOfType = sourceOfType;
     }
 
 

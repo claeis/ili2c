@@ -43,6 +43,14 @@ public class ObjectPath extends Evaluable
 		}
 		return new ObjectType(last.getViewable());
 	}
+    @Override
+    public Element getSourceOfType() {
+        PathEl last=getLastPathEl();
+        if(last instanceof AttributeRef){
+            return ((AttributeRef)last).getAttr();
+        }
+        return null;
+    }
     public boolean isAttributePath()
     {
         PathEl last=getLastPathEl();
