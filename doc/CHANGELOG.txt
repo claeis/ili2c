@@ -1,5 +1,9 @@
 LATEST
 ---------------------------
+
+ili2c 5.5.0 (2024-01-11)
+---------------------------
+- only ili2c-core release
 - fix validation of translated Expression with +, -, *, /, ->
 - fix validation of #true
 - ili2 export: fix kind of MODEL
