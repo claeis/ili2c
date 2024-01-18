@@ -45,7 +45,13 @@ public class Interlis2GeneratorTranslationTest {
 
 	private static final String ILI_FILE = "test/data/interlis2generator/EnumOk_de.ili";
 	private static final String NLSXML_FILE = ILI_FILE + ".xml";
-	private static final String OUTPUT_ILI_FILE = "out.ili";
+    private static final String OUTPUT_FOLDER = "build/test/";
+    private static final String OUTPUT_ILI_FILE=OUTPUT_FOLDER+"EnumOk_fr.ili";
+    @org.junit.BeforeClass
+    public static void setup()
+    {
+        new java.io.File(OUTPUT_FOLDER).mkdir();
+    }
 
 	/**
 	 * Es ueberprueft, ob die MODEL korrekt in das ili file geschrieben wurde.

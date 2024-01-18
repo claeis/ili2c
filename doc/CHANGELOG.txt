@@ -1,6 +1,26 @@
 LATEST
 ---------------------------
 
+ili2c 5.5.1 (2024-01-18)
+---------------------------
+- iox-ili-1.23.0
+
+ili2c 5.5.0 (2024-01-11)
+---------------------------
+- only ili2c-core release
+- fix validation of translated Expression with +, -, *, /, ->
+- fix validation of #true
+- ili2 export: fix kind of MODEL
+- ili2 export: fix THIS
+- ili2 export: fix PathElAbstractRole, PathElBase, AssociationPath
+- ili2 export: fix ViewDef/Selection
+- ili2 export: fix +, -, *, /, ->
+- ili2 export: SignParamAssignment/MetaObjectRef
+- ili2 export: CONSTRAINTS OF
+- ili2 export: translated EnumerationConst
+- ili2 export: nested Expressions
+- API: new class Expression.Subexpression
+
 ili2c 5.4.1 (2023-12-29)
 ---------------------------
 - ili2.4: fix ContextDef parser again

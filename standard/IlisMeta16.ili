@@ -11,7 +11,7 @@ INTERLIS 2.4;
  *  - constraints as meta elements
  *  - ...
  */
-MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2023-10-30ceis" =
+MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2024-01-10ceis" =
 
   DOMAIN
     BasketOID = OID TEXT;  !! Filename
@@ -633,7 +633,7 @@ MODEL IlisMeta16 (en) AT "http://models.interlis.ch" VERSION "2023-10-30ceis" =
      */
 
     STRUCTURE UnaryExpr EXTENDS Expression =
-      Operation: (Not, Defined);
+      Operation: (Not, Defined, Nested);
       SubExpression: Expression;
     END UnaryExpr;
 

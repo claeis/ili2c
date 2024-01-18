@@ -1226,6 +1226,13 @@ public class Imd16Generator {
 		    iomExpr.setOperation(UnaryExpr_Operation.Not);
 		    ch.interlis.ili2c.metamodel.Evaluable left = ((ch.interlis.ili2c.metamodel.Expression.Negation) e).getNegated();
 	    	iomExpr.setSubExpression(visitExpression (left));
+        }else if(e instanceof ch.interlis.ili2c.metamodel.Expression.Subexpression){
+            UnaryExpr iomExpr=new UnaryExpr();
+            ret=iomExpr;
+            //iomExpr.setOperation(UnaryExpr_Operation.Nested);
+            iomExpr.setattrvalue(UnaryExpr.tag_Operation,"Nested");
+            ch.interlis.ili2c.metamodel.Evaluable left = ((ch.interlis.ili2c.metamodel.Expression.Subexpression) e).getSubexpression();
+            iomExpr.setSubExpression(visitExpression (left));
 		}else if(e instanceof ch.interlis.ili2c.metamodel.Expression.DefinedCheck){
 		    UnaryExpr iomExpr=new UnaryExpr();
 		    ret=iomExpr;

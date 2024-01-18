@@ -30,6 +30,18 @@ public class Expressions23Test {
         assertEquals(0, errs.getErrs().size());
     }
     @Test
+    public void logical_const() throws Exception {
+        LogCollector errs = new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig = new Configuration();
+        FileEntry fileEntry = new FileEntry(TEST_OUT + "logical_const.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td = null;
+        td = ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+        assertEquals(0, errs.getErrs().size());
+    }
+    @Test
     public void logical_simple_fail() throws Exception {
         LogCollector errs = new LogCollector();
         EhiLogger.getInstance().addListener(errs);

@@ -266,6 +266,7 @@ options
 										srcLine);
 								}
 								((Constant.Enumeration)expr).setType((EnumerationType)expr2Type.resolveAliases());
+								((Constant.Enumeration)expr).setSourceOfType(comparedWith.getSourceOfType());
 							}else if(comparedWith instanceof Constant.Enumeration){
 								// validate that constant is a member of the enumeration type
 								String value=((Constant.Enumeration)comparedWith).toString();
@@ -275,6 +276,7 @@ options
 										srcLine);
 								}
 								((Constant.Enumeration)comparedWith).setType((EnumerationType)expr1Type.resolveAliases());
+								((Constant.Enumeration)comparedWith).setSourceOfType(expr.getSourceOfType());
 							}else{
 							 if(expr1Type.resolveAliases()!=expr2Type.resolveAliases()){
 								reportError (formatMessage ("err_expr_incompatibleTypes",(String)null),
@@ -297,6 +299,7 @@ options
 										srcLine);
 								}
 								((Constant.Enumeration)expr).setType((EnumTreeValueType)expr2Type.resolveAliases());
+								((Constant.Enumeration)expr).setSourceOfType(comparedWith.getSourceOfType());
 						}else if(expr1Type.resolveAliases() instanceof EnumTreeValueType && comparedWith instanceof Constant.Enumeration){
 								// validate that constant is a member of the enumeration type
 								String value=((Constant.Enumeration)comparedWith).toString();
@@ -306,6 +309,7 @@ options
 										srcLine);
 								}
 								((Constant.Enumeration)comparedWith).setType((EnumTreeValueType)expr1Type.resolveAliases());
+								((Constant.Enumeration)comparedWith).setSourceOfType(expr.getSourceOfType());
 						}else if(expr1Type.resolveAliases() instanceof ObjectType && expr2Type.resolveAliases() instanceof ObjectType){
 							// object
 						}else{
@@ -4689,7 +4693,11 @@ protected constraintsDef[Container scope]
 	  }
 	}
 	( constr=constraintDef[def,scope]
-		{if(constr!=null)def.add(constr);}
+		{if(constr!=null){
+				constr.setSelfStanding(true);
+				def.add(constr);
+			}
+		}
 	)*
 	"END" SEMI
 	;
@@ -4906,6 +4914,12 @@ protected predicate[Container ns, Type expectedType,Container functionNs]
 			      try {
 			      	expr = new Expression.Negation (expr);
 			      	expr.setDirty(dirty);
+			      } catch (Exception ex) {
+			      	reportError (ex, nt.getLine());
+			      }
+			}else{
+			      try {
+			      	expr = new Expression.Subexpression(expr);
 			      } catch (Exception ex) {
 			      	reportError (ex, nt.getLine());
 			      }

@@ -1,0 +1,28 @@
+INTERLIS 2.4;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC TopicA =
+
+    CLASS ClassA =
+      attrA : TEXT*20;
+    END ClassA;
+
+    CLASS ClassB =
+    END ClassB;
+
+    ASSOCIATION AssocAB =
+      roleA -- {0..1} ClassA;
+      roleB -- {0..*} ClassB;
+    END AssocAB;
+
+    CONSTRAINTS OF ClassB =
+      MANDATORY CONSTRAINT C1: DEFINED(roleA->attrA);
+    END;
+    
+    CLASS ClassC =
+    END ClassC;
+    
+  END TopicA;
+
+END ModelA.

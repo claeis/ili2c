@@ -28,12 +28,16 @@ import ch.interlis.ili2c.metamodel.LineForm;
 import ch.interlis.ili2c.metamodel.LocalAttribute;
 import ch.interlis.ili2c.metamodel.MandatoryConstraint;
 import ch.interlis.ili2c.metamodel.MetaDataUseDef;
+import ch.interlis.ili2c.metamodel.Model;
 import ch.interlis.ili2c.metamodel.Parameter;
 import ch.interlis.ili2c.metamodel.Projection;
+import ch.interlis.ili2c.metamodel.RefSystemModel;
 import ch.interlis.ili2c.metamodel.RoleDef;
+import ch.interlis.ili2c.metamodel.SymbologyModel;
 import ch.interlis.ili2c.metamodel.Table;
 import ch.interlis.ili2c.metamodel.Topic;
 import ch.interlis.ili2c.metamodel.TransferDescription;
+import ch.interlis.ili2c.metamodel.TypeModel;
 import ch.interlis.ili2c.metamodel.UniquenessConstraint;
 import ch.interlis.ili2c.metamodel.ComposedUnit;
 
@@ -43,9 +47,16 @@ import ch.interlis.ili2c.metamodel.ComposedUnit;
 
 public class Interlis2GeneratorTest {
 
-	private static final String ILI_FILE = "test/data/interlis2generator/EnumOk_de.ili";
+    private static final String SRC_FOLDER = "test/data/interlis2generator/";
+    private static final String OUTPUT_FOLDER = "build/test/";
+	private static final String ILI_FILE = SRC_FOLDER+"EnumOk_de.ili";
 	private static final String OUTPUT_ILI_FILE = "out.ili";
 
+	@org.junit.BeforeClass
+	public static void setup()
+	{
+	    new java.io.File(OUTPUT_FOLDER).mkdir();
+	}
 	/**
 	 * Es ueberprueft, ob die MODEL korrekt in das ili file geschrieben wurde.
      * @throws Exception 
@@ -67,7 +78,94 @@ public class Interlis2GeneratorTest {
 		assertEquals(DataModel.class, modelEle.getClass());
         assertEquals(DataModel.ILI2_3,((DataModel)modelEle).getIliVersion());
 	}
-	
+    @Test
+    public void modelKind() throws Exception {
+        final String TEST_ILI="ModelKind.ili";
+        final String TEST_ILI_OUT=OUTPUT_FOLDER+TEST_ILI;
+        // ili lesen
+        TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(SRC_FOLDER+TEST_ILI));
+        // neues ili schreiben
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(TEST_ILI_OUT),"UTF-8");
+        new Interlis2Generator().generate(out, td, false);
+        out.close();
+        // neues ili lesen
+        TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(TEST_ILI_OUT));
+        assertNotNull(newTd);
+
+        Model modelEle=null;
+        modelEle = (Model)newTd.getElement("TypeModel");
+        assertNotNull(modelEle);
+        assertEquals(TypeModel.class, modelEle.getClass());
+        modelEle = (Model) newTd.getElement("RefSystemModel");
+        assertNotNull(modelEle);
+        assertEquals(RefSystemModel.class, modelEle.getClass());
+        modelEle = (Model) newTd.getElement("SymbologyModel");
+        assertNotNull(modelEle);
+        assertEquals(SymbologyModel.class, modelEle.getClass());
+        assertTrue(modelEle.isContracted());
+    }
+
+    @Test
+    public void model_IliBeispiel() throws Exception {
+        final String TEST_ILI="Kap0_IliBeispiel.ili";
+        final String TEST_ILI_OUT=OUTPUT_FOLDER+TEST_ILI;
+        // ili lesen
+        TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(SRC_FOLDER+TEST_ILI));
+        // neues ili schreiben
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(TEST_ILI_OUT),"UTF-8");
+        new Interlis2Generator().generate(out, td, false);
+        out.close();
+        // neues ili lesen
+        TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(TEST_ILI_OUT));
+        assertNotNull(newTd);
+
+        Model modelEle=null;
+        modelEle = (Model)newTd.getElement("Bund");
+        assertNotNull(modelEle);
+        modelEle = (Model)newTd.getElement("Bern");
+        assertNotNull(modelEle);
+        modelEle = (Model)newTd.getElement("SimpleSignsSymbology");
+        assertNotNull(modelEle);
+        modelEle = (Model)newTd.getElement("SimpleGrafik");
+        assertNotNull(modelEle);
+
+    }
+
+    @Test
+    public void constraintsOf() throws Exception {
+        final String TEST_ILI="ConstraintsOf.ili";
+        final String TEST_ILI_OUT=OUTPUT_FOLDER+TEST_ILI;
+        // ili lesen
+        TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(SRC_FOLDER+TEST_ILI));
+        // neues ili schreiben
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(TEST_ILI_OUT),"UTF-8");
+        new Interlis2Generator().generate(out, td, false);
+        out.close();
+        // neues ili lesen
+        TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(TEST_ILI_OUT));
+        assertNotNull(newTd);
+
+        Element modelEle=null;
+        modelEle = newTd.getElement("ModelA.TopicA.ClassB.C1");
+        assertNotNull(modelEle);
+
+    }
+    @Test
+    public void expression() throws Exception {
+        final String TEST_ILI="Expression.ili";
+        final String TEST_ILI_OUT=OUTPUT_FOLDER+TEST_ILI;
+        // ili lesen
+        TransferDescription td = Ili2TranslationXmlTest.compileIliModel(new File(SRC_FOLDER+TEST_ILI));
+        // neues ili schreiben
+        java.io.Writer out = new java.io.OutputStreamWriter(new FileOutputStream(TEST_ILI_OUT),"UTF-8");
+        new Interlis2Generator().generate(out, td, false);
+        out.close();
+        // neues ili lesen
+        TransferDescription newTd = Ili2TranslationXmlTest.compileIliModel(new File(TEST_ILI_OUT));
+        assertNotNull(newTd);
+
+    }
+    
     /**
      * Es ueberprueft, ob die FUNCTION korrekt in das ili file geschrieben wurde.
      * @throws Exception      

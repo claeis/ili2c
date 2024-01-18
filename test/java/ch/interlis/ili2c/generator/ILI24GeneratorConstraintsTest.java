@@ -100,7 +100,7 @@ public class ILI24GeneratorConstraintsTest {
         assertInterlis2GeneratorPrintConstraint(
                 ILI_CONSTRAINTS,
                 "ModelA.TopicA.ClassA.Constraint13",
-                "SET CONSTRAINT\r\n  INTERLIS.objectCount (ALL) >= 0;\r\n");
+                "SET CONSTRAINT\r\n  INTERLIS.objectCount(ALL) >= 0;\r\n");
     }
 
     @Test
@@ -108,7 +108,7 @@ public class ILI24GeneratorConstraintsTest {
         assertInterlis2GeneratorPrintConstraint(
                 ILI_CONSTRAINTS,
                 "ModelA.TopicA.ClassA.NamedSetConstraintBasket",
-                "SET CONSTRAINT (BASKET) NamedSetConstraintBasket:\r\n  INTERLIS.objectCount (ALL) >= 0;\r\n");
+                "SET CONSTRAINT (BASKET) NamedSetConstraintBasket:\r\n  INTERLIS.objectCount(ALL) >= 0;\r\n");
     }
 
     @Test

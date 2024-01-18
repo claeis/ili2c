@@ -9,6 +9,9 @@ public abstract class Evaluable
     public Type getType() {
         return null;
     }
+    public Element getSourceOfType() {
+        return null;
+    }
 
   /** Checks whether it is possible to assign this Evaluable to
       the Element <code>target</code>, whose type is <code>targetType</code>.
