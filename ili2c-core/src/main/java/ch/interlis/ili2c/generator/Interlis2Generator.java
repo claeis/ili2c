@@ -2034,10 +2034,10 @@ protected String getModelVersion(Model mdef) {
         	    ipw.print(" = ");
         	    printType (scope, dd.getType(),language, scopedNamePrefix);
 
-                if (!dd.isEmpty()) {
+                Iterator<DomainConstraint> iterator = dd.iteratorConstraints();
+                if (iterator.hasNext()) {
                     ipw.print(" CONSTRAINTS ");
                     boolean first = true;
-                    Iterator<DomainConstraint> iterator = dd.iterator();
                     while (iterator.hasNext()) {
                         DomainConstraint constraint = iterator.next();
                         if (first) {
