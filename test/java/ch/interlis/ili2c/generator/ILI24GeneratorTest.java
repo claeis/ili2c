@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 
 import ch.interlis.ili2c.CompilerTestHelper;
 import ch.interlis.ili2c.metamodel.ContextDef;
+import ch.interlis.ili2c.metamodel.Domain;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -174,6 +175,19 @@ public class ILI24GeneratorTest {
             makeSyntax.printElement(null, null, td.getElement("ModelA.TopicA.ClassA.attrA"), null);
             Assert.assertEquals("attrA : LIST {0..*} OF TEXT*20;",syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
         }
+    }
+
+    @Test
+    public void genericCoord() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(CONTEXT_ILI_FILE);
+        assertNotNull(td);
+        Domain domain = (Domain) td.getElement("ModelA.Coord2");
+
+        java.io.StringWriter syntaxBuffer = new java.io.StringWriter();
+        Interlis2Generator makeSyntax = Interlis2Generator.generateElements24(syntaxBuffer, td);
+        makeSyntax.printDomainDef(domain.getContainer(), domain, null);
+
+        Assert.assertEquals("Coord2 (GENERIC) = COORD NUMERIC, NUMERIC;", syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
     }
 
     @Test
