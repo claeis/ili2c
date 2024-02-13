@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 
 import ch.interlis.ili2c.CompilerTestHelper;
 import ch.interlis.ili2c.metamodel.ContextDef;
+import ch.interlis.ili2c.metamodel.Domain;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,6 +26,7 @@ import ch.interlis.ili2c.metamodel.TransferDescription;
 public class ILI24GeneratorTest {
     private static final String ILI_FILE = "test/data/interlis2generator/EnumOk24.ili";
     private static final String CONTEXT_ILI_FILE = "test/data/interlis2generator/Context.ili";
+    private static final String DOMAIN_ILI_FILE = "test/data/interlis2generator/Domain.ili";
     private static final String OUTPUT_ILI_FILE = "out.ili";
     @Test
     public void model() throws Exception {
@@ -200,5 +202,31 @@ public class ILI24GeneratorTest {
         makeSyntax.printContextSyntax(contextDef.getContainer(), contextDef);
 
         Assert.assertEquals("ModelA.Coord2 = ModelA.Coord2_CHLV03 OR ModelA.Coord2_CHLV95;", syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+    }
+
+    @Test
+    public void domainSingleConstraint() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(DOMAIN_ILI_FILE);
+        assertNotNull(td);
+        Domain domain = (Domain) td.getElement("ModelA.SingleConstraint");
+
+        java.io.StringWriter syntaxBuffer = new java.io.StringWriter();
+        Interlis2Generator makeSyntax = Interlis2Generator.generateElements24(syntaxBuffer,td);
+        makeSyntax.printDomainDef(domain.getContainer(), domain, null);
+
+        Assert.assertEquals("SingleConstraint = TEXT*30 CONSTRAINTS Values: THIS == \"SomeConstant\" OR THIS == \"OtherConstant\";", syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+    }
+
+    @Test
+    public void domainMultipleConstraints() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(DOMAIN_ILI_FILE);
+        assertNotNull(td);
+        Domain domain = (Domain) td.getElement("ModelA.MultipleConstraints");
+
+        java.io.StringWriter syntaxBuffer = new java.io.StringWriter();
+        Interlis2Generator makeSyntax = Interlis2Generator.generateElements24(syntaxBuffer,td);
+        makeSyntax.printDomainDef(domain.getContainer(), domain, null);
+
+        Assert.assertEquals("MultipleConstraints = TEXT*30 CONSTRAINTS Values: THIS == \"SomeConstant\" OR THIS == \"OtherConstant\", Length: INTERLIS.len(THIS) > 5;", syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
     }
 }

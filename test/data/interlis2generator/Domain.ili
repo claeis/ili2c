@@ -1,0 +1,6 @@
+INTERLIS 2.4;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+    DOMAIN SingleConstraint = TEXT*30 CONSTRAINTS Values : THIS == "SomeConstant" OR THIS == "OtherConstant";
+    DOMAIN MultipleConstraints = TEXT*30 CONSTRAINTS Values : THIS == "SomeConstant" OR THIS == "OtherConstant", Length : INTERLIS.len(THIS) > 5;
+END ModelA.
