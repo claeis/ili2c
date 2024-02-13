@@ -2039,6 +2039,22 @@ protected String getModelVersion(Model mdef) {
 
         	    ipw.print(" = ");
         	    printType (scope, dd.getType(),language, scopedNamePrefix);
+
+                Iterator<DomainConstraint> iterator = dd.iteratorConstraints();
+                if (iterator.hasNext()) {
+                    ipw.print(" CONSTRAINTS ");
+                    boolean first = true;
+                    while (iterator.hasNext()) {
+                        DomainConstraint constraint = iterator.next();
+                        if (first) {
+                            first = false;
+                        } else {
+                            ipw.print(", ");
+                        }
+                        printConstraint(constraint, language);
+                    }
+                }
+
         	    if(dd.getType() instanceof StructuredUnitType){
         	        EhiLogger.logError("DOMAIN "+dd.getName()+": StructuredUnitType not supported by INTERLIS 2.3; replace by TextType or FormattedType/XMLDate");
         	        ipw.println("; !! Hint: replace by TextType or FormattedType/XMLDate");
