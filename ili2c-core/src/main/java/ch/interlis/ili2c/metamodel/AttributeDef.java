@@ -516,7 +516,11 @@ public abstract class AttributeDef
       }
       return type;
   }
-
+  public Cardinality getCardinality()
+  {
+      Type type=getDomainOrDerivedDomain();
+      return type.getCardinality();
+  }
   /* Documentation Note
      ------------------
      Make sure to propagate manually any changes
