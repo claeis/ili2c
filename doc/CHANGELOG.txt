@@ -1,5 +1,7 @@
-LATEST
+ili2c 5.5.2 (2024-xx-xx)
 ---------------------------
+- ili2 export: print domain constraints (#117)
+- ili2 export: include GENERIC property in domain export (#116)
 
 ili2c 5.5.1 (2024-01-18)
 ---------------------------
