@@ -879,49 +879,6 @@ options
     }
     return overriding;
   }
-
-	protected static String parseEscapeSequences(String input) {
-		StringBuilder result = new StringBuilder(input.length());
-		for (int i = 0; i < input.length(); i++) {
-			char c = input.charAt(i);
-			if (c == '\\') {
-				if (i + 1 >= input.length()) {
-					throw new IllegalArgumentException("Incomplete escape sequence: '\\' at end of string");
-				}
-				char next = input.charAt(i + 1);
-				switch (next) {
-					case '\"':
-						result.append('\"');
-						break;
-					case '\\':
-						result.append('\\');
-						break;
-					case 'u':
-						int numberStart = i + 2;
-						int numberEnd = numberStart + 4;
-						if (numberEnd > input.length()) {
-							throw new IllegalArgumentException("Incomplete unicode escape sequence at end of string");
-						}
-						String hexNumber = input.substring(numberStart, numberEnd);
-						try {
-							int unicodeValue = Integer.parseInt(hexNumber, 16);
-							result.append((char) unicodeValue);
-						} catch (NumberFormatException e) {
-							throw new IllegalArgumentException("Invalid unicode escape sequence: \\u" + hexNumber);
-						}
-						i += 4;
-						break;
-					default:
-						throw new IllegalArgumentException("Unknown escape sequence: \\" + next);
-				}
-				i++;
-			} else {
-				result.append(c);
-			}
-		}
-		return result.toString();
-	}
-
 	private Table buildDecomposedStruct(AttributeDef attrdef,boolean areaDecomp)
 		throws java.beans.PropertyVetoException
 	{
@@ -1140,7 +1097,7 @@ protected modelDef
 		}
 		)?
 		"AT" issuerToken:STRING {
-			String issuer=parseEscapeSequences(issuerToken.getText());
+			String issuer=issuerToken.getText();
 			md.setIssuer(issuer);
 			// http://www.ietf.org/rfc/rfc3986.txt
 			// <scheme>:<scheme-specific-part>
@@ -1158,21 +1115,21 @@ protected modelDef
 			}
 		}
 		"VERSION" ver:STRING (verexpl:EXPLANATION)? {
-			md.setModelVersion(parseEscapeSequences(ver.getText()));
+			md.setModelVersion(ver.getText());
 			if(verexpl!=null){
 				md.setModelVersionExpl(verexpl.getText());
 			}
 		}
-		(	"TRANSLATION" "OF" translationOf:NAME LBRACE translationOfVersion:STRING RBRACE { md.setTranslationOf(translationOf.getText(),parseEscapeSequences(translationOfVersion.getText())); }
+		(	"TRANSLATION" "OF" translationOf:NAME LBRACE translationOfVersion:STRING RBRACE { md.setTranslationOf(translationOf.getText(),translationOfVersion.getText()); }
 		|
 		)
 		EQUALS
 		("CHARSET" ianaNameToken:STRING SEMI {
-			md.setCharSetIANAName(parseEscapeSequences(ianaNameToken.getText()));
+			md.setCharSetIANAName(ianaNameToken.getText());
 		}	
 		)?
 		("XMLNS" xmlnsToken:STRING SEMI {
-			md.setXmlns(parseEscapeSequences(xmlnsToken.getText()));
+			md.setXmlns(xmlnsToken.getText());
 		}
 		)?
 		( "IMPORTS" ("UNQUALIFIED" {unqualified=true;} | /* empty */ {unqualified=false;}) 
@@ -2560,7 +2517,7 @@ protected textConst
 	{
 		c=null;
 	}
-	: s:STRING {c=new Constant.Text(parseEscapeSequences(s.getText()));}
+	: s:STRING {c=new Constant.Text(s.getText());}
 	;
 
 protected enumerationType [Type extending]
@@ -3091,13 +3048,13 @@ protected formattedType[Container scope, Type extending]
 		LPAREN ("INHERITANCE")?
                   ( prefix:STRING {
 				if(prefix!=null){
-					ft.setPrefix(parseEscapeSequences(prefix.getText()));
+					ft.setPrefix(prefix.getText());
 				}
                   	}
                   )? 
                   ( baseAttr=baseAttrRef[ft,struct] {postfix=null;} (postfix:STRING)?
 		  		{ 	if(postfix!=null){
-						baseAttr.setPostfix(parseEscapeSequences(postfix.getText()));
+						baseAttr.setPostfix(postfix.getText());
 					}
 					ft.addBaseAttrRef(baseAttr);
 				}
@@ -3106,12 +3063,10 @@ protected formattedType[Container scope, Type extending]
 		( min:STRING DOTDOT max:STRING )?
 		{ 
 			if(min!=null){
-				String minString=parseEscapeSequences(min.getText());
-				String maxString=parseEscapeSequences(max.getText());
-				validateFormattedConst(ft,minString,min.getLine());
-				validateFormattedConst(ft,maxString,max.getLine());
-				ft.setMinimum(minString);
-				ft.setMaximum(maxString);
+				validateFormattedConst(ft,min.getText(),min.getLine());
+				validateFormattedConst(ft,max.getText(),max.getLine());
+				ft.setMinimum(min.getText());
+				ft.setMaximum(max.getText());
 			}
 		}
 	) 
@@ -3128,12 +3083,10 @@ protected formattedType[Container scope, Type extending]
 					reportError(ex,line);
 				}
 			}
-			String min2String=parseEscapeSequences(min2.getText());
-			String max2String=parseEscapeSequences(max2.getText());
-			validateFormattedConst(ft,min2String,min2.getLine());
-			validateFormattedConst(ft,max2String,max2.getLine());
-			ft.setMinimum(min2String);
-			ft.setMaximum(max2String);
+			validateFormattedConst(ft,min2.getText(),min2.getLine());
+			validateFormattedConst(ft,max2.getText(),max2.getLine());
+			ft.setMinimum(min2.getText());
+			ft.setMaximum(max2.getText());
 		}
 	)
 	| ( "FORMAT" domain=domainRef[scope] min3:STRING DOTDOT max3:STRING
@@ -3148,24 +3101,22 @@ protected formattedType[Container scope, Type extending]
 				}
 			}
 			ft.setBaseDomain(domain);
-			String min3String=parseEscapeSequences(min3.getText());
-			String max3String=parseEscapeSequences(max3.getText());
 			try{
-				if(!ft.isValueInRange(min3String)){
-					reportError(formatMessage("err_formattedType_valueOutOfRange",min3String),min3.getLine());
+				if(!ft.isValueInRange(min3.getText())){
+					reportError(formatMessage("err_formattedType_valueOutOfRange",min3.getText()),min3.getLine());
 				}
 			}catch(NumberFormatException ex){
-				reportError(formatMessage("err_formattedType_illegalFormat",min3String),min3.getLine());
+				reportError(formatMessage("err_formattedType_illegalFormat",min3.getText()),min3.getLine());
 			}
 			try{
-				if(!ft.isValueInRange(max3String)){
-					reportError(formatMessage("err_formattedType_valueOutOfRange",max3String),max3.getLine());
+				if(!ft.isValueInRange(max3.getText())){
+					reportError(formatMessage("err_formattedType_valueOutOfRange",max3.getText()),max3.getLine());
 				}
 			}catch(NumberFormatException ex){
-				reportError(formatMessage("err_formattedType_illegalFormat",max3String),max3.getLine());
+				reportError(formatMessage("err_formattedType_illegalFormat",max3.getText()),max3.getLine());
 			}
-			ft.setMinimum(min3String);
-			ft.setMaximum(max3String);
+			ft.setMinimum(min3.getText());
+			ft.setMaximum(max3.getText());
 		}
 	))
 	;
@@ -3293,7 +3244,7 @@ protected coordinateType [Container scope, Type extending,boolean isGeneric]
 		| (nt3=numericType [scope, ext_nt3,true] (COMMA rots=rotationDef)?)
 		)
 	      )?
-	     ("REFSYS" refsysT:STRING {refsys=parseEscapeSequences(refsysT.getText());})?
+	     ("REFSYS" refsysT:STRING {refsys=refsysT.getText();})? 
 	    )?
 	 )
     {
@@ -7393,6 +7344,7 @@ STRING
   : '"'!
     ( ESC | ~( '"' | '\\' ) )*
     '"'!
+    { setText(InterlisString.parseEscapeSequences($getText)); }
   ;
 
 
