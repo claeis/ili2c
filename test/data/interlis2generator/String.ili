@@ -1,0 +1,16 @@
+INTERLIS 2.4;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1\u002E2" =
+
+  TOPIC TopicA =
+
+    CLASS ClassA =
+      attrA : TEXT*20;
+
+      MANDATORY CONSTRAINT quoteBackslash: attrA != "\"" AND attrA != "\\";
+      MANDATORY CONSTRAINT unicode: attrA != "\u000A" AND attrA != "\u000D";
+    END ClassA;
+
+  END TopicA;
+
+END ModelA.

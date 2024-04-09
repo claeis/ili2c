@@ -45,4 +45,32 @@ public final class InterlisString {
         }
         return result.toString();
     }
+
+    public static String escapeSpecialChars(String input) {
+        StringBuilder result = new StringBuilder(input.length());
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (requiresUnicodeEscape(c)) {
+                result.append("\\u");
+                result.append(String.format("%04x", (int) c));
+            } else {
+                switch (c) {
+                    case '\"':
+                        result.append("\\\"");
+                        break;
+                    case '\\':
+                        result.append("\\\\");
+                        break;
+                    default:
+                        result.append(c);
+                        break;
+                }
+            }
+        }
+        return result.toString();
+    }
+
+    private static boolean requiresUnicodeEscape(char c) {
+        return c < 0x20 || c > 0x7E;
+    }
 }

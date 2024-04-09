@@ -37,4 +37,25 @@ public class InterlisStringTest {
     public void parseInvalidSequence() {
         InterlisString.parseEscapeSequences("\\n");
     }
+
+    @Test
+    public void escapeQuote() {
+        assertEquals("\\\"", InterlisString.escapeSpecialChars("\""));
+    }
+
+    @Test
+    public void escapeBackslash() {
+        assertEquals("\\\\ \\\\ \\\\", InterlisString.escapeSpecialChars("\\ \\ \\"));
+    }
+
+    @Test
+    public void escapeNewline() {
+        assertEquals("\\u000d\\u000a", InterlisString.escapeSpecialChars("\r\n"));
+    }
+
+    @Test
+    public void escapeUnicode() {
+        assertEquals("\\u2b1c", InterlisString.escapeSpecialChars("\u2b1c"));
+        assertEquals("\\ud83c\\udf09", InterlisString.escapeSpecialChars("\uD83C\udf09"));
+    }
 }
