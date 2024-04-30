@@ -14,6 +14,7 @@ import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
 import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.generator.nls.TranslationElement;
 import ch.interlis.ili2c.metamodel.*;
+import ch.interlis.ili2c.parser.InterlisString;
 
 /** A class used to generate an INTERLIS model description as INTERLIS-2.
 */
@@ -597,8 +598,9 @@ protected void printSelection(Container view, String language) {
 
     if (expr instanceof Constant.Text)
     {
+      String value = ((Constant.Text) expr).getValue();
       ipw.print ('"');
-      ipw.print (((Constant.Text) expr).getValue());
+      ipw.print (InterlisString.escapeSpecialChars(value));
       ipw.print ('"');
       return;
     }
@@ -1856,9 +1858,9 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 	ipw.println ();
 	ipw.indent();
 	String issuer = getModelIssuer(mdef);
-    ipw.println("AT \""+issuer+"\"");
+    ipw.println("AT \"" + InterlisString.escapeSpecialChars(issuer) + "\"");
     String version = getModelVersion(mdef);
-    ipw.print("VERSION \""+version+"\"");
+    ipw.print("VERSION \"" + InterlisString.escapeSpecialChars(version) + "\"");
 	String expl = getModelVersionExpl(mdef);
 	if ((expl != null) && (expl.length() > 0))
 	{
@@ -1868,7 +1870,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     ipw.println("");
 	if (translationConfig!=null) {
         String translationText = "TRANSLATION OF " + mdef.getName() + " [\""
-                + mdef.getModelVersion() + "\"]";
+                + InterlisString.escapeSpecialChars(mdef.getModelVersion()) + "\"]";
         ipw.println(translationText);
 	}else {
 	    // TODO Translation
@@ -2189,7 +2191,7 @@ protected String getModelVersion(Model mdef) {
             		sep=" ";
             	}
             	if(ft.getDefinedPrefix()!=null){
-            		ipw.print("\""+ft.getDefinedPrefix()+"\"");
+            		ipw.print("\"" + InterlisString.escapeSpecialChars(ft.getDefinedPrefix()) + "\"");
             		sep=" ";
             	}
             	while(baseAttri.hasNext()){
@@ -2227,7 +2229,7 @@ protected String getModelVersion(Model mdef) {
                     	}
                 	}
                 	if(baseAttr.getPostfix()!=null){
-                		ipw.print(" \""+baseAttr.getPostfix()+"\"");
+                		ipw.print(" \"" + InterlisString.escapeSpecialChars(baseAttr.getPostfix()) + "\"");
                 	}
             		sep=" ";
             	}
@@ -2535,9 +2537,9 @@ protected String getModelVersion(Model mdef) {
   }
 private void printFormatedTypeMinMax(FormattedType ft) {
 	ipw.print("\"");
-	ipw.print(ft.getDefinedMinimum());
+	ipw.print(InterlisString.escapeSpecialChars(ft.getDefinedMinimum()));
 	ipw.print("\" .. \"");
-	ipw.print(ft.getDefinedMaximum());
+	ipw.print(InterlisString.escapeSpecialChars(ft.getDefinedMaximum()));
 	ipw.print("\"");
 }
 
