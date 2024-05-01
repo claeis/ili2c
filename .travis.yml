@@ -28,7 +28,7 @@ before_script:
 
 script: 
   - if [ $TRAVIS_BRANCH == "stable-core" ]; then ./gradlew :ili2c-core:jar :ili2c-core:test ; fi 
-  - if [ $TRAVIS_BRANCH != "stable-core" ]; then ./gradlew jar test usrdoc ilidoc; fi
+  - if [ $TRAVIS_BRANCH != "stable-core" ]; then ./gradlew -Drst2html=`which rst2html.py` jar test usrdoc ilidoc; fi
   
 deploy:
   - provider: script
@@ -38,7 +38,7 @@ deploy:
       branch: master
   - provider: script
     skip_cleanup: true
-    script: ./gradlew -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} '-Drelease=' bindist uploadArchives uploadBindist uploadDoc
+    script: ./gradlew -Drst2html=`which rst2html.py` -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} '-Drelease=' bindist uploadArchives uploadBindist uploadDoc
     on:
       branch: stable
   - provider: script
