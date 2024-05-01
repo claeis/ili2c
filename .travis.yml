@@ -6,6 +6,10 @@ jdk:
 addons:
   ssh_known_hosts:
   - ftp.interlis.ch
+  apt:
+    packages:
+    - python3
+    - python3-pip
 
 branches:
   only:
@@ -15,9 +19,16 @@ branches:
 
 install: true
 
+before_script:
+    - python3 --version
+    - virtualenv -p python3 my_py3
+    - source my_py3/bin/activate # to activate the python3 environemt    
+    - python -m pip install docutils # use my_py3
+    - python -m pip freeze
+
 script: 
   - if [ $TRAVIS_BRANCH == "stable-core" ]; then ./gradlew :ili2c-core:jar :ili2c-core:test ; fi 
-  - if [ $TRAVIS_BRANCH != "stable-core" ]; then ./gradlew jar test ; fi
+  - if [ $TRAVIS_BRANCH != "stable-core" ]; then ./gradlew -Drst2html=`which rst2html.py` jar test usrdoc ilidoc; fi
   
 deploy:
   - provider: script
@@ -27,7 +38,7 @@ deploy:
       branch: master
   - provider: script
     skip_cleanup: true
-    script: ./gradlew -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} '-Drelease=' bindist uploadArchives uploadBindist uploadDoc
+    script: ./gradlew -Drst2html=`which rst2html.py` -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} '-Drelease=' bindist uploadArchives uploadBindist uploadDoc
     on:
       branch: stable
   - provider: script
