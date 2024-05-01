@@ -88,6 +88,9 @@ public class Domain extends ExtendableContainer<DomainConstraint>
         };
     }
 
+    public Iterator<DomainConstraint> iteratorConstraints() {
+        return constraints.iterator();
+    }
 
   /** Determines the current value of the <code>name</code> property.
       Domains are identified and used by specifying their name.

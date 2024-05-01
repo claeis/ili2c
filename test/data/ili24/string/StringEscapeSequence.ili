@@ -1,0 +1,15 @@
+INTERLIS 2.4;
+
+MODEL ModelA AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+	TOPIC TopicA =
+		CLASS ClassA =
+			attrText : TEXT*20;
+
+			MANDATORY CONSTRAINT quotes: attrText == "some \" quote";
+			MANDATORY CONSTRAINT backslash: attrText == "\\";
+			MANDATORY CONSTRAINT quotesAndBackslash: attrText == "\\\"";
+			MANDATORY CONSTRAINT unicode: attrText == "\u2B1C";
+			MANDATORY CONSTRAINT unicodeSurrogate: attrText == "\uD83C\udf09";
+		END ClassA;
+	END TopicA;
+END ModelA.

@@ -27,7 +27,7 @@ deploy:
       branch: master
   - provider: script
     skip_cleanup: true
-    script: ./gradlew -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} '-Drelease=' bindist uploadArchives uploadBindist
+    script: ./gradlew -Drepos_dir=${repos_dir} -Drepos_pwd=${repos_pwd} -Drepos_usr=${repos_usr} '-Drelease=' bindist uploadArchives uploadBindist uploadDoc
     on:
       branch: stable
   - provider: script

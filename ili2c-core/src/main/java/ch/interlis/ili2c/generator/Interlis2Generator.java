@@ -14,6 +14,7 @@ import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
 import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.generator.nls.TranslationElement;
 import ch.interlis.ili2c.metamodel.*;
+import ch.interlis.ili2c.parser.InterlisString;
 
 /** A class used to generate an INTERLIS model description as INTERLIS-2.
 */
@@ -144,9 +145,9 @@ private void setup(
 
 
   protected void printModifiers(boolean _abstract,
-    boolean _final, boolean _extended,boolean _ordered, boolean _external,boolean _transient)
+    boolean _final, boolean _extended,boolean _ordered, boolean _external,boolean _transient, boolean _generic)
   {
-    if (!_abstract && !_final && !_extended && !_ordered && !_external && !_transient){
+    if (!_abstract && !_final && !_extended && !_ordered && !_external && !_transient && !_generic) {
 		return;
     }
 
@@ -159,6 +160,7 @@ private void setup(
 	first = printModifierHelper(first, _ordered, "ORDERED");
 	first = printModifierHelper(first, _external, "EXTERNAL");
 	first = printModifierHelper(first, _transient, "TRANSIENT");
+	first = printModifierHelper(first, _generic, "GENERIC");
     ipw.print(')');
   }
 
@@ -176,7 +178,7 @@ private void setup(
     ipw.print("TOPIC ");
     printName(topic,language);
     printModifiers(topic.isAbstract(), topic.isFinal(),
-      /* EXTENDED */false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
+      /* EXTENDED */false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false,/*GENERIC*/false);
 
 
     if (extending != null)
@@ -399,7 +401,7 @@ protected void printRenamedViewableRefs (View scope, ViewableAlias[] refs, Strin
     if(ec instanceof View){
     	_transient=((View)ec).isTransient();
     }
-    printModifiers (ec.isAbstract(), ec.isFinal(), extendingSameName, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/_transient);
+    printModifiers (ec.isAbstract(), ec.isFinal(), extendingSameName, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/_transient,/*GENERIC*/false);
 
 
     if ((extending != null) && !extendingSameName)
@@ -596,8 +598,9 @@ protected void printSelection(Container view, String language) {
 
     if (expr instanceof Constant.Text)
     {
+      String value = ((Constant.Text) expr).getValue();
       ipw.print ('"');
-      ipw.print (((Constant.Text) expr).getValue());
+      ipw.print (InterlisString.escapeSpecialChars(value));
       ipw.print ('"');
       return;
     }
@@ -1131,7 +1134,7 @@ protected void printSelection(Container view, String language) {
     
     printName(mu,language);
     
-    printModifiers(/*ABSTRACT*/false, mu.isFinal(),/*EXTENDED*/false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
+    printModifiers(/*ABSTRACT*/false, mu.isFinal(),/*EXTENDED*/false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false,/*GENERIC*/false);
 
     /* TODO ce 2002-05-07 handle EXTENDS in MetaDataUseDef
     MetaDataUseDef extending = (MetaDataUseDef) mu.getExtending();
@@ -1230,7 +1233,7 @@ protected void printSelection(Container view, String language) {
     }
 
 
-    printModifiers (u.isAbstract(), /* FINAL */ false, /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
+    printModifiers (u.isAbstract(), /* FINAL */ false, /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false,/*GENERIC*/false);
 
 
     if ((extending != null) && (extending != anyUnit) && (!(u instanceof DerivedUnit)))
@@ -1534,7 +1537,7 @@ protected void printSelection(Container view, String language) {
       printMetaValues(role,role.getMetaValues(), language, role.getScopedName());
       printName(role,language);
 	printModifiers(role.isAbstract(), role.isFinal(),
-	  role.isExtended(),role.isOrdered(),role.isExternal(),/*TRANSIENT*/false);
+	  role.isExtended(),role.isOrdered(),role.isExternal(),/*TRANSIENT*/false,/*GENERIC*/false);
 	String kind="";
 	switch(role.getKind()){
 	  case RoleDef.Kind.eASSOCIATE:
@@ -1608,7 +1611,7 @@ protected void printSelection(Container view, String language) {
 	}
     printName(attrib,language);
     printModifiers(attrib.isAbstract(), attrib.isFinal(),
-      /* EXTENDED */ attrib.getExtending() != null, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/attrib.isTransient());
+      /* EXTENDED */ attrib.getExtending() != null, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/attrib.isTransient(),/*GENERIC*/false);
 
 
     if (attrib instanceof LocalAttribute){
@@ -1659,7 +1662,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     printName(attrib,language);
 
     printModifiers(/* ABSTRACT */ false, /* FINAL */ false,
-      /* EXTENDED */ extending != null, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
+      /* EXTENDED */ extending != null, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false,/*GENERIC*/false);
 
 
     if ((extending == null)
@@ -1855,9 +1858,9 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
 	ipw.println ();
 	ipw.indent();
 	String issuer = getModelIssuer(mdef);
-    ipw.println("AT \""+issuer+"\"");
+    ipw.println("AT \"" + InterlisString.escapeSpecialChars(issuer) + "\"");
     String version = getModelVersion(mdef);
-    ipw.print("VERSION \""+version+"\"");
+    ipw.print("VERSION \"" + InterlisString.escapeSpecialChars(version) + "\"");
 	String expl = getModelVersionExpl(mdef);
 	if ((expl != null) && (expl.length() > 0))
 	{
@@ -1867,7 +1870,7 @@ public void printAttributeBasePath(Container scope, AttributeDef attrib,String l
     ipw.println("");
 	if (translationConfig!=null) {
         String translationText = "TRANSLATION OF " + mdef.getName() + " [\""
-                + mdef.getModelVersion() + "\"]";
+                + InterlisString.escapeSpecialChars(mdef.getModelVersion()) + "\"]";
         ipw.println(translationText);
 	}else {
 	    // TODO Translation
@@ -2015,13 +2018,18 @@ protected String getModelVersion(Model mdef) {
     if(dd.getType() instanceof TypeAlias && ((TypeAlias)dd.getType()).getAliasing()==td.INTERLIS.INTERLIS_1_DATE){
     	Domain dd2=((TypeAlias)dd.getType()).getAliasing();
         printModifiers (dd2.isAbstract(), dd2.isFinal(),
-      	      /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
+      	      /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false,/*GENERIC*/false);
 	    ipw.print(" = ");
 	    printType (scope, dd2.getType(),language, scopedNamePrefix);
         ipw.println(';');
     }else{
+        boolean generic = false;
+        if (dd.getType() instanceof AbstractCoordType) {
+            AbstractCoordType coordType = (AbstractCoordType) dd.getType();
+            generic = coordType.isGeneric();
+        }
         printModifiers (dd.isAbstract(), dd.isFinal(),
-        	      /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false);
+        	      /* EXTENDED */ false, /*ORDERED*/false,/*EXTERNAL*/false,/*TRANSIENT*/false, generic);
 
 
         	    if (extending != null)
@@ -2033,6 +2041,22 @@ protected String getModelVersion(Model mdef) {
 
         	    ipw.print(" = ");
         	    printType (scope, dd.getType(),language, scopedNamePrefix);
+
+                Iterator<DomainConstraint> iterator = dd.iteratorConstraints();
+                if (iterator.hasNext()) {
+                    ipw.print(" CONSTRAINTS ");
+                    boolean first = true;
+                    while (iterator.hasNext()) {
+                        DomainConstraint constraint = iterator.next();
+                        if (first) {
+                            first = false;
+                        } else {
+                            ipw.print(", ");
+                        }
+                        printConstraint(constraint, language);
+                    }
+                }
+
         	    if(dd.getType() instanceof StructuredUnitType){
         	        EhiLogger.logError("DOMAIN "+dd.getName()+": StructuredUnitType not supported by INTERLIS 2.3; replace by TextType or FormattedType/XMLDate");
         	        ipw.println("; !! Hint: replace by TextType or FormattedType/XMLDate");
@@ -2167,7 +2191,7 @@ protected String getModelVersion(Model mdef) {
             		sep=" ";
             	}
             	if(ft.getDefinedPrefix()!=null){
-            		ipw.print("\""+ft.getDefinedPrefix()+"\"");
+            		ipw.print("\"" + InterlisString.escapeSpecialChars(ft.getDefinedPrefix()) + "\"");
             		sep=" ";
             	}
             	while(baseAttri.hasNext()){
@@ -2205,7 +2229,7 @@ protected String getModelVersion(Model mdef) {
                     	}
                 	}
                 	if(baseAttr.getPostfix()!=null){
-                		ipw.print(" \""+baseAttr.getPostfix()+"\"");
+                		ipw.print(" \"" + InterlisString.escapeSpecialChars(baseAttr.getPostfix()) + "\"");
                 	}
             		sep=" ";
             	}
@@ -2513,9 +2537,9 @@ protected String getModelVersion(Model mdef) {
   }
 private void printFormatedTypeMinMax(FormattedType ft) {
 	ipw.print("\"");
-	ipw.print(ft.getDefinedMinimum());
+	ipw.print(InterlisString.escapeSpecialChars(ft.getDefinedMinimum()));
 	ipw.print("\" .. \"");
-	ipw.print(ft.getDefinedMaximum());
+	ipw.print(InterlisString.escapeSpecialChars(ft.getDefinedMaximum()));
 	ipw.print("\"");
 }
 

@@ -28,7 +28,7 @@ allprojects {
 	}
 }
 
-version '5.5.1'+System.getProperty('release','-SNAPSHOT')
+version '5.5.2'+System.getProperty('release','-SNAPSHOT')
 
 configurations {
 	scpAntTask
@@ -91,7 +91,7 @@ task usrdoc(type:Exec) {
 	def infile=new File(project.projectDir,'doc/ili2c.rst')
 	def outfile=new File('docs/ili2c.html')
 	inputs.file infile
-	outputs.file outfile
+	outputs.file new File(project.buildDir,'docs/ili2c.html')
 	doFirst{
 		new File(project.buildDir,'docs').mkdir()
 	}
@@ -192,6 +192,9 @@ uploadArchives {
 ant.taskdef(name: 'myscp',
 			classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
 			classpath: configurations.scpAntTask.asPath)
+ant.taskdef(name: 'mysshexec',
+			classname: 'org.apache.tools.ant.taskdefs.optional.ssh.SSHExec',
+			classpath: configurations.scpAntTask.asPath)
 
 task uploadBindist(dependsOn: bindist) {
 	doLast {
@@ -215,3 +218,20 @@ task uploadBindist(dependsOn: bindist) {
 	}
 }
 
+task uploadDoc(dependsOn: [usrdoc,ilidoc]) {
+	doLast {
+
+		ant.mysshexec(host: repos_host
+         ,username: repos_usr
+         ,password: repos_pwd
+         ,command: 'mkdir -p '+repos_dir+"/web/docs/ili2c/"+project.version)
+         
+		ant.myscp(password: repos_pwd,
+			todir: repos_usr+'@'+repos_host+':'+repos_dir+"/web/docs/ili2c/"+project.version){
+				fileset(dir: new File(project.buildDir,'docs') ) {
+					include(name: 'ili2c.html')
+					include(name: 'ilidoc.html')
+				}
+		}
+	}
+}

@@ -7,7 +7,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import ch.interlis.ili2c.CompilerTestHelper;
+import ch.interlis.ili2c.metamodel.Constraint;
 import ch.interlis.ili2c.metamodel.ContextDef;
+import ch.interlis.ili2c.metamodel.Domain;
+import ch.interlis.ili2c.metamodel.Model;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,6 +28,8 @@ import ch.interlis.ili2c.metamodel.TransferDescription;
 public class ILI24GeneratorTest {
     private static final String ILI_FILE = "test/data/interlis2generator/EnumOk24.ili";
     private static final String CONTEXT_ILI_FILE = "test/data/interlis2generator/Context.ili";
+    private static final String DOMAIN_ILI_FILE = "test/data/interlis2generator/Domain.ili";
+    private static final String STRING_ILI_FILE = "test/data/interlis2generator/String.ili";
     private static final String OUTPUT_ILI_FILE = "out.ili";
     @Test
     public void model() throws Exception {
@@ -177,6 +182,19 @@ public class ILI24GeneratorTest {
     }
 
     @Test
+    public void genericCoord() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(CONTEXT_ILI_FILE);
+        assertNotNull(td);
+        Domain domain = (Domain) td.getElement("ModelA.Coord2");
+
+        java.io.StringWriter syntaxBuffer = new java.io.StringWriter();
+        Interlis2Generator makeSyntax = Interlis2Generator.generateElements24(syntaxBuffer, td);
+        makeSyntax.printDomainDef(domain.getContainer(), domain, null);
+
+        Assert.assertEquals("Coord2 (GENERIC) = COORD NUMERIC, NUMERIC;", syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+    }
+
+    @Test
     public void context() {
         TransferDescription td = CompilerTestHelper.getTransferDescription(CONTEXT_ILI_FILE);
         assertNotNull(td);
@@ -200,5 +218,68 @@ public class ILI24GeneratorTest {
         makeSyntax.printContextSyntax(contextDef.getContainer(), contextDef);
 
         Assert.assertEquals("ModelA.Coord2 = ModelA.Coord2_CHLV03 OR ModelA.Coord2_CHLV95;", syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+    }
+
+    @Test
+    public void domainSingleConstraint() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(DOMAIN_ILI_FILE);
+        assertNotNull(td);
+        Domain domain = (Domain) td.getElement("ModelA.SingleConstraint");
+
+        java.io.StringWriter syntaxBuffer = new java.io.StringWriter();
+        Interlis2Generator makeSyntax = Interlis2Generator.generateElements24(syntaxBuffer,td);
+        makeSyntax.printDomainDef(domain.getContainer(), domain, null);
+
+        Assert.assertEquals("SingleConstraint = TEXT*30 CONSTRAINTS Values: THIS == \"SomeConstant\" OR THIS == \"OtherConstant\";", syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+    }
+
+    @Test
+    public void domainMultipleConstraints() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(DOMAIN_ILI_FILE);
+        assertNotNull(td);
+        Domain domain = (Domain) td.getElement("ModelA.MultipleConstraints");
+
+        java.io.StringWriter syntaxBuffer = new java.io.StringWriter();
+        Interlis2Generator makeSyntax = Interlis2Generator.generateElements24(syntaxBuffer,td);
+        makeSyntax.printDomainDef(domain.getContainer(), domain, null);
+
+        Assert.assertEquals("MultipleConstraints = TEXT*30 CONSTRAINTS Values: THIS == \"SomeConstant\" OR THIS == \"OtherConstant\", Length: INTERLIS.len(THIS) > 5;", syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+    }
+
+    @Test
+    public void stringEscapeSequencesModelVersion() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(STRING_ILI_FILE);
+        assertNotNull(td);
+
+        Model model = (Model) td.getElement("ModelA");
+        assertEquals("1.2", model.getModelVersion());
+    }
+
+    @Test
+    public void stringEscapeSequencesQuoteBackslash() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(STRING_ILI_FILE);
+        assertNotNull(td);
+
+        Constraint constraint = (Constraint) td.getElement("ModelA.TopicA.ClassA.quoteBackslash");
+
+        java.io.StringWriter syntaxBuffer = new java.io.StringWriter();
+        Interlis2Generator makeSyntax = Interlis2Generator.generateElements24(syntaxBuffer,td);
+        makeSyntax.printConstraint(constraint);
+
+        assertEquals("MANDATORY CONSTRAINT quoteBackslash: attrA <> \"\\\"\" AND attrA <> \"\\\\\";", syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
+    }
+
+    @Test
+    public void stringEscapeSequencesUnicode() {
+        TransferDescription td = CompilerTestHelper.getTransferDescription(STRING_ILI_FILE);
+        assertNotNull(td);
+
+        Constraint constraint = (Constraint) td.getElement("ModelA.TopicA.ClassA.unicode");
+
+        java.io.StringWriter syntaxBuffer = new java.io.StringWriter();
+        Interlis2Generator makeSyntax = Interlis2Generator.generateElements24(syntaxBuffer,td);
+        makeSyntax.printConstraint(constraint);
+
+        assertEquals("MANDATORY CONSTRAINT unicode: attrA <> \"\\u000a\" AND attrA <> \"\\u000d\";", syntaxBuffer.toString().replaceAll("\\s+", " ").trim());
     }
 }

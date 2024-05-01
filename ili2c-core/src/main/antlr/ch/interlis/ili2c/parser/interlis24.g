@@ -7344,6 +7344,7 @@ STRING
   : '"'!
     ( ESC | ~( '"' | '\\' ) )*
     '"'!
+    { setText(InterlisString.parseEscapeSequences($getText)); }
   ;
 
 
