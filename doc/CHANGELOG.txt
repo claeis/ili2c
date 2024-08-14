@@ -1,6 +1,7 @@
 ili2c 5.5.4 (2024-07-xx)
 ---------------------------
-- imd export: Subexpression export (#131) 
+- imd export: Subexpression export (#131)
+- imd16 export: local mandatory domain-types (#132)
 
 ili2c 5.5.3 (2024-05-01)
 ---------------------------

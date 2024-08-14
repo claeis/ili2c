@@ -734,12 +734,7 @@ public class Imd16Generator {
 					visitAttrLocalType(typeTid,type,attr,null); 
 					iomAttr.setType(typeTid.value);
 				}else{
-					if(alias.isMandatory()){
-						OutParam<String> typeTid=new OutParam<String>();
-						visitAttrLocalType(typeTid,domain.getType(),attr,domain.getScopedName(null)); 
-						iomAttr.setType(getTypeTid(type,attr,null));
-					}
-					else if(alias.getCardinality().getMaximum()>1){						
+					if(alias.getCardinality().getMaximum()>1){						
 						MultiValue iomMultiValue=new MultiValue(attr.getContainer().getScopedName(null)+"."+attr.getName()+"."+MVT_TYPE_NAME);
 						iomMultiValue.setName(MVT_TYPE_NAME);
 						iomMultiValue.setLTParent(getAttrTid(attr));
@@ -750,6 +745,10 @@ public class Imd16Generator {
 						iomMultiValue.setBaseType(domain.getScopedName(null));
 						out.write(new ObjectEvent(iomMultiValue));
 						iomAttr.setType(iomMultiValue.getobjectoid());
+					}else if(alias.isMandatory()){
+                        OutParam<String> typeTid=new OutParam<String>();
+                        visitAttrLocalType(typeTid,domain.getType(),attr,domain.getScopedName(null)); 
+                        iomAttr.setType(getTypeTid(type,attr,null));
 					}else{
 						iomAttr.setType(domain.getScopedName(null));
 					}
