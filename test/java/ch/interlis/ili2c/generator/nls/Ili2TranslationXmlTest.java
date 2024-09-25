@@ -113,17 +113,25 @@ public class Ili2TranslationXmlTest {
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
+		boolean de_found=false;
+        boolean fr_found=false;
 		for (TranslationElement ele : modelElements) {
 			if (ele.getScopedName() != null) {
-				if (ele.getScopedName().equals("EnumOkA.TopicA.METAOBJECT.dispName")) {
+				if (ele.getScopedName().equals("EnumOkA.TopicA.METAOBJECT.dispName_de")) {
 					assertEquals("Topic A", ele.getName_de());
-					assertEquals("Topic B", ele.getName_fr());
 					assertEquals(ElementType.METAATTRIBUTE, ele.getElementType());
-					return;
+			        de_found=true;
 				}
+                if (ele.getScopedName().equals("EnumOkA.TopicA.METAOBJECT.dispName_fr")) {
+                    assertEquals("Topic B", ele.getName_de());
+                    assertEquals(ElementType.METAATTRIBUTE, ele.getElementType());
+                    fr_found=true;
+                }
 			}
 		}
-		fail("METAATTRIBUTE can not be found!");
+		if(!de_found || !fr_found) {
+	        fail("METAATTRIBUTE can not be found!");
+		}
 	}
 	
 	/**
@@ -301,17 +309,25 @@ public class Ili2TranslationXmlTest {
 		// xml lesen
 		ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
 		
+        boolean de_found=false;
+        boolean fr_found=false;
 		for (TranslationElement ele : modelElements) {
 			if (ele.getScopedName() != null) {
-				if (ele.getScopedName().equals("EnumOkA.TopicA.ClassA.attrA.a2.METAOBJECT.dispName")) {
+				if (ele.getScopedName().equals("EnumOkA.TopicA.ClassA.attrA.a2.METAOBJECT.dispName_de")) {
 					assertEquals("a 2", ele.getName_de());
-					assertEquals("b 2", ele.getName_fr());
 					assertEquals(ElementType.METAATTRIBUTE, ele.getElementType());
-					return;
+                    de_found=true;
 				}
+                if (ele.getScopedName().equals("EnumOkA.TopicA.ClassA.attrA.a2.METAOBJECT.dispName_fr")) {
+                    assertEquals("b 2", ele.getName_de());
+                    assertEquals(ElementType.METAATTRIBUTE, ele.getElementType());
+                    fr_found=true;
+                }
 			}
 		}
-		fail("ENUMERATION ELEMENT METAATTRIBUTE can not be found!");
+        if(!de_found || !fr_found) {
+            fail("ENUMERATION ELEMENT METAATTRIBUTE can not be found!");
+        }
 	}
 
 	/**

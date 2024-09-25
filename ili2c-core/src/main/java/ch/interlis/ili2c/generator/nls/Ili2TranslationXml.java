@@ -42,7 +42,7 @@ import ch.interlis.ili2c.metamodel.View;
 
 public class Ili2TranslationXml {
 
-	private ModelElements elements = new ModelElements();
+	private java.util.Map<String,NlsModelElement> elements = new java.util.HashMap<String,NlsModelElement>();
 	public static final String METAOBJECT = ".METAOBJECT.";
 	public static final String FR = "fr";
 	public static final String IT = "it";
@@ -58,11 +58,42 @@ public class Ili2TranslationXml {
 	 */
 	public ModelElements convertTransferDescription2ModelElements(TransferDescription td) {
 
-		visitTransferDescription(td);
-		return elements;
+        Model models[]=td.getModelsFromLastFile();
+        List<NlsModelElement> nlsEles=convertModels(models);
+        ModelElements ret=new ModelElements();
+        for(NlsModelElement nlsEle:nlsEles) {
+            {
+                TranslationElement ele=new TranslationElement();
+                ele.setScopedName(nlsEle.getScopedName());
+                ele.setElementType(nlsEle.getElementType());
+                ele.setName_de(makeNotNull(nlsEle.getName(DE)));
+                ele.setDocumentation_de(makeNotNull(nlsEle.getDocumentation(DE)));
+                ele.setName_it(makeNotNull(nlsEle.getName(IT)));
+                ele.setDocumentation_it(makeNotNull(nlsEle.getDocumentation(IT)));
+                ele.setName_fr(makeNotNull(nlsEle.getName(FR)));
+                ele.setDocumentation_fr(makeNotNull(nlsEle.getDocumentation(FR)));
+                ele.setName_en(makeNotNull(nlsEle.getName(EN)));
+                ele.setDocumentation_en(makeNotNull(nlsEle.getDocumentation(EN)));
+                ret.add(ele);
+            }
+            List<String> metaAttrNames=nlsEle.getMetaAttrs();
+            for(String metaAttrName:metaAttrNames) {
+                String metaAttrValue=nlsEle.getMetaAttr(metaAttrName);
+                if(metaAttrValue!=null) {
+                    TranslationElement ele=new TranslationElement();
+                    ele.setScopedName(getMetaAttributeScopedName(nlsEle.getScopedName(),metaAttrName));
+                    ele.setElementType(ElementType.METAATTRIBUTE);
+                    ele.setName_de(metaAttrValue);
+                    ret.add(ele);
+                }
+            }
+        }
+		return ret;
 	}
-	
-	/**
+    private String makeNotNull(String val) {
+        return val==null?"":val;
+    }
+    /**
 	 * it writes Model Elements as a XML File
 	 * 
 	 * @param eles Structure of the XML
@@ -76,96 +107,43 @@ public class Ili2TranslationXml {
 		ms.marshal(eles, fileName);
 	}
 
-	/**
-	 * it reads and filter from the incoming td data
-	 * 
-	 * @param td all ili models
-	 * @param file read only models from this file
-	 */
-	private void visitTransferDescription(TransferDescription td) {
-	    Model models[]=td.getModelsFromLastFile();
-	    HashSet<Model> visitedModels=new HashSet<Model>();
-	    ArrayList<Model> mostSpecificModels=new ArrayList<Model>();
-	    for(int modeli=models.length-1;modeli>=0;modeli--) {
-	        Model model=models[modeli];
-	        if(!visitedModels.contains(model)) {
-	            visitedModels.add(model);
-	            mostSpecificModels.add(0,model);
-	            Model translatedModel=(Model)model.getTranslationOf();
-	            while(translatedModel!=null) {
-	                visitedModels.add(translatedModel);
-	                translatedModel=(Model)translatedModel.getTranslationOf();
-	            }
-	        }
-	    }
-		for(Model model:mostSpecificModels) {
+    public List<NlsModelElement> convertModels(Model models[]) {
+        HashSet<Model> visitedModels=new HashSet<Model>();
+        ArrayList<Model> mostSpecificModels=new ArrayList<Model>();
+        for(int modeli=models.length-1;modeli>=0;modeli--) {
+            Model model=models[modeli];
+            if(!visitedModels.contains(model)) {
+                visitedModels.add(model);
+                mostSpecificModels.add(0,model);
+                Model translatedModel=(Model)model.getTranslationOf();
+                while(translatedModel!=null) {
+                    visitedModels.add(translatedModel);
+                    translatedModel=(Model)translatedModel.getTranslationOf();
+                }
+            }
+        }
+        for(Model model:mostSpecificModels) {
 
-			TranslationElement text = new TranslationElement();
-			allFieldsWithSetTOEmpty(text);
-			text.setScopedName(getElementInRootLanguage(model).getScopedName());
+            NlsModelElement text = new NlsModelElement();
+            text.setScopedName(getElementInRootLanguage(model).getScopedName());
+            text.setElementType(getElementType(model));
+            setModelElementAllLanguages(text, model);
+            elements.put(text.getScopedName(),text);
 
-			text.setElementType(getElementType(model));
-			setModelElementAllLanguages(text, model);
-			addTranslationElement(text);
-
-			visitContainer(model);
-		}
-	}
-
-	/**
-	 * it shows whether the model is translated
-	 * 
-	 * @param model related model Element
-	 * @return If the model has a translation then it return the name of the
-	 *         translated model name otherwise it return empty String
-	 */
-	private String hasATranslation(Model model) {
-
-		if (model.getTranslationOf() != null) {
-			return model.getTranslationOf().getName();
-		}
-		return "";
-	}
-
-	/**
-	 * the file path of the model is checking whether the given file path matches.
-	 * 
-	 * @param model related model element
-	 * @param file path of the source file
-	 * @return it returns true if the both file path matches otherwise it returns false
-	 */
-	private boolean controlOfTheFileName(Model model, String file) {
-
-		if (model.getFileName() == null) {
-			return true;
-		}
-
-		File fileNameFromModel = new File(model.getFileName());
-		File fileNameFromIli = new File(file);
-		if (!fileNameFromModel.getName().equals(fileNameFromIli.getName())) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * in the beginning, it makes all fields of the Structure null 
-	 * 
-	 * @param text Structure of the data XML
-	 */
-	private void allFieldsWithSetTOEmpty(TranslationElement text) {
-		text.setDocumentation_de("");
-		text.setDocumentation_en("");
-		text.setDocumentation_fr("");
-		text.setDocumentation_it("");
-
-		text.setName_de("");
-		text.setName_en("");
-		text.setName_fr("");
-		text.setName_it("");
-
-		text.setScopedName("");
-	}
+            visitContainer(model);
+        }
+        
+        java.util.List<NlsModelElement> ret=new java.util.ArrayList<NlsModelElement>();
+        java.util.List<String> iliNames=new java.util.ArrayList<String>();
+        iliNames.addAll(elements.keySet());
+        java.util.Collections.sort(iliNames);
+        for(String iliName:iliNames) {
+            NlsModelElement nlsEle=elements.get(iliName);
+            ret.add(nlsEle);
+        }
+        
+        return ret;
+    }
 
 	/**
 	 * it returns as a String the name of the Element
@@ -257,21 +235,12 @@ public class Ili2TranslationXml {
 	}
 
 	/**
-	 * Insert the Structure into the ArrayList
-	 * 
-	 * @param text Structure of the XML with data
-	 */
-	private void addTranslationElement(TranslationElement text) {
-		elements.add(text);
-	}
-
-	/**
 	 * inserts model element's data into the structure with all Languages
 	 * 
 	 * @param translationElement Structure of the XML
 	 * @param modelElement related model Element
 	 */
-	private void setModelElementAllLanguages(TranslationElement translationElement, Element modelElement) {
+	private void setModelElementAllLanguages(NlsModelElement translationElement, Element modelElement) {
 		String language = getLanguage(modelElement);
 		setModelElementOneLanguage(translationElement, modelElement, language);
 		Element baseLanguageElement = modelElement.getTranslationOf();
@@ -304,45 +273,14 @@ public class Ili2TranslationXml {
 	 * @param model related model Element
 	 * @param language Language of the Element
 	 */
-	private void setModelElementOneLanguage(TranslationElement text, Element model, String language) {
-		if (language == null) {
-			if (model.getName() != null) {
-				text.setName_de(model.getName());
-			}
-			if (model.getDocumentation() != null) {
-				text.setDocumentation_de(model.getDocumentation());
-			}
-		} else {
-			if (language.equals(Ili2TranslationXml.DE)) {
-				if (model.getName() != null) {
-					text.setName_de(model.getName());
-				}
-				if (model.getDocumentation() != null) {
-					text.setDocumentation_de(model.getDocumentation());
-				}
-			} else if (language.equals(Ili2TranslationXml.FR)) {
-				if (model.getName() != null) {
-					text.setName_fr(model.getName());
-				}
-				if (model.getDocumentation() != null) {
-					text.setDocumentation_fr(model.getDocumentation());
-				}
-			} else if (language.equals(Ili2TranslationXml.IT)) {
-				if (model.getName() != null) {
-					text.setName_it(model.getName());
-				}
-				if (model.getDocumentation() != null) {
-					text.setDocumentation_it(model.getDocumentation());
-				}
-			} else if (language.equals(Ili2TranslationXml.EN)) {
-				if (model.getName() != null) {
-					text.setName_en(model.getName());
-				}
-				if (model.getDocumentation() != null) {
-					text.setDocumentation_en(model.getDocumentation());
-				}
-			}
-		}
+	private void setModelElementOneLanguage(NlsModelElement text, Element model, String language) {
+        if (model.getName() != null) {
+            text.setName(language,model.getName());
+        }
+        if (model.getDocumentation() != null) {
+            text.setDocumentation(language,model.getDocumentation());
+        }
+        visitMetaAttributes(text,model);
 	}
 
 	/**
@@ -353,49 +291,21 @@ public class Ili2TranslationXml {
 	 * @param Name Name of the Element
 	 * @param Language Language of the Element
 	 */
-	private void setTranslationElementName(TranslationElement text, String name, String language) {
-		if (language == null) {
-			text.setName_de(name);
-		} else {
-			if (language.equals(Ili2TranslationXml.DE)) {
-				text.setName_de(name);
-			} else if (language.equals(Ili2TranslationXml.FR)) {
-				text.setName_fr(name);
-			} else if (language.equals(Ili2TranslationXml.IT)) {
-				text.setName_it(name);
-			} else if (language.equals(Ili2TranslationXml.EN)) {
-				text.setName_en(name);
-			}
-		}
+	private void setTranslationElementName(NlsModelElement text, String name, String language) {
+        text.setName(language,name);
 	}
 
 	/**
 	 * converts an Enumeration.Element to a TranslationElement.
 	 * 
-	 * @param text Structure of the XML
+	 * @param nlsEle Structure of the XML
 	 * @param element Enumeration element
 	 * @param language Language of the Element
 	 */
-	private void convertEnumerationElement(TranslationElement text, ch.interlis.ili2c.metamodel.Enumeration.Element element,
+	private void visitEnumerationElement(NlsModelElement nlsEle, ch.interlis.ili2c.metamodel.Enumeration.Element element,
 			String language) {
-		if (language == null) {
-			text.setName_de(element.getName());
-			text.setDocumentation_de(element.getDocumentation());
-		} else {
-			if (language.equals(Ili2TranslationXml.DE)) {
-				text.setName_de(element.getName());
-				text.setDocumentation_de(element.getDocumentation());
-			} else if (language.equals(Ili2TranslationXml.FR)) {
-				text.setName_fr(element.getName());
-				text.setDocumentation_fr(element.getDocumentation());
-			} else if (language.equals(Ili2TranslationXml.IT)) {
-				text.setName_it(element.getName());
-				text.setDocumentation_de(element.getDocumentation());
-			} else if (language.equals(Ili2TranslationXml.EN)) {
-				text.setName_en(element.getName());
-				text.setDocumentation_en(element.getDocumentation());
-			}
-		}
+        nlsEle.setName(language,element.getName());
+        nlsEle.setDocumentation(language,element.getDocumentation());
 	}
 
 	/**
@@ -407,12 +317,11 @@ public class Ili2TranslationXml {
 		Iterator<Element> funcI = model.iterator();
 		while (funcI.hasNext()) {
 			Element ele = funcI.next();
-			TranslationElement dto = new TranslationElement();
+			NlsModelElement dto = new NlsModelElement();
 			dto.setScopedName(getElementInRootLanguage(ele).getScopedName());
 			setModelElementAllLanguages(dto, ele);
 			dto.setElementType(getElementType(ele));
-			visitMetaAttributes(ele);
-			addTranslationElement(dto);
+			elements.put(dto.getScopedName(),dto);
 
 			if (ele instanceof Container) {
 				visitContainer((Container) ele);
@@ -421,13 +330,13 @@ public class Ili2TranslationXml {
 				// If exist
 				if (attr.getDomain() instanceof EnumerationType) {
 					String text = getElementInRootLanguage(ele).getScopedName();
-					prepareAllEnumaration((EnumerationType) attr.getDomain(), text, attr);
+					visitEnumarationType((EnumerationType) attr.getDomain(), text, attr);
 				}
 			} else if (ele instanceof Domain) {
 				Domain domain = (Domain) ele;
 				if (domain.getType() instanceof EnumerationType) {
 					String text = getElementInRootLanguage(ele).getScopedName();
-					prepareAllEnumaration((EnumerationType) domain.getType(), text, domain);
+					visitEnumarationType((EnumerationType) domain.getType(), text, domain);
 				}
 			} else if (ele instanceof Function) {
 			    Function srcFunction = (Function) ele;
@@ -435,7 +344,7 @@ public class Ili2TranslationXml {
                 final String srcFunctionScopedName = getElementInRootLanguage(srcFunction).getScopedName();
 			    FormalArgument[] srcArguments = srcFunction.getArguments();
 			    for (int i = 0; i < srcArguments.length; i++) {
-	                TranslationElement translationElement = new TranslationElement();
+	                NlsModelElement translationElement = new NlsModelElement();
                     translationElement.setScopedName(srcFunctionScopedName + "." + getElementInRootLanguage(srcArguments[i]).getName());
                     translationElement.setElementType(getElementType(srcArguments[i]));
                     setModelElementOneLanguage(translationElement, srcArguments[i], srcEleLanguage);
@@ -447,34 +356,28 @@ public class Ili2TranslationXml {
                         setModelElementOneLanguage(translationElement, baseLanguageArguments[i], getLanguage(baseLanguageElement));
                         baseLanguageElement = baseLanguageFunction.getTranslationOf();
 			        }
-			        addTranslationElement(translationElement);
+			        elements.put(translationElement.getScopedName(),translationElement);
 			    }
 			}
 		}
 
 	}
 
-	/**
-	 * All Meta Values are assigned into the related fields
-	 * 
-	 * @param Related Model Element
-	 */
-	private void visitMetaAttributes(Element ele) {
-		String eleScopedName = getElementInRootLanguage(ele).getScopedName();
-		for (String metaAttrName : ele.getMetaValues().getValues()) {
-			String metaAttrScopedName = getMetaAttributeScopedName(eleScopedName, metaAttrName);
-			TranslationElement translationElement = new TranslationElement();
-			translationElement.setElementType(ElementType.METAATTRIBUTE);
-			translationElement.setScopedName(metaAttrScopedName);
-			while (ele != null) {
-				String language = getLanguage(ele);
-				String metaAttrValue = ele.getMetaValue(metaAttrName);
-				setTranslationElementName(translationElement, metaAttrValue, language);
-				ele = ele.getTranslationOf();
-			}
-			addTranslationElement(translationElement);
-		}
-	}
+    private void visitMetaAttributes(NlsModelElement nlsEle,Element ele) {
+        for (String metaAttrName : ele.getMetaValues().getValues()) {
+            String metaAttrValue = ele.getMetaValue(metaAttrName);
+            nlsEle.setMetaAttr(metaAttrName,metaAttrValue);
+        }
+    }
+    private NlsModelElement getNlsModelElement(String scopedName) {
+        if(elements.containsKey(scopedName)) {
+            return elements.get(scopedName);
+        }
+        NlsModelElement nlsEle=new NlsModelElement();
+        nlsEle.setScopedName(scopedName);
+        elements.put(nlsEle.getScopedName(),nlsEle);
+        return nlsEle;
+    }
 
 	/**
 	 * it gives return, ScopedName of the Meta Attribute
@@ -483,7 +386,7 @@ public class Ili2TranslationXml {
 	 * @param metaAttrName value of the metaAttribute
 	 * @return it returns the full scoped name of the metaAttribute
 	 */
-	private String getMetaAttributeScopedName(String eleScopedName, String metaAttrName) {
+	public static String getMetaAttributeScopedName(String eleScopedName, String metaAttrName) {
 		return eleScopedName + Ili2TranslationXml.METAOBJECT + metaAttrName;
 	}
 	
@@ -492,11 +395,11 @@ public class Ili2TranslationXml {
 	 * 
 	 * @param et Related Enumeration Elements
 	 * @param scopedNamePrefix Scope Name
-	 * @param modelElement Model Element
+	 * @param domainOrAttr Model Element
 	 */
-	private void prepareAllEnumaration(EnumerationType et, String scopedNamePrefix, Element modelElement) {
+	private void visitEnumarationType(EnumerationType et, String scopedNamePrefix, Element domainOrAttr) {
 		Enumeration enumeration = et.getEnumeration();
-		printAllEnumaration(enumeration, scopedNamePrefix, modelElement);
+		visitEnumaration(enumeration, scopedNamePrefix, domainOrAttr);
 	}
 
 	/**
@@ -504,71 +407,46 @@ public class Ili2TranslationXml {
 	 * 
 	 * @param enumeration Related Enumeration Elements
 	 * @param scopedNamePrefix Scope Name
-	 * @param modelEle Model Element
+	 * @param domainOrAttr Model Element
 	 */
-	private void printAllEnumaration(Enumeration enumeration, String scopedNamePrefix, Element modelEle) {
+	private void visitEnumaration(Enumeration enumeration, String scopedNamePrefix, Element domainOrAttr) {
 		Iterator<ch.interlis.ili2c.metamodel.Enumeration.Element> enumarationIterator = enumeration.getElements();
 
 		while (enumarationIterator.hasNext()) {
 			Enumeration.Element enumEle = enumarationIterator.next();
-			TranslationElement text = new TranslationElement();
+			NlsModelElement nlsEle = new NlsModelElement();
 
 			// ScopedName
 			String scopedName = scopedNamePrefix + "." + getEnumerationElementInRootLanguage(enumEle).getName();
-			text.setScopedName(scopedName);
+			nlsEle.setScopedName(scopedName);
 
-			String language = getLanguage(modelEle);
-			convertEnumerationElement(text, enumEle, language);
+			String language = getLanguage(domainOrAttr);
+			visitEnumerationElement(nlsEle, enumEle, language);
+            visitEnumerationElementMetaAttributes(nlsEle,enumEle);
 			Enumeration.Element baseLanguageElement = enumEle.getTranslationOf();
-			Element baseLanguageModelElement = modelEle.getTranslationOf();
+			Element baseLanguageModelElement = domainOrAttr.getTranslationOf();
 			while (baseLanguageElement != null) {
 				String baseLanguage = getLanguage(baseLanguageModelElement);
-				convertEnumerationElement(text, baseLanguageElement, baseLanguage);
+				visitEnumerationElement(nlsEle, baseLanguageElement, baseLanguage);
+	            visitEnumerationElementMetaAttributes(nlsEle,baseLanguageElement);
 				baseLanguageElement = baseLanguageElement.getTranslationOf();
 				baseLanguageModelElement = baseLanguageModelElement.getTranslationOf();
 			}
 
-			text.setElementType(getElementType(enumEle));
-			visitEnumerationElementMetaAttributes(enumEle, scopedName, modelEle);
-			addTranslationElement(text);
+			nlsEle.setElementType(getElementType(enumEle));
+			elements.put(nlsEle.getScopedName(),nlsEle);
 			if (enumEle.getSubEnumeration() != null) {
-				printAllEnumaration(enumEle.getSubEnumeration(), scopedName, modelEle);
+				visitEnumaration(enumEle.getSubEnumeration(), scopedName, domainOrAttr);
 			}
 		}
 	}
 
-	/**
-	 * Meta values are inserted into the XML file according to language
-	 * 
-	 * @param ele Related All Enumeration Element
-	 * @param scopedName Scope Name
-	 * @param modelEle Model Element
-	 */
-	private void visitEnumerationElementMetaAttributes(ch.interlis.ili2c.metamodel.Enumeration.Element ele, String scopedName,
-			Element modelEle) {
-		for (String metaAttrName : ele.getMetaValues().getValues()) {
-			String metaAttrScopedName = getMetaAttributeScopedName(scopedName, metaAttrName);
-			TranslationElement translationElement = new TranslationElement();
-			translationElement.setElementType(ElementType.METAATTRIBUTE);
-			translationElement.setScopedName(metaAttrScopedName);
-
-			String metaAttrValue = ele.getMetaValues().getValue(metaAttrName);
-			String language = getLanguage(modelEle);
-			setTranslationElementName(translationElement, metaAttrValue, language);
-
-			Element baseLanguageModelElement = modelEle.getTranslationOf();
-			Enumeration.Element baseLanguageElement = ele.getTranslationOf();
-			while (baseLanguageElement != null) {
-				String langu = getLanguage(baseLanguageModelElement);
-				String metaValue = baseLanguageElement.getMetaValues().getValue(metaAttrName);
-				setTranslationElementName(translationElement, metaValue, langu);
-				baseLanguageElement = baseLanguageElement.getTranslationOf();
-				baseLanguageModelElement = baseLanguageModelElement.getTranslationOf();
-			}
-
-			addTranslationElement(translationElement);
-		}
-	}
+	private void visitEnumerationElementMetaAttributes(NlsModelElement nlsEle,ch.interlis.ili2c.metamodel.Enumeration.Element ele) {
+        for (String metaAttrName : ele.getMetaValues().getValues()) {
+            String metaAttrValue = ele.getMetaValues().getValue(metaAttrName);
+            nlsEle.setMetaAttr(metaAttrName,metaAttrValue);
+        }
+    }
 
 	/**
 	 * check if element contains a root language.

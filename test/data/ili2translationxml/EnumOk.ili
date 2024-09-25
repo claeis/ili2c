@@ -35,7 +35,7 @@ CONTRACTED MODEL EnumOkA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "
 
     CubicMeterPerSecond [m3secA] = (Units.m3 / INTERLIS.s);
 	
-	!!@ dispName="Topic A"
+	!!@ dispName_de="Topic A"
 	TOPIC TopicA =
 	
 		STRUCTURE StructureA =
@@ -55,7 +55,7 @@ CONTRACTED MODEL EnumOkA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "
 			/** Das ist Dokumentation in DE */
 			attrA : (a1,
 				/** enum docu zu a2 */
-				!!@ dispName="a 2"
+				!!@ dispName_de="a 2"
 				a2(a21,a22));
 			angleA : CoordSys.Angle_DMS;
 			MANDATORY CONSTRAINT DEFINED(attrA);
@@ -132,7 +132,7 @@ TRANSLATION OF EnumOkA [ "1"]
 
     CubicMeterPerSecondB [m3secB] = (Units.m3 / INTERLIS.s);
 
-	!!@ dispName="Topic B"
+	!!@ dispName_fr="Topic B"
 	TOPIC TopicB =
 		STRUCTURE StructureB =
 		END StructureB;
@@ -151,7 +151,7 @@ TRANSLATION OF EnumOkA [ "1"]
 		/** Das ist Dokumentation in FR */
 			attrB : (b1,
 			/** enum docu zu b2 */
-			!!@ dispName="b 2"
+			!!@ dispName_fr="b 2"
 			b2(b21,b22));
 			angleB : CoordSys.Angle_DMS;
 			MANDATORY CONSTRAINT DEFINED(attrB);
