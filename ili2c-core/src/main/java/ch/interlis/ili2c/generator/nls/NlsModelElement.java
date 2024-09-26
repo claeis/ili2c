@@ -1,5 +1,7 @@
 package ch.interlis.ili2c.generator.nls;
 
+import java.util.Comparator;
+
 public class NlsModelElement {
 	private String scopedName;
 	private String elementType;
@@ -11,19 +13,40 @@ public class NlsModelElement {
         langs.addAll(name.keySet());
         langs.addAll(documentation.keySet());
         java.util.List<String> ret=new java.util.ArrayList<String>(langs);
-        java.util.Collections.sort(ret);
+        java.util.Collections.sort(ret,new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                if(o1==o2) {
+                    return 0;
+                }
+                if(o1==null) {
+                    return -1;
+                }
+                if(o2==null) {
+                    return 1;
+                }
+                return o1.compareTo(o2);
+            }
+            
+        });
         return ret;
     }
     public String getScopedName() {
         return scopedName;
     }
     public void setScopedName(String scopedName) {
+        if(scopedName==null) {
+            throw new IllegalArgumentException();
+        }
         this.scopedName = scopedName;
     }
     public String getElementType() {
         return elementType;
     }
     public void setElementType(String elementType) {
+        if(elementType==null) {
+            throw new IllegalArgumentException();
+        }
         this.elementType = elementType;
     }
     public String getName(String lang) {
@@ -49,6 +72,9 @@ public class NlsModelElement {
         return metaAttr.get(attrName);
     }
     public void setMetaAttr(String attrName,String attrValue) {
+        if(attrName==null) {
+            throw new IllegalArgumentException();
+        }
         this.metaAttr.put(attrName,attrValue);
     }
 }
