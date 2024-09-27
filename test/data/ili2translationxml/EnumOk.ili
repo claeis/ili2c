@@ -1,90 +1,90 @@
 INTERLIS 2.3;
 
 /** Das ist Dokumentation zum Modell in DE */
-CONTRACTED MODEL EnumOkA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+CONTRACTED MODEL EnumOk_DE (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
   IMPORTS Units;
   IMPORTS CoordSys;
 
-  REFSYSTEM BASKET BCoordSysA ~ CoordSys.CoordsysTopic
+  REFSYSTEM BASKET BCoordSys_DE ~ CoordSys.CoordsysTopic
     OBJECTS OF GeoCartesian2D: CHLV95;
 
-  FUNCTION FunctionA(argA:BOOLEAN):BOOLEAN;
+  FUNCTION Function_DE(arg_DE:BOOLEAN):BOOLEAN;
 
-  STRUCTURE Klothoide EXTENDS INTERLIS.LineSegment=
+  STRUCTURE Klothoide_DE EXTENDS INTERLIS.LineSegment=
     a : 0.0 .. 10.0;
-  END Klothoide;
+  END Klothoide_DE;
   
   LINE FORM
-    LineFormA : Klothoide;
+    LineForm_DE : Klothoide_DE;
 
   DOMAIN
-  Coord2 = COORD
+  Coord2_DE = COORD
       2460000.000 .. 2870000.000 [INTERLIS.m] {CHLV95[1]},
       1045000.000 .. 1310000.000 [INTERLIS.m] {CHLV95[2]},
       ROTATION 2 -> 1;
     
-  Gebietseinteilung = AREA WITH (ARCS, STRAIGHTS, LineFormA) VERTEX Coord2
+  Gebietseinteilung_DE = AREA WITH (ARCS, STRAIGHTS, LineForm_DE) VERTEX Coord2_DE
        WITHOUT OVERLAPS > 0.05;
 
-  STRUCTURE LocalisedUriDE =
+  STRUCTURE LocalisedUri_DE =
     Text : MANDATORY INTERLIS.URI;
-  END LocalisedUriDE;
+  END LocalisedUri_DE;
 
 
   UNIT
 
-    CubicMeterPerSecond [m3secA] = (Units.m3 / INTERLIS.s);
+    CubicMeterPerSecond_DE [m3sec_DE] = (Units.m3 / INTERLIS.s);
 	
-	!!@ dispName_de="Topic A"
-	TOPIC TopicA =
+	!!@ dispName_de="Topic DE"
+	TOPIC Topic_DE =
 	
-		STRUCTURE StructureA =
-		END StructureA;
+		STRUCTURE Structure_DE =
+		END Structure_DE;
 
-    	CLASS Dokument =
-    		Titel : MANDATORY TEXT*80;
-    		Web : LocalisedUriDE;
-    	END Dokument;
+    	CLASS Dokument_DE =
+    		Titel_DE : MANDATORY TEXT*80;
+    		Web_DE : LocalisedUri_DE;
+    	END Dokument_DE;
 
-    	CLASS Rechtsvorschrift EXTENDS Dokument =
-		END Rechtsvorschrift;
+    	CLASS Rechtsvorschrift_DE EXTENDS Dokument_DE =
+		END Rechtsvorschrift_DE;
 	
 		/** Das ist CLASS Dokumentation in DE */
-		CLASS ClassA =
-			geomA : Coord2;
+		CLASS Class_DE =
+			geom_DE : Coord2_DE;
 			/** Das ist Dokumentation in DE */
-			attrA : (a1,
+			attr_DE : (a1_DE,
 				/** enum docu zu a2 */
 				!!@ dispName_de="a 2"
-				a2(a21,a22));
-			angleA : CoordSys.Angle_DMS;
-			MANDATORY CONSTRAINT DEFINED(attrA);
-			!!@ name=UniqueConstraintA
-			UNIQUE attrA;
-		END ClassA;
+				a2_DE(a21_DE,a22_DE));
+			angle_DE : CoordSys.Angle_DMS;
+			MANDATORY CONSTRAINT DEFINED(attr_DE);
+			!!@ name=UniqueConstraint_DE
+			UNIQUE attr_DE;
+		END Class_DE;
 		
 		ASSOCIATION =
-			roleA1 -- ClassA;
-			roleA2 -- ClassA;
-			MANDATORY CONSTRAINT DEFINED(roleA1->attrA);
+			role1_DE -- Class_DE;
+			role2_DE -- Class_DE;
+			MANDATORY CONSTRAINT DEFINED(role1_DE->attr_DE);
 		END;
 
-		VIEW ClassA_V
-    		PROJECTION OF A~ClassA;
+		VIEW Class_V_DE
+    		PROJECTION OF A~Class_DE;
     		=
     		ALL OF A;
-    	END ClassA_V;
+    	END Class_V_DE;
 		
-		CLASS SymbolA EXTENDS INTERLIS.SIGN =
+		CLASS Symbol_DE EXTENDS INTERLIS.SIGN =
 			PARAMETER
-				PosA: MANDATORY Coord2;
-		END SymbolA;
-	END TopicA;
+				Pos_DE: MANDATORY Coord2_DE;
+		END Symbol_DE;
+	END Topic_DE;
 
-	TOPIC GrafikA =
-	DEPENDS ON TopicA;
-		SIGN BASKET BTopicA ~ TopicA
-			OBJECTS OF SymbolA: Punktsignatur;
+	TOPIC Grafik_DE =
+	DEPENDS ON Topic_DE;
+		SIGN BASKET BTopic_DE ~ Topic_DE
+			OBJECTS OF Symbol_DE: Punktsignatur;
 /*
 		GRAPHIC PunktGrafikA BASED ON EnumOkA.TopicA.ClassA =
 		SymbolA OF EnumOkA.TopicA.SymbolA: (
@@ -93,94 +93,94 @@ CONTRACTED MODEL EnumOkA (de) AT "http://www.interlis.ch/ili2c/tests/" VERSION "
 		);
 		END PunktGrafikA;
 */
-	END GrafikA;
+	END Grafik_DE;
 
-END EnumOkA.
+END EnumOk_DE.
 
 /** Das ist Dokumentation zum Modell in FR */
-CONTRACTED MODEL EnumOkB (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
-TRANSLATION OF EnumOkA [ "1"]
+CONTRACTED MODEL EnumOk_FR (fr) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF EnumOk_DE [ "1"]
 =
   IMPORTS Units;
   IMPORTS CoordSys;
 
-  REFSYSTEM BASKET BCoordSysB ~ CoordSys.CoordsysTopic
+  REFSYSTEM BASKET BCoordSys_FR ~ CoordSys.CoordsysTopic
     OBJECTS OF GeoCartesian2D: CHLV95;
 
-  FUNCTION FunctionB(argB:BOOLEAN):BOOLEAN;
+  FUNCTION Function_FR(arg_FR:BOOLEAN):BOOLEAN;
 
-  STRUCTURE KlothoideB EXTENDS INTERLIS.LineSegment=
-    aB : 0.0 .. 10.0;
-  END KlothoideB;
+  STRUCTURE Klothoide_FR EXTENDS INTERLIS.LineSegment=
+    a_FR : 0.0 .. 10.0;
+  END Klothoide_FR;
   
   LINE FORM
-    LineFormB : KlothoideB;
+    LineForm_FR : Klothoide_FR;
 
   DOMAIN
-  Coord2B = COORD
+  Coord2_FR = COORD
       2460000.000 .. 2870000.000 [INTERLIS.m] {CHLV95[1]},
       1045000.000 .. 1310000.000 [INTERLIS.m] {CHLV95[2]},
       ROTATION 2 -> 1;
-    SurfacePartition = AREA WITH (ARCS, STRAIGHTS,LineFormB) VERTEX Coord2B
+    SurfacePartition_FR = AREA WITH (ARCS, STRAIGHTS,LineForm_FR) VERTEX Coord2_FR
        WITHOUT OVERLAPS > 0.05;
 
-  STRUCTURE LocalisedUriFR =
+  STRUCTURE LocalisedUri_FR =
     Text : MANDATORY INTERLIS.URI;
-  END LocalisedUriFR;
+  END LocalisedUri_FR;
 
   UNIT
 
-    CubicMeterPerSecondB [m3secB] = (Units.m3 / INTERLIS.s);
+    CubicMeterPerSecond_FR [m3sec_FR] = (Units.m3 / INTERLIS.s);
 
-	!!@ dispName_fr="Topic B"
-	TOPIC TopicB =
-		STRUCTURE StructureB =
-		END StructureB;
+	!!@ dispName_fr="Topic FR"
+	TOPIC Topic_FR =
+		STRUCTURE Structure_FR =
+		END Structure_FR;
 
-    	CLASS Document =
-      	  Titre : MANDATORY TEXT*80;
-      	  WebB : LocalisedUriFR;
-    	END Document;
+    	CLASS Document_FR =
+      	  Titre_FR : MANDATORY TEXT*80;
+      	  Web_FR : LocalisedUri_FR;
+    	END Document_FR;
 
-    	CLASS DispositionJuridique EXTENDS Document =
-		END DispositionJuridique;
+    	CLASS DispositionJuridique_FR EXTENDS Document_FR =
+		END DispositionJuridique_FR;
 
 		/** Das ist CLASS Dokumentation in FR */
-		CLASS ClassB =
-			geomB : Coord2B;
+		CLASS Class_FR =
+			geom_FR : Coord2_FR;
 		/** Das ist Dokumentation in FR */
-			attrB : (b1,
+			attr_FR : (b1_FR,
 			/** enum docu zu b2 */
 			!!@ dispName_fr="b 2"
-			b2(b21,b22));
-			angleB : CoordSys.Angle_DMS;
-			MANDATORY CONSTRAINT DEFINED(attrB);
-			!!@ name=UniqueConstraintB
-			UNIQUE attrB;
-		END ClassB;
+			b2_FR(b21_FR,b22_FR));
+			angle_FR : CoordSys.Angle_DMS;
+			MANDATORY CONSTRAINT DEFINED(attr_FR);
+			!!@ name=UniqueConstraint_FR
+			UNIQUE attr_FR;
+		END Class_FR;
 
 		ASSOCIATION =
-			roleB1 -- ClassB;
-			roleB2 -- ClassB;
-			MANDATORY CONSTRAINT DEFINED(roleB1->attrB);
+			role1_FR -- Class_FR;
+			role2_FR -- Class_FR;
+			MANDATORY CONSTRAINT DEFINED(role1_FR->attr_FR);
 		END;
-		VIEW ClassB_V
-    		PROJECTION OF B~ClassB;
+		VIEW Class_V_FR
+    		PROJECTION OF B~Class_FR;
     		=
     		ALL OF B;
-    	END ClassB_V;
+    	END Class_V_FR;
 		
-		CLASS SymbolB EXTENDS INTERLIS.SIGN =
+		CLASS Symbol_FR EXTENDS INTERLIS.SIGN =
 			PARAMETER
-				PosB: MANDATORY Coord2B;
-		END SymbolB;
+				Pos_FR: MANDATORY Coord2_FR;
+		END Symbol_FR;
 		
-	END TopicB;
+	END Topic_FR;
 
-	TOPIC GrafikB =
-	DEPENDS ON TopicB;
-		SIGN BASKET BTopicB ~ TopicB
-			OBJECTS OF SymbolB: Punktsignatur;
+	TOPIC Grafik_FR =
+	DEPENDS ON Topic_FR;
+		SIGN BASKET BTopic_FR ~ Topic_FR
+			OBJECTS OF Symbol_FR: Punktsignatur;
 /*
 		GRAPHIC PunktGrafikB BASED ON EnumOkB.TopicB.ClassB =
 		SymbolB OF EnumOkB.TopicB.SymbolB: (
@@ -189,13 +189,13 @@ TRANSLATION OF EnumOkA [ "1"]
 		);
 		END PunktGrafikB;
 */
-	END GrafikB;
+	END Grafik_FR;
 	
-END EnumOkB.
+END EnumOk_FR.
 
 /** Das ist Dokumentation zum Modell in IT */
 CONTRACTED MODEL EnumOk_IT (it) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
-TRANSLATION OF EnumOkB [ "1"]
+TRANSLATION OF EnumOk_FR [ "1"]
 =
   IMPORTS Units;
   IMPORTS CoordSys;

@@ -109,11 +109,7 @@ public class Ili2TranslationXml {
 
     public List<NlsModelElement> convertModels(Model models[]) {
         for(Model model:models) {
-            Model rootModel=(Model) getElementInRootLanguage(model);
-            NlsModelElement text = getNlsModelElement(rootModel.getScopedName());
-            text.setElementType(getElementType(model));
-            setModelElementAllLanguages(text, model);
-            visitContainer(model);
+            visitElement(model);
         }
         
         java.util.List<NlsModelElement> ret=new java.util.ArrayList<NlsModelElement>();
@@ -267,18 +263,6 @@ public class Ili2TranslationXml {
 	}
 
 	/**
-	 * it gets from the TranslatedElementName related data with language and Insert
-	 * in the Structure
-	 * 
-	 * @param text Structure of the XML(Structure of the ModelElements)
-	 * @param Name Name of the Element
-	 * @param Language Language of the Element
-	 */
-	private void setTranslationElementName(NlsModelElement text, String name, String language) {
-        text.setName(language,name);
-	}
-
-	/**
 	 * converts an Enumeration.Element to a TranslationElement.
 	 * 
 	 * @param nlsEle Structure of the XML
@@ -296,54 +280,48 @@ public class Ili2TranslationXml {
 	 * 
 	 * @param Model related model Element
 	 */
-	private void visitContainer(Container model) {
-		Iterator<Element> funcI = model.iterator();
-		while (funcI.hasNext()) {
-			Element ele = funcI.next();
-			NlsModelElement dto = new NlsModelElement();
-			dto.setScopedName(getElementInRootLanguage(ele).getScopedName());
-			setModelElementAllLanguages(dto, ele);
-			dto.setElementType(getElementType(ele));
-			elements.put(dto.getScopedName(),dto);
-
-			if (ele instanceof Container) {
-				visitContainer((Container) ele);
-			} else if (ele instanceof AttributeDef) {
-				AttributeDef attr = (AttributeDef) ele;
-				// If exist
-				if (attr.getDomain() instanceof EnumerationType) {
-					String text = getElementInRootLanguage(ele).getScopedName();
-					visitEnumarationType((EnumerationType) attr.getDomain(), text, attr);
-				}
-			} else if (ele instanceof Domain) {
-				Domain domain = (Domain) ele;
-				if (domain.getType() instanceof EnumerationType) {
-					String text = getElementInRootLanguage(ele).getScopedName();
-					visitEnumarationType((EnumerationType) domain.getType(), text, domain);
-				}
-			} else if (ele instanceof Function) {
-			    Function srcFunction = (Function) ele;
-                final String srcEleLanguage = getLanguage(srcFunction);
-                final String srcFunctionScopedName = getElementInRootLanguage(srcFunction).getScopedName();
-			    FormalArgument[] srcArguments = srcFunction.getArguments();
-			    for (int i = 0; i < srcArguments.length; i++) {
-	                NlsModelElement translationElement = new NlsModelElement();
-                    translationElement.setScopedName(srcFunctionScopedName + "." + getElementInRootLanguage(srcArguments[i]).getName());
-                    translationElement.setElementType(getElementType(srcArguments[i]));
-                    setModelElementOneLanguage(translationElement, srcArguments[i], srcEleLanguage);
-			        
-			        Element baseLanguageElement = srcFunction.getTranslationOf();
-			        while (baseLanguageElement != null) {
-                        Function baseLanguageFunction = (Function) baseLanguageElement;
-                        FormalArgument[] baseLanguageArguments = baseLanguageFunction.getArguments();
-                        setModelElementOneLanguage(translationElement, baseLanguageArguments[i], getLanguage(baseLanguageElement));
-                        baseLanguageElement = baseLanguageFunction.getTranslationOf();
-			        }
-			        elements.put(translationElement.getScopedName(),translationElement);
-			    }
-			}
-		}
-
+	private void visitElement(Element ele) {
+        Element rootEle=getElementInRootLanguage(ele);
+        NlsModelElement nlsEle = getNlsModelElement(rootEle.getScopedName());
+        setModelElementAllLanguages(nlsEle, ele);
+        nlsEle.setElementType(getElementType(ele));
+        
+        if (ele instanceof Container) {
+            Iterator<Element> eleIt = ((Container)ele).iterator();
+            while (eleIt.hasNext()) {
+                visitElement(eleIt.next());
+            }
+        } else if (ele instanceof AttributeDef) {
+            AttributeDef attr = (AttributeDef) ele;
+            // If exist
+            if (attr.getDomain() instanceof EnumerationType) {
+                String attrRootScopedName = getElementInRootLanguage(attr).getScopedName();
+                visitEnumarationType((EnumerationType) attr.getDomain(), attrRootScopedName, attr);
+            }
+        } else if (ele instanceof Domain) {
+            Domain domain = (Domain) ele;
+            if (domain.getType() instanceof EnumerationType) {
+                String domainRootScopedName = getElementInRootLanguage(domain).getScopedName();
+                visitEnumarationType((EnumerationType) domain.getType(), domainRootScopedName, domain);
+            }
+        } else if (ele instanceof Function) {
+            Function function = (Function) ele;
+            final String lang = getLanguage(function);
+            final String rootFunctionScopedName = getElementInRootLanguage(function).getScopedName();
+            FormalArgument[] args = function.getArguments();
+            for (int i = 0; i < args.length; i++) {
+                String rootArgScopedName=rootFunctionScopedName + "." + getElementInRootLanguage(args[i]).getName();
+                NlsModelElement nlsArg = getNlsModelElement(rootArgScopedName);
+                nlsArg.setElementType(getElementType(args[i]));
+                setModelElementOneLanguage(nlsArg, args[i], lang);
+                Function baseFunction = (Function) function.getTranslationOf();
+                while (baseFunction != null) {
+                    FormalArgument[] baseArgs = baseFunction.getArguments();
+                    setModelElementOneLanguage(nlsArg, baseArgs[i], getLanguage(baseFunction));
+                    baseFunction = (Function)baseFunction.getTranslationOf();
+                }
+            }
+        }
 	}
 
     private void visitMetaAttributes(NlsModelElement nlsEle,Element ele) {
@@ -397,11 +375,9 @@ public class Ili2TranslationXml {
 
 		while (enumarationIterator.hasNext()) {
 			Enumeration.Element enumEle = enumarationIterator.next();
-			NlsModelElement nlsEle = new NlsModelElement();
-
-			// ScopedName
-			String scopedName = scopedNamePrefix + "." + getEnumerationElementInRootLanguage(enumEle).getName();
-			nlsEle.setScopedName(scopedName);
+            String scopedName = scopedNamePrefix + "." + getEnumerationElementInRootLanguage(enumEle).getName();
+			NlsModelElement nlsEle = getNlsModelElement(scopedName);
+            nlsEle.setElementType(getElementType(enumEle));
 
 			String language = getLanguage(domainOrAttr);
 			visitEnumerationElement(nlsEle, enumEle, language);
@@ -416,8 +392,6 @@ public class Ili2TranslationXml {
 				baseLanguageModelElement = baseLanguageModelElement.getTranslationOf();
 			}
 
-			nlsEle.setElementType(getElementType(enumEle));
-			elements.put(nlsEle.getScopedName(),nlsEle);
 			if (enumEle.getSubEnumeration() != null) {
 				visitEnumaration(enumEle.getSubEnumeration(), scopedName, domainOrAttr);
 			}
@@ -440,7 +414,7 @@ public class Ili2TranslationXml {
 	private static ch.interlis.ili2c.metamodel.Enumeration.Element getEnumerationElementInRootLanguage(
 			Enumeration.Element ele) {
 		ch.interlis.ili2c.metamodel.Enumeration.Element baseLanguageElement = ele.getTranslationOf();
-		if (baseLanguageElement != null) {
+		while(baseLanguageElement != null) {
 			ele = baseLanguageElement;
 			baseLanguageElement = ele.getTranslationOf();
 		}
