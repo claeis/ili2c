@@ -108,28 +108,11 @@ public class Ili2TranslationXml {
 	}
 
     public List<NlsModelElement> convertModels(Model models[]) {
-        HashSet<Model> visitedModels=new HashSet<Model>();
-        ArrayList<Model> mostSpecificModels=new ArrayList<Model>();
-        for(int modeli=models.length-1;modeli>=0;modeli--) {
-            Model model=models[modeli];
-            if(!visitedModels.contains(model)) {
-                visitedModels.add(model);
-                mostSpecificModels.add(0,model);
-                Model translatedModel=(Model)model.getTranslationOf();
-                while(translatedModel!=null) {
-                    visitedModels.add(translatedModel);
-                    translatedModel=(Model)translatedModel.getTranslationOf();
-                }
-            }
-        }
-        for(Model model:mostSpecificModels) {
-
-            NlsModelElement text = new NlsModelElement();
-            text.setScopedName(getElementInRootLanguage(model).getScopedName());
+        for(Model model:models) {
+            Model rootModel=(Model) getElementInRootLanguage(model);
+            NlsModelElement text = getNlsModelElement(rootModel.getScopedName());
             text.setElementType(getElementType(model));
             setModelElementAllLanguages(text, model);
-            elements.put(text.getScopedName(),text);
-
             visitContainer(model);
         }
         
@@ -226,7 +209,7 @@ public class Ili2TranslationXml {
 	 */
 	public static Element getElementInRootLanguage(Element ele) {
 		Element baseLanguageElement = ele.getTranslationOf();
-		if (baseLanguageElement != null) {
+		while(baseLanguageElement != null) {
 			ele = baseLanguageElement;
 			baseLanguageElement = ele.getTranslationOf();
 		}

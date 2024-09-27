@@ -193,3 +193,98 @@ TRANSLATION OF EnumOkA [ "1"]
 	
 END EnumOkB.
 
+/** Das ist Dokumentation zum Modell in IT */
+CONTRACTED MODEL EnumOk_IT (it) AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" 
+TRANSLATION OF EnumOkB [ "1"]
+=
+  IMPORTS Units;
+  IMPORTS CoordSys;
+
+  REFSYSTEM BASKET BCoordSysB ~ CoordSys.CoordsysTopic
+    OBJECTS OF GeoCartesian2D: CHLV95;
+
+  FUNCTION Function_IT(arg_IT:BOOLEAN):BOOLEAN;
+
+  STRUCTURE Klothoide_IT EXTENDS INTERLIS.LineSegment=
+    a_IT : 0.0 .. 10.0;
+  END Klothoide_IT;
+  
+  LINE FORM
+    LineForm_IT : Klothoide_IT;
+
+  DOMAIN
+  Coord2_IT = COORD
+      2460000.000 .. 2870000.000 [INTERLIS.m] {CHLV95[1]},
+      1045000.000 .. 1310000.000 [INTERLIS.m] {CHLV95[2]},
+      ROTATION 2 -> 1;
+    SurfacePartition_IT = AREA WITH (ARCS, STRAIGHTS,LineForm_IT) VERTEX Coord2_IT
+       WITHOUT OVERLAPS > 0.05;
+
+  STRUCTURE LocalisedUri_IT =
+    Text_IT : MANDATORY INTERLIS.URI;
+  END LocalisedUri_IT;
+
+  UNIT
+
+    CubicMeterPerSecond_IT [m3secB] = (Units.m3 / INTERLIS.s);
+
+	!!@ dispName_fr="Topic IT"
+	TOPIC Topic_IT =
+		STRUCTURE Structure_IT =
+		END Structure_IT;
+
+    	CLASS Document_IT =
+      	  Titre_IT : MANDATORY TEXT*80;
+      	  Web_IT : LocalisedUri_IT;
+    	END Document_IT;
+
+    	CLASS DispositionJuridique_IT EXTENDS Document_IT =
+		END DispositionJuridique_IT;
+
+		/** Das ist CLASS Dokumentation in FR */
+		CLASS Class_IT =
+			geom_IT : Coord2_IT;
+		/** Das ist Dokumentation in FR */
+			attr_IT : (it1,
+			/** enum docu zu it2 */
+			!!@ dispName_fr="b 2"
+			it2(it21,it22));
+			angle_IT : CoordSys.Angle_DMS;
+			MANDATORY CONSTRAINT DEFINED(attr_IT);
+			!!@ name=UniqueConstraint_IT
+			UNIQUE attr_IT;
+		END Class_IT;
+
+		ASSOCIATION =
+			role1_IT -- Class_IT;
+			role2_IT -- Class_IT;
+			MANDATORY CONSTRAINT DEFINED(role1_IT->attr_IT);
+		END;
+		VIEW Class_IT_V
+    		PROJECTION OF B~Class_IT;
+    		=
+    		ALL OF B;
+    	END Class_IT_V;
+		
+		CLASS Symbol_IT EXTENDS INTERLIS.SIGN =
+			PARAMETER
+				Pos_IT: MANDATORY Coord2_IT;
+		END Symbol_IT;
+		
+	END Topic_IT;
+
+	TOPIC Grafik_IT =
+	DEPENDS ON Topic_IT;
+		SIGN BASKET BTopic_IT ~ Topic_IT
+			OBJECTS OF Symbol_IT: Punktsignatur;
+/*
+		GRAPHIC PunktGrafikB BASED ON EnumOkB.TopicB.ClassB =
+		SymbolB OF EnumOkB.TopicB.SymbolB: (
+		Sign := {BTopicB.Punktsignatur};
+		PosB := geomB
+		);
+		END PunktGrafikB;
+*/
+	END Grafik_IT;
+	
+END EnumOk_IT.

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -23,6 +24,7 @@ import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
 import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.generator.nls.TranslationElement;
+import ch.interlis.ili2c.metamodel.Model;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 
 /**
@@ -50,7 +52,7 @@ public class Ili2TranslationXmlTest {
 				if (ele.getScopedName().equals("EnumOkA")) {
 					assertEquals("EnumOkA", ele.getName_de());
 					assertEquals("EnumOkB", ele.getName_fr());
-                    assertEquals(null, ele.getName_it());
+                    assertEquals(null, ele.getName_en());
 					assertEquals("Das ist Dokumentation zum Modell in DE", ele.getDocumentation_de());
 					assertEquals("Das ist Dokumentation zum Modell in FR", ele.getDocumentation_fr());
 					assertEquals(ElementType.MODEL, ele.getElementType());
@@ -69,11 +71,11 @@ public class Ili2TranslationXmlTest {
 		    Node node=elements.item(elei);
 		    Node scopedNameNode=node.getFirstChild();
 		    if(scopedNameNode.getTextContent().equals("EnumOkA")) {
-		      nameItNode=node.getChildNodes().item(4);
+		      nameItNode=node.getChildNodes().item(5);
 		      break;
 		    }
 		}
-		assertEquals("name_it",nameItNode.getNodeName());
+		assertEquals("name_en",nameItNode.getNodeName());
         assertEquals("-",nameItNode.getTextContent());
 	}
 
@@ -216,6 +218,17 @@ public class Ili2TranslationXmlTest {
             }
         }
         return null;
+    }
+    @Test
+    public void getElementInRootLanguageTest() throws Exception {
+        // compile
+        TransferDescription td=compileIliModel(new File(SRC_GENERAL));
+        Model model_IT=(Model) td.getElement("EnumOk_IT");
+        Model model_FR=(Model) td.getElement("EnumOkB");
+        Model model_DE=(Model) td.getElement("EnumOkA");
+        Assert.assertEquals(model_DE,Ili2TranslationXml.getElementInRootLanguage(model_IT));
+        Assert.assertEquals(model_DE,Ili2TranslationXml.getElementInRootLanguage(model_FR));
+        Assert.assertEquals(model_DE,Ili2TranslationXml.getElementInRootLanguage(model_DE));
     }
 
     /**
