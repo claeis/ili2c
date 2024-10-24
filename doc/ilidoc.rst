@@ -90,6 +90,10 @@ Attribut-Definition::
     AttributeDef = { IliDoc } [ [ 'CONTINUOUS' ] 'SUBDIVISION' ]
             Attribute-Name ...
 
+Beziehung-Definition::
+	
+    AssociationDef = { IliDoc } 'ASSOCIATION' Association-Name ...
+
 Rollen-Definition in Assoziationen::
 	
     RoleDef = { IliDoc } Role-Name ...
