@@ -100,21 +100,20 @@ Rollen-Definition in Assoziationen::
 
 Wertebereichs-Definition::
 	
-    DomainDef = 'DOMAIN' { { IliDoc } Domain-Name ...
+    DomainDef = 'DOMAIN' { IliDoc } Domain-Name ...
 
 Aufzähltyp-Element::
 
     EnumElement = { IliDoc } EnumElement-Name ...
 
-
 Linienform-Definition::
 	
-   LineFormTypeDef = 'LINE' 'FORM' { { IliDoc } 
+   LineFormTypeDef = 'LINE' 'FORM' { IliDoc } 
       LineFormType-Name ...
 
 Einheiten-Definition::
 	
-   UnitDef = 'UNIT' { { IliDoc } Unit-Name ...
+   UnitDef = 'UNIT' { IliDoc } Unit-Name ...
 
 Definition eines Metaobjekt-Behälters::
 
@@ -131,7 +130,7 @@ Parameter-Definition::
 
 Laufzeitparameter-Definition::
 	
-    RunTimeParameterDef = 'PARAMETER' { { IliDoc } 
+    RunTimeParameterDef = 'PARAMETER' { IliDoc } 
                RunTimeParameter-Name ...
 
 Definition einer Konsistenzbedingung::
