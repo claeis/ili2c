@@ -74,6 +74,14 @@ public class Ili2TranslationXmlTest {
     private static final String ILI_ENUM_OK_DE_TOPIC_DE_CLASS_DE = "EnumOk_DE.Topic_DE.Class_DE";
     private static final String ILI_STRUCTURE_FR = "Structure_FR";
     private static final String ILI_STRUCTURE_DE = "Structure_DE";
+    private static final String ILI_ENUM_DOMAIN_FR = "EnumDomain_FR";
+    private static final String ILI_ENUM_DOMAIN_DE = "EnumDomain_DE";
+    private static final String ILI_ENUM_OK_FR_ENUM_DOMAIN_FR = "EnumOk_FR.EnumDomain_FR";
+    private static final String ILI_ENUM_OK_DE_ENUM_DOMAIN_DE = "EnumOk_DE.EnumDomain_DE";
+    private static final String ILI_A1_FR = "b1_FR";
+    private static final String ILI_A1_DE = "a1_DE";
+    private static final String ILI_ENUM_OK_FR_ENUM_DOMAIN_FR_A1_FR = ILI_ENUM_OK_FR_ENUM_DOMAIN_FR+"."+ILI_A1_FR;
+    private static final String ILI_ENUM_OK_DE_ENUM_DOMAIN_DE_A1_DE = ILI_ENUM_OK_DE_ENUM_DOMAIN_DE+"."+ILI_A1_DE;
     private static final String ILI_ENUM_OK_DE_TOPIC_DE_STRUCTURE_DE = "EnumOk_DE.Topic_DE.Structure_DE";
     private static final String ILI_ENUM_OK_DE_TOPIC_DE_METAOBJECT_DISP_NAME_FR = "EnumOk_DE.Topic_DE.METAOBJECT.dispName_fr";
     private static final String ILI_ENUM_OK_DE_TOPIC_DE_METAOBJECT_DISP_NAME_DE = "EnumOk_DE.Topic_DE.METAOBJECT.dispName_de";
@@ -210,6 +218,34 @@ public class Ili2TranslationXmlTest {
 		}
 		fail("STRUCTURE can not be found!");
 	}
+    @Test
+    public void enum_domain() throws Exception {
+        // ili lesen und xml schreiben
+        final String xmlFileName = SRC_GENERAL + ".xml";
+        Ili2TranslationXml.writeModelElementsAsXML(readAllModels(new File(SRC_GENERAL)), new File(xmlFileName));
+        // xml lesen
+        ModelElements modelElements = Ili2TranslationXml.readModelElementsXml(new File(xmlFileName));
+        boolean domainFound=false;
+        boolean elementFound=false;
+        for (TranslationElement ele : modelElements) {
+            if (ele.getScopedName() != null) {
+                if (ele.getScopedName().equals(ILI_ENUM_OK_DE_ENUM_DOMAIN_DE)) {
+                    assertEquals(ILI_ENUM_DOMAIN_DE, ele.getName_de());
+                    assertEquals(ILI_ENUM_DOMAIN_FR, ele.getName_fr());
+                    assertEquals(ElementType.DOMAIN, ele.getElementType());
+                    domainFound=true;
+                }
+                if (ele.getScopedName().equals(ILI_ENUM_OK_DE_ENUM_DOMAIN_DE_A1_DE)) {
+                    assertEquals(ILI_A1_DE, ele.getName_de());
+                    assertEquals(ILI_A1_FR, ele.getName_fr());
+                    assertEquals(ElementType.ENUMERATION_ELEMENT, ele.getElementType());
+                    elementFound=true;
+                }
+            }
+        }
+        if(domainFound==false)fail(ILI_ENUM_OK_DE_ENUM_DOMAIN_DE+"  can not be found!");
+        if(elementFound==false)fail(ILI_ENUM_OK_DE_ENUM_DOMAIN_DE_A1_DE+" can not be found!");
+    }
 
 	/**
 	 * Es ueberprueft, ob das CLASS korrekt in das XML file geschrieben wurde.

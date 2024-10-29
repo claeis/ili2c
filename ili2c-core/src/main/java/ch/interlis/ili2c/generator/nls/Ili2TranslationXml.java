@@ -286,12 +286,7 @@ public class Ili2TranslationXml {
         setModelElementAllLanguages(nlsEle, ele);
         nlsEle.setElementType(getElementType(ele));
         
-        if (ele instanceof Container) {
-            Iterator<Element> eleIt = ((Container)ele).iterator();
-            while (eleIt.hasNext()) {
-                visitElement(eleIt.next());
-            }
-        } else if (ele instanceof AttributeDef) {
+        if (ele instanceof AttributeDef) {
             AttributeDef attr = (AttributeDef) ele;
             // If exist
             if (attr.getDomain() instanceof EnumerationType) {
@@ -320,6 +315,11 @@ public class Ili2TranslationXml {
                     setModelElementOneLanguage(nlsArg, baseArgs[i], getLanguage(baseFunction));
                     baseFunction = (Function)baseFunction.getTranslationOf();
                 }
+            }
+        }else if (ele instanceof Container) {
+            Iterator<Element> eleIt = ((Container)ele).iterator();
+            while (eleIt.hasNext()) {
+                visitElement(eleIt.next());
             }
         }
 	}
