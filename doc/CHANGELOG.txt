@@ -1,8 +1,9 @@
-ili2c 5.6.0 (2024-08-xx)
+ili2c 5.6.0 (2024-11-03)
 ---------------------------
 - API: re-factor NLSXML generation/new class NlsModelElement
 - NLSXML: fix evaluation of scopedName for multiple translated elements
 - NLSXML: fix enumeration in domains (#130)
+- iox-ili-1.23.2
 
 ili2c 5.5.4 (2024-08-16)
 ---------------------------
