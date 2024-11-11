@@ -28,6 +28,8 @@ options
   private antlr.TokenStreamHiddenTokenFilter filter;
   private boolean checkMetaObjs;
   private Ili2cMetaAttrs externalMetaAttrs=new Ili2cMetaAttrs();
+  private  int parserErrc=0;
+
 
   /** Parse the contents of a stream according to INTERLIS-1 or INTERLIS-2 syntax
       (the version is detected automatically by the parser) and add the
@@ -165,6 +167,58 @@ options
     } catch (Exception ex) {
       throw new Ili2cException(ex);
     }
+  }
+ static public Evaluable parseExpression(TransferDescription td
+    ,String objectPath,Container start, Type expectedType,String filename
+    )
+    throws Ili2cException
+  {
+
+  	Evaluable ret=null;
+    Ili23Parser parser =null;
+    try {
+      Ili2Lexer lexer= new Ili2Lexer (new java.io.StringReader(objectPath));
+      
+      //
+      // setup token stream splitting to filter out comments
+      //
+      //filter.getHiddenAfter(end)
+      //filter.getHiddenBefore(begin)
+
+      // create token objects augmented with links to hidden tokens. 
+      lexer.setTokenObjectClass("antlr.CommonHiddenStreamToken");
+
+      // create filter that pulls tokens from the lexer
+      antlr.TokenStreamHiddenTokenFilter filter = new antlr.TokenStreamHiddenTokenFilter(lexer);
+
+      // tell the filter which tokens to hide, and which to discard
+      filter.hide(ILI_DOC);
+      filter.hide(ILI_METAVALUE);
+
+      // connect parser to filter (instead of lexer)
+      parser = new Ili23Parser (filter);
+
+      
+      // Ili2.3 always check existence of metaobject
+      parser.checkMetaObjs=true; // checkMetaObjects;
+      parser.lexer=lexer;
+      parser.filter=filter;
+      parser.setFilename (filename);
+      ret=parser.standaloneExpression (td,start,expectedType);
+    }catch(antlr.RecognitionException ex){
+      throw new Ili2cException(ex);
+    }catch(antlr.TokenStreamRecognitionException ex){
+      throw new Ili2cException(ex);
+    } catch (antlr.ANTLRError ex) {
+      throw new Ili2cException(ex);
+    } catch (Exception ex) {
+      throw new Ili2cException(ex);
+    }
+    if(parser!=null && parser.parserErrc>0){
+      throw new Ili2cException("parse failed <"+objectPath+">");
+    }
+    return ret;
+    
   }
 
 	/** compiler error messages
@@ -619,8 +673,10 @@ options
 	      }
 	      return d;
 	}
+  @Override
   public void reportError (String message)
   {
+  	parserErrc++;
       String filename=getFilename();
       CompilerLogEvent.logError(filename,0,message);
   }
@@ -635,6 +691,7 @@ options
 
   protected void reportError (String message, int lineNumber)
   {
+  	parserErrc++;
       String filename=getFilename();
       CompilerLogEvent.logError(filename,lineNumber,message);
   }
@@ -649,6 +706,7 @@ options
 
   protected void reportError (Throwable ex, int lineNumber)
   {
+  	parserErrc++;
       String filename=getFilename();
       if(ex instanceof antlr.RecognitionException){
 	      CompilerLogEvent.logError(filename,lineNumber,ex.getLocalizedMessage());
@@ -660,18 +718,22 @@ options
   }
   protected void reportError (Ili2cSemanticException ex)
   {
+  	parserErrc++;
       String filename=getFilename();
       CompilerLogEvent.logError(filename,ex.getSourceLine(),ex.getLocalizedMessage());
   }
   protected void reportError (List<Ili2cSemanticException> errs)
   {
+  	parserErrc++;
       String filename=getFilename();
   	for(Ili2cSemanticException ex:errs){
       CompilerLogEvent.logError(filename,ex.getSourceLine(),ex.getLocalizedMessage());
   	}
   }
+  @Override
   public void reportError (antlr.RecognitionException ex)
   {
+  	parserErrc++;
       String filename=getFilename();
       int lineNumber=((antlr.RecognitionException)ex).getLine();
       CompilerLogEvent.logError(filename,lineNumber,ex.getLocalizedMessage());
@@ -1071,6 +1133,26 @@ public standaloneObjectOrAttributePath[TransferDescription td1,Viewable start]
 		this.predefinedCoordSystemClass = td.INTERLIS.COORDSYSTEM;
 	}
 	:	result=objectOrAttributePath[start,start]
+		EOF		
+	    exception
+		    catch [NoViableAltException nvae]
+		    {
+		    	throw nvae;
+		    }
+	;
+	
+	
+public standaloneExpression [TransferDescription td1,Container ns, Type expectedType]
+	returns [Evaluable result]
+	{
+		result=null;
+		this.td = td1;
+		this.modelInterlis = td.INTERLIS;
+		this.predefinedBooleanType = Type.findReal (td.INTERLIS.BOOLEAN.getType());
+		this.predefinedScalSystemClass = td.INTERLIS.SCALSYSTEM;
+		this.predefinedCoordSystemClass = td.INTERLIS.COORDSYSTEM;
+	}
+	:	result=expression [ns,expectedType,ns]
 		EOF		
 	    exception
 		    catch [NoViableAltException nvae]
