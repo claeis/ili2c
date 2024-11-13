@@ -4,6 +4,7 @@ header
 	import ch.interlis.ili2c.metamodel.*;
 	import ch.interlis.ili2c.generator.Interlis2Generator;
 	import ch.interlis.ili2c.CompilerLogEvent;
+	import ch.interlis.ili2c.Ili2cException;
 	import java.util.*;
 	import ch.ehi.basics.logging.EhiLogger;
 	import ch.ehi.basics.settings.Settings;
@@ -27,7 +28,8 @@ options
   private antlr.TokenStreamHiddenTokenFilter filter;
   private boolean checkMetaObjs;
   private Ili2cMetaAttrs externalMetaAttrs=new Ili2cMetaAttrs();
-
+  private int parserErrc=0;
+  
   /** Parse the contents of a stream according to INTERLIS-1 or INTERLIS-2 syntax
       (the version is detected automatically by the parser) and add the
       encountered contents to this TransferDescription.
@@ -120,6 +122,58 @@ options
       CompilerLogEvent.logError(filename,0,ex);
       return false;
     }
+  }
+ static public Evaluable parseExpression(TransferDescription td
+    ,String objectPath,Container start, Type expectedType,String filename
+    )
+    throws Ili2cException
+  {
+
+  	Evaluable ret=null;
+    Ili24Parser parser =null;
+    try {
+      Ili24Lexer lexer= new Ili24Lexer (new java.io.StringReader(objectPath));
+      
+      //
+      // setup token stream splitting to filter out comments
+      //
+      //filter.getHiddenAfter(end)
+      //filter.getHiddenBefore(begin)
+
+      // create token objects augmented with links to hidden tokens. 
+      lexer.setTokenObjectClass("antlr.CommonHiddenStreamToken");
+
+      // create filter that pulls tokens from the lexer
+      antlr.TokenStreamHiddenTokenFilter filter = new antlr.TokenStreamHiddenTokenFilter(lexer);
+
+      // tell the filter which tokens to hide, and which to discard
+      filter.hide(ILI_DOC);
+      filter.hide(ILI_METAVALUE);
+
+      // connect parser to filter (instead of lexer)
+      parser = new Ili24Parser (filter);
+
+      
+      // Ili2.3 always check existence of metaobject
+      parser.checkMetaObjs=true; // checkMetaObjects;
+      parser.lexer=lexer;
+      parser.filter=filter;
+      parser.setFilename (filename);
+      ret=parser.standaloneExpression (td,start,expectedType);
+    }catch(antlr.RecognitionException ex){
+      throw new Ili2cException(ex);
+    }catch(antlr.TokenStreamRecognitionException ex){
+      throw new Ili2cException(ex);
+    } catch (antlr.ANTLRError ex) {
+      throw new Ili2cException(ex);
+    } catch (Exception ex) {
+      throw new Ili2cException(ex);
+    }
+    if(parser!=null && parser.parserErrc>0){
+      throw new Ili2cException("parse failed <"+objectPath+">");
+    }
+    return ret;
+    
   }
 
 	/** compiler error messages
@@ -587,8 +641,10 @@ options
 	      }
 	      return d;
 	}
+  @Override
   public void reportError (String message)
   {
+	  parserErrc++;
       String filename=getFilename();
       CompilerLogEvent.logError(filename,0,message);
   }
@@ -603,6 +659,7 @@ options
 
   protected void reportError (String message, int lineNumber)
   {
+	  parserErrc++;
       String filename=getFilename();
       CompilerLogEvent.logError(filename,lineNumber,message);
   }
@@ -617,6 +674,7 @@ options
 
   protected void reportError (Throwable ex, int lineNumber)
   {
+	  parserErrc++;
       String filename=getFilename();
       if(ex instanceof antlr.RecognitionException){
 	      CompilerLogEvent.logError(filename,lineNumber,ex.getLocalizedMessage());
@@ -628,18 +686,22 @@ options
   }
   protected void reportError (Ili2cSemanticException ex)
   {
+	  parserErrc++;
       String filename=getFilename();
       CompilerLogEvent.logError(filename,ex.getSourceLine(),ex.getLocalizedMessage());
   }
   protected void reportError (List<Ili2cSemanticException> errs)
   {
+	  parserErrc++;
       String filename=getFilename();
   	for(Ili2cSemanticException ex:errs){
       CompilerLogEvent.logError(filename,ex.getSourceLine(),ex.getLocalizedMessage());
   	}
   }
+  @Override
   public void reportError (antlr.RecognitionException ex)
   {
+	  parserErrc++;
       String filename=getFilename();
       int lineNumber=((antlr.RecognitionException)ex).getLine();
       CompilerLogEvent.logError(filename,lineNumber,ex.getLocalizedMessage());
@@ -647,6 +709,7 @@ options
 
   protected void reportInternalError(int lineNumber)
   {
+	  parserErrc++;
       String filename=getFilename();
       CompilerLogEvent.logError(filename,lineNumber,formatMessage("err_internalCompilerError", /* exception */ ""));
   }
@@ -654,6 +717,7 @@ options
 
   protected void reportInternalError (Throwable ex, int lineNumber)
   {
+	  parserErrc++;
       String filename=getFilename();
       CompilerLogEvent.logError(filename,lineNumber,formatMessage("err_internalCompilerError", ""),ex);
   }
@@ -1029,6 +1093,24 @@ public interlisDescription [TransferDescription td1]
 		    }
 	;
 
+public standaloneExpression [TransferDescription td1,Container ns, Type expectedType]
+	returns [Evaluable result]
+	{
+		result=null;
+		this.td = td1;
+		this.modelInterlis = td.INTERLIS;
+		this.predefinedBooleanType = Type.findReal (td.INTERLIS.BOOLEAN.getType());
+		this.predefinedScalSystemClass = td.INTERLIS.SCALSYSTEM;
+		this.predefinedCoordSystemClass = td.INTERLIS.COORDSYSTEM;
+	}
+	:	result=expression [ns,expectedType,ns]
+		EOF		
+	    exception
+		    catch [NoViableAltException nvae]
+		    {
+		    	throw nvae;
+		    }
+	;
 
 protected interlis2Def
 	{

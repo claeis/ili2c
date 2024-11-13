@@ -27,10 +27,12 @@ import ch.interlis.ili2c.generator.TransformationParameter;
 import ch.interlis.ili2c.generator.nls.Ili2TranslationXml;
 import ch.interlis.ili2c.generator.nls.ModelElements;
 import ch.interlis.ili2c.metamodel.Element;
+import ch.interlis.ili2c.metamodel.Evaluable;
 import ch.interlis.ili2c.metamodel.Ili2cMetaAttrs;
 import ch.interlis.ili2c.metamodel.ObjectPath;
 import ch.interlis.ili2c.metamodel.RuntimeParameters;
 import ch.interlis.ili2c.metamodel.TransferDescription;
+import ch.interlis.ili2c.metamodel.Type;
 import ch.interlis.ili2c.metamodel.Viewable;
 import ch.interlis.ili2c.parser.Ili1Parser;
 import ch.interlis.ili2c.parser.Ili22Parser;
@@ -1147,6 +1149,17 @@ public class Main {
     {
         TransferDescription td=(TransferDescription) viewable.getContainer(TransferDescription.class);
         return Ili23Parser.parseObjectOrAttributePath(td,viewable, objectPath);
+    }
+    static public Evaluable parseExpression(Viewable viewable,Type expectedReturnType,String expression,String filename) throws Ili2cException
+    {
+        TransferDescription td=(TransferDescription) viewable.getContainer(TransferDescription.class);
+        Evaluable expr=null;
+        if(td.getLastModel().isIli23()) {
+            expr=Ili23Parser.parseExpression(td,expression,viewable, expectedReturnType,filename);
+        }else {
+            expr=Ili24Parser.parseExpression(td,expression,viewable, expectedReturnType,filename);
+        }
+        return expr;
     }
 
     static public void logIliFiles(ch.interlis.ili2c.config.Configuration config) {
