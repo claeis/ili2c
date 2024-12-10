@@ -29,6 +29,7 @@ options
   private boolean checkMetaObjs;
   private Ili2cMetaAttrs externalMetaAttrs=new Ili2cMetaAttrs();
   private int parserErrc=0;
+  private boolean standaloneExpression=false;
   
   /** Parse the contents of a stream according to INTERLIS-1 or INTERLIS-2 syntax
       (the version is detected automatically by the parser) and add the
@@ -156,6 +157,7 @@ options
       
       // Ili2.3 always check existence of metaobject
       parser.checkMetaObjs=true; // checkMetaObjects;
+      parser.standaloneExpression=true;
       parser.lexer=lexer;
       parser.filter=filter;
       parser.setFilename (filename);
@@ -785,7 +787,8 @@ options
     {
       if ((scopeModel != null)
           && (scopeModel != m)
-          && !scopeModel.isImporting (m) && m!=modelInterlis)
+          && (standaloneExpression || !scopeModel.isImporting (m) && m!=modelInterlis)
+          )
       {
         reportError (formatMessage ("err_model_notImported",
           scopeModel.toString(), m.toString()),

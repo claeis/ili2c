@@ -1,6 +1,7 @@
 ili2c 5.6.3 (2024-12-xx)
 ---------------------------
 - Xtf23Reader: fix xml whitespace/comment reading in headersection (#136)
+- allow standalone expressions with functions without importing the function model (ilishaper#4)
 - iox-ili-1.23.4+
 
 ili2c 5.6.2 (2024-12-04)
