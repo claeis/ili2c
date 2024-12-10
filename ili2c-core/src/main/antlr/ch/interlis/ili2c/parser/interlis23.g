@@ -818,7 +818,7 @@ options
     {
       if ((scopeModel != null)
           && (scopeModel != m)
-          && (standaloneExpression || !scopeModel.isImporting (m) && m!=modelInterlis)
+          && (!standaloneExpression && !scopeModel.isImporting (m) && m!=modelInterlis)
           )
       {
         reportError (formatMessage ("err_model_notImported",
