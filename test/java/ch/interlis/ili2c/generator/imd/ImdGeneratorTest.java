@@ -35,7 +35,7 @@ public class ImdGeneratorTest {
     public static final String SIMPLE23_ILI = "test/data/imdgenerator/Simple23.ili";
     public static final String EXPRESSION23_ILI = "test/data/imdgenerator/Expression23.ili";
     private static final String ILIS_META07_ILI = "standard/IlisMeta07.ili";
-    private boolean issue336fixed=false;
+    public static boolean issue336fixed=false;
     @Test
     public void ili23Test() throws Iox2jtsException, IoxException {
         final String OUT_FILE = "Simple23-out.imd";

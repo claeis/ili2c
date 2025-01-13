@@ -908,6 +908,7 @@ public class ImdGenerator {
 				while(attri.hasNext()){
 			    	  ch.interlis.ili2c.metamodel.ObjectPath attr=(ch.interlis.ili2c.metamodel.ObjectPath)attri.next();
 			    	  PathOrInspFactor iomExpr=new PathOrInspFactor();
+			    	  visitObjectPathEls(iomExpr,uc.getPrefix());
 			    	  iomUniqueConstraint.addUniqueDef(visitObjectPathEls(iomExpr,attr));
 				}
 			} else {
