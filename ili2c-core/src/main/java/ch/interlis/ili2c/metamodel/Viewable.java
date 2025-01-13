@@ -2,6 +2,9 @@ package ch.interlis.ili2c.metamodel;
 
 
 import java.util.Set;
+
+import ch.ehi.basics.logging.EhiLogger;
+
 import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
@@ -249,6 +252,83 @@ END B;<br></pre></code>
 	    return result.iterator ();
   	}
   }
+  public AttributeDef findAttribute(String name)
+  {
+      
+      AttributeDef attrdef=null;
+      Iterator it=getAttributes();
+      while(it.hasNext()){
+          AttributeDef ele=(AttributeDef)it.next();
+          if(ele.getName().equals(name)){
+              attrdef=ele;
+              break;
+          }
+      }
+      return attrdef; // may be null if no attribute found
+  }
+  public AttributeDef findAttributeInExtendedClass(Container context,String name)
+  {
+      AttributeDef attrdef=findAttribute(name);
+      if(attrdef==null && context!=null){
+          if(context instanceof Viewable) {
+              context=context.getContainer();
+          }
+          if(!(context instanceof Topic || context instanceof Model)){
+              throw new IllegalArgumentException("illegal context "+context.getScopedName());
+          }
+          ArrayList<Viewable> extRoles=new ArrayList<Viewable>();
+          extRoles.addAll((Set)this.getExtensions());
+          java.util.Collections.sort(extRoles,new java.util.Comparator<Viewable>() {
+
+              @Override
+              public int compare(Viewable o1, Viewable o2) {
+                  return -Integer.valueOf(o1.getDefidx()).compareTo(Integer.valueOf(o2.getDefidx()));
+              }
+              
+          });
+          for(Viewable found:extRoles) {
+              if(found.isDefinedIn(context)){
+                  attrdef=found.findAttribute(name);
+                  if(attrdef!=null) {
+                      return attrdef;
+                  }
+              }
+          }
+    }
+      return attrdef; // may be null if no attribute found
+  }
+  private boolean isDefinedIn(Container modelOrTopic) {
+      if(modelOrTopic.contains(this)) {
+          return true;
+      }
+      if(modelOrTopic instanceof Topic) {
+          modelOrTopic=modelOrTopic.getContainer();
+          if(modelOrTopic.contains(this)) {
+              return true;
+          }
+      }
+      return false;
+  }
+  
+  private RoleDef findExtendedRole(AbstractClassDef target, RoleDef role) {
+      ArrayList<RoleDef> extRoles=new ArrayList<RoleDef>();
+      extRoles.addAll(role.getExtensions());
+      java.util.Collections.sort(extRoles,new java.util.Comparator<RoleDef>() {
+
+          @Override
+          public int compare(RoleDef o1, RoleDef o2) {
+              return -Integer.valueOf(o1.getDefidx()).compareTo(Integer.valueOf(o2.getDefidx()));
+          }
+          
+      });
+      for(RoleDef found:extRoles) {
+          if(target.isExtending(found.getDestination())){
+              return found;
+          }
+      }
+      return role;
+  }
+  
   public Iterator<Element> getAttributesAndRoles()
   {
    	if(isAlias()){
