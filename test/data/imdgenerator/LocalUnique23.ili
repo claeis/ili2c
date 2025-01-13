@@ -1,0 +1,21 @@
+INTERLIS 2.3;
+
+MODEL LocalUnique23
+  AT "mailto:ce@eisenhutinformatik.ch" VERSION "2016-12-21" =
+    
+  TOPIC TestA =
+    
+    STRUCTURE Struct1 =
+       a1 : TEXT*10;
+       a2 : TEXT*10;
+    END Struct1;
+    
+    CLASS Class1 =
+		struct1 : Struct1;
+     UNIQUE (LOCAL) struct1:a1,a2;
+     END Class1;
+    
+  END TestA;
+  
+  
+END LocalUnique23.

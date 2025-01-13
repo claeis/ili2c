@@ -29,6 +29,7 @@ options
   private boolean checkMetaObjs;
   private Ili2cMetaAttrs externalMetaAttrs=new Ili2cMetaAttrs();
   private int parserErrc=0;
+  private boolean standaloneExpression=false;
   
   /** Parse the contents of a stream according to INTERLIS-1 or INTERLIS-2 syntax
       (the version is detected automatically by the parser) and add the
@@ -156,6 +157,7 @@ options
       
       // Ili2.3 always check existence of metaobject
       parser.checkMetaObjs=true; // checkMetaObjects;
+      parser.standaloneExpression=true;
       parser.lexer=lexer;
       parser.filter=filter;
       parser.setFilename (filename);
@@ -188,16 +190,17 @@ options
 	protected AttributeDef findAttribute(Container scope,String name)
 	{
 		if(!(scope instanceof Viewable))return null;
-		Viewable currentViewable=(Viewable)scope;
-		AttributeDef attrdef=null;
-		Iterator it=currentViewable.getAttributes();
-		while(it.hasNext()){
-			AttributeDef ele=(AttributeDef)it.next();
-			if(ele.getName().equals(name)){
-				attrdef=ele;
-				break;
-			}
-		}
+		Viewable currentViewable=(Viewable)scope;		
+		
+		AttributeDef attrdef=currentViewable.findAttribute(name);
+		return attrdef; // may be null if no attribute found
+	}
+	protected AttributeDef findAttribute(Container context,Container scope,String name)
+	{
+		if(!(scope instanceof Viewable))return null;
+		Viewable currentViewable=(Viewable)scope;		
+		
+		AttributeDef attrdef=currentViewable.findAttributeInExtendedClass(context,name);
 		return attrdef; // may be null if no attribute found
 	}
 	/** check if the given name is part of a AttributeRef, that is 
@@ -205,9 +208,9 @@ options
 	*   basename inside a viewable.
 	*   semantic predicate
 	*/
-	protected boolean isAttributeRef(Viewable v,String name)
+	protected boolean isAttributeRef(Container context,Viewable v,String name)
 	{
-			AttributeDef attr=findAttribute(v,name);
+			AttributeDef attr=findAttribute(context,v,name);
 			if(attr==null){
 			    // no attribute name in v
 			    return false;
@@ -785,7 +788,8 @@ options
     {
       if ((scopeModel != null)
           && (scopeModel != m)
-          && !scopeModel.isImporting (m) && m!=modelInterlis)
+          && (!standaloneExpression && !scopeModel.isImporting (m) && m!=modelInterlis)
+          )
       {
         reportError (formatMessage ("err_model_notImported",
           scopeModel.toString(), m.toString()),
@@ -5233,7 +5237,7 @@ protected objectOrAttributePath[Viewable start,Container context]
 			next=el.getViewable();
 			// System.err.println(el+": "+prenext+"->"+next);
 		}
-	el=pathEl[next,null]
+	el=pathEl[next,context]
 		{
 			path.add(el);
 		}
@@ -5284,7 +5288,7 @@ protected pathEl[Viewable currentViewable,Container context]
 	|	el=associationPath[currentViewable]
 		{ // TODO pathEl adapt associationPath
 		}
-	| 	{(isAttributeRef(currentViewable,LT(1).getText()) || LT(1).getText().equals("AGGREGATES")) }? el=attributeRef[currentViewable]
+	| 	{(isAttributeRef(context,currentViewable,LT(1).getText()) || LT(1).getText().equals("AGGREGATES")) }? el=attributeRef[context,currentViewable]
         /* | ReferenceAttribute-Name
         ** | Role-Name
 	** | Base-Name
@@ -5292,7 +5296,7 @@ protected pathEl[Viewable currentViewable,Container context]
 	|	n:NAME
 		{ 
 		AttributeDef refattr=null;
-		refattr=findAttribute(currentViewable,n.getText());
+		refattr=findAttribute(context,currentViewable,n.getText());
 		RoleDef oppend=null;
 		if(currentViewable instanceof Viewable){
 			if(context!=null){
@@ -5346,7 +5350,7 @@ protected associationPath[Viewable currentViewable]
 			}
 	;
 
-protected attributeRef[Viewable currentViewable]
+protected attributeRef[Container context,Viewable currentViewable]
 	returns[AbstractAttributeRef el]
 	{
 		long idx;
@@ -5355,7 +5359,7 @@ protected attributeRef[Viewable currentViewable]
 	:	(n:NAME
 			(	LBRACE idx=listIndex RBRACE
 				{
-				AttributeDef attrdef=findAttribute(currentViewable,n.getText());
+				AttributeDef attrdef=findAttribute(context,currentViewable,n.getText());
 				if(attrdef==null){
 					// no attribute 'name' in 'currentView'
 					reportError (formatMessage ("err_attributeRef_unknownAttr", n.getText(),
@@ -5380,7 +5384,7 @@ protected attributeRef[Viewable currentViewable]
 				}
 			| /* empty */
 				{
-				AttributeDef attrdef=findAttribute(currentViewable,n.getText());
+				AttributeDef attrdef=findAttribute(context,currentViewable,n.getText());
 				if(attrdef==null){
 					// no attribute 'name' in 'currentView'
 					reportError (formatMessage ("err_attributeRef_unknownAttr", n.getText(),

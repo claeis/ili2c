@@ -1,3 +1,11 @@
+ili2c 5.6.3 (2025-01-13)
+---------------------------
+- Xtf23Reader: fix xml whitespace/comment reading in headersection (#136)
+- allow standalone expressions with functions without importing the function model (ilishaper#4)
+- IMD/IMD16: local unique StructureAttribute-Name missing (#137)
+- fix accessing inherited AssocationAccess (#133)
+- iox-ili-1.23.4
+
 ili2c 5.6.2 (2024-12-04)
 ---------------------------
 - iox-ili-1.23.3

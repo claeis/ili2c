@@ -975,12 +975,13 @@ public class Imd16Generator {
 			ch.interlis.ili2c.metamodel.UniquenessConstraint uc=(ch.interlis.ili2c.metamodel.UniquenessConstraint)cnstrt;
 			if ( uc.getLocal() ) {
 				iomUniqueConstraint.setKind( UniqueConstraint_Kind.LocalU );
-				// TODO iomUniqueConstraint.setScope(visitObjectPath(uc.getPrefix()));
 				Iterator attri=uc.getElements().iteratorAttribute();
 				while(attri.hasNext()){
 			    	  ch.interlis.ili2c.metamodel.ObjectPath attr=(ch.interlis.ili2c.metamodel.ObjectPath)attri.next();
 			    	  PathOrInspFactor iomExpr=new PathOrInspFactor();
-			    	  iomUniqueConstraint.addUniqueDef(visitObjectPathEls(iomExpr,attr));
+	                  visitObjectPathEls(iomExpr,uc.getPrefix());
+			    	  visitObjectPathEls(iomExpr,attr);
+                      iomUniqueConstraint.addUniqueDef(iomExpr);
 				}
 			} else {
 				if (uc.perBasket()) {
