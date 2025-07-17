@@ -1269,6 +1269,28 @@ public class RepositoryAccess {
         }
         return lastVersion;
     }
+    public File getLocalFileLocation(String uriStr)
+    throws RepositoryAccessException
+    {
+        String localReposName = translateUriInclPathToFilenameInCache(uriStr);
+        File localReposFolder=new File(localCache,localReposName);
+        java.net.URL url=null;
+        try {
+            java.net.URI uri=new java.net.URI(uriStr);
+            url=uri.toURL();
+        } catch (MalformedURLException e) {
+            throw new RepositoryAccessException(e);
+        } catch (URISyntaxException e) {
+            throw new RepositoryAccessException(e);
+        }
+        File targetLocalFile=null;
+        try {
+            targetLocalFile = fetchFromHttpServer(url, localReposFolder,null);
+        } catch (IOException e) {
+            throw new RepositoryAccessException(e);
+        }
+        return targetLocalFile;
+    }
 	/** Gets access to a file.
 	 * If the file is in a remote repository, it will be downloaded to the cache and path to the version in the cache is returned.
 	 * If the file is already in the cache, the repository will be checked for never version depending on age of cached file and md5 digest.
@@ -1386,138 +1408,55 @@ public class RepositoryAccess {
 			}
 			localFileName=translateUriToFilenameInCache(urib);
 		}
-		File ret=new File(localCache,localFileName);
+		File targetLocalFolder=new File(localCache,localFileName);
+        File targetLocalFile=targetLocalFolder;
 		if(filename!=null){
-			ret=new File(ret,filename);
+			targetLocalFile=new File(targetLocalFolder,filename);
 		}
 		boolean fetchFromServer=true;
 		boolean localFileExists=false;
-		if(!ret.exists()){
+		if(!targetLocalFile.exists()){
 			fetchFromServer=true;
 		}else{
 			localFileExists=true;
 			fetchFromServer=false;
-			if(!fetchFromServer && (maxTTL==0 || ret.lastModified()+maxTTL<System.currentTimeMillis())){
+			if(!fetchFromServer && (maxTTL==0 || targetLocalFile.lastModified()+maxTTL<System.currentTimeMillis())){
 				fetchFromServer=true;
 			}
-			if(!fetchFromServer && md5!=null && !calcMD5(ret).equals(md5)){
+			if(!fetchFromServer && md5!=null && !calcMD5(targetLocalFile).equals(md5)){
 				fetchFromServer=true;
 			}
 		}
 		// if not in cache
 		if(fetchFromServer){
-			// fetch from http server (handle redirects)
-			java.net.URL url=null;
-			try {
-			    java.net.URI uri=new java.net.URI(uriStr);
-				url=uri.toURL();
-				if(filename!=null){
-					// incomplete url of directory?
-					if(!uriStr.endsWith("/")){
-						// fix it
-						uri=new java.net.URI(uriStr+"/");
-					}
-					url=makeURI(uri,filename).toURL();
-				}
-				EhiLogger.traceState("fetching <"+url+"> ...");
-			} catch (MalformedURLException e) {
-				throw new RepositoryAccessException(e);
-			} catch (URISyntaxException e) {
-				throw new RepositoryAccessException(e);
-			}
-			java.net.URLConnection conn=null;
-			try {
-				//
-				// java  -Dhttp.proxyHost=myproxyserver.com  -Dhttp.proxyPort=80 MyJavaApp
-				//
-				// System.setProperty("http.proxyHost", "myProxyServer.com");
-				// System.setProperty("http.proxyPort", "80");
-				//
-				// System.setProperty("java.net.useSystemProxies", "true");
-				//
-				// since 1.5 
-				// Proxy instance, proxy ip = 123.0.0.1 with port 8080
-				// Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("123.0.0.1", 8080));
-				// URL url = new URL("http://www.yahoo.com");
-				// HttpURLConnection uc = (HttpURLConnection)url.openConnection(proxy);
-				// uc.connect();
-				// 
-				conn = url.openConnection();
-                // java  -Dsun.net.client.defaultConnectTimeout=15000
-                // java  -Dsun.net.client.defaultReadTimeout=40000
-				if(conn.getConnectTimeout()==0) {
-	                conn.setConnectTimeout(15*1000);
-				}
-				if(conn.getReadTimeout()==0) {
-	                conn.setReadTimeout(40*1000);
-				}
-				
-			} catch (IOException e) {
-				if(localFileExists){
-					EhiLogger.logAdaption(e.toString()+"; use local copy of remote file "+filename);
-					return ret;
-				}
-				throw new RepositoryAccessException(e);
-			}
-			java.io.BufferedInputStream in=null;
-			java.io.OutputStream fos=null;
-			try{
-				try {
-					in=new java.io.BufferedInputStream(conn.getInputStream());
-				} catch (FileNotFoundException e) {
-					return null;
-				//} catch (java.net.UnknownHostException e) {
-				//	return null;
-				} catch (IOException e) {
-					if(localFileExists){
-						EhiLogger. logAdaption(e.toString()+"; use local copy of remote file "+filename);
-						return ret;
-					}
-					throw new RepositoryAccessException(e);
-				}
-				// create directory
-				java.io.File dir=ret.getParentFile();
-				if(!dir.exists()){
-					boolean created=dir.mkdirs();
-					if(!created){
-						throw new IllegalArgumentException("failed to create folder "+uriStr);
-					}
-				}
-				// save to cache
-				try {
-					fos = new java.io.BufferedOutputStream(new java.io.FileOutputStream(ret));
-				} catch (FileNotFoundException e) {
-					throw new IllegalArgumentException("failed to create file in cache",e);
-				}
-			    try {
-					byte[] buf = new byte[1024];
-					int i = 0;
-					while ((i = in.read(buf)) != -1) {
-					    fos.write(buf, 0, i);
-					}
-				} catch (IOException e) {
-					throw new IllegalArgumentException("failed to save downloaded file to cache",e);
-				}
-			}finally{
-				if(in!=null){
-					try {
-						in.close();
-					} catch (IOException e) {
-						EhiLogger.logError(e);
-					}
-					in=null;
-				}
-				if(fos!=null){
-					try {
-						fos.close();
-					} catch (IOException e) {
-						EhiLogger.logError(e);
-					}
-					fos=null;
-				}
-			}
+		    try {
+		        java.net.URL url=null;
+		        try {
+		            java.net.URI uri=new java.net.URI(uriStr);
+		            url=uri.toURL();
+		            if(filename!=null){
+		                // incomplete url of directory?
+		                if(!uriStr.endsWith("/")){
+		                    // fix it
+		                    uri=new java.net.URI(uriStr+"/");
+		                }
+		                url=makeURI(uri,filename).toURL();
+		            }
+		        } catch (MalformedURLException e) {
+		            throw new RepositoryAccessException(e);
+		        } catch (URISyntaxException e) {
+		            throw new RepositoryAccessException(e);
+		        }
+	            targetLocalFile=fetchFromHttpServer(url, targetLocalFolder,filename);
+	        } catch (IOException e) {
+	            if(localFileExists){
+	                EhiLogger.logAdaption(e.toString()+"; use local copy of remote file "+filename);
+	                return targetLocalFile;
+	            }
+	            throw new RepositoryAccessException(e);
+	        }
 		}
-		return ret;
+		return targetLocalFile;
 	}
 	// uri is a local file 
 	File ret=new File(uriStr);
@@ -1529,6 +1468,95 @@ public class RepositoryAccess {
 	}
 	return ret;
 }
+
+    private File fetchFromHttpServer(java.net.URL url, File dir,String filename)
+            throws RepositoryAccessException, IOException {
+        // fetch from http server (handle redirects)
+        EhiLogger.traceState("fetching <"+url+"> ...");
+        java.net.URLConnection conn=null;
+        {
+        	//
+        	// java  -Dhttp.proxyHost=myproxyserver.com  -Dhttp.proxyPort=80 MyJavaApp
+        	//
+        	// System.setProperty("http.proxyHost", "myProxyServer.com");
+        	// System.setProperty("http.proxyPort", "80");
+        	//
+        	// System.setProperty("java.net.useSystemProxies", "true");
+        	//
+        	// since 1.5 
+        	// Proxy instance, proxy ip = 123.0.0.1 with port 8080
+        	// Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("123.0.0.1", 8080));
+        	// URL url = new URL("http://www.yahoo.com");
+        	// HttpURLConnection uc = (HttpURLConnection)url.openConnection(proxy);
+        	// uc.connect();
+        	// 
+        	conn = url.openConnection();
+            // java  -Dsun.net.client.defaultConnectTimeout=15000
+            // java  -Dsun.net.client.defaultReadTimeout=40000
+        	if(conn.getConnectTimeout()==0) {
+                conn.setConnectTimeout(15*1000);
+        	}
+        	if(conn.getReadTimeout()==0) {
+                conn.setReadTimeout(40*1000);
+        	}
+        }
+        java.io.BufferedInputStream in=null;
+        java.io.OutputStream fos=null;
+        File targetFile=null;
+        try{
+        	try {
+        		in=new java.io.BufferedInputStream(conn.getInputStream());
+        	} catch (FileNotFoundException e) {
+        		return null;
+        	//} catch (java.net.UnknownHostException e) {
+        	//	return null;
+        	}
+        	// create directory
+        	if(!dir.exists()){
+        		boolean created=dir.mkdirs();
+        		if(!created){
+        			throw new IllegalArgumentException("failed to create folder "+url.toString());
+        		}
+        	}
+            if(filename==null) {
+                filename=new File(url.getPath()).getName();
+            }
+            targetFile=new File(dir,filename);
+        	// save to cache
+        	try {
+        		fos = new java.io.BufferedOutputStream(new java.io.FileOutputStream(targetFile));
+        	} catch (FileNotFoundException e) {
+        		throw new IllegalArgumentException("failed to create file in cache",e);
+        	}
+            try {
+        		byte[] buf = new byte[1024];
+        		int i = 0;
+        		while ((i = in.read(buf)) != -1) {
+        		    fos.write(buf, 0, i);
+        		}
+        	} catch (IOException e) {
+        		throw new IllegalArgumentException("failed to save downloaded file to cache",e);
+        	}
+        }finally{
+        	if(in!=null){
+        		try {
+        			in.close();
+        		} catch (IOException e) {
+        			EhiLogger.logError(e);
+        		}
+        		in=null;
+        	}
+        	if(fos!=null){
+        		try {
+        			fos.close();
+        		} catch (IOException e) {
+        			EhiLogger.logError(e);
+        		}
+        		fos=null;
+        	}
+        }
+        return targetFile;
+    }
     public static java.net.URI makeURI(java.net.URI uri,String pathStr) throws URISyntaxException
     {
         if(pathStr.startsWith("/") || pathStr.startsWith("\\")) {
@@ -1588,6 +1616,12 @@ public class RepositoryAccess {
         }
         return escapeUri(uri);
     }
+    private String translateUriInclPathToFilenameInCache(String uri) {
+        if(doHashedFilenames) {
+            return calcMD5(uri);
+        }
+        return escapeUriInclPath(uri);
+    }
     public static String escapeUri(String uri) {
 		StringBuffer localFileName=new StringBuffer();
 		{
@@ -1615,6 +1649,34 @@ public class RepositoryAccess {
 		}
 		return localFileName.toString();
 	}
+    public static String escapeUriInclPath(String uri) {
+        StringBuffer localFileName=new StringBuffer();
+        {
+            // escape characters
+            // win < > : " / \ | ? * %
+            for(int i=0;i<uri.length();i++){
+                char c=uri.charAt(i);
+                if(c=='<'
+                        || c=='>'
+                        || c==':'
+                        || c=='"'
+                        || c=='\\'
+                        || c=='/'
+                        || c=='|'
+                        || c=='?'
+                        || c=='*'
+                        || c=='%'
+                        || c=='&'){
+                    localFileName.append('&');
+                    String str=Integer.toHexString(c);
+                    localFileName.append("0000".substring(str.length())+str);
+                }else{
+                    localFileName.append(c);
+                }
+            }
+        }
+        return localFileName.toString();
+    }
 	/** Calculates the digest of a local file.
 	 * @param file local file
 	 * @return md5 digest of local file content.
