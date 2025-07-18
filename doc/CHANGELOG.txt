@@ -1,4 +1,4 @@
-ili2c 5.65 (2025-07-xx)
+ili2c 5.6.5 (2025-07-xx)
 --------------------------
 - API: new function RepositoryAccess.getLocalFileLocation() to access file by url
 
