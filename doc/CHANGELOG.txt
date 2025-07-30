@@ -1,6 +1,7 @@
 ili2c 5.6.5 (2025-07-xx)
 --------------------------
 - API: new function RepositoryAccess.getLocalFileLocation() to access file by url
+- API: XSD24Generator.createDef2NameMapping() return only non-translated elements to avoid writing of translated objects
 
 ili2c 5.6.4 (2025-05-07)
 ---------------------------
