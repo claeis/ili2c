@@ -1,0 +1,33 @@
+INTERLIS 2.3;
+
+
+MODEL Model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1" =
+
+  TOPIC Topic = 
+
+    CLASS A =
+    END A;
+
+    CLASS B =
+    END B;
+
+    ASSOCIATION  =
+      a -- {1} A;
+      b -- B;
+    END;
+    
+  END Topic;
+
+  TOPIC TopicExt EXTENDS Topic = 
+
+    CLASS A (EXTENDED) =
+      attr : TEXT*10;
+    END A;
+
+    CONSTRAINTS OF B =
+      MANDATORY CONSTRAINT a->attr=="Hello World";
+    END;
+
+  END TopicExt;
+
+END Model.

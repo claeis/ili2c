@@ -1178,6 +1178,18 @@ public class Expressions23Test {
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}
+    @Test
+    public void expressions_AcceptingExtendedObjectWithRoleOfClass() {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"expressions_AcceptingExtendedObjectWithRoleOfClass.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+        assertNotNull(td);
+        assertEquals(0,errs.getErrs().size());
+    }
 	
 	// This test checks if the compiler detects an association path that may point to multiple objects.
 	@Ignore

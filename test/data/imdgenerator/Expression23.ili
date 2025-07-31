@@ -1,0 +1,24 @@
+INTERLIS 2.3;
+
+MODEL Expression23
+  AT "mailto:ce@eisenhutinformatik.ch" VERSION "2016-12-21" =
+    
+  TOPIC TestA =
+    
+    CLASS ClassA1 =
+		Test1 : TEXT*80;
+		Test2 : TEXT*12;
+		
+		MANDATORY CONSTRAINT
+			NOT(DEFINED(Test1)) OR
+            NOT(DEFINED(Test2)) OR
+            (
+               DEFINED(Test1) AND
+               DEFINED(Test2)
+            );
+     END ClassA1;
+    
+  END TestA;
+  
+  
+END Expression23.

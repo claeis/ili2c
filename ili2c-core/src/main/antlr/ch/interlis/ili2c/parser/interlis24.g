@@ -4,6 +4,7 @@ header
 	import ch.interlis.ili2c.metamodel.*;
 	import ch.interlis.ili2c.generator.Interlis2Generator;
 	import ch.interlis.ili2c.CompilerLogEvent;
+	import ch.interlis.ili2c.Ili2cException;
 	import java.util.*;
 	import ch.ehi.basics.logging.EhiLogger;
 	import ch.ehi.basics.settings.Settings;
@@ -27,7 +28,9 @@ options
   private antlr.TokenStreamHiddenTokenFilter filter;
   private boolean checkMetaObjs;
   private Ili2cMetaAttrs externalMetaAttrs=new Ili2cMetaAttrs();
-
+  private int parserErrc=0;
+  private boolean standaloneExpression=false;
+  
   /** Parse the contents of a stream according to INTERLIS-1 or INTERLIS-2 syntax
       (the version is detected automatically by the parser) and add the
       encountered contents to this TransferDescription.
@@ -121,6 +124,59 @@ options
       return false;
     }
   }
+ static public Evaluable parseExpression(TransferDescription td
+    ,String objectPath,Container start, Type expectedType,String filename
+    )
+    throws Ili2cException
+  {
+
+  	Evaluable ret=null;
+    Ili24Parser parser =null;
+    try {
+      Ili24Lexer lexer= new Ili24Lexer (new java.io.StringReader(objectPath));
+      
+      //
+      // setup token stream splitting to filter out comments
+      //
+      //filter.getHiddenAfter(end)
+      //filter.getHiddenBefore(begin)
+
+      // create token objects augmented with links to hidden tokens. 
+      lexer.setTokenObjectClass("antlr.CommonHiddenStreamToken");
+
+      // create filter that pulls tokens from the lexer
+      antlr.TokenStreamHiddenTokenFilter filter = new antlr.TokenStreamHiddenTokenFilter(lexer);
+
+      // tell the filter which tokens to hide, and which to discard
+      filter.hide(ILI_DOC);
+      filter.hide(ILI_METAVALUE);
+
+      // connect parser to filter (instead of lexer)
+      parser = new Ili24Parser (filter);
+
+      
+      // Ili2.3 always check existence of metaobject
+      parser.checkMetaObjs=true; // checkMetaObjects;
+      parser.standaloneExpression=true;
+      parser.lexer=lexer;
+      parser.filter=filter;
+      parser.setFilename (filename);
+      ret=parser.standaloneExpression (td,start,expectedType);
+    }catch(antlr.RecognitionException ex){
+      throw new Ili2cException(ex);
+    }catch(antlr.TokenStreamRecognitionException ex){
+      throw new Ili2cException(ex);
+    } catch (antlr.ANTLRError ex) {
+      throw new Ili2cException(ex);
+    } catch (Exception ex) {
+      throw new Ili2cException(ex);
+    }
+    if(parser!=null && parser.parserErrc>0){
+      throw new Ili2cException("parse failed <"+objectPath+">");
+    }
+    return ret;
+    
+  }
 
 	/** compiler error messages
 	*/
@@ -134,16 +190,17 @@ options
 	protected AttributeDef findAttribute(Container scope,String name)
 	{
 		if(!(scope instanceof Viewable))return null;
-		Viewable currentViewable=(Viewable)scope;
-		AttributeDef attrdef=null;
-		Iterator it=currentViewable.getAttributes();
-		while(it.hasNext()){
-			AttributeDef ele=(AttributeDef)it.next();
-			if(ele.getName().equals(name)){
-				attrdef=ele;
-				break;
-			}
-		}
+		Viewable currentViewable=(Viewable)scope;		
+		
+		AttributeDef attrdef=currentViewable.findAttribute(name);
+		return attrdef; // may be null if no attribute found
+	}
+	protected AttributeDef findAttribute(Container context,Container scope,String name)
+	{
+		if(!(scope instanceof Viewable))return null;
+		Viewable currentViewable=(Viewable)scope;		
+		
+		AttributeDef attrdef=currentViewable.findAttributeInExtendedClass(context,name);
 		return attrdef; // may be null if no attribute found
 	}
 	/** check if the given name is part of a AttributeRef, that is 
@@ -151,9 +208,9 @@ options
 	*   basename inside a viewable.
 	*   semantic predicate
 	*/
-	protected boolean isAttributeRef(Viewable v,String name)
+	protected boolean isAttributeRef(Container context,Viewable v,String name)
 	{
-			AttributeDef attr=findAttribute(v,name);
+			AttributeDef attr=findAttribute(context,v,name);
 			if(attr==null){
 			    // no attribute name in v
 			    return false;
@@ -587,8 +644,10 @@ options
 	      }
 	      return d;
 	}
+  @Override
   public void reportError (String message)
   {
+	  parserErrc++;
       String filename=getFilename();
       CompilerLogEvent.logError(filename,0,message);
   }
@@ -603,6 +662,7 @@ options
 
   protected void reportError (String message, int lineNumber)
   {
+	  parserErrc++;
       String filename=getFilename();
       CompilerLogEvent.logError(filename,lineNumber,message);
   }
@@ -617,6 +677,7 @@ options
 
   protected void reportError (Throwable ex, int lineNumber)
   {
+	  parserErrc++;
       String filename=getFilename();
       if(ex instanceof antlr.RecognitionException){
 	      CompilerLogEvent.logError(filename,lineNumber,ex.getLocalizedMessage());
@@ -628,18 +689,22 @@ options
   }
   protected void reportError (Ili2cSemanticException ex)
   {
+	  parserErrc++;
       String filename=getFilename();
       CompilerLogEvent.logError(filename,ex.getSourceLine(),ex.getLocalizedMessage());
   }
   protected void reportError (List<Ili2cSemanticException> errs)
   {
+	  parserErrc++;
       String filename=getFilename();
   	for(Ili2cSemanticException ex:errs){
       CompilerLogEvent.logError(filename,ex.getSourceLine(),ex.getLocalizedMessage());
   	}
   }
+  @Override
   public void reportError (antlr.RecognitionException ex)
   {
+	  parserErrc++;
       String filename=getFilename();
       int lineNumber=((antlr.RecognitionException)ex).getLine();
       CompilerLogEvent.logError(filename,lineNumber,ex.getLocalizedMessage());
@@ -647,6 +712,7 @@ options
 
   protected void reportInternalError(int lineNumber)
   {
+	  parserErrc++;
       String filename=getFilename();
       CompilerLogEvent.logError(filename,lineNumber,formatMessage("err_internalCompilerError", /* exception */ ""));
   }
@@ -654,6 +720,7 @@ options
 
   protected void reportInternalError (Throwable ex, int lineNumber)
   {
+	  parserErrc++;
       String filename=getFilename();
       CompilerLogEvent.logError(filename,lineNumber,formatMessage("err_internalCompilerError", ""),ex);
   }
@@ -721,7 +788,8 @@ options
     {
       if ((scopeModel != null)
           && (scopeModel != m)
-          && !scopeModel.isImporting (m) && m!=modelInterlis)
+          && (!standaloneExpression && !scopeModel.isImporting (m) && m!=modelInterlis)
+          )
       {
         reportError (formatMessage ("err_model_notImported",
           scopeModel.toString(), m.toString()),
@@ -1029,6 +1097,24 @@ public interlisDescription [TransferDescription td1]
 		    }
 	;
 
+public standaloneExpression [TransferDescription td1,Container ns, Type expectedType]
+	returns [Evaluable result]
+	{
+		result=null;
+		this.td = td1;
+		this.modelInterlis = td.INTERLIS;
+		this.predefinedBooleanType = Type.findReal (td.INTERLIS.BOOLEAN.getType());
+		this.predefinedScalSystemClass = td.INTERLIS.SCALSYSTEM;
+		this.predefinedCoordSystemClass = td.INTERLIS.COORDSYSTEM;
+	}
+	:	result=expression [ns,expectedType,ns]
+		EOF		
+	    exception
+		    catch [NoViableAltException nvae]
+		    {
+		    	throw nvae;
+		    }
+	;
 
 protected interlis2Def
 	{
@@ -5151,7 +5237,7 @@ protected objectOrAttributePath[Viewable start,Container context]
 			next=el.getViewable();
 			// System.err.println(el+": "+prenext+"->"+next);
 		}
-	el=pathEl[next,null]
+	el=pathEl[next,context]
 		{
 			path.add(el);
 		}
@@ -5202,7 +5288,7 @@ protected pathEl[Viewable currentViewable,Container context]
 	|	el=associationPath[currentViewable]
 		{ // TODO pathEl adapt associationPath
 		}
-	| 	{(isAttributeRef(currentViewable,LT(1).getText()) || LT(1).getText().equals("AGGREGATES")) }? el=attributeRef[currentViewable]
+	| 	{(isAttributeRef(context,currentViewable,LT(1).getText()) || LT(1).getText().equals("AGGREGATES")) }? el=attributeRef[context,currentViewable]
         /* | ReferenceAttribute-Name
         ** | Role-Name
 	** | Base-Name
@@ -5210,7 +5296,7 @@ protected pathEl[Viewable currentViewable,Container context]
 	|	n:NAME
 		{ 
 		AttributeDef refattr=null;
-		refattr=findAttribute(currentViewable,n.getText());
+		refattr=findAttribute(context,currentViewable,n.getText());
 		RoleDef oppend=null;
 		if(currentViewable instanceof Viewable){
 			if(context!=null){
@@ -5264,7 +5350,7 @@ protected associationPath[Viewable currentViewable]
 			}
 	;
 
-protected attributeRef[Viewable currentViewable]
+protected attributeRef[Container context,Viewable currentViewable]
 	returns[AbstractAttributeRef el]
 	{
 		long idx;
@@ -5273,7 +5359,7 @@ protected attributeRef[Viewable currentViewable]
 	:	(n:NAME
 			(	LBRACE idx=listIndex RBRACE
 				{
-				AttributeDef attrdef=findAttribute(currentViewable,n.getText());
+				AttributeDef attrdef=findAttribute(context,currentViewable,n.getText());
 				if(attrdef==null){
 					// no attribute 'name' in 'currentView'
 					reportError (formatMessage ("err_attributeRef_unknownAttr", n.getText(),
@@ -5298,7 +5384,7 @@ protected attributeRef[Viewable currentViewable]
 				}
 			| /* empty */
 				{
-				AttributeDef attrdef=findAttribute(currentViewable,n.getText());
+				AttributeDef attrdef=findAttribute(context,currentViewable,n.getText());
 				if(attrdef==null){
 					// no attribute 'name' in 'currentView'
 					reportError (formatMessage ("err_attributeRef_unknownAttr", n.getText(),
@@ -7344,6 +7430,7 @@ STRING
   : '"'!
     ( ESC | ~( '"' | '\\' ) )*
     '"'!
+    { setText(InterlisString.parseEscapeSequences($getText)); }
   ;
 
 

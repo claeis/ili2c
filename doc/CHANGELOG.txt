@@ -1,5 +1,55 @@
-LATEST
+ili2c 5.6.5 (2025-07-31)
+--------------------------
+- only ili2c-core release
+- API: new function RepositoryAccess.getLocalFileLocation() to access file by url
+- API: XSD24Generator.createDef2NameMapping() return only non-translated elements to avoid writing of translated objects
+
+ili2c 5.6.4 (2025-05-07)
 ---------------------------
+- iox-ili-1.24.0
+
+ili2c 5.6.3 (2025-01-13)
+---------------------------
+- Xtf23Reader: fix xml whitespace/comment reading in headersection (#136)
+- allow standalone expressions with functions without importing the function model (ilishaper#4)
+- IMD/IMD16: local unique StructureAttribute-Name missing (#137)
+- fix accessing inherited AssocationAccess (#133)
+- iox-ili-1.23.4
+
+ili2c 5.6.2 (2024-12-04)
+---------------------------
+- iox-ili-1.23.3
+
+ili2c 5.6.1 (2024-11-03)
+---------------------------
+- API: Main.parseExpression() added
+
+ili2c 5.6.0 (2024-11-03)
+---------------------------
+- API: re-factor NLSXML generation/new class NlsModelElement
+- NLSXML: fix evaluation of scopedName for multiple translated elements
+- NLSXML: fix enumeration in domains (#130)
+- iox-ili-1.23.2
+
+ili2c 5.5.4 (2024-08-16)
+---------------------------
+- imd export: Subexpression export (#131)
+- imd16 export: local mandatory domain-types (#132)
+- iox-ili-1.23.1
+
+ili2c 5.5.3 (2024-05-01)
+---------------------------
+- fix doc generation
+
+ili2c 5.5.2 (2024-05-01)
+---------------------------
+- ili2 export: print domain constraints (#117)
+- ili2 export: include GENERIC property in domain export (#116)
+- fix escape sequences in text constants (#124)
+
+ili2c 5.5.1 (2024-01-18)
+---------------------------
+- iox-ili-1.23.0
 
 ili2c 5.5.0 (2024-01-11)
 ---------------------------

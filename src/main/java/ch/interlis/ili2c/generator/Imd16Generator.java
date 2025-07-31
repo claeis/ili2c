@@ -731,7 +731,7 @@ public class Imd16Generator {
 				ch.interlis.ili2c.metamodel.Domain domain=alias.getAliasing();
 				if(domain==td.INTERLIS.URI || domain==td.INTERLIS.NAME  || domain==td.INTERLIS.BOOLEAN){
 				    OutParam<String> typeTid=new OutParam<String>();
-					visitAttrLocalType(typeTid,type,attr); 
+					visitAttrLocalType(typeTid,type,attr,null); 
 					iomAttr.setType(typeTid.value);
 				}else{
 					if(alias.getCardinality().getMaximum()>1){						
@@ -745,13 +745,17 @@ public class Imd16Generator {
 						iomMultiValue.setBaseType(domain.getScopedName(null));
 						out.write(new ObjectEvent(iomMultiValue));
 						iomAttr.setType(iomMultiValue.getobjectoid());
+					}else if(alias.isMandatory()){
+                        OutParam<String> typeTid=new OutParam<String>();
+                        visitAttrLocalType(typeTid,domain.getType(),attr,domain.getScopedName(null)); 
+                        iomAttr.setType(getTypeTid(type,attr,null));
 					}else{
 						iomAttr.setType(domain.getScopedName(null));
 					}
 				}
 			}else{
-			    OutParam<String> typeTid=new OutParam<String>();
-				visitAttrLocalType(typeTid,type,attr);
+				OutParam<String> typeTid=new OutParam<String>();
+				visitAttrLocalType(typeTid,type,attr,null);
 				iomAttr.setType(typeTid.value);
 			}
 			out.write(new ObjectEvent(iomAttr));
@@ -971,12 +975,13 @@ public class Imd16Generator {
 			ch.interlis.ili2c.metamodel.UniquenessConstraint uc=(ch.interlis.ili2c.metamodel.UniquenessConstraint)cnstrt;
 			if ( uc.getLocal() ) {
 				iomUniqueConstraint.setKind( UniqueConstraint_Kind.LocalU );
-				// TODO iomUniqueConstraint.setScope(visitObjectPath(uc.getPrefix()));
 				Iterator attri=uc.getElements().iteratorAttribute();
 				while(attri.hasNext()){
 			    	  ch.interlis.ili2c.metamodel.ObjectPath attr=(ch.interlis.ili2c.metamodel.ObjectPath)attri.next();
 			    	  PathOrInspFactor iomExpr=new PathOrInspFactor();
-			    	  iomUniqueConstraint.addUniqueDef(visitObjectPathEls(iomExpr,attr));
+	                  visitObjectPathEls(iomExpr,uc.getPrefix());
+			    	  visitObjectPathEls(iomExpr,attr);
+                      iomUniqueConstraint.addUniqueDef(iomExpr);
 				}
 			} else {
 				if (uc.perBasket()) {
@@ -2037,17 +2042,28 @@ public class Imd16Generator {
 		}
 		return iomType;
 	}
-	private void visitAttrLocalType(OutParam<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.AttributeDef attr)
+	private void visitAttrLocalType(OutParam<String> typeTid,ch.interlis.ili2c.metamodel.Type type,ch.interlis.ili2c.metamodel.AttributeDef attr,String domainTid)
 	throws IoxException
 	{
 		typeTid.value=getTypeTid(type,attr,null);
 		Type iomType=visitType(typeTid.value,type);
 		iomType.setName(LOCAL_TYPE_NAME);
-		ch.interlis.ili2c.metamodel.AttributeDef baseAttr=(ch.interlis.ili2c.metamodel.AttributeDef)attr.getExtending();
-		if(baseAttr!=null){
+		if(domainTid!=null){
 			// not yet set?
 			if(iomType.getattrvaluecount("Super")==0){ 
-				iomType.setSuper(getTypeTid(baseAttr.getDomain(), baseAttr, null));
+				iomType.setSuper(domainTid);
+			}else{
+				// replace ref
+			    ch.interlis.iom.IomObject ref=iomType.getattrobj("Super",0);
+			    ref.setobjectrefoid(domainTid);
+			}
+		}else{
+			ch.interlis.ili2c.metamodel.AttributeDef baseAttr=(ch.interlis.ili2c.metamodel.AttributeDef)attr.getExtending();
+			if(baseAttr!=null){
+				// not yet set?
+				if(iomType.getattrvaluecount("Super")==0){ 
+					iomType.setSuper(getTypeTid(baseAttr.getDomain(), baseAttr, null));
+				}
 			}
 		}
 		iomType.setAbstract( type.isAbstract() );
