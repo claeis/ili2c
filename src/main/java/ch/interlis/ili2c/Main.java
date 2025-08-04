@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.view.GenericFileFilter;
 import ch.interlis.ili2c.config.BoidEntry;
@@ -39,6 +40,8 @@ import ch.interlis.ili2c.parser.Ili22Parser;
 import ch.interlis.ili2c.parser.Ili23Parser;
 import ch.interlis.ili2c.parser.Ili24Parser;
 import ch.interlis.ilirepository.impl.RepositoryVisitor;
+import ch.interlis.iox_j.logging.FileLogger;
+import ch.interlis.iox_j.logging.XtfErrorsLogger;
 
 
 public class Main {
@@ -220,6 +223,8 @@ public class Main {
 	    System.err.println("                      warnings are generated as well.");
 	    System.err.println("--trace               Display detailed trace messages.");
 	    System.err.println("--quiet               Suppress info messages.");
+        System.err.println("--log file            text file, that receives messages.");
+        System.err.println("--xtflog file         INTERLIS transfer file, that receives messages.");
 	    System.err.println("-h|--help             Display this help text.");
 	    System.err.println("-u|--usage            Display short information about usage.");
 	    System.err.println("-v|--version          Display the version of " + APP_NAME + ".");
@@ -233,8 +238,12 @@ public class Main {
 	    return;
 	}
 
+    FileLogger log=null;
+    XtfErrorsLogger xtflog=null;
 	try {
 	    String outfile = null;
+	    String logfile = null;
+        String xtflogfile = null;
 		String language = null;
 		String nlsxmlFilename = null;
 	    int outputKind = GenerateOutputKind.NOOUTPUT;
@@ -291,6 +300,16 @@ public class Main {
 		    outfile = args[i];
 		    continue;
 		}
+        if (args[i].equals("--log")) {
+            i++;
+            logfile = args[i];
+            continue;
+        }
+        if (args[i].equals("--xtflog")) {
+            i++;
+            xtflogfile = args[i];
+            continue;
+        }
 		if (args[i].equals("--translation")) {
 		    i++;
             String modelNameMappings[]=args[i].split(";");
@@ -427,6 +446,15 @@ public class Main {
 
 	    }
 
+        if(logfile!=null) {
+            log=new FileLogger(new File(logfile),false);
+            EhiLogger.getInstance().addListener(log);
+        }
+        if(xtflogfile!=null) {
+            xtflog=new XtfErrorsLogger(new File(xtflogfile), Main.APP_NAME+"-"+Main.getVersion());
+            EhiLogger.getInstance().addListener(xtflog);
+        }
+	    
 	    Ili2cSettings settings = new Ili2cSettings();
 	    setDefaultIli2cPathMap(settings);
 	    settings.setHttpProxyHost(httpProxyHost);
@@ -507,6 +535,18 @@ public class Main {
 	} catch (Exception ex) {
 	    EhiLogger.logError(APP_NAME + ": An internal error has occured. Please notify " + notifyOnError, ex);
 	    System.exit(1);
+	}finally {
+	    if(log!=null) {
+            log.close();
+            EhiLogger.getInstance().removeListener(log);
+            log=null;
+	        
+	    }
+        if(xtflog!=null) {
+            xtflog.close();
+            EhiLogger.getInstance().removeListener(xtflog);
+            xtflog=null;
+        }
 	}
     }
 
