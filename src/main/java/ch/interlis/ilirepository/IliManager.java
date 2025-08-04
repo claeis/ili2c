@@ -79,6 +79,8 @@ public class IliManager implements ReposManager {
      */
     public static final String ILIDATA_URI_PREFIX = "ilidata:";
     public static final String FILE_URI_PREFIX = "file:";
+    public static final String HTTP_URI_PREFIX = "http:";
+    public static final String HTTPS_URI_PREFIX = "https:";
     private long iliMaxTTL=604800000L; // max time (7 days) to live in ms for a file in the cache
     private long dataMaxTTL=43200000L; // max time (24h) to live in ms for a file in the cache
 	private RepositoryAccess rep=new RepositoryAccess();
@@ -549,6 +551,12 @@ public class IliManager implements ReposManager {
                 }
                 java.io.File localFiles[]=repoManager.getLocalFileOfRemoteDataset(datasets.get(0), getFormat(datasets.get(0)));
                 return localFiles[0];
+            } catch (RepositoryAccessException e) {
+                throw new Ili2cException("failed to get file "+dataFile,e);
+            }
+        }else if(dataFile.startsWith(IliManager.HTTP_URI_PREFIX) || dataFile.startsWith(IliManager.HTTPS_URI_PREFIX)) {
+            try {
+                return repoManager.rep.getLocalFileLocation(dataFile);
             } catch (RepositoryAccessException e) {
                 throw new Ili2cException("failed to get file "+dataFile,e);
             }

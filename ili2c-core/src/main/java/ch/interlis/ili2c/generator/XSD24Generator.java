@@ -151,52 +151,54 @@ public final class XSD24Generator
 			Object modelo = modeli.next();
 			if (modelo instanceof Model) {
 					Model model = (Model) modelo;
-					HashMap<String,Element> name2def=new HashMap<String,Element>();
-					HashSet<String> nameSet=new HashSet<String>();
-					Iterator<Element> topici = model.iterator();
-					while (topici.hasNext()) {
-						Element ele = (Element)topici.next();
-					    String eleName=ele.getName();
-					    nameSet.add(eleName);
-				    	name2def.put(eleName, ele);
-				    	def2name.put(ele, eleName);
-					}
-					topici = model.iterator();
-					while (topici.hasNext()) {
-						Object topico = topici.next();
-						if (topico instanceof Topic) {
-							Topic topic = (Topic) topico;
-						    String topicName=topic.getName();
-							   Iterator<?> classi = topic.iterator();
-							   while (classi.hasNext())
-							   {
-							     Element aclass = (Element)classi.next();
-							     String className=aclass.getName();
-							     if(nameSet.contains(className)){
-							    	 	// fix existing entry
-									    	if(name2def.containsKey(className)){
-										    	Element exstEle=name2def.get(className);
-										    	// if exstEle not at ModelDef level
-										    	if(!(exstEle.getContainer() instanceof Model)){
-										    	 	String scopedName=exstEle.getContainer().getName()+"."+exstEle.getName();
-											    	name2def.remove(className);							    	 
-											    	name2def.put(scopedName, exstEle);							    	 
-											    	def2name.remove(exstEle);
-											    	def2name.put(exstEle, scopedName);
-										    	}
-									    	}
-							    	 	// use qualified Name
-							    	 	String scopedName=topicName+"."+className;
-								    	name2def.put(scopedName, aclass);							    	 
-								    	def2name.put(aclass, scopedName);
-							     }else{
-							    	 	// use unqualified Name
-								    	name2def.put(className, aclass);
-								    	def2name.put(aclass, className);
-									    nameSet.add(className);
-							     }
-							   }
-						}
+					if(model.getTranslationOf()==null) {
+	                    HashMap<String,Element> name2def=new HashMap<String,Element>();
+	                    HashSet<String> nameSet=new HashSet<String>();
+	                    Iterator<Element> topici = model.iterator();
+	                    while (topici.hasNext()) {
+	                        Element ele = (Element)topici.next();
+	                        String eleName=ele.getName();
+	                        nameSet.add(eleName);
+	                        name2def.put(eleName, ele);
+	                        def2name.put(ele, eleName);
+	                    }
+	                    topici = model.iterator();
+	                    while (topici.hasNext()) {
+	                        Object topico = topici.next();
+	                        if (topico instanceof Topic) {
+	                            Topic topic = (Topic) topico;
+	                            String topicName=topic.getName();
+	                               Iterator<?> classi = topic.iterator();
+	                               while (classi.hasNext())
+	                               {
+	                                 Element aclass = (Element)classi.next();
+	                                 String className=aclass.getName();
+	                                 if(nameSet.contains(className)){
+	                                        // fix existing entry
+	                                            if(name2def.containsKey(className)){
+	                                                Element exstEle=name2def.get(className);
+	                                                // if exstEle not at ModelDef level
+	                                                if(!(exstEle.getContainer() instanceof Model)){
+	                                                    String scopedName=exstEle.getContainer().getName()+"."+exstEle.getName();
+	                                                    name2def.remove(className);                                  
+	                                                    name2def.put(scopedName, exstEle);                                   
+	                                                    def2name.remove(exstEle);
+	                                                    def2name.put(exstEle, scopedName);
+	                                                }
+	                                            }
+	                                        // use qualified Name
+	                                        String scopedName=topicName+"."+className;
+	                                        name2def.put(scopedName, aclass);                                    
+	                                        def2name.put(aclass, scopedName);
+	                                 }else{
+	                                        // use unqualified Name
+	                                        name2def.put(className, aclass);
+	                                        def2name.put(aclass, className);
+	                                        nameSet.add(className);
+	                                 }
+	                               }
+	                        }
+	                    }
 					}
 			}
 		}
