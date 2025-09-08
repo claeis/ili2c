@@ -1,3 +1,7 @@
+ili2c 5.6.7 (2025-08-xx)
+--------------------------
+- Association with more than two roles fails (#148)
+
 ili2c 5.6.6 (2025-08-04)
 --------------------------
 - iox-ili-1.24.1
