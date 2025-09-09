@@ -584,4 +584,55 @@ public class Association23Test {
         }
         assertNotNull(td);
     }
+    @Test
+    public void association_missingEndName() {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"association_missingEndName.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+        }
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
+        assertEquals("ASSOCIATION Model.TopicA.a2b should end with \"END a2b\", but \"END \" was found.", compilerLogEvent.getRawEventMsg());
+    }
+    @Test
+    public void association_missingBeginName() {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"association_missingBeginName.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+        }
+        assertNull(td);
+        assertEquals(1,errs.getErrs().size());
+        CompilerLogEvent logEvent= (CompilerLogEvent) errs.getErrs().get(0);
+        CompilerLogEvent compilerLogEvent=(CompilerLogEvent) logEvent;
+        assertEquals("ASSOCIATION Model.TopicA.ab should end with \"END \", but \"END a2b\" was found.", compilerLogEvent.getRawEventMsg());
+    }
+    @Test
+    public void association_noName() {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"association_noName.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+        }
+        assertNotNull(td);
+        assertEquals(0,errs.getErrs().size());
+    }
 }

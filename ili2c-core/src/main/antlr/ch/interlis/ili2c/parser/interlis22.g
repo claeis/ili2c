@@ -1634,14 +1634,14 @@ protected associationDef[Container scope]
 	}
 	: { ilidoc=getIliDoc();metaValues=getMetaValues();}
 		a:"ASSOCIATION"
-		( n:NAME
+		( namBegin:NAME
 			{
 				try{
-					def.setName(n.getText());
+					def.setName(namBegin.getText());
 					def.setDocumentation(ilidoc);
 					def.setMetaValues(metaValues);
 				} catch (Exception ex) {
-					reportError(ex, n.getLine());
+					reportError(ex, namBegin.getLine());
 				}
 			}
 		)?
@@ -1734,17 +1734,18 @@ protected associationDef[Container scope]
 		( constr=constraintDef[def]
 			{if(constr!=null)def.add(constr);}
 		)*
-		"END"
-		(nam:NAME
-			{
-			if (!nam.getText().equals(def.getName())){
-				reportError(
-					formatMessage ("err_end_mismatch", def.toString(),
-					def.getName(), nam.getText()),
-					nam.getLine());
-			}
-			}
+		e:"END"
+		(namEnd:NAME
 		)?
+			{
+				if ((namBegin==null && namEnd!=null) || (namBegin!=null && namEnd==null) || (namBegin!=null && namEnd!=null && !namEnd.getText().equals(namBegin.getText()))){
+					reportError(
+						formatMessage ("err_end_mismatch", def.toString(),
+						namBegin!=null?namBegin.getText():"", 
+						namEnd!=null?namEnd.getText():""),
+						e.getLine());
+				}
+			}
 		SEMI
 	;
 protected roleDefs[AssociationDef container]

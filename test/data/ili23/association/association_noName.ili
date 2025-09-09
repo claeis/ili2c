@@ -1,0 +1,20 @@
+INTERLIS 2.3;
+
+MODEL Model AT "http://www.interlis.ch/ili2c/tests/" VERSION "1"  =
+
+	TOPIC TopicA =
+
+		CLASS ClassA =
+		END ClassA;
+
+		CLASS ClassB =
+		END ClassB;
+		
+		ASSOCIATION =
+			a -- ClassA;
+			b -- ClassB;
+		END;
+		
+	END TopicA;
+
+END Model.
