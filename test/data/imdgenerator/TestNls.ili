@@ -1,0 +1,73 @@
+INTERLIS 2.4;
+
+/** Testmodell für die Umsetzung der Mehrsprachigkeit (DE-Originalmodell). */
+MODEL TestNlsDe_V1 (de) AT "mailto:localhost" VERSION "20250625" =
+
+/** Originalthema des Testmodells */
+TOPIC ThemaDe =
+
+/** Originalklasse des Testmodells */
+!!@ testAttr=testValue
+CLASS KlasseDe = 
+  /** Name des Objekt "KlasseDe" */
+  NameDe: MANDATORY TEXT;
+  /** Klassierung der Bauwerke für verschiedene Zwecke */
+  Bauwerk: (
+    /** Haus allgemein */
+    Haus,
+    /** Stall für Tierhaltung */
+    Stall,
+    /** Strasse verschiedener Art */
+    Strasse,
+    /** Mauer (Grenz-, Trenn-, Stützmauer) */
+    Mauer);
+END KlasseDe;
+
+END ThemaDe;
+
+END TestNlsDe_V1.
+
+
+/** Modèle de test pour la mise en œuvre du multilinguisme (modèle traduit FR). */
+MODEL TestNlsFr_V1 (fr) AT "mailto:localhost" VERSION "20250625" TRANSLATION OF TestNlsDe_V1 ["20250605"] =
+
+/** Thème traduit du modèle de test */
+TOPIC ThemeFr =
+
+/** Classe traduite du modèle de test */
+!!@ testAttr_fr=testValue
+CLASS ClasseFr = 
+  /** Nom de l'objet "ClasseFr". */
+  NomFr: MANDATORY TEXT;
+  /** Classification des ouvrages à des fins diverses */
+  Ouvrage: (
+    /** maison en général */
+    Maison,
+    /** étable pour l'élevage d'animaux */
+    Etable,
+    /** route de différents types */
+    Rue,
+    /** mur (de délimitation, de séparation, de soutènement) */
+    Mur);
+END ClasseFr;
+
+END ThemeFr;
+
+END TestNlsFr_V1.
+
+/** EXTENDED Modèle de test pour la mise en œuvre du multilinguisme. */
+MODEL TestNlsFrEx_V1 (fr) AT "mailto:localhost" VERSION "20250625" =
+IMPORTS TestNlsFr_V1;
+
+/** Thème traduit du modèle de test */
+TOPIC ThemeFrEx EXTENDS TestNlsFr_V1.ThemeFr =
+
+/** Classe traduite du modèle de test */
+CLASS ClasseFrEx EXTENDS TestNlsFr_V1.ThemeFr.ClasseFr = 
+    /** NEW EXTENSION ATTRIBUTE */
+    Extension: TEXT;
+END ClasseFrEx;
+
+END ThemeFrEx;
+
+END TestNlsFrEx_V1.

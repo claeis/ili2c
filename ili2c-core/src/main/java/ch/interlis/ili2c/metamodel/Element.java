@@ -942,6 +942,16 @@ public void setDocumentation(String string) {
   		}
   		return baseLanguageElement.getTranslationOfOrSame();
   	}
+    public Element getElementInRootLanguage() {
+        Element ele=this;
+        Element baseLanguageElement = ele.getTranslationOf();
+        while(baseLanguageElement != null) {
+            ele = baseLanguageElement;
+            baseLanguageElement = ele.getTranslationOf();
+        }
+        return ele;
+    }
+  	
   	protected void linkTranslationOf(Element baseElement)
   	{
   	    if(baseElement==this) {

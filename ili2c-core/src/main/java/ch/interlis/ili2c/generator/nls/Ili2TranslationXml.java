@@ -204,13 +204,7 @@ public class Ili2TranslationXml {
 	 * @return the element in the root language or the element itself (if it is not translated).
 	 */
 	public static Element getElementInRootLanguage(Element ele) {
-		Element baseLanguageElement = ele.getTranslationOf();
-		while(baseLanguageElement != null) {
-			ele = baseLanguageElement;
-			baseLanguageElement = ele.getTranslationOf();
-		}
-
-		return ele;
+		return ele.getElementInRootLanguage();
 	}
 
 	/**
@@ -413,13 +407,7 @@ public class Ili2TranslationXml {
 	 */
 	private static ch.interlis.ili2c.metamodel.Enumeration.Element getEnumerationElementInRootLanguage(
 			Enumeration.Element ele) {
-		ch.interlis.ili2c.metamodel.Enumeration.Element baseLanguageElement = ele.getTranslationOf();
-		while(baseLanguageElement != null) {
-			ele = baseLanguageElement;
-			baseLanguageElement = ele.getTranslationOf();
-		}
-
-		return ele;
+		return ele.getElementInRootLanguage();
 	}
 
 	/**
