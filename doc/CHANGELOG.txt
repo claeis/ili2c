@@ -3,6 +3,7 @@ ili2c 5.6.7 (2025-08-xx)
 - Association with more than two roles fails (#148)
 - AssociationDef with incorrect closing END; instead of END Name; (#145)
 - IMD16: elements of TOPIC ilisMeta16.ModelTranslation missing (#149)
+- API: RepositoryAccess.getLocalFileLocation() with maxTTL
 
 ili2c 5.6.6 (2025-08-04)
 --------------------------
