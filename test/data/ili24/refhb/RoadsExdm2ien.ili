@@ -1,0 +1,29 @@
+!! File RoadsExdm2ien.ili Release 2014-07-09
+
+INTERLIS 2.4;
+
+MODEL RoadsExdm2ien (en) AT "http://www.interlis.ch/models/refhb24"
+  VERSION "2014-07-09" =
+
+  IMPORTS RoadsExdm2ben;
+
+
+  TOPIC RoadsExtended EXTENDS RoadsExdm2ben.Roads =
+
+    CLASS StreetAxis (EXTENDED) =
+      Precision: MANDATORY (
+        precise,
+        unprecise);
+    END StreetAxis;
+
+    CLASS RoadSign (EXTENDED) =
+      Type (EXTENDED): MANDATORY (
+        prohibition (
+          noentry,
+          noparking,
+          other));
+    END RoadSign;
+
+  END RoadsExtended; !! of TOPIC
+
+END RoadsExdm2ien. !! of MODEL
