@@ -211,6 +211,7 @@ ML_COMMENT
       | '\r' '\n'  {newline();}
       | '\r'       {newline();}
       | '\n'       {newline();}
+      | '\uFFFF'   {throw new antlr.TokenStreamException("Unterminated comment");}
       | ~('*'|'\n'|'\r')
     )*
     "*/"
@@ -235,6 +236,7 @@ EXPLANATION
       | '\r' '\n'		{newline();}
       | '\r'			{newline();}
       | '\n'			{newline();}
+      | '\uFFFF'   {throw new antlr.TokenStreamException("Unterminated explanation");}
       | ~('/'|'\n'|'\r')
     )*
     "//"!

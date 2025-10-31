@@ -5,6 +5,7 @@ ili2c 5.6.7 (2025-08-xx)
 - IMD16: elements of TOPIC ilisMeta16.ModelTranslation missing (#149)
 - fix compilation of RoadsExgm2ien (#142)
 - API: RepositoryAccess.getLocalFileLocation() with maxTTL
+- fix endlessloop when compiling Model with unclosed comments (#147)
 
 ili2c 5.6.6 (2025-08-04)
 --------------------------

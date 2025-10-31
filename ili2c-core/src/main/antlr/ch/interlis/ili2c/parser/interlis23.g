@@ -7034,7 +7034,8 @@ SL_COMMENT
 
   
 ILI_DOC
-  : "/**"
+{int line=0;int col=0;}
+  : "/**" {line=getLine();col=getColumn();}
     ( /* '\r' '\n' can be matched in one alternative or by matching
          '\r' in one iteration and '\n' in another.  I am trying to
          handle any flavor of newline that comes in, but the language
@@ -7051,6 +7052,7 @@ ILI_DOC
       | '\r' '\n'  {newline();}
       | '\r'       {newline();}
       | '\n'       {newline();}
+      | '\uFFFF'   {throw new antlr.RecognitionException("Unterminated comment", getFilename(), line, col);}
       | ~('*'|'\n'|'\r')
     )*
     "*/"
@@ -7062,9 +7064,12 @@ ILI_DOC
    the Java syntax.
 */
 ML_COMMENT
-  : "/*" ('\r' '\n'  {newline();}
+{int line=0;int col=0;}
+  : "/*" {line=getLine();col=getColumn();}
+  ('\r' '\n'  {newline();}
       | '\r'       {newline();}
       | '\n'       {newline();}
+      | '\uFFFF'   {throw new antlr.RecognitionException("Unterminated comment", getFilename(), line, col);}
       | ~('*'|'\n'|'\r'))
     ( /* '\r' '\n' can be matched in one alternative or by matching
          '\r' in one iteration and '\n' in another.  I am trying to
@@ -7082,6 +7087,7 @@ ML_COMMENT
       | '\r' '\n'  {newline();}
       | '\r'       {newline();}
       | '\n'       {newline();}
+      | '\uFFFF'   {throw new antlr.RecognitionException("Unterminated comment", getFilename(), line, col);}
       | ~('*'|'\n'|'\r')
     )*
     "*/"
@@ -7091,7 +7097,8 @@ ML_COMMENT
 
 // see multiple-line comments in ANTLR example grammar for Java syntax
 EXPLANATION
-  : "//"!
+{int line=0;int col=0;}
+  : "//"! {line=getLine();col=getColumn();}
     (
       /* '\r' '\n' can be matched in one alternative or by matching
          '\r' in one iteration and '\n' in another.  I am trying to
@@ -7106,6 +7113,7 @@ EXPLANATION
       | '\r' '\n'		{newline();}
       | '\r'			{newline();}
       | '\n'			{newline();}
+      | '\uFFFF'   {throw new antlr.RecognitionException("Unterminated explanation", getFilename(), line, col);}
       | ~('/'|'\n'|'\r')
     )*
     "//"!
