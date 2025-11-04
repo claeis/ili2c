@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.junit.Test;
 
@@ -78,15 +79,26 @@ public class Imd16GeneratorTest {
             reader.setModel(td);
             IoxEvent event=null;
             HashMap<String,IomObject> objs=new HashMap<String,IomObject>();
+            HashSet<String> ids=new HashSet<String>();
              do{
                     event=reader.read();
                     //validator.validate(event); // requires ilivalidator#336
                     if(event instanceof StartTransferEvent){
                     }else if(event instanceof StartBasketEvent){
+                        String bid=((StartBasketEvent)event).getBid();
+                        Assert.assertNotNull(bid);
+                        Assert.assertFalse(ids.contains(bid));
+                        ids.add(bid);
                     }else if(event instanceof ObjectEvent){
                         IomObject iomObj=((ObjectEvent)event).getIomObject();
-                        if(iomObj.getobjectoid()!=null) {
-                            objs.put(iomObj.getobjectoid(), iomObj);
+                        String oid=iomObj.getobjectoid();
+                        if(oid!=null) {
+                            if(ids.contains(oid)) {
+                                System.out.println(iomObj);
+                            }
+                            Assert.assertFalse(ids.contains(oid));
+                            ids.add(oid);
+                            objs.put(oid, iomObj);
                         }
                     }else if(event instanceof EndBasketEvent){
                     }else if(event instanceof EndTransferEvent){

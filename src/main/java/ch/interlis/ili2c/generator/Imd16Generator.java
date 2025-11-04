@@ -1742,7 +1742,7 @@ public class Imd16Generator {
 				}
 			}
 			return getRef(func)+"."+LOCAL_TYPE_NAME;
-		}else if(parent instanceof ch.interlis.ili2c.metamodel.FormalArgument){
+		}else if(parent instanceof ch.interlis.ili2c.metamodel.FormalArgument && function!=null){
 			ch.interlis.ili2c.metamodel.FormalArgument arg=(ch.interlis.ili2c.metamodel.FormalArgument)parent;
 			if(type instanceof ch.interlis.ili2c.metamodel.TypeAlias){
 				ch.interlis.ili2c.metamodel.TypeAlias alias=(ch.interlis.ili2c.metamodel.TypeAlias)type;
@@ -1754,7 +1754,7 @@ public class Imd16Generator {
 					return getRef(domain);
 				}
 			}
-			return getRef(arg)+"."+LOCAL_TYPE_NAME;
+			return getRef(function)+"."+getRef(arg)+"."+LOCAL_TYPE_NAME;
 		}else{
 			throw new IllegalArgumentException("unexpected parent type "+parent.getClass().getName());
 		}
