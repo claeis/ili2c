@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.junit.Test;
 
@@ -37,6 +38,8 @@ import ch.interlis.iox_j.validator.Validator;
 public class Imd16GeneratorTest {
     private static final String ILIS_META16_ILI = "standard/IlisMeta16.ili";
     private static final String UNITS23_ILI = "standard/Units.ili";
+    private static final String TESTNLS_ILI = "test/data/imdgenerator/TestNls.ili";
+    
     private static final String LOCALUNIQUE23_ILI = "test/data/imdgenerator/LocalUnique23.ili";
     @Test
     public void ili23Test() throws Iox2jtsException, IoxException {
@@ -76,15 +79,26 @@ public class Imd16GeneratorTest {
             reader.setModel(td);
             IoxEvent event=null;
             HashMap<String,IomObject> objs=new HashMap<String,IomObject>();
+            HashSet<String> ids=new HashSet<String>();
              do{
                     event=reader.read();
                     //validator.validate(event); // requires ilivalidator#336
                     if(event instanceof StartTransferEvent){
                     }else if(event instanceof StartBasketEvent){
+                        String bid=((StartBasketEvent)event).getBid();
+                        Assert.assertNotNull(bid);
+                        Assert.assertFalse(ids.contains(bid));
+                        ids.add(bid);
                     }else if(event instanceof ObjectEvent){
                         IomObject iomObj=((ObjectEvent)event).getIomObject();
-                        if(iomObj.getobjectoid()!=null) {
-                            objs.put(iomObj.getobjectoid(), iomObj);
+                        String oid=iomObj.getobjectoid();
+                        if(oid!=null) {
+                            if(ids.contains(oid)) {
+                                System.out.println(iomObj);
+                            }
+                            Assert.assertFalse(ids.contains(oid));
+                            ids.add(oid);
+                            objs.put(oid, iomObj);
                         }
                     }else if(event instanceof EndBasketEvent){
                     }else if(event instanceof EndTransferEvent){
@@ -288,6 +302,80 @@ public class Imd16GeneratorTest {
                  }
              }
              
+        }
+    }
+    @Test
+    public void translationOfTest() throws Iox2jtsException, IoxException {
+        final String OUT_FILE = "TestNls-out.imd";
+        // generate imd file
+        {
+            // compile model
+            TransferDescription td=null;
+            Configuration ili2cConfig=new Configuration();
+            FileEntry fileEntry=new FileEntry(TESTNLS_ILI, FileEntryKind.ILIMODELFILE);
+            ili2cConfig.addFileEntry(fileEntry);
+            ili2cConfig.setOutputFile(OUT_FILE);
+            ili2cConfig.setOutputKind(GenerateOutputKind.IMD16);
+            td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+            assertNotNull(td);
+            
+        }
+        
+        // verify
+        {
+            // compile model
+            TransferDescription td=null;
+            Configuration ili2cConfig=new Configuration();
+            FileEntry fileEntry=new FileEntry(ILIS_META16_ILI, FileEntryKind.ILIMODELFILE);
+            ili2cConfig.addFileEntry(fileEntry);
+            td=ch.interlis.ili2c.Main.runCompiler(ili2cConfig);
+            assertNotNull(td);
+            
+            ValidationConfig modelConfig = new ValidationConfig();
+            LogCollector logger = new LogCollector();
+            LogEventFactory errFactory = new LogEventFactory();
+            PipelinePool pipelinePool = new PipelinePool();
+            Settings settings = new Settings();
+            Validator validator = new Validator(td, modelConfig, logger, errFactory, pipelinePool, settings);
+            
+            Xtf24Reader reader=new Xtf24Reader(new File(OUT_FILE));
+            reader.setModel(td);
+            IoxEvent event=null;
+            HashMap<String,IomObject> objs=new HashMap<String,IomObject>();
+            HashMap<String,StartBasketEvent> baskets=new HashMap<String,StartBasketEvent>();
+             do{
+                    event=reader.read();
+                    if (ImdGeneratorTest.issue336fixed) {
+                        validator.validate(event); // requires ilivalidator#336
+                    }
+                    if(event instanceof StartTransferEvent){
+                    }else if(event instanceof StartBasketEvent){
+                        baskets.put(((StartBasketEvent) event).getBid(),(StartBasketEvent) event);
+                    }else if(event instanceof ObjectEvent){
+                        IomObject iomObj=((ObjectEvent)event).getIomObject();
+                        if(iomObj.getobjectoid()!=null) {
+                            objs.put(iomObj.getobjectoid(), iomObj);
+                        }
+                    }else if(event instanceof EndBasketEvent){
+                    }else if(event instanceof EndTransferEvent){
+                    }
+             }while(!(event instanceof EndTransferEvent));
+             assertEquals(4,baskets.size());
+             StartBasketEvent basket=null;
+             basket=baskets.get("MODEL.INTERLIS");
+             assertEquals(ch.interlis.models.ILISMETA16.ModelData,basket.getType());
+             basket=baskets.get("MODEL.TestNlsDe_V1");
+             assertEquals(ch.interlis.models.ILISMETA16.ModelData,basket.getType());
+             basket=baskets.get("MODEL.TestNlsFr_V1");
+             assertEquals(ch.interlis.models.ILISMETA16.ModelTranslation,basket.getType());
+             basket=baskets.get("MODEL.TestNlsFrEx_V1");
+             assertEquals(ch.interlis.models.ILISMETA16.ModelData,basket.getType());
+             
+
+             
+             IomObject classeFrEx=objs.get("TestNlsFrEx_V1.ThemeFrEx.ClasseFrEx");
+             IomObject refObj=classeFrEx.getattrobj(ch.interlis.models.IlisMeta16.ModelData.Class.tag_Super,0);
+             assertEquals("TestNlsDe_V1.ThemaDe.KlasseDe",refObj.getobjectrefoid());
         }
     }
 

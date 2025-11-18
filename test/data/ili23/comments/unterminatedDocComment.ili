@@ -1,0 +1,6 @@
+INTERLIS 2.3;
+
+MODEL UnterminatedDocComment (en) =
+    /** Missing closing tag
+    DOMAIN Dummy = TEXT;
+END UnterminatedDocComment.

@@ -116,6 +116,15 @@ public class Enumeration implements Cloneable
   		}
   		return baseLanguageElement.getTranslationOfOrSame();
   	}
+    public Element getElementInRootLanguage() {
+        Element ele=this;
+        Element baseLanguageElement = ele.getTranslationOf();
+        while(baseLanguageElement != null) {
+            ele = baseLanguageElement;
+            baseLanguageElement = ele.getTranslationOf();
+        }
+        return ele;
+    }
   	protected void linkTranslationOf(Element baseElement)
   	{
   		this.baseLanguageElement=baseElement;

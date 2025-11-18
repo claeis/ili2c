@@ -73,7 +73,11 @@ public class ModelScan {
 	} catch (FileNotFoundException fnfex) {
 	    EhiLogger.logError(streamName + ": " + "There is no such file.");
 	} catch(Ili2cSemanticException ex) {
-	    EhiLogger.logAdaption(streamName + ": " + "failed to scan file ("+ex.getCause().getMessage()+"); file ignored");
+	    if(ex.getSourceLine()!=0) {
+	        CompilerLogEvent.logAdaption(streamName,ex.getSourceLine(),ex.getCause().getLocalizedMessage());
+	    }else {
+	        EhiLogger.logAdaption(streamName + ": " + "failed to scan file ("+ex.getCause().getMessage()+"); file ignored");
+	    }
 	} catch (Exception ex) {
 	    EhiLogger.logError(ex);
 	}

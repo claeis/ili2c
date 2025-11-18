@@ -153,4 +153,23 @@ public class Functions23Test {
 		assertNotNull(td);
 		assertEquals(0,errs.getErrs().size());
 	}
+    @Test
+    public void unterminatedExplanation_Fail() {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"functions_UnterminatedExplanation.ili", FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+            fail("compiler should fail because of unterminated explanation");
+        }catch(Ili2cFailure ex){
+        }
+        assertNull(td);
+        assertTrue(errs.getErrs().size()>0);
+        CompilerLogEvent logEvent=(CompilerLogEvent)errs.getErrs().get(0);
+        assertEquals(6, logEvent.getLine());
+        assertTrue(logEvent.getRawEventMsg().contains("Unterminated explanation"));
+    }
 }

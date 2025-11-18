@@ -270,8 +270,13 @@ END B;<br></pre></code>
   {
       AttributeDef attrdef=findAttribute(name);
       if(attrdef==null && context!=null){
-          if(context instanceof Viewable) {
-              context=context.getContainer();
+          if(!(context instanceof Topic || context instanceof Model)){
+              Container context2=context.getContainer(Topic.class);
+              if(context2!=null) {
+                  context=context2;
+              }else {
+                  context=context.getContainer(Model.class);
+              }
           }
           if(!(context instanceof Topic || context instanceof Model)){
               throw new IllegalArgumentException("illegal context "+context.getScopedName());

@@ -540,6 +540,9 @@ public class IliManager implements ReposManager {
 		
 	}
     public static File getLocalCopyOfReposFile(IliManager repoManager, String dataFile) throws Ili2cException {
+        return getLocalCopyOfReposFile(repoManager, dataFile,0L);
+    }
+    public static File getLocalCopyOfReposFile(IliManager repoManager, String dataFile, long maxTTL) throws Ili2cException {
         if(dataFile.startsWith(IliManager.ILIDATA_URI_PREFIX)) {
             try {
                 String bid=dataFile.substring(IliManager.ILIDATA_URI_PREFIX.length());
@@ -556,7 +559,7 @@ public class IliManager implements ReposManager {
             }
         }else if(dataFile.startsWith(IliManager.HTTP_URI_PREFIX) || dataFile.startsWith(IliManager.HTTPS_URI_PREFIX)) {
             try {
-                return repoManager.rep.getLocalFileLocation(dataFile);
+                return repoManager.rep.getLocalFileLocation(dataFile,maxTTL);
             } catch (RepositoryAccessException e) {
                 throw new Ili2cException("failed to get file "+dataFile,e);
             }

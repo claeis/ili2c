@@ -1272,6 +1272,11 @@ public class RepositoryAccess {
     public File getLocalFileLocation(String srcUriStr)
     throws RepositoryAccessException
     {
+        return getLocalFileLocation(srcUriStr,0L);
+    }
+    public File getLocalFileLocation(String srcUriStr,long maxTTL)
+    throws RepositoryAccessException
+    {
         String localReposName = translateUriInclPathToFilenameInCache(srcUriStr);
         File localReposFolder=new File(localCache,localReposName);
         java.net.URL url=null;
@@ -1283,11 +1288,14 @@ public class RepositoryAccess {
         } catch (URISyntaxException e) {
             throw new RepositoryAccessException(e);
         }
-        File targetLocalFile=null;
-        try {
-            targetLocalFile = fetchFromHttpServer(url, localReposFolder,null);
-        } catch (IOException e) {
-            throw new RepositoryAccessException(e);
+        String filename=new File(url.getPath()).getName();
+        File targetLocalFile=new File(localReposFolder,filename);
+        if(maxTTL==0 || !targetLocalFile.exists() || targetLocalFile.lastModified()+maxTTL<System.currentTimeMillis()) {
+            try {
+                targetLocalFile = fetchFromHttpServer(url, localReposFolder,filename);
+            } catch (IOException e) {
+                throw new RepositoryAccessException(e);
+            }
         }
         return targetLocalFile;
     }
@@ -1524,9 +1532,6 @@ public class RepositoryAccess {
         			throw new IllegalArgumentException("failed to create folder "+targetFolder.toString());
         		}
         	}
-            if(filename==null) {
-                filename=new File(url.getPath()).getName();
-            }
             targetFile=new File(targetFolder,filename);
         	// save to cache
         	try {

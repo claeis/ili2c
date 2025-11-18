@@ -43,8 +43,11 @@ options
 			parser.iliFile.addModel(parser.model);
 		}
     }catch(RecognitionException ex){
-  		throw new Ili2cSemanticException(ex); // not really a semantic exception; but avoid a new ili2c specific RuntimeExcpetion
+  		throw new Ili2cSemanticException(ex.getLine(),ex); // not really a semantic exception; but avoid a new ili2c specific RuntimeExcpetion
     }catch(antlr.TokenStreamRecognitionException ex){
+    	if(ex.recog instanceof RecognitionException){
+	  		throw new Ili2cSemanticException(ex.recog.getLine(),ex); // not really a semantic exception; but avoid a new ili2c specific RuntimeExcpetion
+    	}
   		throw new Ili2cSemanticException(ex); // not really a semantic exception; but avoid a new ili2c specific RuntimeExcpetion
      }catch(TokenStreamException ex){
   		throw new Ili2cSemanticException(ex); // not really a semantic exception; but avoid a new ili2c specific RuntimeExcpetion
@@ -194,7 +197,8 @@ SL_COMMENT
    the Java syntax.
 */
 ML_COMMENT
-  : "/*" 
+{int line=0;int col=0;}
+  : "/*" {line=getLine();col=getColumn();}
     ( /* '\r' '\n' can be matched in one alternative or by matching
          '\r' in one iteration and '\n' in another.  I am trying to
          handle any flavor of newline that comes in, but the language
@@ -211,6 +215,7 @@ ML_COMMENT
       | '\r' '\n'  {newline();}
       | '\r'       {newline();}
       | '\n'       {newline();}
+      | '\uFFFF'   {throw new antlr.RecognitionException("Unterminated comment", getFilename(), line, col);}
       | ~('*'|'\n'|'\r')
     )*
     "*/"
@@ -220,7 +225,8 @@ ML_COMMENT
 
 // see multiple-line comments in ANTLR example grammar for Java syntax
 EXPLANATION
-  : "//"!
+{int line=0;int col=0;}
+  : "//"! {line=getLine();col=getColumn();}
     (
       /* '\r' '\n' can be matched in one alternative or by matching
          '\r' in one iteration and '\n' in another.  I am trying to
@@ -235,6 +241,7 @@ EXPLANATION
       | '\r' '\n'		{newline();}
       | '\r'			{newline();}
       | '\n'			{newline();}
+      | '\uFFFF'   {throw new antlr.RecognitionException("Unterminated explanation", getFilename(), line, col);}
       | ~('/'|'\n'|'\r')
     )*
     "//"!

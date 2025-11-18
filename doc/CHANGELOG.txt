@@ -1,3 +1,14 @@
+ili2c 5.6.7 (2025-11-18)
+--------------------------
+- Association with more than two roles fails (#148)
+- AssociationDef with incorrect closing END; instead of END Name; (#145)
+- IMD16: elements of TOPIC ilisMeta16.ModelTranslation missing (#149)
+- fix compilation of RoadsExgm2ien (#142)
+- API: RepositoryAccess.getLocalFileLocation() with maxTTL
+- fix endlessloop when compiling Model with unclosed comments (#147)
+- IMD16: fix duplicate TID of FormalArgument type (#152)
+- iox-ili-1.24.3
+
 ili2c 5.6.6 (2025-08-04)
 --------------------------
 - iox-ili-1.24.1

@@ -9,16 +9,22 @@ import ch.interlis.iox.IoxLogEvent;
 
 public class LogCollector implements  ch.ehi.basics.logging.LogListener,ch.interlis.iox.IoxLogging {
 	private ArrayList<LogEvent> errors=new ArrayList<LogEvent>();
+    private ArrayList<LogEvent> adaptions=new ArrayList<LogEvent>();
 
 	public ArrayList<LogEvent> getErrs() {
 		return errors;
 	}
+    public ArrayList<LogEvent> getAdaptions() {
+        return adaptions;
+    }
 
 	public void logEvent(LogEvent event) {
 	    final int eventKind = event.getEventKind();
         if(eventKind==LogEvent.ERROR) {
             errors.add(event);
-	    }
+	    }else if(eventKind==LogEvent.ADAPTION) {
+            adaptions.add(event);
+        }
 	}
 	public static String getMessage(LogEvent ev) {
 	    java.util.List<String> msgs=AbstractStdListener.formatOutput(ev, false, false);

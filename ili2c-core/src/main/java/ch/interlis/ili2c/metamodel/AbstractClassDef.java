@@ -22,6 +22,8 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
     // check role name is unique with respect to attributes and roles in other roles target
     AssociationDef assoc=(AssociationDef)role.getContainer();
     
+    List<RoleDef> rolesOfCurrentAssoc=new ArrayList<RoleDef>(assoc.getRoles());
+    
     AbstractClassDef<?> targetClass=this;
     
     // for all oppends of role
@@ -50,6 +52,9 @@ public abstract class AbstractClassDef<E extends Element> extends Viewable<E>
         Iterator<RoleDef> rolei=targetClass.getOpposideRoles();
         while (rolei.hasNext()){
 	      RoleDef targetClassOutgoingRole = rolei.next();
+	      if(rolesOfCurrentAssoc.contains(targetClassOutgoingRole)) {
+	          continue;
+	      }
 	      RoleDef tragetClassOutgoingRoleRoot = targetClassOutgoingRole.getRootExtending();
 	      if(tragetClassOutgoingRoleRoot==null) {
             tragetClassOutgoingRoleRoot=targetClassOutgoingRole;
