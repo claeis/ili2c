@@ -150,10 +150,13 @@ public class Imd16Generator {
 		if(model.getNoIncrementalTransfer()!=null){
 			iomModel.setNoIncrementalTransfer(model.getNoIncrementalTransfer());
 		}
-		if(model.getIliVersion().equals(ch.interlis.ili2c.metamodel.Model.ILI2_3)){
-			iomModel.setAt( model.getIssuer() );
-			iomModel.setVersion( model.getModelVersion() );
-		}else if(model.getIliVersion().equals(ch.interlis.ili2c.metamodel.Model.ILI1)){
+		if(model.getIssuer()!=null) {
+            iomModel.setAt( model.getIssuer() );
+		}
+		if(model.getModelVersion()!=null) {
+            iomModel.setVersion( model.getModelVersion() );
+		}
+		if(model.getIliVersion().equals(ch.interlis.ili2c.metamodel.Model.ILI1)){
 			iomModel.setili1Transfername(td.getName());
 			// set ili1 format
 			ch.interlis.ili2c.metamodel.Ili1Format ili1fmt=td.getIli1Format();
