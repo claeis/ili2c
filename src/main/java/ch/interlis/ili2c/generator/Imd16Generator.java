@@ -2399,6 +2399,9 @@ public class Imd16Generator {
         
         while ( it.hasNext() ) {
             Element ele = it.next();
+            if(ele instanceof ch.interlis.ili2c.metamodel.Selection) {
+                continue;
+            }
             EhiLogger.traceState(ele.toString());
             ch.interlis.models.IlisMeta16.ModelTranslation.METranslation iomEle=new ch.interlis.models.IlisMeta16.ModelTranslation.METranslation();
             iomEle.setOf(ele.getElementInRootLanguage().getScopedName());

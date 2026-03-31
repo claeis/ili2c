@@ -23,6 +23,22 @@ CLASS KlasseDe =
     Mauer);
 END KlasseDe;
 
+CLASS KlasseB_De =
+END KlasseB_De;
+
+ASSOCIATION a2b_De =
+	a_De -- {0..1} KlasseB_De;
+	b_De -- {0..*} KlasseDe;
+END a2b_De;
+
+	VIEW KlasseDe_Gueltig
+     	PROJECTION OF K~KlasseDe;
+     	WHERE DEFINED(K->Bauwerk);
+    	=
+    	ALL OF K;
+      SET CONSTRAINT Bed: DEFINED(Bauwerk);
+    END KlasseDe_Gueltig;
+
 END ThemaDe;
 
 END TestNlsDe_V1.
@@ -50,6 +66,23 @@ CLASS ClasseFr =
     /** mur (de délimitation, de séparation, de soutènement) */
     Mur);
 END ClasseFr;
+
+CLASS ClasseB_Fr =
+END ClasseB_Fr;
+
+ASSOCIATION a2b_Fr =
+	a_Fr -- {0..1} ClasseB_Fr;
+	b_Fr -- {0..*} ClasseFr;
+END a2b_Fr;
+
+
+	VIEW ClasseFr_Gueltig
+     	PROJECTION OF C~ClasseFr;
+     	WHERE DEFINED(C->Ouvrage);
+    	=
+    	ALL OF C;
+      SET CONSTRAINT Cond: DEFINED(Ouvrage);
+    END ClasseFr_Gueltig;
 
 END ThemeFr;
 
