@@ -2,6 +2,8 @@ INTERLIS 2.4;
 
 /** Testmodell für die Umsetzung der Mehrsprachigkeit (DE-Originalmodell). */
 MODEL TestNlsDe_V1 (de) AT "mailto:localhost" VERSION "20250625" =
+  	DOMAIN
+		RGB_De = (Rot_De, Blau_De, Gruen_De);
 
 /** Originalthema des Testmodells */
 TOPIC ThemaDe =
@@ -46,6 +48,8 @@ END TestNlsDe_V1.
 
 /** Modèle de test pour la mise en œuvre du multilinguisme (modèle traduit FR). */
 MODEL TestNlsFr_V1 (fr) AT "mailto:localhost" VERSION "20250625" TRANSLATION OF TestNlsDe_V1 ["20250605"] =
+  	DOMAIN
+		RGB_Fr = (Rot_Fr, Blau_Fr, Gruen_Fr);
 
 /** Thème traduit du modèle de test */
 TOPIC ThemeFr =

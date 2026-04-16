@@ -2415,7 +2415,8 @@ public class Imd16Generator {
             iomModel.addTranslations(iomEle);
             if(ele instanceof ch.interlis.ili2c.metamodel.Container) {
                 visitTranslatedElements(iomModel,(ch.interlis.ili2c.metamodel.Container)ele);
-            }else if (ele instanceof AttributeDef) {
+            }
+            if (ele instanceof AttributeDef) {
                 AttributeDef attr = (AttributeDef) ele;
                 // If exist
                 if (attr.getDomain() instanceof EnumerationType) {
