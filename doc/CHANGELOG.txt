@@ -3,6 +3,7 @@ ili2c 5.6.9 (2026-03-xx)
 - IMD16: fix missing <IlisMeta16:At> (#157)
 - IMD16: fix null in METranslation/Of (#160)
 - IMD16: fix untranslated Enumeration-Domain (#160)
+- IMD16: fix untranslated MODEL (#161)
 
 ili2c 5.6.8 (2025-12-29)
 --------------------------

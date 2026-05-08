@@ -395,6 +395,7 @@ public class Imd16GeneratorTest {
                      }
                      translations.put(ofRefObj.getobjectrefoid(),nls);
                  }
+                 assertEquals("TestNlsFr_V1",translations.get("TestNlsDe_V1").getattrvalue(ch.interlis.models.IlisMeta16.ModelTranslation.METranslation.tag_TranslatedName));
                  assertEquals("Rot_Fr",translations.get("TestNlsDe_V1.RGB_De.TOP.Rot_De").getattrvalue(ch.interlis.models.IlisMeta16.ModelTranslation.METranslation.tag_TranslatedName));
                  assertEquals("Maison",translations.get("TestNlsDe_V1.ThemaDe.KlasseDe.Bauwerk.TYPE.TOP.Haus").getattrvalue(ch.interlis.models.IlisMeta16.ModelTranslation.METranslation.tag_TranslatedName));
                  

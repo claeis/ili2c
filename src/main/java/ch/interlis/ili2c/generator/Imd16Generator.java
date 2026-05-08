@@ -112,6 +112,7 @@ public class Imd16Generator {
         out.write( startBasketEvent );
         ch.interlis.models.IlisMeta16.ModelTranslation.Translation iomModel = new ch.interlis.models.IlisMeta16.ModelTranslation.Translation( "TRANSLATION."+model.getScopedName(null) );
         iomModel.setLanguage(model.getLanguage());
+        visitTranslatedElement(iomModel,model);
         visitTranslatedElements(iomModel,model);
         out.write(new ObjectEvent(iomModel));
         EndBasketEvent endBasketEvent = new EndBasketEvent();
@@ -2400,19 +2401,9 @@ public class Imd16Generator {
         while ( it.hasNext() ) {
             Element ele = it.next();
             if(ele instanceof ch.interlis.ili2c.metamodel.Selection) {
-                continue;
+                return;
             }
-            EhiLogger.traceState(ele.toString());
-            ch.interlis.models.IlisMeta16.ModelTranslation.METranslation iomEle=new ch.interlis.models.IlisMeta16.ModelTranslation.METranslation();
-            iomEle.setOf(ele.getElementInRootLanguage().getScopedName());
-            iomEle.setTranslatedName(ele.getName());
-            String doc=ele.getDocumentation();
-            if(doc!=null) {
-                ch.interlis.models.IlisMeta16.ModelTranslation.DocTextTranslation iomDoc=new ch.interlis.models.IlisMeta16.ModelTranslation.DocTextTranslation();
-                iomDoc.setText(doc);
-                iomEle.addTranslatedDoc(iomDoc);
-            }
-            iomModel.addTranslations(iomEle);
+            visitTranslatedElement(iomModel,ele);
             if(ele instanceof ch.interlis.ili2c.metamodel.Container) {
                 visitTranslatedElements(iomModel,(ch.interlis.ili2c.metamodel.Container)ele);
             }
@@ -2435,6 +2426,21 @@ public class Imd16Generator {
                 }
             }
         }
+    }
+    private void visitTranslatedElement(ch.interlis.models.IlisMeta16.ModelTranslation.Translation iomModel,ch.interlis.ili2c.metamodel.Element ele)
+    throws IoxException
+    {
+        EhiLogger.traceState(ele.toString());
+        ch.interlis.models.IlisMeta16.ModelTranslation.METranslation iomEle=new ch.interlis.models.IlisMeta16.ModelTranslation.METranslation();
+        iomEle.setOf(ele.getElementInRootLanguage().getScopedName());
+        iomEle.setTranslatedName(ele.getName());
+        String doc=ele.getDocumentation();
+        if(doc!=null) {
+            ch.interlis.models.IlisMeta16.ModelTranslation.DocTextTranslation iomDoc=new ch.interlis.models.IlisMeta16.ModelTranslation.DocTextTranslation();
+            iomDoc.setText(doc);
+            iomEle.addTranslatedDoc(iomDoc);
+        }
+        iomModel.addTranslations(iomEle);
     }
 	private void visitElements(ch.interlis.ili2c.metamodel.Container<Element> container)
 	throws IoxException
