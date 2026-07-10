@@ -138,7 +138,6 @@ task bindist(type: Zip, dependsOn: fatjar) {
 	from("doc"){
 		include "LICENSE.*"
 		include "CHANGELOG.txt"
-		include "README.txt"
 		include "index.html" 
 		into('doc')
 	}
