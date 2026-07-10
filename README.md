@@ -1,5 +1,5 @@
 # ili2c - The INTERLIS Compiler
-Checks the syntactical correctness of an [INTERLIS](https://www.interlis.ch/content/index.php?language=e "Interlis - The tool to describe, integrate and coordinate geodata.") data model.
+Checks the syntactical correctness of an [INTERLIS](https://www.interlis.ch/) data model.
 
 ## Build Status
 - master branch [![build status](https://www.travis-ci.org/claeis/ili2c.svg?branch=master)](https://www.travis-ci.org/claeis/ili2c)
@@ -11,6 +11,9 @@ ili2c is licensed under the [LGPL](https://www.gnu.org/licenses/lgpl.txt) (Lesse
 ## System Configuration
 For the current version of ili2c, you will need a JRE (Java Runtime Environment) installed on your system, version 1.6 or later. Any OpenJDK based JRE will do.
 The JRE (Java Runtime Environment) can be downloaded from the Website <http://www.java.com/>.
+
+## Software Download 
+<https://downloads.interlis.ch/ili2c/>
 
 ## Installing ili2c
 To install the ilivalidator, choose a directory and extract the distribution file there. 
