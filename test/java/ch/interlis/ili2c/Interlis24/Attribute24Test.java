@@ -14,6 +14,7 @@ import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.metamodel.AttributeDef;
 import ch.interlis.ili2c.metamodel.Cardinality;
 import ch.interlis.ili2c.metamodel.Domain;
+import ch.interlis.ili2c.metamodel.EnumerationType;
 import ch.interlis.ili2c.metamodel.MultiCoordType;
 import ch.interlis.ili2c.metamodel.MultiPolylineType;
 import ch.interlis.ili2c.metamodel.MultiSurfaceType;
@@ -27,6 +28,7 @@ public class Attribute24Test {
 	private static final String TEST_OUT="test/data/ili24/attribute/";
     public static final String ILI_DATE_TIME = TEST_OUT+"dateTime.ili";
     public static final String ILI_TEXT_LIST = TEST_OUT+"text_List.ili";
+    public static final String ILI_ENUM_LIST = TEST_OUT+"enum_List.ili";
     public static final String ILI_MULTICOORD = TEST_OUT+"MultiCoord.ili";
     public static final String ILI_MULTIPOLYLINE = TEST_OUT+"MultiPolyline.ili";
     public static final String ILI_MULTISURFACE = TEST_OUT+"MultiSurface.ili";
@@ -65,6 +67,25 @@ public class Attribute24Test {
         assertEquals(TextType.class,attrA.getDomain().getClass());
         assertEquals(0,attrA.getDomain().getCardinality().getMinimum());
         assertEquals(Cardinality.UNBOUND,attrA.getDomain().getCardinality().getMaximum());
+    }
+    @Test
+    public void enum_List() {
+        LogCollector errs=new LogCollector();
+        EhiLogger.getInstance().addListener(errs);
+        Configuration ili2cConfig=new Configuration();
+        FileEntry fileEntry=new FileEntry(ILI_ENUM_LIST, FileEntryKind.ILIMODELFILE);
+        ili2cConfig.addFileEntry(fileEntry);
+        TransferDescription td=null;
+        try{
+            td=ch.interlis.ili2c.Ili2c.runCompiler(ili2cConfig);
+        }catch(Ili2cFailure ex){
+        }
+        assertNotNull(td);
+        assertEquals(0,errs.getErrs().size());
+        AttributeDef attrB=(AttributeDef) td.getElement("ModelA.TopicA.ClassA.attrB");
+        assertEquals(EnumerationType.class,attrB.getDomain().getClass());
+        assertEquals(0,attrB.getDomain().getCardinality().getMinimum());
+        assertEquals(Cardinality.UNBOUND,attrB.getDomain().getCardinality().getMaximum());
     }
     @Test
     public void dateTime() {
