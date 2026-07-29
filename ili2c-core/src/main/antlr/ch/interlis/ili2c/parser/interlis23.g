@@ -1873,10 +1873,12 @@ protected attrTypeDef[Container  scope,
 		"OF" ct=restrictedStructureRef[scope]
 		{
 			try{
-				if(card!=null){
-					ct.setCardinality(card);
+				if(ct!=null){
+					if(card!=null){
+						ct.setCardinality(card);
+					}
+					ct.setOrdered(ordered);
 				}
-				ct.setOrdered(ordered);
 			}catch(Exception ex){
 			    reportError(ex, line);
 			}
