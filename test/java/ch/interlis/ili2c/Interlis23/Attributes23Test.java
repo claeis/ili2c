@@ -163,7 +163,7 @@ public class Attributes23Test {
         EhiLogger.getInstance().addListener(errs);
         EhiLogger.getInstance().setTraceFilter(false);
         Configuration ili2cConfig=new Configuration();
-        FileEntry fileEntry=new FileEntry(TEST_OUT+"list_enum_Fail.ili", FileEntryKind.ILIMODELFILE);
+        FileEntry fileEntry=new FileEntry(TEST_OUT+"List_enum_Fail.ili", FileEntryKind.ILIMODELFILE);
         ili2cConfig.addFileEntry(fileEntry);
         TransferDescription td=null;
         try{
