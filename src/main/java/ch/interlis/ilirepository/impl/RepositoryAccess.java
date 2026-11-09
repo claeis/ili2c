@@ -1424,7 +1424,7 @@ public class RepositoryAccess {
 			localRelativeFolder=localRelativeFile.getParent();
 			srcName=localRelativeFile.getName();
 			targetLocalFolder=new File(localCache,localRelativeFolder);
-            targetLocalFile=new File(targetLocalFolder,srcPath);
+            targetLocalFile=new File(targetLocalFolder,srcName);
 		}
 		boolean fetchFromServer=true;
 		boolean localFileExists=false;
